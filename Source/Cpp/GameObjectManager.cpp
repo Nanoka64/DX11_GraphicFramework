@@ -1,0 +1,284 @@
+#include "pch.h"
+#include "GameObjectManager.h"
+#include "GameObject.h"
+#include  <algorithm>
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】コンストラクタ
+//* 引数：なし
+//*----------------------------------------------------------------------------------------
+GameObjectManager::GameObjectManager()
+{
+
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】デストラクタ
+//* 引数：なし
+//*----------------------------------------------------------------------------------------
+GameObjectManager::~GameObjectManager()
+{
+
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】初期化
+//* 引数：1.RendererManager
+//* 返値：bool
+//*----------------------------------------------------------------------------------------
+bool GameObjectManager::Init(RendererManager &renderer)
+{
+    m_pObjectList.clear();
+    return true;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】更新
+//* 引数：1.RendererManager
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::ObjectUpdate(RendererManager &renderer)
+{
+    std::vector<std::shared_ptr<GameObject>> deleteList;       // 削除用
+    std::vector<std::shared_ptr<GameObject>> collisionList;    // 衝突判定用
+
+    for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
+    {
+        (*it).get()->Update(renderer);
+        (*it).get()->ComponentUpdate(renderer);
+
+        // 削除フラグが立っていれば削除リストに追加
+        if ((*it).get()->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE) == true)
+        {
+            deleteList.push_back((*it));
+        }
+    }
+
+    // 削除する
+    for (auto& del : deleteList)
+    {
+        remove_Object(del);
+    }
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】描画
+//* 引数：1.RendererManager
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::ObjectRender(RendererManager &renderer)
+{
+    // 描画
+    for (auto& obj : m_pObjectList)
+    {
+        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) {
+            obj->Draw(renderer);
+            obj->ComponentRender(renderer);
+        }
+    }
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】終了
+//* 引数：1.RendererManager
+//* 返値：bool
+//*----------------------------------------------------------------------------------------
+bool GameObjectManager::Term(RendererManager &renderer)
+{
+    return true;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】オブジェクトの生成
+//      この関数を通じてオブジェクトを生成する。
+//* 引数：1.RendererManager
+//* 返値：生成したオブジェクトの共有ポインタ
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<Transform> parent)
+{
+    // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
+    // (Unity風に)
+    // ※一旦ここで追加させるが、なるべく外に移した方が良い。
+    pObj->add_Component<Transform>();
+    pObj->m_pTransform = pObj->get_Component<Transform>();
+    pObj->m_pTransform->set_Pos(pos);
+    pObj->m_pTransform->set_RotateToDeg(pos);
+
+    // 親が設定されているか
+    if (parent.lock() != nullptr) {
+        pObj->m_pTransform->set_Parent(parent);
+    }
+
+
+    // リストに追加
+    this->add_Object(pObj);   
+
+    return pObj;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】オブジェクトの追加
+//* 引数：1.追加するオブジェクトの共有ポインタ
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::add_Object(std::shared_ptr<GameObject> object)
+{
+    m_pObjectList.push_back(object);
+
+    // 描画順にソート
+    m_pObjectList.sort(
+        [](const std::shared_ptr<GameObject> &a, const std::shared_ptr<GameObject> &b) {
+            return a->get_LayerRank() < b->get_LayerRank();
+        });
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】リストからオブジェクトを削除　
+//* 引数：1.削除するオブジェクトの共有ポインタ
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::remove_Object(std::shared_ptr<GameObject> object)
+{
+    auto begin = m_pObjectList.begin();
+    auto end = m_pObjectList.end();
+
+    m_pObjectList.erase(std::remove_if(begin, end,
+        [object](const std::shared_ptr<GameObject> &obj)
+        {
+            return (obj == object);
+        }),
+        end
+    );
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】リストからオブジェクトを削除　※タグ指定
+//* 引数：1.削除するオブジェクトの共有ポインタ
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::remove_ObjectByTag(const std::string &tag)
+{
+    auto begin = m_pObjectList.begin();
+    auto end = m_pObjectList.end();
+
+    m_pObjectList.erase(std::remove_if(begin, end,
+        [tag](const std::shared_ptr<GameObject> &obj)
+        {
+            return (obj->get_Tag() == tag);
+        }),
+        end
+    );
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】指定タグのオブジェクトを一つ取得
+//* 引数：1.タグ
+//* 返値：オブジェクトの参照ポインタ
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string &tag)
+{
+    auto begin = m_pObjectList.begin();
+    auto end = m_pObjectList.end();
+
+    auto it = std::find_if(begin, end,
+        [tag](const std::shared_ptr<GameObject> &obj)
+        {
+            return (obj->get_Tag() == tag);
+        }
+    );
+
+    if (it != end)
+        return (*it);
+    else
+        return {};  // 見つからなければ空を返す
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】指定タグのオブジェクトをすべてリストにして取得
+//* 引数：1.タグ
+//* 返値：オブジェクトの参照ポインタリスト
+//*----------------------------------------------------------------------------------------
+std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(const std::string &tag)
+{
+    std::list<std::weak_ptr<GameObject>> resList;
+
+    for (auto &obj : m_pObjectList)
+    {
+        if (obj->get_Tag() == tag)
+        {
+            resList.push_back(obj);
+        }
+    }
+
+    return resList;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】オブジェクトリストを取得
+//* 引数：なし
+//* 返値：オブジェクトの参照ポインタリスト
+//*----------------------------------------------------------------------------------------
+std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectList()
+{
+    return {};
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】全てのオブジェクトを削除
+//* 引数：なし
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::clear_AllObject()
+{
+    // スマートポインタの場合、
+    // デストラクタで破棄されるのでdelete要らない（便利だね！）
+    m_pObjectList.clear();  
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】dontDestroyフラグが立っていないオブジェクトを全て削除
+//* 引数：なし
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::clear_NotIsDontDestroyObject()
+{
+    m_pObjectList.remove_if(
+        [](const std::shared_ptr<GameObject> &obj)
+        {
+            return (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY) == false);
+        }
+    );
+}
+
+
+
+

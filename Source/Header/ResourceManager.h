@@ -1,0 +1,44 @@
+#pragma once
+//--------------------------------------------------------------------------------------
+//      * Includes *
+//--------------------------------------------------------------------------------------
+#include <unordered_map>
+#include <d3d11.h>
+#include <wrl/client.h>
+#include "Texture.h"
+#include "ModelData.h"
+
+// =======================================================================================
+//      * ResourceManager Class *
+//        - シングルトン - 
+//          リソース管理
+// =======================================================================================
+class ResourceManager
+{
+private:
+    // プライベートコンストラクタ・デストラクタ
+    ResourceManager() = default;
+    ~ResourceManager() = default;
+    ResourceManager(const ResourceManager &) = delete;
+    ResourceManager &operator=(const ResourceManager &) = delete;
+
+    // テクスチャリソース Textureの共有ポインタを持つ
+    std::unordered_map<std::wstring, std::shared_ptr<Texture>> m_TexturesMap;
+    std::unordered_map<std::string, std::shared_ptr<ModelData>> m_ModelsMap;
+
+    std::weak_ptr<class RendererManager> m_pRenderer;    // 描画クラスの弱参照を持つ
+
+public:
+    static ResourceManager &Instance(){
+        static ResourceManager instance;
+        return instance;
+    }
+
+    bool Init(std::shared_ptr<class RendererManager> renderer);   // 初期化
+    void Term();                            // 終了
+    void Release();                         // 全開放
+
+    std::shared_ptr<Texture> LoadTexture(const std::wstring &path);    // テクスチャのロード
+    std::shared_ptr<ModelData> LoadModel(const char* path);    // テクスチャのロード
+};
+

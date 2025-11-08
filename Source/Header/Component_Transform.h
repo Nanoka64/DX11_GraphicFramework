@@ -1,0 +1,79 @@
+#pragma once
+#include "IComponent.h"
+
+
+// ************************************************************************************************************
+// ------------------------------------------------------------------------------------------------------------
+/* --- @:Transform Class --- */
+//
+//  ★継承：IComponent ★
+//
+// 【?】位置、回転、拡縮を管理するコンポーネント
+// 
+//      値は自作ベクトル構造体としては持っておらず、XMVECTORとして値を保持している   
+//      メンバ変数はprivateとし、派生先で直接値を変更することを禁止とする（あくまで値の保持のみに使う）
+//      値を変更する際は「set関数」を使用して変更すること.
+//      ※ UnityのTransformに近い感じ
+// 
+//      ※ 回転値（Rotation ）はラジアンとして扱っている
+//      なのでset/getでラジアンとデグリーで選ぶことができるが、
+//      ラジアン指定のほうが変換処理が要らないため、効率がいい
+//
+// *************************************************************************************************************
+class Transform : public IComponent
+{
+private:
+	DirectX::XMVECTOR m_Position;	// 位置
+	DirectX::XMVECTOR m_Rotation;	// 回転
+	DirectX::XMVECTOR m_Scale;		// 拡縮
+	std::weak_ptr<Transform> m_pParent;	        // 親オブジェクト
+
+    void Init(RendererManager &renderer) override {};		// 初期化
+    void Update(RendererManager &renderer) override {}; 	// 更新処理
+    void Draw(RendererManager &renderer)override {};		// 描画処理
+
+public:
+	Transform(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
+	virtual~Transform();
+
+
+    /****** セッタ ******/
+    void set_Pos(float x, float y, float z);            // 位置設定 float 3要素
+    void set_RotateToRad(float x, float y, float z);    // 回転設定 float 3要素 ラジアン
+    void set_RotateToDeg(float x, float y, float z);    // 回転設定 float 3要素 デグリー
+    void set_Scale(float x, float y, float z);          // 拡大設定 float 3要素
+    void set_Pos(const VECTOR3::VEC3& vIn);             // 位置設定 - ベクトル指定
+    void set_RotateToRad(const VECTOR3::VEC3& vIn);     // 回転設定 - ベクトル指定 ラジアン
+    void set_RotateToDeg(const VECTOR3::VEC3& vIn);     // 回転設定 - ベクトル指定 デグリー
+    void set_Scale(const VECTOR3::VEC3& vIn);           // 拡大設定 - ベクトル指定
+
+    void set_Parent(std::weak_ptr<Transform> parent) { m_pParent = parent; }  // 親設定
+
+    /****** ゲッタ ******/
+    DirectX::XMVECTOR get_XMVecToPos() const;            // 位置取得 - XMVECTOR
+    DirectX::XMVECTOR get_XMVecToRotateToRad() const;    // 回転取得 - XMVECTOR ラジアン 
+    DirectX::XMVECTOR get_XMVecToRotateToDeg() const;    // 回転取得 - XMVECTOR デグリー 
+    DirectX::XMVECTOR get_XMVecToScale() const;          // 拡大取得 - XMVECTOR   
+    const VECTOR3::VEC3 get_VEC3ToPos() const;          // 位置取得 - VEC3
+    const VECTOR3::VEC3 get_VEC3ToRotateToRad() const;  // 回転取得 - VEC3  ラジアン
+    const VECTOR3::VEC3 get_VEC3ToRotateToDeg() const;  // 回転取得 - VEC3  デグリー
+    const VECTOR3::VEC3 get_VEC3ToScale() const;        // 拡大取得 - VEC3
+
+    DirectX::XMMATRIX get_MtxPos()const;    // 位置行列取得
+    DirectX::XMMATRIX get_MtxRotate()const; // 回転行列取得
+    DirectX::XMMATRIX get_MtxScale()const;  // 拡大行列取得
+
+    DirectX::XMMATRIX get_WorldMtx()const;  // ワールド行列取得
+
+    const VECTOR3::VEC3 get_Forward()const;
+    VECTOR3::VEC3 get_Up()const;
+    VECTOR3::VEC3 get_Right()const;
+
+    static const DirectX::XMVECTOR FORWARD;
+    static const DirectX::XMVECTOR UP;
+    static const DirectX::XMVECTOR RIGHT;
+
+
+    void Release(); // 解放
+};
+
