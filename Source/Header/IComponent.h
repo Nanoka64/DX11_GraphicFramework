@@ -1,8 +1,6 @@
 #pragma once
 #include "Object.h"
 
-class GameObject;
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:IComponent Class --- */
@@ -15,11 +13,11 @@ class GameObject;
 class IComponent : public Object
 {
 protected:
-	std::weak_ptr<GameObject> m_pOwner;	// このコンポーネントの持ち主
+	std::weak_ptr<class GameObject> m_pOwner;	// このコンポーネントの持ち主
 	int m_UpdateRank;	// 更新の順番
 
 public:
-	IComponent(std::weak_ptr<GameObject> pOwner, int updateRank = 100);	// updateRankが低いほど先に更新される
+	IComponent(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);	// updateRankが低いほど先に更新される
 	virtual ~IComponent();
 
 	virtual void Init(RendererManager &renderer) {};		// 初期化

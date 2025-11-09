@@ -14,11 +14,11 @@ struct MeshInfo
 	UINT NumMaterial;					// É}ÉeÉäÉAÉãêî
 };
 
-class MeshFactory
+class MeshInfoFactory
 {
 public:
-	MeshFactory();
-	~MeshFactory();
+	MeshInfoFactory();
+	~MeshInfoFactory();
 
 	static MeshInfo *CreateTriangleInfo();
 	static MeshInfo *CreateQuadInfo(MATERIAL *materials, UINT matNum);

@@ -71,7 +71,7 @@ float3 DirectionLightCalc(DirectionalLight ligData, float3 pos, float3 norm)
     float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc(ligData.Direction, ligData.SpecularColor, 2.0f, pos, norm);
+    float3 specularLig = SpecularLightCalc(ligData.Direction, ligData.SpecularColor, 2.0, pos, norm);
     
     // 拡散反射と鏡面反射を足して最終的な光を求める
     finalLig = diffuseLig + specularLig;
@@ -105,7 +105,7 @@ float3 PointLightCalc(PointLight ligData, float3 worldPos, float3 norm)
     float3 diffPoint = DiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
-    float3 spcPoint = SpecularLightCalc(ligDir, ligData.SpecularColor, 2.0f, worldPos, norm);
+    float3 spcPoint = SpecularLightCalc(ligDir, ligData.SpecularColor, 2.0, worldPos, norm);
     
     // 頂点とライトの距離
     float distance = length(worldPos - ligData.Pos);

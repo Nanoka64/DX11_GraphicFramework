@@ -14,7 +14,7 @@
 #include "Component_ModelMeshResource.h"
 #include "Component_ModelMeshRenderer.h"
 #include "Component_MeshRenderer.h"
-#include "ModelFactory.h"
+#include "MeshFactory.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
 
@@ -76,9 +76,9 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             /* ディレクションライトの生成 */
             std::weak_ptr<GameObject> pDLight = Instantiate(std::move(std::make_shared<GameObject>()));
-            pDLight.lock()->get_Transform().lock()->set_RotateToRad(VEC3(1.0f, -1.0f, 1.0f));
+            pDLight.lock()->get_Transform().lock()->set_RotateToRad(VEC3(0.01f, -0.01f, 0.01f));
             auto light = pDLight.lock()->add_Component<DirectionalLight>();
-            pDLight.lock()->set_Tag("Light");
+            pDLight.lock()->set_Tag("DirLight");
             light->CreateCBuffer(renderer.get_Device());
             light->set_CameraTransform(GameObjectManager::Instance().get_ObjectByTag("Camera").lock()->get_Transform());
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
@@ -92,15 +92,36 @@ bool SceneManager::Init(RendererManager &renderer)
             pDLight.lock()->set_Tag("PointLight");
             auto light = pDLight.lock()->add_Component<PointLight>();
             light->CreateCBuffer(renderer.get_Device());
-            light->set_LightColor(VEC3(1.0f, 0.0f, 1.0f));
-            light->set_Range(1500.0f);
+            light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+            light->set_Range(2500.0f);
             light->Init(renderer);
         }
 
         {
-            /* モデルの生成 */
+            /* プレイヤー モデルの生成 */
+            MATERIAL mat[1];
+            mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Player2/AL_Standard.fbx";
+            model.ObjTag = "Player";
+            model.IsAnim = true;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            auto obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(false);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+        }
+
+        {
+            /* アリ モデルの生成 */
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
+            mat[0].DiffuseColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -108,36 +129,53 @@ bool SceneManager::Init(RendererManager &renderer)
             model.ObjTag = "Model";
             model.IsAnim = true;
             model.MatNum = 1;
-            model.MaterialData = new CreateModelInfo::InputMaterial();
+            model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            auto obj = ModelFactory::CreateModel(model);
+            auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
 
         {
-            /* キューブ生成 */
-            std::weak_ptr<GameObject> pCubu = Instantiate(std::move(std::make_shared<GameObject>()));
-            pCubu.lock()->Init(renderer);
-            pCubu.lock()->get_Transform().lock()->set_Pos(0.0f, 2.0f, 0.0f);
-            pCubu.lock()->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
-            pCubu.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
-            SpriteUV uv[6];
-            uv[0] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 前
-            uv[1] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 右
-            uv[2] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 上
-            uv[3] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 下
-            uv[4] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 左
-            uv[5] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 裏
-            MATERIAL* mat = new MATERIAL();
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W048.jpg");
-            auto res1 = pCubu.lock()->add_Component<IMeshResource>();
-            auto res2 = pCubu.lock()->add_Component<MeshRenderer>();
-            
-            if (!res1->Setup(renderer, UTILITY_MESH_TYPE::QUAD, mat, 1))return false;
-            res2->set_MeshResource(res1);
-            pCubu.lock()->get_Component<Transform>()->set_Scale(1000, 10, 1000);
-            pCubu.lock()->get_Component<Transform>()->set_Pos(0, -100, 0);
+            /* QUADの生成 */
+
+            for (int i = -1; i < 2; i++)
+            {
+                MATERIAL* mat = new MATERIAL;
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+
+                CreateUtilityMeshInfo mesh;
+                mesh.pRenderer = &renderer;
+                mesh.Type = UTILITY_MESH_TYPE::QUAD;
+                mesh.ObjTag = "Quad" + std::to_string(i);
+                mesh.MatNum = 1;
+                mesh.MaterialData = new InputMaterial();
+                mesh.MaterialData->pMat = mat;
+
+                auto obj = MeshFactory::CreateUtilityMesh(mesh);
+                obj.lock()->get_Transform().lock()->set_Scale(1000, 10, 1000);
+                obj.lock()->get_Transform().lock()->set_Pos((i * 1000), -100, 0);
+                obj.lock()->get_Transform().lock()->set_RotateToDeg(0, 0, (i * 90));
+            }
+        }
+
+        {
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "Cubu";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
         }
     }
 

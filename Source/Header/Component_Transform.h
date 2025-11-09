@@ -33,7 +33,7 @@ private:
     void Draw(RendererManager &renderer)override {};		// •`‰æˆ—
 
 public:
-	Transform(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
+	Transform(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);
 	virtual~Transform();
 
 

@@ -8,6 +8,8 @@ private:
 	std::weak_ptr<class ModelMeshResource> m_pMeshResource;	// ƒƒbƒVƒ…î•ñ‚ÌQÆ
 	bool m_IsDrawLine;
 
+	int m_DebugDrawBoneNum;
+
 public:
 	ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~ModelMeshRenderer();

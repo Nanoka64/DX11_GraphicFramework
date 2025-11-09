@@ -26,9 +26,8 @@ enum class UTILITY_MESH_TYPE
 // ***************************************************************************************
 class IMeshResource : public IComponent
 {
-protected:
+private:
 	friend class MeshRenderer;
-	std::weak_ptr<class ModelData> m_pModelData;
 
 	MeshInfo *m_pMeshInfo;			// メッシュ情報
 	ID3D11Buffer *m_pVertexBuffer;	// 頂点バッファ

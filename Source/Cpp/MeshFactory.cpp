@@ -1,22 +1,23 @@
 #include "pch.h"
-#include "ModelFactory.h"
+#include "MeshFactory.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "RendererManager.h"
 #include "Component_ModelMeshResource.h"
 #include "Component_ModelMeshRenderer.h"
+#include "Component_MeshRenderer.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "ResourceManager.h"
 #include "Texture.h"
 
 
 //*---------------------------------------------------------------------------------------
-//* @:ModelFactory Class 
+//* @:MeshFactory Class 
 //*【?】モデルの生成
 //* 引数：1.CreateModelInfo&
 //* 返値：std::weak_ptr<GameObject>
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<class GameObject> ModelFactory::CreateModel(const CreateModelInfo &info)
+std::weak_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &info)
 {
     // モデルの読み込み
     std::weak_ptr<ModelData> modeldata = ResourceManager::Instance().LoadModel(info.Path.c_str());
@@ -59,7 +60,44 @@ std::weak_ptr<class GameObject> ModelFactory::CreateModel(const CreateModelInfo 
     if (info.IsAnim) {
         pModelObj.lock()->add_Component<SkinnedMeshAnimator>()->set_MeshResource(meshResource);;
         pModelObj.lock()->get_Component<SkinnedMeshAnimator>()->Init(*info.pRenderer);
+        pModelObj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(info.InitAnimIndex);
     }
 
     return pModelObj;
+}
+
+
+
+//*---------------------------------------------------------------------------------------
+//* @:MeshFactory Class 
+//*【?】汎用メッシュの生成
+//* 引数：1.CreateUtilityMeshInfo&
+//* 返値：std::weak_ptr<GameObject>
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUtilityMeshInfo& info)
+{
+    // オブジェクトの生成
+    std::weak_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    pObj.lock()->Init(*info.pRenderer);
+    pObj.lock()->set_Tag(info.ObjTag.c_str());
+
+    // オブジェクトの状態をアクティブにする
+    if (info.IsActive) {
+        pObj.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    }
+
+    // 種別がなければそのままのオブジェクトを返す
+    if (info.Type == UTILITY_MESH_TYPE::NONE)return pObj;
+
+    // コンポーネントの追加
+    auto meshResource = pObj.lock()->add_Component<IMeshResource>();
+    auto meshRenderer = pObj.lock()->add_Component<MeshRenderer>();
+
+    // リソースのセットアップ
+    if (!meshResource->Setup(*info.pRenderer, info.Type, info.MaterialData->pMat, info.MatNum))return {};
+    
+    // Rendererにリソースを設定
+    meshRenderer->set_MeshResource(meshResource);
+
+    return pObj;
 }

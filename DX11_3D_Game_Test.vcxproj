@@ -77,7 +77,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -100,7 +100,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -170,7 +170,7 @@
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\IChildSceneState.h" />
     <ClInclude Include="Source\Header\ModelData.h" />
-    <ClInclude Include="Source\Header\ModelFactory.h" />
+    <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
     <ClInclude Include="Source\Header\RootSceneState.h" />
     <ClInclude Include="Source\Header\IState.h" />
@@ -243,8 +243,11 @@
     <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
-    <ClCompile Include="Source\Cpp\ModelData.cpp" />
-    <ClCompile Include="Source\Cpp\ModelFactory.cpp" />
+    <ClCompile Include="Source\Cpp\ModelData.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\MeshFactory.cpp" />
     <ClCompile Include="Source\Cpp\Component_PointLight.cpp" />
     <ClCompile Include="Source\Cpp\RootSceneState.cpp" />
     <ClCompile Include="Source\Cpp\IState.cpp" />
@@ -292,7 +295,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\GameObject.cpp" />
+    <ClCompile Include="Source\Cpp\GameObject.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\Helper.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -301,7 +307,10 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\IComponent.cpp" />
     <ClCompile Include="Source\Cpp\IDXBuffer.cpp" />
-    <ClCompile Include="Source\Cpp\IDXResource.cpp" />
+    <ClCompile Include="Source\Cpp\IDXResource.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\IndexBuffer.cpp" />
     <ClCompile Include="Source\Cpp\InputFactory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -333,7 +342,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\GameObjectManager.cpp" />
+    <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

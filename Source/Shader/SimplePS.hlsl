@@ -27,7 +27,7 @@ float4 SimplePSMain(PS_SimpleLightingInput input) : SV_TARGET
     float3 pointLig = PointLightCalc(cb_PointLightData, input.World.xyz, input.Normal);
     
     // ç≈èIêF
-    finalCol.xyz *= pointLig;
+    finalCol.xyz *= dirLig + pointLig;
     
     return float4(finalCol);
 }

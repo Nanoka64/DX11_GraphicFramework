@@ -279,11 +279,11 @@
     <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
       <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\ModelFactory.cpp">
-      <Filter>ソース ファイル\Graphics\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_PointLight.cpp">
       <Filter>ソース ファイル\Graphics\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\MeshFactory.cpp">
+      <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -494,11 +494,11 @@
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
       <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\ModelFactory.h">
-      <Filter>ソース ファイル\Graphics\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Component_PointLight.h">
       <Filter>ソース ファイル\Graphics\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\MeshFactory.h">
+      <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

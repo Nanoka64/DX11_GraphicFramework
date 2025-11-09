@@ -111,12 +111,11 @@ std::weak_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_pt
 {
     // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
     // (Unity風に)
-    // ※一旦ここで追加させるが、なるべく外に移した方が良い。
     pObj->add_Component<Transform>();
     pObj->m_pTransform = pObj->get_Component<Transform>();
     pObj->m_pTransform->set_Pos(pos);
-    pObj->m_pTransform->set_RotateToDeg(pos);
-
+    pObj->m_pTransform->set_RotateToDeg(rot);
+     
     // 親が設定されているか
     if (parent.lock() != nullptr) {
         pObj->m_pTransform->set_Parent(parent);

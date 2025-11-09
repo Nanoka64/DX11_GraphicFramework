@@ -4,11 +4,11 @@
 using namespace BASE_VERTEX;
 using namespace Tool::UV;
 
-MeshFactory::MeshFactory()
+MeshInfoFactory::MeshInfoFactory()
 {
 }
 
-MeshFactory::~MeshFactory()
+MeshInfoFactory::~MeshInfoFactory()
 {
 }
 
@@ -17,7 +17,7 @@ MeshFactory::~MeshFactory()
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-MeshInfo *MeshFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
+MeshInfo * MeshInfoFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
 {
 	MeshInfo *meshInfo = new MeshInfo();
 
@@ -55,7 +55,7 @@ MeshInfo *MeshFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-MeshInfo* MeshFactory::CreateCubeInfo(MATERIAL* materials, UINT matNum)
+MeshInfo* MeshInfoFactory::CreateCubeInfo(MATERIAL* materials, UINT matNum)
 {
 	MeshInfo* meshInfo = new MeshInfo();
 

@@ -22,7 +22,6 @@ ModelData::ModelData() :
     m_AnimNum(0),
     m_MaterialNum(0),
     m_pScene(nullptr),
-    m_pVertex(nullptr),
     m_pConstanrBufferBonesData(nullptr),
     m_pCBTransformSet(nullptr),
     m_pCBMaterialDataSet(nullptr),

@@ -48,25 +48,6 @@ void ModelMesh::Draw(RendererManager& render)
 	auto pDeviceContext = render.get_DeviceContext();
 	uint32_t stride[1] = { sizeof(MODEL_VERTEX) };
 	uint32_t offset[1] = { 0 };
-	static int drawBoneNum = 10;
-
-	Debugger::Instance().BeginDebugWindow("MeshInfo");
-	Debugger::Instance().DG_SliderInt("DrawBoneNum",1, &drawBoneNum,10,m_VertexNum);
-
-	for (size_t i = 0; i < std::min<size_t>(m_VertexNum, drawBoneNum); i++)
-	{
-		for (size_t j = 0; j < 4; j++)
-		{
-			if (m_pVertex[i].boneIDs[j] == 0)
-			{
-				Debugger::Instance().DG_TextValue("Vertex%d============================", i);
-
-				Debugger::Instance().DG_TextValue("BoneIds : %d", m_pVertex[i].boneIDs[j]);
-				Debugger::Instance().DG_TextValue("Weight  : %f.2", m_pVertex[i].boneWeights[j]);
-			}
-		}
-	}
-	Debugger::Instance().EndDebugWindow();
 
 	pDeviceContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, m_pVertex, 0, 0);
 

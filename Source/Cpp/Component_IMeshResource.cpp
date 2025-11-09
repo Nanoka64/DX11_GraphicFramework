@@ -222,10 +222,10 @@ bool IMeshResource::Setup(RendererManager& renderer, UTILITY_MESH_TYPE type, MAT
 		return false;
 		break;
 	case UTILITY_MESH_TYPE::CUBU:
-		m_pMeshInfo = MeshFactory::CreateCubeInfo(materials, materialNum);
+		m_pMeshInfo = MeshInfoFactory::CreateCubeInfo(materials, materialNum);
 		break;
 	case UTILITY_MESH_TYPE::QUAD:
-		m_pMeshInfo = MeshFactory::CreateQuadInfo(materials, materialNum);
+		m_pMeshInfo = MeshInfoFactory::CreateQuadInfo(materials, materialNum);
 		break;
 	case UTILITY_MESH_TYPE::SPHERE:
 		break;

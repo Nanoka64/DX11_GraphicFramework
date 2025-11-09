@@ -15,13 +15,11 @@
 struct PS_INPUT
 {
     float4 Pos      : SV_POSITION;
-    float4 World    : WORLD;
+    float4 WPos     : POSITION;
     float3 Normal   : NORMAL0;
     float4 Col      : COLOR0;
     float2 UV       : TEXCOORD0;
 };
-
-
 
 // **************************************************************************
 /* - @:エントリーポイント - */
@@ -33,8 +31,7 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     float4 specularColor = g_SpecularTex.Sample(mySampler, input.UV);
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
-    finalCol = diffuseColor;
-    
+    finalCol = diffuseColor + DiffuseColor;
     
     /* ライティング処理 */
     /* ////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,13 +41,13 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     */ ////////////////////////////////////////////////////////////////////////////////////////////
   
     // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, input.World.xyz, input.Normal);
+    float3 dirLig = DirectionLightCalc(cb_DirLightData, input.WPos.xyz, input.Normal);
     
     // ポイントライト計算
-    float3 pointLig = PointLightCalc(cb_PointLightData, input.World.xyz, input.Normal);
+    float3 pointLig = PointLightCalc(cb_PointLightData, input.WPos.xyz, input.Normal);
     
     // 最終色
-    finalCol.xyz *=  pointLig;
+    finalCol.xyz *= dirLig + pointLig;
     
     //finalCol = c * diffuseColor;    // 頂点カラーとディフューズを乗算
     //return float4(c);               // 頂点カラー

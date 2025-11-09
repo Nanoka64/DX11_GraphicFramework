@@ -17,7 +17,8 @@ using namespace Tool::UV;
 //* 引数：1.
 //*----------------------------------------------------------------------------------------
 ModelMeshRenderer::ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
-m_IsDrawLine(false)
+m_IsDrawLine(false),
+m_DebugDrawBoneNum(0)
 {
     this->set_Tag("ModelMeshRenderer");
 }
@@ -70,11 +71,35 @@ void ModelMeshRenderer::Draw(RendererManager &renderer)
 
     auto pDeviceContext             = renderer.get_DeviceContext();
     std::vector<MATERIAL>matList    = m_pMeshResource.lock()->get_ModelData().lock()->get_MaterialList();
-    UINT meshNum                    = m_pMeshResource.lock()->get_ModelData().lock()->get_MeshNum();
     const aiScene *pScene           = m_pMeshResource.lock()->get_ModelData().lock()->get_Scene();
     ModelMesh *pMeshes              = m_pMeshResource.lock()->get_ModelData().lock()->get_Meshes();
+    UINT meshNum                    = m_pMeshResource.lock()->get_ModelData().lock()->get_MeshNum();
     CB_MATERIAL_SET *CB_MatSet      = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferMaterialDataSet();
     CB_TRANSFORM_SET *CB_TransSet   = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferTransformSet();
+    UINT vertexNum          = pMeshes->get_VertexNum();
+    MODEL_VERTEX* vertices  = pMeshes->get_Vertices();
+
+    // モデルシェーダに切り替え
+    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::MODEL);
+
+
+    Debugger::Instance().BeginDebugWindow(m_pOwner.lock()->get_Tag());
+    Debugger::Instance().DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
+
+    for (size_t i = 0; i < std::min<size_t>(vertexNum, m_DebugDrawBoneNum); i++)
+    {
+        for (size_t j = 0; j < 4; j++)
+        {
+            if (vertices[i].boneIDs[j] == 0)
+            {
+                Debugger::Instance().DG_TextValue("Vertex%d============================", i);
+
+                Debugger::Instance().DG_TextValue("BoneIds : %d", vertices[i].boneIDs[j]);
+                Debugger::Instance().DG_TextValue("Weight  : %f.2", vertices[i].boneWeights[j]);
+            }
+        }
+    }
+    Debugger::Instance().EndDebugWindow();
 
 
     // トランスフォームのセット ==========================
@@ -115,10 +140,7 @@ void ModelMeshRenderer::Draw(RendererManager &renderer)
     );
 
     // マテリアル用定数バッファのセット
-    pDeviceContext->VSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);
-
-    // モデルシェーダに切り替え
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::MODEL);
+    pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);
 
 
     /* デバッグモード指定の場合、ワイヤーフレームで表示 */

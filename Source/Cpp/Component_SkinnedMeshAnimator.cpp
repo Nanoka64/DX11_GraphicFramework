@@ -48,12 +48,12 @@ void SkinnedMeshAnimator::Init(RendererManager &renderer)
 //*----------------------------------------------------------------------------------------
 void SkinnedMeshAnimator::Update(RendererManager& renderer)
 {
-    Debugger::Instance().BeginDebugWindow("*****ModelInfo*****");
+    Debugger::Instance().BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
     Debugger::Instance().DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
     Debugger::Instance().DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
     Debugger::Instance().DG_TextValue("AnimNum: %d", m_Animations.size());  // アニメーション数
-    Debugger::Instance().DG_CheckBox("IsAnimation", &m_IsAnimationFlag);    // アニメーション再生するか
-    Debugger::Instance().DG_SliderInt("AnimationIndex", 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
+    Debugger::Instance().DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
+    Debugger::Instance().DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
     Debugger::Instance().EndDebugWindow();
 
     m_AnimProcTime += 0.023f;
@@ -117,7 +117,12 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererManager &renderer, float 
         m_ConstanrBufferBonesData->Data.BonesMatrices[i] = m_BoneList[i].FinalTransformation;
     }
 
-    // 定数バッファに転送
+
+    // モデルシェーダに切り替え
+    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::MODEL);
+
+
+    // 定数バッファ更新
     pContext->UpdateSubresource(
         m_ConstanrBufferBonesData->pBuff,
         0,

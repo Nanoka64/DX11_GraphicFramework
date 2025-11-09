@@ -119,7 +119,6 @@ private:
     Assimp::Importer m_Importer;			// インポーター
     const aiScene *m_pScene;				// シーン情報
 	ModelMesh *m_pMeshes;					// メッシュ
-    BASE_VERTEX::MODEL_VERTEX *m_pVertex;	// 頂点データ
     std::vector<BoneInfo> m_BoneList;		// ボーンリスト
     std::vector<MATERIAL> m_MaterialList;	// マテリアル
 
@@ -152,7 +151,6 @@ public:
 
 	/* メッシュ・頂点データ */
 	ModelMesh *get_Meshes() const { return m_pMeshes; }
-	const BASE_VERTEX::MODEL_VERTEX *get_VertexData() const { return m_pVertex; }
 	
 	/* ボーン・マテリアル */
 	const std::vector<BoneInfo> &get_BoneList() const { return m_BoneList; }

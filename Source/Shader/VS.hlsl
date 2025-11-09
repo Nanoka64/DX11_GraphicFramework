@@ -35,7 +35,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 Pos    : SV_POSITION; // 頂点座標(画面空間)
-    float4 World  : WORLD;       // ライティング用のワールド座標
+    float4 WPos   : POSITION;    // ライティング用のワールド座標
     float3 Normal : NORMAL0;     // 法線
     float4 Col    : COLOR0;      // 頂点色
     float2 UV     : TEXCOORD0;   // テクスチャ座標
@@ -43,7 +43,7 @@ struct VS_OUTPUT
 
 /* ---------------------------------------------------------------------------------------
 /* - @:ShaderManager Class - */
-/* 【?】ボーンIDに応じたデバッグカラーを返す関数
+/* 【?】ボーンIDに応じたデバッグカラーを返す関数 aiに頼んだ
 /* ---------------------------------------------------------------------------------------*/
 float4 GetBoneDebugColor(int boneID)
 {
@@ -124,8 +124,8 @@ VS_OUTPUT VS(VS_INPUT input)
     pos  = skinnedPos; // スキニング後の頂点座標
     norm = skinnedNormal; // スキニング後の法線
     
-    pos = mul(pos,Transform);      // ワールド変換
-    output.World = pos;
+    pos = mul(pos,Transform);       // ワールド変換
+    output.WPos = pos;
     pos = mul(pos, View);           // ビュー変換
     pos = mul(pos, Projection);     // 投影変換
     
