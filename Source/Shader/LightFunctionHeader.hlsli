@@ -18,7 +18,7 @@ float3 DiffuseLightCalc(float3 ligDir, float3 ligCol, float3 norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = -dot(norm, ligDir);
+    float diffuseFactor = dot(norm, ligDir);
     diffuseFactor = saturate(diffuseFactor); // saturate：0～1にクランプする
     
     // 拡散反射求める
@@ -41,7 +41,7 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
 
     // 反射ベクトル
-    float3 refVec = reflect(norm, ligDir);
+    float3 refVec = reflect(-ligDir, norm);
     
     // 光が入射したベクトルから視点に向かって伸びるベクトル
     float3 toEye = EyePos - pos;
@@ -97,7 +97,7 @@ float3 PointLightCalc(PointLight ligData, float spcPow, float3 worldPos, float3 
     float3 finalLig = float3(0, 0, 0);
 
     // 光の向きを求める
-    float3 ligDir = worldPos - ligData.Pos;
+    float3 ligDir = ligData.Pos - worldPos;
     ligDir = normalize(ligDir);
     
     // ディフューズ計算
@@ -110,7 +110,7 @@ float3 PointLightCalc(PointLight ligData, float spcPow, float3 worldPos, float3 
     float distance = length(worldPos - ligData.Pos);
     
     // 影響度計算
-    float influencePower = 1.0f - 1.0f / ligData.Range * distance;
+    float influencePower = 1.0f - (distance / ligData.Range);
     
     // マイナスにならないように
     influencePower = max(0.0, influencePower);

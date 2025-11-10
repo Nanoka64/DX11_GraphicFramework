@@ -37,16 +37,15 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     // ディフューズマップとcpp側で設定したカラーを足す
-    finalCol = diffuseMap + DiffuseColor;
+    finalCol = diffuseMap * DiffuseColor;
     
     // 今のままだと0～1の値になっているので、-1～1に変換
     normalMap = (normalMap - 0.5f) * 2.0f;
     
     // タンジェントスペースの法線をワールドスペースに変換
-    float3 normal = input.Normal;
-    normal = input.Tan    * normalMap.x + 
-             input.BiNorm * normalMap.y + 
-             input.Normal * normalMap.z;
+    float3 normal = normalize(input.Tan * normalMap.x +
+             input.BiNorm * normalMap.y +
+             input.Normal * normalMap.z);
     
     /* ライティング処理 */
     /* ////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,26 +55,26 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     */ ////////////////////////////////////////////////////////////////////////////////////////////
   
     // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, specularMap, input.WPos.xyz, normal);
+    float3 dirLig = DirectionLightCalc(cb_DirLightData, 16, input.WPos.xyz, input.Normal);
     
     // ポイントライト計算
-    float3 pointLig = PointLightCalc(cb_PointLightData, specularMap, input.WPos.xyz, normal);
+    float3 pointLig = PointLightCalc(cb_PointLightData, 16, input.WPos.xyz, input.Normal);
     
     // 天球ライト
-    float3 hemiLig = HemisphereLightCalc(normal);
+    float3 hemiLig = HemisphereLightCalc(input.Normal);
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
-    float3 lighting = dirLig + hemiLig + 0.3f;
+    float3 lighting = dirLig + pointLig + hemiLig + 0.2f;
+    
     
     // 最終色
     finalCol.xyz *= lighting;
-
     
     
     //finalCol = c * diffuseColor;    // 頂点カラーとディフューズを乗算
     //return float4(c);               // 頂点カラー
     //return float4(t, 1, 1);         // UVカラー
-    return float4(finalCol);          // テクスチャカラー
+    return saturate(finalCol); // テクスチャカラー
 }
 
 

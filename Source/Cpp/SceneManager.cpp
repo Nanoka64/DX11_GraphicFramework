@@ -73,10 +73,10 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
         {
-            /* ディレクションライトの生成 */
-                        /* ポイントライトの生成 (Cubuで分かりやすく)*/
+            /* ディレクションライトの生成(Cubuで分かりやすく) */
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -102,6 +102,7 @@ bool SceneManager::Init(RendererManager &renderer)
             /* ポイントライトの生成 (Cubuで分かりやすく)*/
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -114,11 +115,11 @@ bool SceneManager::Init(RendererManager &renderer)
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
             obj.lock()->get_Transform().lock()->set_Scale(VEC3(100, 100, 100));
-            //auto light = obj.lock()->add_Component<PointLight>();
-            //light->CreateCBuffer(renderer.get_Device());
-            //light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            //light->set_Range(3000.0f);
-            //light->Init(renderer);
+            auto light = obj.lock()->add_Component<PointLight>();
+            light->CreateCBuffer(renderer.get_Device());
+            light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+            light->set_Range(3000.0f);
+            light->Init(renderer);
         }
 
 
@@ -147,7 +148,7 @@ bool SceneManager::Init(RendererManager &renderer)
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
-            mat[0].DiffuseColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+            mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -170,7 +171,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
-            mat[0].DiffuseColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+            mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -183,7 +184,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        }
+        }        
 
         {
             /* QUADの生成 */
@@ -259,9 +260,9 @@ void SceneManager::Update(RendererManager& renderer)
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
-    //auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    //lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, (cos(a) * 1000.0f) * -1, 0);
-    //lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+    auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
+    lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, (cos(a) * 1000.0f) * -1, 0);
+    lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
 
     auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
