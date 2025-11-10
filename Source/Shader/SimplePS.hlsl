@@ -21,10 +21,17 @@ float4 SimplePSMain(PS_SimpleLightingInput input) : SV_TARGET
     finalCol = diffuseColor;
     
     // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, input.World.xyz, input.Normal.xyz);
+    float3 dirLig = DirectionLightCalc(cb_DirLightData, 2.0f, input.World.xyz, input.Normal.xyz);
     
     // ポイントライト計算
-    float3 pointLig = PointLightCalc(cb_PointLightData, input.World.xyz, input.Normal);
+    float3 pointLig = PointLightCalc(cb_PointLightData, 2.0f,input.World.xyz, input.Normal);
+    
+    // 天球ライト
+    float3 hemiLig = HemisphereLightCalc(input.Normal);
+
+    
+    // 天球ライト加算
+    finalCol.xyz += hemiLig;
     
     // 最終色
     finalCol.xyz *= dirLig + pointLig;

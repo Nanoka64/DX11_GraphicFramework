@@ -113,11 +113,16 @@ bool ModelMesh:: Setup(RendererManager& render, aiMesh* pMeshData)
 		auto norm  = pMeshData->HasNormals()		? &(pMeshData->mNormals[vertexIdx]) : &zero3D;			// 法線情報を取得
 		auto uv    = pMeshData->HasTextureCoords(0) ? &(pMeshData->mTextureCoords[0][vertexIdx]) : &zero3D; // HasTextureCoords : uv情報があればtrue、無ければfalseをかえす
 		auto color = pMeshData->HasVertexColors(0)  ? &(pMeshData->mColors[0][vertexIdx]) : &oneColor;		// カラー情報の取得
+		auto tan   = pMeshData->HasTangentsAndBitangents() ? &(pMeshData->mTangents[vertexIdx]) : &zero3D;
+		auto biN   = pMeshData->HasTangentsAndBitangents() ? &(pMeshData->mBitangents[vertexIdx]) : &zero3D;
 
-		m_pVertex[vertexIdx].pos    = VEC3(pos->x, pos->y, pos->z);					// 取得した座標を設定
-		m_pVertex[vertexIdx].color  = VEC4(color->r, color->g, color->b, color->a);	// カラー設定
-		m_pVertex[vertexIdx].normal = VEC3(norm->x, norm->y, norm->z);				// 法線情報を取得 
-		m_pVertex[vertexIdx].uv     = VEC2(uv->x, uv->y);// UV情報を取得  (モデルデータとDirectXの座標系の違いでV軸を反転させないと上手く表示されない ※ロード時のフラグで解決) 
+		m_pVertex[vertexIdx].pos	  = VEC3(pos->x, pos->y, pos->z);					// 取得した座標を設定
+		m_pVertex[vertexIdx].color	  = VEC4(color->r, color->g, color->b, color->a);	// カラー設定
+		m_pVertex[vertexIdx].normal	  = VEC3(norm->x, norm->y, norm->z);				// 法線情報を取得 
+		m_pVertex[vertexIdx].uv		  = VEC2(uv->x, uv->y);// UV情報を取得  (モデルデータとDirectXの座標系の違いでV軸を反転させないと上手く表示されない ※ロード時のフラグで解決) 
+		m_pVertex[vertexIdx].tangent  = VEC3(tan->x,tan->y,tan->z);
+		m_pVertex[vertexIdx].biNormal = VEC3(biN->x, biN->y, biN->z);
+
 
 		// --- ボーン情報の初期化 ---
 		for (int i = 0; i < 4; ++i) {

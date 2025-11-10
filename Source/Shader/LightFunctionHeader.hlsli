@@ -48,6 +48,7 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
     
     toEye = normalize(toEye); // 正規化
     float refFactor = dot(refVec, toEye); // 内積を求める
+    refFactor = max(0.0, refFactor);      // マイナスにならないよう
     refFactor = pow(refFactor, spcPower); // 反射の強さ求める
     
     // 鏡面反射求める
@@ -63,7 +64,7 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
 //* 引数：2.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 DirectionLightCalc(DirectionalLight ligData, float3 pos, float3 norm)
+float3 DirectionLightCalc(DirectionalLight ligData, float spcPow, float3 pos, float3 norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
 
@@ -71,15 +72,13 @@ float3 DirectionLightCalc(DirectionalLight ligData, float3 pos, float3 norm)
     float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc(ligData.Direction, ligData.SpecularColor, 2.0, pos, norm);
+    float3 specularLig = SpecularLightCalc(ligData.Direction, ligData.SpecularColor, spcPow, pos, norm);
     
     // 拡散反射と鏡面反射を足して最終的な光を求める
     finalLig = diffuseLig + specularLig;
     
-    // アンビエント
-    finalLig += 0.5f;
-    
-    return finalLig;
+    // あとでIntensityとかにしてマジックナンバー消す
+    return finalLig ;
 }
 
 
@@ -93,7 +92,7 @@ float3 DirectionLightCalc(DirectionalLight ligData, float3 pos, float3 norm)
 //* 引数：6.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 PointLightCalc(PointLight ligData, float3 worldPos, float3 norm)
+float3 PointLightCalc(PointLight ligData, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0, 0, 0);
 
@@ -105,7 +104,7 @@ float3 PointLightCalc(PointLight ligData, float3 worldPos, float3 norm)
     float3 diffPoint = DiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
-    float3 spcPoint = SpecularLightCalc(ligDir, ligData.SpecularColor, 2.0, worldPos, norm);
+    float3 spcPoint = SpecularLightCalc(ligDir, ligData.SpecularColor, spcPow, worldPos, norm);
     
     // 頂点とライトの距離
     float distance = length(worldPos - ligData.Pos);
@@ -126,5 +125,25 @@ float3 PointLightCalc(PointLight ligData, float3 worldPos, float3 norm)
     return finalLig;
 }
 
-
-
+//*---------------------------------------------------------------------------------------
+//*【?】半球ライト計算
+//* 引数：1.頂点法線
+//* 返値：float3
+//*----------------------------------------------------------------------------------------
+float3 HemisphereLightCalc(float3 norm)
+{
+    float3 finalLig     = float3(0, 0, 0);
+    float3 groundNorm   = float3(0.0f, 1.0f, 0.0f);
+    float3 skyColor     = float3(0.15f, 0.5f, 0.75f);
+    float3 groundColor  = float3(0.2f, 0.2f, 0.2f);
+    
+    float factor = dot(norm, groundNorm);
+    
+    // 0～1に変換
+    factor = (factor + 1.0f) * 0.5f;
+    
+    // 地面色と天球色を補間
+    finalLig = lerp(groundColor, skyColor, factor);
+    
+    return finalLig;
+}

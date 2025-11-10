@@ -39,6 +39,9 @@ namespace BASE_VERTEX
     {
         int boneIDs[4] = { -1, -1, -1, -1 }; //影響を与えるボーンのインデックス
         float boneWeights[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; // ボーンウェイト
+
+        VEC3 tangent;   // 接ベクトル
+        VEC3 biNormal;  // 従ベクトル
     };
 
     namespace Utils

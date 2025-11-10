@@ -236,7 +236,7 @@ bool RendererManager::InitDx11()
     if (FAILED(InitDX11_ZBuff()))           return false;
     if (FAILED(InitDX11_Rasterizer()))      return false;
     if (FAILED(InitDX11_BuffResource()))    return false;
-    if (FAILED(InitShader()))               return false;
+    //if (FAILED(InitShader()))               return false;
     if (FAILED(InitDX11_Sampler()))         return false;
     if (FAILED(InitDX11_BlendState()))      return false;
     if (FAILED(InitDX11_ConstantBuff()))    return false;

@@ -29,6 +29,8 @@ static const D3D11_INPUT_ELEMENT_DESC ModelLayout[] =
     {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,        0, offsetof(BASE_VERTEX::MODEL_VERTEX, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BONEIDS",    0, DXGI_FORMAT_R32G32B32A32_SINT,   0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneIDs),    D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneWeights),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"BINORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, biNormal),   D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 /* ---------------------------------------------------------------------------------------

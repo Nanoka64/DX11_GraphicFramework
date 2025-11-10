@@ -50,12 +50,12 @@ public:
 	void DG_ColorEdit4(std::string label, float col[]);														// カラーエディット4
 	void DG_ColorEdit4(std::string label, VECTOR4::VEC4* col4V);											// カラーエディット4
 
-	void DG_DragInt(std::string label, int valNum, int* val, float slideSpeed, int min, int max);			// int
-	void DG_DragFloat(std::string label, int valNum, float* val, float slideSpeed, float min, float max);	// float
-	void DG_DragVec3(std::string label, VECTOR3::VEC3* val, float slideSpeed, float min, float max);		// VEC3
-	void DG_SliderInt(std::string label, int valNum, int* val, int min, int max);							// スライダー -int-
-	void DG_SliderFloat(std::string label, int valNum, float* val, float min, float max);					// スライダー -float-
-	void DG_SliderFloat(std::string label, VECTOR3::VEC3* val, float min, float max);						// スライダー -VEC3-
+	void DG_DragInt(std::string label, int valNum, int* val, float slideSpeed, int _min, int _max);			// int
+	void DG_DragFloat(std::string label, int valNum, float* val, float slideSpeed, float _min, float _max);	// float
+	void DG_DragVec3(std::string label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max);		// VEC3
+	void DG_SliderInt(std::string label, int valNum, int* val, int _min, int _max);							// スライダー -int-
+	void DG_SliderFloat(std::string label, int valNum, float* val, float _min, float _max);					// スライダー -float-
+	void DG_SliderFloat(std::string label, VECTOR3::VEC3* val, float _min, float _max);						// スライダー -VEC3-
 	bool DG_Button(std::string label, VECTOR2::VEC2 size = { 0.0f,0.0f });									// ボタン
 	bool DG_RadioButton(std::string label, bool active);													// ラジオボタン
 	bool DG_CheckBox(std::string label, bool *active);														// チェックボックス

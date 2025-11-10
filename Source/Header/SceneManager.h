@@ -17,21 +17,15 @@
 class SceneManager
 {
 private:
-	VERTEX3 m_testTriangle;
 	std::weak_ptr<GameObject>  m_pCamera;
-	//Model m_TestModel;
-	//Model m_TestModel2;
-	//Model m_TestModel3;
-	//class Cubu* m_pCubu;
-	class Cubu* m_pCubu;
-	class Quad* m_pQuad;
 
-
-	int m_CrntSceneState;	//現在実行しているSceneStateのID
-	//std::map<int, std::shared_ptr<RootSceneState>> m_SceneStateMap;//IDとSceneStateの関連付け
+	int m_CrntSceneState;	
 
 	// ステートマシン
 	StateMachine<SceneManager> m_StateMachine;
+
+	float m_PointLightRange;
+	VECTOR3::VEC3 m_LightDir;
 
 public:
 	SceneManager();

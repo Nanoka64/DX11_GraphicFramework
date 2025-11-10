@@ -31,7 +31,6 @@ using namespace Input;
 //*----------------------------------------------------------------------------------------
 SceneManager::SceneManager():
     m_pCamera(),
-    m_testTriangle(VECTOR3::VEC3(0,0,0),1.0f),
     m_StateMachine(this)
 {
 
@@ -75,27 +74,53 @@ bool SceneManager::Init(RendererManager &renderer)
 
         {
             /* ディレクションライトの生成 */
-            std::weak_ptr<GameObject> pDLight = Instantiate(std::move(std::make_shared<GameObject>()));
-            pDLight.lock()->get_Transform().lock()->set_RotateToRad(VEC3(0.01f, -0.01f, 0.01f));
-            auto light = pDLight.lock()->add_Component<DirectionalLight>();
-            pDLight.lock()->set_Tag("DirLight");
+                        /* ポイントライトの生成 (Cubuで分かりやすく)*/
+            MATERIAL *mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "DirLight";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            auto light = obj.lock()->add_Component<DirectionalLight>();
             light->CreateCBuffer(renderer.get_Device());
             light->set_CameraTransform(GameObjectManager::Instance().get_ObjectByTag("Camera").lock()->get_Transform());
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
             light->Init(renderer);
+
+            obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
+            obj.lock()->get_Transform().lock()->set_Scale(VEC3(40, 40, 100));
+            obj.lock()->get_Transform().lock()->set_RotateToRad(VEC3(1.0f, -1.0f, 1.0f));
         }
 
         {
-            /* ポイントライトの生成 */
-            std::weak_ptr<GameObject> pDLight = Instantiate(std::move(std::make_shared<GameObject>()));
-            pDLight.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
-            pDLight.lock()->set_Tag("PointLight");
-            auto light = pDLight.lock()->add_Component<PointLight>();
-            light->CreateCBuffer(renderer.get_Device());
-            light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            light->set_Range(2500.0f);
-            light->Init(renderer);
+            /* ポイントライトの生成 (Cubuで分かりやすく)*/
+            MATERIAL *mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "PointLight";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
+            obj.lock()->get_Transform().lock()->set_Scale(VEC3(100, 100, 100));
+            //auto light = obj.lock()->add_Component<PointLight>();
+            //light->CreateCBuffer(renderer.get_Device());
+            //light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+            //light->set_Range(3000.0f);
+            //light->Init(renderer);
         }
+
 
         {
             /* プレイヤー モデルの生成 */
@@ -121,6 +146,7 @@ bool SceneManager::Init(RendererManager &renderer)
             /* アリ モデルの生成 */
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
 
             CreateModelInfo model;
@@ -139,12 +165,34 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
         {
+            /* B-2 モデルの生成 */
+            MATERIAL mat[1];
+            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
+            mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
+            mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
+            mat[0].DiffuseColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/b-2/test_b-2.fbx";
+            model.ObjTag = "B-2";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            auto obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        }
+
+        {
             /* QUADの生成 */
 
             for (int i = -1; i < 2; i++)
             {
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -162,7 +210,10 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
         {
+            // CUBU
+
             MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
 
             CreateUtilityMeshInfo mesh;
@@ -181,76 +232,6 @@ bool SceneManager::Init(RendererManager &renderer)
 
     // 参照を持たせる
     m_pCamera = GameObjectManager::Instance().get_ObjectByTag("Camera");
-
- //   if (!m_testTriangle.CreateVertexBuffer(renderer))
- //   {
- //       return false;
- //   }
-
- //   // アリモデル読み込み
- //   if (m_TestModel3.Setup(renderer, "Resource/Model/Enemy/trader_ant_lowpoly.fbx") == false) return false;
- //   m_TestModel3.set_TextureMap(TEXTURE_MAP_DIFFUSE, 0, L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
- //   m_TestModel3.set_AnimIndex(0);
- //   
- //   // キャラモデル↓
- //   //if (m_TestModel.Setup(renderer, "Resource/Model/Player/chara.fbx") == false)return false;   // swat
- //   if (m_TestModel.Setup(renderer, "Resource/Model/Player2/AL_Standard.fbx") == false)return false; // 動くほう
- //   //m_TestModel.set_Scale(VEC3(0.025f, 0.025f, 0.025f));
-
- //   // テクスチャマップ設定
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_DIFFUSE, 0, L"Resource/Model/Player/Swat.fbm/Soldier_Body_diffuse.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_NORMAL,  0, L"Resource/Model/Player/Swat.fbm/Soldier_Body_normal.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_SPECULAR,0, L"Resource/Model/Player/Swat.fbm/Soldier_Body_specular.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_DIFFUSE, 1, L"Resource/Model/Player/Swat.fbm/Soldier_Body_diffuse.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_NORMAL,  1, L"Resource/Model/Player/Swat.fbm/Soldier_Body_normal.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_SPECULAR,1, L"Resource/Model/Player/Swat.fbm/Soldier_Body_specular.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_DIFFUSE, 2, L"Resource/Model/Player/Swat.fbm/Soldier_head_diffuse.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_NORMAL, 2, L"Resource/Model/Player/Swat.fbm/Soldier_head_normal.png");
- //   m_TestModel.set_TextureMap(TEXTURE_MAP_SPECULAR, 2, L"Resource/Model/Player/Swat.fbm/Soldier_head_specular.png");
- //   m_TestModel.set_AnimIndex(0);
-
-
- //   //// B-2モデル ↓
- //   //if (m_TestModel2.Setup(renderer, "Resource/Model/b-2/test_b-2.fbx") == false)return false;
- //   //m_TestModel2.set_TextureMap(TEXTURE_MAP_DIFFUSE,  0, L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
- //   //m_TestModel2.set_TextureMap(TEXTURE_MAP_NORMAL,   0, L"Resource/Model/b-2/textures/ggg_normal.jpeg");
- //   //m_TestModel2.set_TextureMap(TEXTURE_MAP_SPECULAR, 0, L"Resource/Model/b-2/textures/ggg_metallic.jpeg");   
- //   //
- //   // 蜘蛛モデル ↓
- //   if (m_TestModel2.Setup(renderer, "Resource/Model/fbx/Spider.fbx") == false)return false;
- //   m_TestModel2.set_TextureMap(TEXTURE_MAP_DIFFUSE,  0, L"Resource/Model/fbx/textures/Spinnen_Bein_tex.jpg");
- //   m_TestModel2.set_TextureMap(TEXTURE_MAP_DIFFUSE,  4, L"Resource/Model/fbx/textures/SH3.png");
- //   m_TestModel2.set_TextureMap(TEXTURE_MAP_NORMAL,   0, L"Resource/Model/fbx/textures/haar_detail_NRM.jpg");
-
- //   // モデルの回転設定
- //   //m_TestModel3.set_RotateToDeg(VEC3(90.f, 0.f, 0.f));
- //   //m_TestModel3.set_Pos(VEC3(0.f, 2.f, 0.f));
- //   //m_TestModel3.set_ParentMtx(&m_TestModel2);
-
- //   // キューブ生成
-	//m_pCubu = new Cubu();
- //   m_pCubu->get_Transform().lock()->set_Pos(0.0f, 2.0f, 0.0f);
- //   m_pCubu->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
- //   SpriteUV uv[6];
- //   uv[0] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 前
- //   uv[1] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 右
- //   uv[2] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 上
- //   uv[3] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 下
- //   uv[4] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 左
- //   uv[5] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // 裏
- //   MATERIAL* mat = new MATERIAL();
- //   mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W048.jpg");
- //   if (!m_pCubu->Setup(renderer, mat,1))return false;
-
- //   // 床用クワッド生成
- //   m_pQuad = new Quad();
- //   mat = new MATERIAL();
- //   mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/WoodFloor051_2K-PNG_Color.png");
- //   if (!m_pQuad->Setup(renderer, mat, 1))return false;
- //   m_pQuad->get_Component<Transform>()->set_Pos(VEC3(0.0f, -5.0f, 0.0f));
- //   m_pQuad->get_Component<Transform>()->set_Scale(VEC3(50.0f, 25.0f, 50.0f));
- //   m_pQuad->get_Component<Transform>()->set_RotateToDeg(VEC3(0.0f, 0.0f, 0.0f));
-
     return true;
 }
 
@@ -278,8 +259,23 @@ void SceneManager::Update(RendererManager& renderer)
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
-    auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, 0, 0);
+    //auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
+    //lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, (cos(a) * 1000.0f) * -1, 0);
+    //lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+
+    auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
+    auto rad = dlig.lock()->get_Component<Transform>();
+    rad->set_RotateToRad(m_LightDir);
+
+
+
+
+
+
+    Debugger::Instance().BeginDebugWindow("Light");
+    Debugger::Instance().DG_SliderFloat("dir", &m_LightDir, -1.0f, 1.0f);
+    Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
+    Debugger::Instance().EndDebugWindow();;
 
 
     // オブジェクト更新

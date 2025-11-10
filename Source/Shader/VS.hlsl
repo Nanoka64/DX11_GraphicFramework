@@ -24,6 +24,10 @@ struct VS_INPUT
     float2 UV     : TEXCOORD;   // テクスチャ座標
     uint4 boneIDs : BONEIDS; // ボーンID
     float4 boneWeights : BONEWEIGHTS;   // ボーンウェイト
+    
+        
+    float3 Tan    : TANGENT; // 接ベクトル
+    float3 BiNorm : BINORMAL; // 従ベクトル
 };
 
 //　セマンティック名こっちは名前が決まってる！
@@ -39,6 +43,9 @@ struct VS_OUTPUT
     float3 Normal : NORMAL0;     // 法線
     float4 Col    : COLOR0;      // 頂点色
     float2 UV     : TEXCOORD0;   // テクスチャ座標
+    
+    float3 Tan    : TANGENT;  // 接ベクトル
+    float3 BiNorm : BINORMAL; // 従ベクトル
 };
 
 /* ---------------------------------------------------------------------------------------
@@ -89,6 +96,7 @@ float4 GetBoneDebugColor(int boneID)
     return boneColors[boneID % 33];
 }
 
+
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
@@ -134,6 +142,10 @@ VS_OUTPUT VS(VS_INPUT input)
     output.UV     = input.UV;       // テクスチャ座標
     output.Col    = input.Col;      // カラー
 
+    // 接ベクトルと従ベクトルをワールド空間に変換する
+    output.Tan    = normalize(mul((float3x3) Transform, input.Tan));
+    output.BiNorm = normalize(mul((float3x3) Transform, input.BiNorm));
+    
     //output.Col = float4(0.5f, 0.5f, 0.5f, 1.0f);
     
     if (input.boneIDs[0].x == 0)
@@ -144,19 +156,6 @@ VS_OUTPUT VS(VS_INPUT input)
     {
         //output.Col = float4(1.0f,0.0f,0.0f,1.0f);   // 赤
     }   
-    //if (input.boneIDs[0].x == 28)
-    //{
-    //    output.Col = float4(0.0f,1.0f,0.0f,1.0f);   // 緑
-    //}  
-    //if (input.boneIDs[0].x == 29)
-    //{
-    //    output.Col = float4(0.0f,0.0f,1.0f,1.0f);   // 青
-    //}    
-    //if (input.boneIDs[0].x == 30)
-    //{
-    //    output.Col = float4(1.0f,0.0f,1.0f,1.0f);   //ピンク
-    //}
-    //output.Col = input.Col;
     
     // 主ボーンID（最も重みの高いボーン）を取得
     int mainBone = input.boneIDs[0];

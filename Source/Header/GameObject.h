@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "Component_Transform.h"
+#include <algorithm>
 
 
 // ***************************************************************************************
@@ -99,10 +100,20 @@ public:
 			}
 		}
 
+
+		// 見つからなければ追加
 		auto newComp = std::make_shared<T>(shared_from_this(), updateRank);
 
-		// 見つからなければ追加する
-		m_pComponentList.push_back(newComp);
+		// 更新レイヤーから挿入位置を探索
+		auto it = std::find_if(m_pComponentList.begin(), m_pComponentList.end(),
+			[&](const std::shared_ptr<IComponent> &comp)
+			{
+				return newComp->get_UpdateRank() < comp->get_UpdateRank();
+			}
+		);
+
+		// 挿入
+		m_pComponentList.insert(it, newComp);
 
 		return newComp;
 	}

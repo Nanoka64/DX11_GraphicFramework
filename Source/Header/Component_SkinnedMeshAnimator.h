@@ -45,7 +45,8 @@ public:
 	~SkinnedMeshAnimator();
 
 	void Init(RendererManager& renderer)override;
-	void Update(RendererManager& renderer)override;
+	//void Update(RendererManager& renderer)override;
+	void Draw(RendererManager& renderer)override;
 
 	void BoneTransformsUpdate(RendererManager &renderer, float timeInSeconds);	// ボーンの更新
 	void set_MeshResource(std::weak_ptr<class ModelMeshResource> meshResource);	// リソースの設定

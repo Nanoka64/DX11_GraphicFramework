@@ -46,7 +46,7 @@ void SkinnedMeshAnimator::Init(RendererManager &renderer)
 //* 引数：1.RendererManager 
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::Update(RendererManager& renderer)
+void SkinnedMeshAnimator::Draw(RendererManager& renderer)
 {
     Debugger::Instance().BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
     Debugger::Instance().DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数

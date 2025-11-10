@@ -60,6 +60,11 @@ struct PointLight
 };
 
 
+struct HemisphereLight
+{
+    
+};
+
 // -------------------------------------------------
 /* ワールド変換                   >>>>>>>【０】*/
 // -------------------------------------------------
@@ -116,6 +121,7 @@ cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
     DirectionalLight cb_DirLightData;
     float3 EyePos; // 視点位置
 };
+
 
 // -------------------------------------------------
 /* ポイントライト            >>>>>>>【６】*/

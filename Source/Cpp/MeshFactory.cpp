@@ -58,7 +58,8 @@ std::weak_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &
 
     // アニメーションコンポーネント追加
     if (info.IsAnim) {
-        pModelObj.lock()->add_Component<SkinnedMeshAnimator>()->set_MeshResource(meshResource);;
+        // Renderer よりも更新を速めに（シェーダに渡る情報がおかしくなるため）
+        pModelObj.lock()->add_Component<SkinnedMeshAnimator>(99)->set_MeshResource(meshResource);;
         pModelObj.lock()->get_Component<SkinnedMeshAnimator>()->Init(*info.pRenderer);
         pModelObj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(info.InitAnimIndex);
     }
