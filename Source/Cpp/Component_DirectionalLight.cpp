@@ -56,6 +56,7 @@ void DirectionalLight::Update(RendererManager &renderer)
     m_pCBLightSet->Data.Direction     = m_pOwnerTransform.lock()->get_Forward();
     m_pCBLightSet->Data.DiffuseColor  = m_LightColor;
     m_pCBLightSet->Data.SpecularColor = m_LightColor;
+	m_pCBLightSet->Data.Intensity     = m_Intensity;
     m_pCBLightSet->Data.EyePos = m_pCameraTransform.lock()->get_VEC3ToPos();
     pContext->UpdateSubresource(m_pCBLightSet->pBuff, 0, nullptr, &m_pCBLightSet->Data, 0, 0);
     
@@ -95,7 +96,7 @@ bool DirectionalLight::CreateCBuffer(ID3D11Device *pDevice)
 	D3D11_BUFFER_DESC bd{};
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = sizeof(CB_DIRECTION_LIGHT);					// バッファのサイズ
+	bd.ByteWidth = sizeof(CB_DIRECTION_LIGHT);			// バッファのサイズ
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
 	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
 	bd.MiscFlags = 0;

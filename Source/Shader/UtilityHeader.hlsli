@@ -30,7 +30,7 @@ struct PS_SimpleInput
 struct PS_SimpleLightingInput
 {
     float4 Pos    : SV_Position;
-    float4 World  : WORLD;
+    float4 WPos   : WORLD;
     float3 Normal : NORMAL;
     float4 Color  : COLOR;
     float2 UV     : TEXCOORD;
@@ -42,9 +42,10 @@ struct PS_SimpleLightingInput
 /* =========================================================================*/
 struct DirectionalLight
 {
-    float3 Direction;
-    float3 DiffuseColor;
-    float3 SpecularColor;
+    float3 Direction;       // 方向
+    float3 DiffuseColor;    // ディフューズ
+    float3 SpecularColor;   // スペキュラ
+    float Intensity;        // 光強度
 };
 
 /* =========================================================================
@@ -53,10 +54,10 @@ struct DirectionalLight
 /* =========================================================================*/
 struct PointLight
 {
-    float3 Pos;
-    float3 DiffuseColor;
-    float3 SpecularColor;
-    float Range;
+    float3 Pos;             // 座標   
+    float3 DiffuseColor;    // ディフューズ
+    float3 SpecularColor;   // スペキュラ
+    float Range;            // 範囲
 };
 
 

@@ -7,7 +7,9 @@
 //* 引数：1.オーナー
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
-Light::Light(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank)
+Light::Light(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
+m_Intensity(1.0f),
+m_LightColor()
 {
 
 };
@@ -34,4 +36,16 @@ void Light::set_CameraTransform(std::weak_ptr<class Transform> pCamTransform)
 void Light::set_LightColor(const VECTOR3::VEC3 &col)
 {
 	m_LightColor = col;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:Light Class 
+//*【?】光の強さ設定
+//* 引数：1.強度
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void Light::set_Intensity(float ins)
+{
+	m_Intensity = ins;
 }

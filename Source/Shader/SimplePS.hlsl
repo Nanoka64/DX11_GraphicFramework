@@ -21,17 +21,19 @@ float4 SimplePSMain(PS_SimpleLightingInput input) : SV_TARGET
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     finalCol = diffuseMap * DiffuseColor;
     
+    float3 specularCol = SpecularColor.xyz * cb_PointLightData.SpecularColor;
+    
     // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, 2.0f, input.World.xyz, input.Normal.xyz);
+    float3 dirLig = DirectionLightCalc(cb_DirLightData, specularCol, SpecularPower, input.WPos.xyz, input.Normal.xyz);
     
     // ポイントライト計算
-    float3 pointLig = PointLightCalc(cb_PointLightData, 2.0f,input.World.xyz, input.Normal);
+    float3 pointLig = PointLightCalc(cb_PointLightData, specularCol, SpecularPower, input.WPos.xyz, input.Normal);
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(input.Normal);
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
-    float3 lighting = dirLig + pointLig + hemiLig + 0.4f;
+    float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
 
     // 最終色
     finalCol.xyz *= lighting;

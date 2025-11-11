@@ -91,6 +91,7 @@ bool SceneManager::Init(RendererManager &renderer)
             light->CreateCBuffer(renderer.get_Device());
             light->set_CameraTransform(GameObjectManager::Instance().get_ObjectByTag("Camera").lock()->get_Transform());
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+            light->set_Intensity(0.1f);
             light->Init(renderer);
 
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
@@ -126,7 +127,10 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             /* プレイヤー モデルの生成 */
             MATERIAL mat[1];
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
+            mat[0].SpecularPower = 16.0f;
+            mat[0].SpecularColor = VEC4(0.0f, 0.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -149,6 +153,8 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower = 1.0f;
+            mat[0].SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -168,10 +174,12 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             /* B-2 モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
+            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
-            mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower    = 12.0f;
+            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -194,6 +202,8 @@ bool SceneManager::Init(RendererManager &renderer)
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+                mat->SpecularPower = 0.5f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -211,11 +221,12 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
         {
-            // CUBU
-
+            // CUBE
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -257,6 +268,10 @@ void SceneManager::Update(RendererManager& renderer)
     static float a = 0.f;
     a += 0.01f;
 
+    // 光強度
+    static float intensity = 1.0f;
+
+
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
@@ -267,14 +282,15 @@ void SceneManager::Update(RendererManager& renderer)
     auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
     rad->set_RotateToRad(m_LightDir);
+    dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
-
-
-
-
+    auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
+    rad = b_2Obj.lock()->get_Component<Transform>();
+    rad->set_RotateToRad(0.0, 0.0, sin(a));
 
     Debugger::Instance().BeginDebugWindow("Light");
     Debugger::Instance().DG_SliderFloat("dir", &m_LightDir, -1.0f, 1.0f);
+    Debugger::Instance().DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
     Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Debugger::Instance().EndDebugWindow();;
 

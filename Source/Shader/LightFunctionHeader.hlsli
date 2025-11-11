@@ -7,8 +7,17 @@
 /* ◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇ */
 #include "UtilityHeader.hlsli"
 
+    
+/* ライティング処理 */
+/* ////////////////////////////////////////////////////////////////////////////////////////////
+*  頂点の法線とライトの向きの内積を取り、値が小さいならライトの向きと近いということであり、
+*  近いということはライトの効果が及びにくい場所なので、暗くする。
+*  計算した内積を反転したものをクランプし、カラー値にしている。
+*/ ////////////////////////////////////////////////////////////////////////////////////////////
+  
+
 //*---------------------------------------------------------------------------------------
-//*【?】Lambert拡散反射光（ディフューズ）の計算
+//*【?】正規化 Lambert拡散反射光（ディフューズ）の計算
 //* 引数：1.ライトの向き
 //* 引数：2.ライトの色
 //* 引数：3.頂点法線
@@ -18,11 +27,17 @@ float3 DiffuseLightCalc(float3 ligDir, float3 ligCol, float3 norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = dot(norm, ligDir);
+    float diffuseFactor = -dot(norm, ligDir);
     diffuseFactor = saturate(diffuseFactor); // saturate：0～1にクランプする
     
     // 拡散反射求める
     finalDfs = ligCol * diffuseFactor;
+    
+    /*
+    *   ・正規化Lambert反射
+    *   エネルギー保存の法則を守るため、反射結果をπで除算する
+    */
+    finalDfs /= 3.1415926f;
     
     return finalDfs;
 }
@@ -41,7 +56,7 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
 
     // 反射ベクトル
-    float3 refVec = reflect(-ligDir, norm);
+    float3 refVec = reflect(ligDir, norm);
     
     // 光が入射したベクトルから視点に向かって伸びるベクトル
     float3 toEye = EyePos - pos;
@@ -64,21 +79,21 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
 //* 引数：2.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 DirectionLightCalc(DirectionalLight ligData, float spcPow, float3 pos, float3 norm)
+float3 DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 pos, float3 norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
-
+    
     // 拡散（ディフューズ）反射
-    float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
+    float3 diffuseLig = DiffuseLightCalc((ligData.Direction), ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc(ligData.Direction, ligData.SpecularColor, spcPow, pos, norm);
+    float3 specularLig = SpecularLightCalc((ligData.Direction), spcCol, spcPow, pos, norm);
     
     // 拡散反射と鏡面反射を足して最終的な光を求める
     finalLig = diffuseLig + specularLig;
     
     // あとでIntensityとかにしてマジックナンバー消す
-    return finalLig ;
+    return finalLig * ligData.Intensity;
 }
 
 
@@ -92,19 +107,19 @@ float3 DirectionLightCalc(DirectionalLight ligData, float spcPow, float3 pos, fl
 //* 引数：6.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 PointLightCalc(PointLight ligData, float spcPow, float3 worldPos, float3 norm)
+float3 PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0, 0, 0);
 
-    // 光の向きを求める
-    float3 ligDir = ligData.Pos - worldPos;
+    // 光の向きを求める（ライト→サーフェイス）
+    float3 ligDir = worldPos - ligData.Pos;
     ligDir = normalize(ligDir);
     
     // ディフューズ計算
     float3 diffPoint = DiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
-    float3 spcPoint = SpecularLightCalc(ligDir, ligData.SpecularColor, spcPow, worldPos, norm);
+    float3 spcPoint = SpecularLightCalc(ligDir, spcCol, spcPow, worldPos, norm);
     
     // 頂点とライトの距離
     float distance = length(worldPos - ligData.Pos);
@@ -134,8 +149,8 @@ float3 HemisphereLightCalc(float3 norm)
 {
     float3 finalLig     = float3(0, 0, 0);
     float3 groundNorm   = float3(0.0f, 1.0f, 0.0f);
-    float3 skyColor     = float3(0.15f, 0.5f, 0.75f);
-    float3 groundColor  = float3(0.2f, 0.2f, 0.2f);
+    float3 skyColor     = float3(0.35f, 0.6f, 0.85f);
+    float3 groundColor  = float3(0.5f, 0.5f, 0.5f);
     
     float factor = dot(norm, groundNorm);
     

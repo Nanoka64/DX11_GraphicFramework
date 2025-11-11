@@ -16,6 +16,7 @@ protected:
     std::weak_ptr<class Transform> m_pCameraTransform;  // カメラの座標取得のために保持
     std::weak_ptr<class Transform> m_pOwnerTransform;   // オーナーの方向を保持（ライトの方向に使うため）
     VECTOR3::VEC3 m_LightColor;                         // ライトカラー
+    float m_Intensity;  // 強度
 
 public:
     Light(std::weak_ptr<GameObject> pOwner, int updateRank);
@@ -41,5 +42,12 @@ public:
     /// </summary>
     /// <param name="col"></param>
     void set_LightColor(const VECTOR3::VEC3& col);
+
+
+    /// <summary>
+    /// 光の強さ設定
+    /// </summary>
+    /// <param name="ins"></param>
+    void set_Intensity(float ins);
 };
 

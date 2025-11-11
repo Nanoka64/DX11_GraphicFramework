@@ -70,9 +70,6 @@
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Graphics\Light">
-      <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Graphics\Buffers">
       <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
     </Filter>
@@ -99,6 +96,18 @@
     </Filter>
     <Filter Include="ソース ファイル\Graphics\Mesh">
       <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh">
+      <UniqueIdentifier>{b0993894-71f6-4681-a4e5-247cb2e61410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Camera">
+      <UniqueIdentifier>{fb43e8a1-5573-4ccd-bd25-3ff510b7fdb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Utility">
+      <UniqueIdentifier>{75a97a67-7ffb-40ed-b03a-0cb20f935867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Light">
+      <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -196,10 +205,10 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Light.cpp">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_DirectionalLight.cpp">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IndexBuffer.cpp">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
@@ -212,12 +221,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDXBuffer.cpp">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\IComponent.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_Transform.cpp">
-      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
       <Filter>ソース ファイル\Obj</Filter>
@@ -249,17 +252,8 @@
     <ClCompile Include="Source\Cpp\SceneFactory.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_3DCamera.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Camera.cpp">
       <Filter>ソース ファイル\NotUsed</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_IMeshResource.cpp">
-      <Filter>ソース ファイル\Component</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Quad.cpp">
       <Filter>ソース ファイル\NotUsed</Filter>
@@ -267,23 +261,38 @@
     <ClCompile Include="Source\Cpp\Cubu.cpp">
       <Filter>ソース ファイル\NotUsed</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <Filter>ソース ファイル\Graphics\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_PointLight.cpp">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\MeshFactory.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_IMeshResource.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_3DCamera.cpp">
+      <Filter>ソース ファイル\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Transform.cpp">
+      <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\IComponent.cpp">
+      <Filter>ソース ファイル\Component\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -405,10 +414,10 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Light.h">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_DirectionalLight.h">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IndexBuffer.h">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
@@ -421,12 +430,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\IDXBuffer.h">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\IComponent.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_Transform.h">
-      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\GameObjectManager.h">
       <Filter>ソース ファイル\Obj</Filter>
@@ -461,17 +464,8 @@
     <ClInclude Include="Source\Header\SceneFactory.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_3DCamera.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Camera.h">
       <Filter>ソース ファイル\NotUsed</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_MeshRenderer.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_IMeshResource.h">
-      <Filter>ソース ファイル\Component</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Quad.h">
       <Filter>ソース ファイル\NotUsed</Filter>
@@ -479,26 +473,41 @@
     <ClInclude Include="Source\Header\Cubu.h">
       <Filter>ソース ファイル\NotUsed</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ModelData.h">
       <Filter>ソース ファイル\Graphics\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_ModelMeshResource.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
-      <Filter>ソース ファイル\Component</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Component_PointLight.h">
-      <Filter>ソース ファイル\Graphics\Light</Filter>
+      <Filter>ソース ファイル\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\MeshFactory.h">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_IMeshResource.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_MeshRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ModelMeshResource.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_3DCamera.h">
+      <Filter>ソース ファイル\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Transform.h">
+      <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\IComponent.h">
+      <Filter>ソース ファイル\Component\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

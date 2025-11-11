@@ -26,13 +26,13 @@ private:
     ID3D11RenderTargetView                  * m_pRenderTargetView;    // 絵を描く領域を切り替える(メモリ領域を覗く、眼鏡みたいなもの)
     ID3D11Texture2D                         * m_pDepthStencil;        // 画像を読み込んで使えるようにするもの
     ID3D11DepthStencilView                  * m_pDepthStencilView;    // 深度バッファ(ZBuffer)奥行き
+    ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
     ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
     ID3D11Buffer                            * m_pCBNeverChanges;      // コンスタントバッファの実体
     ID3D11Buffer                            * m_pCBChangeOnResize;    // ...
     ID3D11Buffer                            * m_pCBChangesEveryFrame; // ...
     ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
-    ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
     ID3D11BlendState                        * m_pBlendStateAlpha;      // αブレンド用
     ID3D11BlendState                        * m_pBlendStateAdd;        // 加算合成用
     ID3D11BlendState                        * m_pBlendStateSub;        // 減算合成用

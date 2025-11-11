@@ -72,10 +72,13 @@ struct CB_DIRECTION_LIGHT
 {
     DirectX::XMFLOAT3 Direction;    // 方向
     float Padding1;
+    
     DirectX::XMFLOAT3 DiffuseColor; // ディフューズ色
     float Padding2;
+
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-    float Padding3;
+
+    float Intensity;                // 光強度
 
     DirectX::XMFLOAT3 EyePos;       // 視点の位置
     float Padding4;
@@ -180,7 +183,7 @@ struct MATERIAL {
     VECTOR4::VEC4 DiffuseColor;   // ディフューズ反射光
     VECTOR4::VEC4 SpecularColor;  // スペキュラ反射光
     VECTOR4::VEC4 NormalColor;    // 法線
-    float SpecularPower;     // スペキュラの強さ
+    float SpecularPower;          // スペキュラの強さ
 
 
     // ===テクスチャマップ===
