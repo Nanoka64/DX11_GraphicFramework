@@ -153,8 +153,8 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 1.0f;
-            mat[0].SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 1.0f);
+            mat[0].SpecularPower = 100.0f;
+            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
