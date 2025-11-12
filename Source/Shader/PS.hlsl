@@ -24,6 +24,13 @@ struct PS_INPUT
     float3 BiNorm   : BINORMAL; // 従ベクトル
 };
 
+struct PS_OUT
+{
+    float test0 : SV_Target0;
+    float test1 : SV_Target1;
+    float test2 : SV_Target2;
+    float test3 : SV_Target3;
+};
 
 // **************************************************************************
 /* - @:エントリーポイント - */

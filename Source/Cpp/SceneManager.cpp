@@ -224,7 +224,7 @@ bool SceneManager::Init(RendererManager &renderer)
             // CUBE
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040_n.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 0.5f;
 

@@ -20,9 +20,6 @@ RendererManager::RendererManager():
     m_pDepthStencil(nullptr),
     m_pDepthStencilView(nullptr),
     m_pVertexBuffer(nullptr),
-    m_pCBNeverChanges(nullptr),
-    m_pCBChangeOnResize(nullptr),
-    m_pCBChangesEveryFrame(nullptr),
     m_pSamplerLinear(nullptr),
     m_pRasterState(nullptr),
     m_pDepthStencilState(nullptr),
@@ -32,7 +29,6 @@ RendererManager::RendererManager():
     m_ScreenWidht(0),
     m_Screenheight(0),
     m_hWnd(0),
-    test(VECTOR3::VEC3(0,0,0),0.25f),
     m_StartTime(0ul),
     m_NearClipDist(0.1f),
     m_FarClipDist(1000.f),
@@ -64,9 +60,6 @@ bool RendererManager::Init(HWND hWnd)
     m_pDepthStencil         = NULL;        // 画像を読み込んで使えるようにするもの
     m_pDepthStencilView     = NULL;        // 深度バッファ(ZBuffer)奥行き
     m_pVertexBuffer         = NULL;        // 頂点バッファ(実際の頂点のデータが詰まっている)
-    m_pCBNeverChanges       = NULL;        // コンスタントバッファの実体
-    m_pCBChangeOnResize     = NULL;        // ...
-    m_pCBChangesEveryFrame  = NULL;        // ...
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
@@ -235,11 +228,8 @@ bool RendererManager::InitDx11()
     if (FAILED(InitDX11_RenderTargetView()))return false;
     if (FAILED(InitDX11_ZBuff()))           return false;
     if (FAILED(InitDX11_Rasterizer()))      return false;
-    if (FAILED(InitDX11_BuffResource()))    return false;
-    //if (FAILED(InitShader()))               return false;
     if (FAILED(InitDX11_Sampler()))         return false;
     if (FAILED(InitDX11_BlendState()))      return false;
-    if (FAILED(InitDX11_ConstantBuff()))    return false;
 
     return true;
 
@@ -327,7 +317,6 @@ HRESULT RendererManager::InitDX11_SwapChain()
 
         if (FAILED(hr))return hr;
     }
-
 
     return hr;
 }
@@ -479,58 +468,6 @@ HRESULT RendererManager::InitDX11_Rasterizer()
 
 
 //--------------------------------------------------------------------------------------
-//      * RendererManager Class - バッファリソース 初期化 - *
-//--------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_BuffResource()
-{
-    /* バッファリソースの設定 */
-
-    HRESULT hr = S_OK;
-
-    D3D11_BUFFER_DESC bd;
-    ZeroMemory(&bd, sizeof(bd));
-
-    // バッファの作成
-    bd.Usage          = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth      = sizeof(SimpleVertex) * 6;
-    bd.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    hr = m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
-
-    // 頂点バッファをセット
-    UINT stride = sizeof(SimpleVertex);
-    UINT offset = 0;
-    m_pImmediateContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-
-    // どういう形式で書くか(これは三角形を組み合わせる)
-    // LINEとかはデバッグ表示で書くとよい
-    m_pImmediateContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    /* RenderParamに移動 */
-    {
-        //// コンスタントバッファの作成
-        //bd.Usage          = D3D11_USAGE_DEFAULT;
-        //bd.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-        //bd.CPUAccessFlags = 0;
-
-        //bd.ByteWidth = sizeof(CBNeverChanges);
-        //hr = m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pCBNeverChanges);
-        //if (FAILED(hr))return hr;
-
-        //bd.ByteWidth = sizeof(CBChangeOnResize);
-        //hr = m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pCBChangeOnResize);
-        //if (FAILED(hr))return hr;
-
-        //bd.ByteWidth = sizeof(CBChangesEveryFrame);
-        //hr = m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pCBChangesEveryFrame);
-        //if (FAILED(hr))return hr;
-    }
-
-    return hr;
-}
-
-
-//--------------------------------------------------------------------------------------
 //      * RendererManager Class - サンプラー 初期化 - *
 //--------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_Sampler()
@@ -561,7 +498,7 @@ HRESULT RendererManager::InitDX11_Sampler()
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
-    sampDesc.MaxAnisotropy = 16;
+    sampDesc.MaxAnisotropy  = 16;
     // 作成
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
     if (FAILED(hr))return hr;
@@ -619,153 +556,6 @@ HRESULT RendererManager::InitDX11_BlendState()
 
 
 //--------------------------------------------------------------------------------------
-//      * RendererManager Class - 定数バッファ 初期化 - *
-//--------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_ConstantBuff()
-{
-    /* マトリクスとコンスタントバッファの設定 */
-
-    HRESULT hr = S_OK;
-
-    //m_World = XMMatrixIdentity();   // ワールド行列を単位行列で初期化
-    //m_View  = XMMatrixIdentity();   // ビュー行列を単位行列で初期化
-    //m_Projection =                  // プロジェクション行列を正射影で設定
-    //    XMMatrixOrthographicOffCenterLH(0.0f, (float)m_ScreenWidht, (float)m_Screenheight, 0.0f, 0.0f, 1.0f);
-
-    //// コンスタントバッファ初期化
-    //CBNeverChanges cbNeverChanges;
-    //cbNeverChanges.mView = XMMatrixTranspose(m_View);   // ビュー行列の転置
-    //m_pImmediateContext->UpdateSubresource(m_pCBNeverChanges, 0, NULL, &cbNeverChanges, 0, 0);
-
-    //CBChangeOnResize cbChangeOnResize;
-    //cbChangeOnResize.mProjection = XMMatrixTranspose(m_Projection); // プロジェクション行列の転置
-    //m_pImmediateContext->UpdateSubresource(m_pCBChangeOnResize, 0, NULL, &cbChangeOnResize, 0, 0);
-
-    //CBChangesEveryFrame cbChangeEveryFrame;
-    //cbChangeEveryFrame.mWorld     = XMMatrixTranspose(m_World); // ワールド行列の転置
-    ////cbChangeEveryFrame.Vertex     = BASE_VERTEX::VERTEX(VECTOR3::VEC3(0, 0, 0), VECTOR3::VEC3(0, 0, 0), VECTOR4::VEC4(1, 0, 0, 1), VECTOR2::VEC2(0, 0));
-    //cbChangeEveryFrame.Time       = m_StartTime;
-    //m_pImmediateContext->UpdateSubresource(m_pCBChangesEveryFrame, 0, NULL, &cbChangeEveryFrame, 0, 0);
-
-    //// 頂点シェーダにコンスタントバッファをセット
-    //m_pImmediateContext->VSSetConstantBuffers(0, 1, &m_pCBNeverChanges);
-    //m_pImmediateContext->VSSetConstantBuffers(1, 1, &m_pCBChangeOnResize);
-    //m_pImmediateContext->VSSetConstantBuffers(2, 1, &m_pCBChangesEveryFrame);
-
-    //// ピクセルシェーダにセット
-    //m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pCBChangesEveryFrame);
-
-    return hr;
-}
-
-
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - シェーダーの初期化 - *
-//--------------------------------------------------------------------------------------
-HRESULT RendererManager::InitShader()
-{
-    HRESULT hr;
-
-    ID3D11VertexShader* pVertexShader = nullptr;  // 頂点シェーダ
-    ID3D11PixelShader*  pPixelShader  = nullptr;  // ピクセルシェーダ
-    ID3D11InputLayout*  pVertexLayout = nullptr;  // 頂点フォーマットの設定
-
-    // ファイルパス
-    std::wstring filePath[2] = { 
-        std::wstring(Path::Shader) + L"VS.hlsl",
-        std::wstring(Path::Shader) + L"PS.hlsl" 
-    };
-
-    //         
-    /* 頂点シェーダー */
-    // 
-    ID3DBlob* pVSBlob = NULL;
-
-    // 頂点シェーダーのコンパイル
-    hr = CompileShaderFromFile(filePath[0].c_str(), "VS", "vs_5_0", &pVSBlob);
-    if (FAILED(hr))
-    {
-        MessageBox(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
-        return hr;
-    }
-
-    // 頂点シェーダーの作成
-    hr = m_pd3dDevice->CreateVertexShader(
-        pVSBlob->GetBufferPointer(), 
-        pVSBlob->GetBufferSize(), 
-        NULL, 
-        &pVertexShader
-    );
-
-    if (FAILED(hr))
-    {
-        pVSBlob->Release();
-        return hr;
-    }
-
-    // 入力データ型の配列
-    D3D11_INPUT_ELEMENT_DESC layout[] =
-    {
-        // ↓頂点シェーダのinputに使ってるセマンティック
-        {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(BASE_VERTEX::MODEL_VERTEX, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(BASE_VERTEX::MODEL_VERTEX, normal),D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(BASE_VERTEX::MODEL_VERTEX, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(BASE_VERTEX::MODEL_VERTEX, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"BONEIDS",    0, DXGI_FORMAT_R32G32B32A32_SINT,  0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneIDs),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneWeights),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-    };
-
-    UINT numElements = ARRAYSIZE(layout);   // 配列の要素数取得
-
-    // 入力レイアウト作成
-    hr = m_pd3dDevice->CreateInputLayout(
-        layout,                     // 入力データ型の配列設定    
-        numElements,                // 配列の要素数
-        pVSBlob->GetBufferPointer(),// コンパイルされたシェーダへのポインタ
-        pVSBlob->GetBufferSize(),   // コンパイルされたシェーダのサイズ
-        &pVertexLayout              // 生成した入力レイアウトの出力先
-    );
-
-    if (FAILED(hr)) return hr;
-
-    // 入力レイアウトのセット
-    m_pImmediateContext->IASetInputLayout(pVertexLayout);
-
-
-    //
-    /* ピクセルシェーダー */
-    // 
-    ID3DBlob* pPSBlob = NULL;
-
-    // ピクセルシェーダーのコンパイル
-    hr = CompileShaderFromFile(filePath[1].c_str(), "PS", "ps_5_0", &pPSBlob);
-    if (FAILED(hr))
-    {
-        MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
-        return hr;
-    }
-
-    // ピクセルシェーダーの作成
-    hr = m_pd3dDevice->CreatePixelShader(
-        pPSBlob->GetBufferPointer(),
-        pPSBlob->GetBufferSize(), 
-        NULL, 
-        &pPixelShader
-    );
-
-    pPSBlob->Release();
-
-    if (FAILED(hr))return hr;
-
-    m_Shader.m_pVertexLayout = pVertexLayout;
-    m_Shader.m_pVertexShader = pVertexShader;
-    m_Shader.m_pPixelShader = pPixelShader;
-
-    return hr;
-}
-
-
-//--------------------------------------------------------------------------------------
 //      * RendererManager Class - DX11 解放 - *
 //--------------------------------------------------------------------------------------
 void RendererManager::CleanupDX11()
@@ -778,9 +568,6 @@ void RendererManager::CleanupDX11()
     SAFE_RELEASE(m_pBlendStateAlpha);
     SAFE_RELEASE(m_pBlendStateAdd);
     SAFE_RELEASE(m_pBlendStateSub);
-    SAFE_RELEASE(m_pCBNeverChanges);
-    SAFE_RELEASE(m_pCBChangeOnResize);
-    SAFE_RELEASE(m_pCBChangesEveryFrame);
     SAFE_RELEASE(m_pVertexBuffer);
     SAFE_RELEASE(m_pDepthStencil);
     SAFE_RELEASE(m_pDepthStencilView);
@@ -788,52 +575,6 @@ void RendererManager::CleanupDX11()
     SAFE_RELEASE(m_pSwapChain);
     SAFE_RELEASE(m_pd3dDevice)
 }
-
-
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - シェーダーのコンパイル - *
-//--------------------------------------------------------------------------------------
-HRESULT RendererManager::CompileShaderFromFile(LPCWSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
-{
-    HRESULT hr = S_OK;
-    //DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-    DWORD dwShaderFlags = D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;  // こっちの方が計算が速いらしい https://proglog.site/triangle-transform-on-shader/
-    
-#if defined(DEBUG) || defined(_DEBUG)
-    // D3DCOMPILE_DEBUG フラグを設定して、シェーダーにデバッグ情報を埋め込む。
-    // このフラグを設定すると、シェーダーのデバッグ体験が向上するが、それでも
-    // シェーダーは最適化され、このプログラムのリリース構成で実行されるのと同じように
-    // 実行される。
-    dwShaderFlags |= D3DCOMPILE_DEBUG;
-#endif
-
-    ID3DBlob* pErrorBlob;
-    hr = D3DCompileFromFile(
-        szFileName,         // コンパイルするhlslファイルパス
-        NULL,               // hlsl上で事前に定義する#defineの指定
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,               // インクルードファイルを取り扱うためのID3DIncludeの指定
-        szEntryPoint,       // エントリーポイントとなる関数名指定
-        szShaderModel,      // コンパイル時のターゲットとなるシェーダモデル指定
-        dwShaderFlags,      // コンパイルオプション
-        0,                  // エフェクトファイル用のコンパイルオプション(シェーダのコンパイルの場合は０)
-        ppBlobOut,          // コンパイル結果のバイナリコードの格納
-        &pErrorBlob         // コンパイル時のError内容の格納
-    );
-
-    if (FAILED(hr))
-    {
-        if (pErrorBlob != NULL)
-        {
-            OutputDebugStringA((char*)pErrorBlob->GetBufferPointer());
-            if (pErrorBlob)pErrorBlob->Release();
-            return hr;
-        }
-    }
-    if (pErrorBlob)pErrorBlob->Release();
-
-    return S_OK;
-}
-
 
 //--------------------------------------------------------------------------------------
 //      * RendererManager Class - 透視投影変換計算 - *
