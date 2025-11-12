@@ -8,13 +8,14 @@
 
 using namespace DirectX;
 
-// =======================================================================================
-//
-// *---        RendererManager Class         ---*
-//		描画関連(dirextX)の処理をまとめたもの
-//		
-// =======================================================================================
 
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:RendererManager Class --- */
+//
+// 【?】描画関連(dirextX)の処理をまとめたもの
+//
+// ***************************************************************************************
 class RendererManager
 {
 private:
@@ -56,9 +57,7 @@ public:
 	void Term();
     void Swap();    // 裏表切り替え
 private:
-
-
-    bool InitDx11();
+    bool InitDx11();                            // ＤＸ１１の初期化
     HRESULT InitDX11_SwapChain();               // ＤＸ１１ スワップチェイン初期化
     HRESULT InitDX11_RenderTargetView();        // ＤＸ１１ レンダーターゲットビューの初期化
     HRESULT InitDX11_ZBuff();                   // ＤＸ１１ Ｚバッファ初期化
@@ -66,8 +65,9 @@ private:
     HRESULT InitDX11_Sampler();                 // ＤＸ１１ サンプラー初期化
     HRESULT InitDX11_BlendState();              // ＤＸ１１ ブレンドステート初期化
     void CleanupDX11();                         // ＤＸ１１ 開放
-    void EnableDebugLayer();            // デバッグレイヤーの有効化
-    bool SetupProjectionTransform();    //透視投影変換計算
+    void EnableDebugLayer();                    // デバッグレイヤーの有効化
+    bool SetupProjectionTransform();            //透視投影変換計算
+
 public:
     ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
     ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得

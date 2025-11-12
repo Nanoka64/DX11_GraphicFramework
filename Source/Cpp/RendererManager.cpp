@@ -7,9 +7,11 @@
 #include "Path.h"
 #include <string>
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - デストラクタ - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】コンストラクタ
+//* 引数：なし
+//*----------------------------------------------------------------------------------------
 RendererManager::RendererManager():
     m_driverType(D3D_DRIVER_TYPE_UNKNOWN),
     m_featureLevel(D3D_FEATURE_LEVEL_11_0),
@@ -37,18 +39,23 @@ RendererManager::RendererManager():
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - デストラクタ - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】デストラクタ
+//* 引数：なし
+//*----------------------------------------------------------------------------------------
 RendererManager::~RendererManager()
 {
 
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】初期化
+//* 引数：1.ウインドウハンドル
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 bool RendererManager::Init(HWND hWnd)
 {
     m_driverType            = D3D_DRIVER_TYPE_NULL;
@@ -63,9 +70,6 @@ bool RendererManager::Init(HWND hWnd)
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
-    //m_World;                               // 行列   
-    //m_View;                                // ...
-    //m_Projection;                          // ...
     m_pBlendStateAlpha = NULL;        // αブレンド用
     m_pBlendStateAdd   = NULL;        // 加算合成用
     m_pBlendStateSub   = NULL;        // 減算合成用
@@ -84,18 +88,13 @@ bool RendererManager::Init(HWND hWnd)
 
 
     // 正常に初期化されたか
-    if (!InitDx11())
-    {
+    if (!InitDx11()) {
         CleanupDX11();  // されて無ければ解放
         return false;
     }
 
-
     // 初期化
     m_RenderParam.Init(*this);
-
-    // ポリゴンの頂点バッファの作成
-    //test.CreateVertexBuffer(*this);
 
     m_StartTime = timeGetTime();    // 開始時間取得
 
@@ -104,52 +103,15 @@ bool RendererManager::Init(HWND hWnd)
     return true;
 }
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - 描画 - *
-//--------------------------------------------------------------------------------------
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】描画
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
 void RendererManager::Draw()
 {
-    if (!m_pImmediateContext || !m_pRenderTargetView) return;
-    {
-        //// コンスタントバッファ更新
-        //CBNeverChanges cbNeverChanges;
-        //CBChangeOnResize cbChangeOnResize;
-        //CBChangesEveryFrame cbChangeEveryFrame;
-
-        //cbNeverChanges.mView = XMMatrixTranspose(m_View);   // ビュー行列の転置
-
-        //cbChangeOnResize.mProjection = XMMatrixTranspose(m_Projection); // プロジェクション行列の転置
-
-        //cbChangeEveryFrame.mWorld = XMMatrixTranspose(m_World); // ワールド行列の転置
-        ////cbChangeEveryFrame.Vertex = BASE_VERTEX::VERTEX(VECTOR3::VEC3(0, 0, 0), VECTOR3::VEC3(0, 0, 0), VECTOR4::VEC4(0, 0, 0, 1), VECTOR2::VEC2(0, 0));
-        //cbChangeEveryFrame.Time   = (timeGetTime() - m_StartTime) / 1000.0f;
-
-        //m_pImmediateContext->UpdateSubresource(m_pCBNeverChanges,      0, NULL, &cbNeverChanges, 0, 0);
-        //m_pImmediateContext->UpdateSubresource(m_pCBChangeOnResize,    0, NULL, &cbChangeOnResize, 0, 0);
-        //m_pImmediateContext->UpdateSubresource(m_pCBChangesEveryFrame, 0, NULL, &cbChangeEveryFrame, 0, 0);
-
-        //m_pImmediateContext->PSSetConstantBuffers(0, 1, &m_pCBChangesEveryFrame);
-
-        //m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL); // 出力先ビューの設定
-        //float color[] = { 0.f,0.f,0.f,0.f };
-        //m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, color);
-
-        //m_pImmediateContext->IASetInputLayout(m_Shader.m_pVertexLayout);
-        //m_pImmediateContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        //m_pImmediateContext->VSSetShader(m_Shader.m_pVertexShader, NULL, 0);
-        //m_pImmediateContext->PSSetShader(m_Shader.m_pPixelShader, NULL, 0);
-
-        //// ポリゴンのカラーアニメーション
-        //double t = cbChangeEveryFrame.Time;
-        //test.vertex[0].color = VECTOR4::VEC4(1, 0, 0, (std::max)(0.0, (abs(sin(t * 3.0)))));
-        //test.vertex[1].color = VECTOR4::VEC4(0, 1, 0, (std::max)(0.0, (abs(sin(t * 3.0)))));
-        //test.vertex[2].color = VECTOR4::VEC4(0, 0, 1, (std::max)(0.0, (abs(sin(t * 3.0)))));
-
-        // 表示
-        //test.Draw(*this);
-    }
-
-
     // 描画ターゲット (深度ステンシルビューもここに入れる)
     m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
@@ -170,30 +132,29 @@ void RendererManager::Draw()
     // ラスタライザ設定
     m_pImmediateContext->RSSetState(m_pRasterState); 
 
-    //// レイアウト
-    //m_pImmediateContext->IASetInputLayout(m_Shader.m_pVertexLayout);
-    //
-    //// シェーダ設定
-    //m_pImmediateContext->VSSetShader(m_Shader.m_pVertexShader, nullptr, 0);
-    //m_pImmediateContext->PSSetShader(m_Shader.m_pPixelShader, nullptr, 0);
-
     // サンプラー設定
     m_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - 終了 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】終了
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
 void RendererManager::Term()
 {
     CleanupDX11();  // リソース解放
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - スワップ・裏表切り替え - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】スワップ・裏表切り替え
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
 void RendererManager::Swap()
 {
     HRESULT hr;
@@ -218,9 +179,13 @@ void RendererManager::EnableDebugLayer()
     ID3D11Debug* debugLayer = nullptr;
 }
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - ＤｉｒｅｃｔＸ１１初期化 - *
-//--------------------------------------------------------------------------------------
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】DirectX11の初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 bool RendererManager::InitDx11()
 {
     // ＤｉｒｅｃｔＸ１１ 各初期化
@@ -236,9 +201,12 @@ bool RendererManager::InitDx11()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - スワップチェイン 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】スワップチェインの初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_SwapChain()
 {
     HRESULT hr = S_OK;
@@ -322,9 +290,12 @@ HRESULT RendererManager::InitDX11_SwapChain()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - レンダーターゲットビューの 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】レンダーターゲットビューの作成
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_RenderTargetView()
 {
     HRESULT hr = S_OK;
@@ -366,9 +337,12 @@ HRESULT RendererManager::InitDX11_RenderTargetView()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - Ｚバッファ(デプスバッファ) 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】Z（デプス）バッファの初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_ZBuff()
 {
     HRESULT hr = S_OK;
@@ -434,9 +408,12 @@ HRESULT RendererManager::InitDX11_ZBuff()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - ラスタライザ 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】ラスタライザの初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_Rasterizer()
 {
     /* ラスタライザにどんな処理をしてもらうか */
@@ -467,9 +444,12 @@ HRESULT RendererManager::InitDX11_Rasterizer()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - サンプラー 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】サンプラーの初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_Sampler()
 {
     /* サンプラーの設定 */
@@ -507,9 +487,12 @@ HRESULT RendererManager::InitDX11_Sampler()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - ブレンドステート 初期化 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】ブレンドステートの初期化
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 HRESULT RendererManager::InitDX11_BlendState()
 {
     /* ブレンドステート設定 */
@@ -555,9 +538,12 @@ HRESULT RendererManager::InitDX11_BlendState()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - DX11 解放 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】リソース解放
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
 void RendererManager::CleanupDX11()
 {
     if (m_pImmediateContext) m_pImmediateContext->ClearState();
@@ -576,9 +562,13 @@ void RendererManager::CleanupDX11()
     SAFE_RELEASE(m_pd3dDevice)
 }
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - 透視投影変換計算 - *
-//--------------------------------------------------------------------------------------
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】透視投影変換計算
+//* 引数：なし
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 bool RendererManager::SetupProjectionTransform()
 {
     auto pDeviceContext = get_DeviceContext();
@@ -623,9 +613,12 @@ bool RendererManager::SetupProjectionTransform()
 }
 
 
-//--------------------------------------------------------------------------------------
-//      * RendererManager Class - ビュー変換計算 - *
-//--------------------------------------------------------------------------------------
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】ビュー変換更新
+//* 引数：ビュー行列
+//* 戻値：成功したか
+//*----------------------------------------------------------------------------------------
 bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 {
     auto pDeviceContext = get_DeviceContext();

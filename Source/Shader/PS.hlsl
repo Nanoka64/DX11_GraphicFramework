@@ -51,7 +51,6 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     // 法線をTBN空間 ワールドスペースに変換して取得
     float3 normal = GetNorm(normalMap, input.Tan, input.BiNorm, input.Normal);
     
-    
     //finalCol.xyz = normal.xyz;
     //return finalCol;
 

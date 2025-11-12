@@ -70,6 +70,9 @@ void MeshRenderer::Draw(RendererManager& renderer)
     ID3D11Buffer* idxBuff = m_pMeshResource.lock()->m_pIndexBuffer;
 
 
+    // シェーダセット ==========================
+    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::SIMPLE);
+
     /* ========== 定数バッファの更新 ========== */
 
     // ワールド行列セット ==========================
@@ -108,11 +111,9 @@ void MeshRenderer::Draw(RendererManager& renderer)
 
     // 定数バッファをセット ==========================
     pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
-    pContext->VSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
+    pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
     //pContext->PSSetConstantBuffers(0, 1, &m_pCB3DObjectSet->pBuff);
 
-    // シェーダセット ==========================
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::SIMPLE);
 
     // テクスチャセット ==========================
     ID3D11ShaderResourceView* diffuseSRV = nullptr;

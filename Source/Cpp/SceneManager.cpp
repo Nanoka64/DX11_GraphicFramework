@@ -202,8 +202,8 @@ bool SceneManager::Init(RendererManager &renderer)
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 0.5f;
+                mat->SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
+                mat->SpecularPower = 1.5f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -292,7 +292,7 @@ void SceneManager::Update(RendererManager& renderer)
     Debugger::Instance().DG_SliderFloat("dir", &m_LightDir, -1.0f, 1.0f);
     Debugger::Instance().DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
     Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
-    Debugger::Instance().EndDebugWindow();;
+    Debugger::Instance().EndDebugWindow();
 
 
     // オブジェクト更新
