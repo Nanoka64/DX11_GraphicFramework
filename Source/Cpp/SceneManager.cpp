@@ -220,25 +220,47 @@ bool SceneManager::Init(RendererManager &renderer)
             }
         }
 
+        //{
+        //    // CUBE
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 0.5f;
+
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
+        //    mesh.ObjTag = "Cubu";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
+
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
+        //}      
+        
         {
-            // CUBE
+            // SPHERE
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/sky_00008.jpg");
+            mat->DiffuseColor = VEC4(5.0f, 5.0f, 5.0f, 1.0f);
             mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 0.5f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.ObjTag = "Cubu";
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+            mesh.ObjTag = "SPHERE";
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
+            obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }
     }
 
@@ -294,6 +316,16 @@ void SceneManager::Update(RendererManager& renderer)
     Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Debugger::Instance().EndDebugWindow();
 
+    auto objList = GameObjectManager::Instance().get_ObjectList();
+
+    Debugger::Instance().BeginDebugWindow("GameObject");
+    Debugger::Instance().DG_TextValue("Num : %d", (int)objList.size());
+    for (auto& obj : objList)
+    {
+        Debugger::Instance().DG_TextValue("name : %s", obj->get_Tag().c_str());
+    }
+
+    Debugger::Instance().EndDebugWindow();
 
     // オブジェクト更新
     GameObjectManager::Instance().ObjectUpdate(renderer);

@@ -13,7 +13,7 @@ MeshInfoFactory::~MeshInfoFactory()
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
-//       * MeshFactory Class - Quadの作成- *
+//       * MeshFactory Class - 板ポリの作成- *
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ MeshInfo * MeshInfoFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
 
 
 // ----------------------------------------------------------------------------------------------------------------------
-//       * MeshFactory Class - Cubuの作成- *
+//       * MeshFactory Class - キューブの作成- *
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
@@ -139,3 +139,82 @@ MeshInfo* MeshInfoFactory::CreateCubeInfo(MATERIAL* materials, UINT matNum)
 
 	return meshInfo;
 }
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+//       * MeshFactory Class - 球の作成- *
+// 引数 1.マテリアル
+// 		2.マテリアル数
+// ----------------------------------------------------------------------------------------------------------------------
+MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
+{
+	MeshInfo* meshInfo = new MeshInfo();
+
+	// 分割数（増やすと滑らかになる）
+	const UINT stackCount = 20; // 緯度分割
+	const UINT sliceCount = 20; // 経度分割
+	const float radius = 1.0f;
+
+	// 頂点数
+	meshInfo->NumVertex = (stackCount + 1) * (sliceCount + 1);
+	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex];
+
+	// 頂点生成
+	UINT vertexIndex = 0;
+	for (UINT i = 0; i <= stackCount; ++i)
+	{
+		float phi = M_PI * i / stackCount; // 緯度 [0, π]
+
+		for (UINT j = 0; j <= sliceCount; ++j)
+		{
+			float theta = (M_PI * 2) * j / sliceCount; // 経度 [0, 2π]
+
+			float x = radius * sinf(phi) * cosf(theta);
+			float y = radius * cosf(phi);
+			float z = radius * sinf(phi) * sinf(theta);
+
+			VEC3 pos = VEC3(x, y, z);
+			VEC3 normal = VEC3::FromXMVECTOR(DirectX::XMVector3Normalize(pos)); // 単位化
+			VEC4 color = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+			VEC2 uv = VEC2(
+				(float)j / sliceCount,
+				(float)i / stackCount
+			);
+
+			meshInfo->pVertices[vertexIndex++] = { pos, normal, color, uv };
+		}
+	}
+
+	// インデックス数
+	meshInfo->NumIndex = stackCount * sliceCount * 6;
+	meshInfo->pIndices = new WORD[meshInfo->NumIndex];
+
+	// インデックス生成
+	UINT index = 0;
+	for (UINT i = 0; i < stackCount; ++i)
+	{
+		for (UINT j = 0; j < sliceCount; ++j)
+		{
+			UINT i0 = i * (sliceCount + 1) + j;
+			UINT i1 = i0 + 1;
+			UINT i2 = (i + 1) * (sliceCount + 1) + j;
+			UINT i3 = i2 + 1;
+
+			// 三角形2枚で四角形を構成
+			meshInfo->pIndices[index++] = (WORD)i0;
+			meshInfo->pIndices[index++] = (WORD)i2;
+			meshInfo->pIndices[index++] = (WORD)i1;
+
+			meshInfo->pIndices[index++] = (WORD)i1;
+			meshInfo->pIndices[index++] = (WORD)i2;
+			meshInfo->pIndices[index++] = (WORD)i3;
+		}
+	}
+
+	// マテリアル設定
+	meshInfo->pMaterials = materials;
+	meshInfo->NumMaterial = matNum;
+
+	return meshInfo;
+}
+

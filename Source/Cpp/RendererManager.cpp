@@ -75,7 +75,7 @@ bool RendererManager::Init(HWND hWnd)
     m_pBlendStateSub   = NULL;        // 減算合成用
 
     m_NearClipDist = 0.1f;
-    m_FarClipDist  = 10000.0f;
+    m_FarClipDist  = 30000.0f;
     m_Fov = XMConvertToRadians(30.0f);
 
 
@@ -427,7 +427,7 @@ HRESULT RendererManager::InitDX11_Rasterizer()
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
     // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
     // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回り)
-    rd.CullMode              = D3D11_CULL_BACK;
+    rd.CullMode              = D3D11_CULL_NONE;
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面

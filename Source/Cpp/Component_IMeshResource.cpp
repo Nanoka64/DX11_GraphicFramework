@@ -228,6 +228,7 @@ bool IMeshResource::Setup(RendererManager& renderer, UTILITY_MESH_TYPE type, MAT
 		m_pMeshInfo = MeshInfoFactory::CreateQuadInfo(materials, materialNum);
 		break;
 	case UTILITY_MESH_TYPE::SPHERE:
+		m_pMeshInfo = MeshInfoFactory::CreateSphereInfo(materials, materialNum);
 		break;
 	default:
 		break;

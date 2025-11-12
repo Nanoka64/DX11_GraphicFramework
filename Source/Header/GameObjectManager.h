@@ -74,7 +74,14 @@ public:
 	/// オブジェクトリストを取得
 	/// </summary>
 	/// <returns></returns>
-	std::list<std::weak_ptr<GameObject>>get_ObjectList();
+	std::list<std::shared_ptr<GameObject>>get_ObjectList();
+
+
+	/// <summary>
+	/// オブジェクト数取得
+	/// </summary>
+	/// <returns></returns>
+	int get_ObjectNum()const;
 
 
 	/// <summary>
@@ -87,6 +94,8 @@ public:
 	/// dontDestroyフラグが立っていないオブジェクトを全て削除
 	/// </summary>
 	void clear_NotIsDontDestroyObject();
+
+
 
 
 	/// <summary>

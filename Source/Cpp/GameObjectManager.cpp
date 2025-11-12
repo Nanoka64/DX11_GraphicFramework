@@ -235,6 +235,17 @@ std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(cons
     return resList;
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】登録されているオブジェクト数取得
+//* 引数：なし
+//* 返値：オブジェクト数
+//*----------------------------------------------------------------------------------------
+int GameObjectManager::get_ObjectNum()const
+{
+    return m_pObjectList.size();
+}
+
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
@@ -242,9 +253,9 @@ std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(cons
 //* 引数：なし
 //* 返値：オブジェクトの参照ポインタリスト
 //*----------------------------------------------------------------------------------------
-std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectList()
+std::list<std::shared_ptr<GameObject>> GameObjectManager::get_ObjectList()
 {
-    return {};
+    return m_pObjectList;
 }
 
 

@@ -23,7 +23,7 @@ public:
 	static MeshInfo *CreateTriangleInfo();
 	static MeshInfo *CreateQuadInfo(MATERIAL *materials, UINT matNum);
 	static MeshInfo *CreateCubeInfo(MATERIAL* materials, UINT matNum);
-	static MeshInfo *CreateSphereInfo();
+	static MeshInfo *CreateSphereInfo(MATERIAL* materials, UINT matNum);
 	static MeshInfo *CreateCylinderInfo();
 	static MeshInfo *CreateTorusInfo();
 };
