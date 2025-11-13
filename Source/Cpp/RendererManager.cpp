@@ -112,16 +112,6 @@ bool RendererManager::Init(HWND hWnd)
 //*----------------------------------------------------------------------------------------
 void RendererManager::Draw()
 {
-    // 描画ターゲット (深度ステンシルビューもここに入れる)
-    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-    // 描画ターゲットビュークリア
-    float color[] = { 0.15f, 0.3f, 0.3f, 0.f };
-    m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, color);
-
-    // 深度ステンシルビューをクリア
-    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
     // OMにブレンドステートオブジェクトを設定
     FLOAT BlendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
     m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, nullptr, 1);   
@@ -188,6 +178,7 @@ void RendererManager::EnableDebugLayer()
 //*----------------------------------------------------------------------------------------
 bool RendererManager::InitDx11()
 {
+
     // ＤｉｒｅｃｔＸ１１ 各初期化
     if (FAILED(InitDX11_SwapChain()))       return false;
     if (FAILED(InitDX11_RenderTargetView()))return false;
@@ -196,8 +187,33 @@ bool RendererManager::InitDx11()
     if (FAILED(InitDX11_Sampler()))         return false;
     if (FAILED(InitDX11_BlendState()))      return false;
 
-    return true;
 
+    // マルチレンダリングテスト用
+    HRESULT hr = S_OK;
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = m_ScreenWidht;
+    desc.Height = m_Screenheight;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_0);
+    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_1);
+    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_2);
+
+    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_0, nullptr, &m_pOffScreenRTV_0)))return false;
+    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_0, nullptr, &m_pDefferdSRV_0)))return false;
+    
+    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_1, nullptr, &m_pOffScreenRTV_1)))return false;
+    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_1, nullptr, &m_pDefferdSRV_1)))return false;
+    
+    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_2, nullptr, &m_pOffScreenRTV_2)))return false;
+    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_2, nullptr, &m_pDefferdSRV_2)))return false;
+
+    return true;
 }
 
 
@@ -650,4 +666,36 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
     return true;
 }
 
+void RendererManager::ChangeTestRT()
+{
+    // MRT テスト用
+    ID3D11RenderTargetView *rtv[] = {
+        m_pOffScreenRTV_0,
+        m_pOffScreenRTV_1,
+        m_pOffScreenRTV_2,
+    };
+    m_pImmediateContext->OMSetRenderTargets(3, rtv, m_pDepthStencilView);
 
+    // 深度ステンシルビューをクリア
+    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    float clearColor[4] = { 0, 0, 0, 0 };
+    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_0, clearColor);
+    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_1, clearColor);
+    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_2, clearColor);
+}
+
+void RendererManager::ChangeFrameBufferRT()
+{
+    // 描画ターゲット (深度ステンシルビューもここに入れる)
+    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+    float clearColor[4] = { 0, 0, 0, 0 };
+    m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
+
+    // 深度ステンシルビューをクリア
+    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    ID3D11ShaderResourceView *srvs[] = { m_pDefferdSRV_0, m_pDefferdSRV_1, m_pDefferdSRV_2 };
+    m_pImmediateContext->PSSetShaderResources(3, 3, srvs);
+}

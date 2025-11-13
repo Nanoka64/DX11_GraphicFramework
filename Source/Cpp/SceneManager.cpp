@@ -104,6 +104,8 @@ bool SceneManager::Init(RendererManager &renderer)
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -220,6 +222,17 @@ bool SceneManager::Init(RendererManager &renderer)
             }
         }
 
+        {
+            CreateSpriteInfo sprite;
+            sprite.pRenderer = &renderer;
+            sprite.ObjTag = "RenderTarget";
+            sprite.pTexture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+            sprite.Width = 500.0f;
+            sprite.Height = 500.0f;
+            auto obj = MeshFactory::CreateSprite(sprite);
+            obj.lock()->get_Transform().lock()->set_Scale(1000, 500.0f, 1000);
+        }
+
         //{
         //    // CUBE
         //    MATERIAL* mat = new MATERIAL;
@@ -244,7 +257,7 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             // SPHERE
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/sky_00008.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Night01.png");
             mat->DiffuseColor = VEC4(5.0f, 5.0f, 5.0f, 1.0f);
             mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -253,7 +266,7 @@ bool SceneManager::Init(RendererManager &renderer)
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
             mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.ObjTag = "SPHERE";
+            mesh.ObjTag = "SkyDorm";
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
@@ -297,6 +310,9 @@ void SceneManager::Update(RendererManager& renderer)
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
+    auto cam = GameObjectManager::Instance().get_ObjectByTag("Camera");
+    VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
+
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
     lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, (cos(a) * 1000.0f) * -1, 0);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
@@ -309,6 +325,12 @@ void SceneManager::Update(RendererManager& renderer)
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, 0.0, sin(a));
+
+
+    auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
+    auto tf = skyObj.lock()->get_Component<Transform>();
+    tf->set_Pos(camPos);
+
 
     Debugger::Instance().BeginDebugWindow("Light");
     Debugger::Instance().DG_SliderFloat("dir", &m_LightDir, -1.0f, 1.0f);
@@ -340,9 +362,10 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
+    renderer.ChangeFrameBufferRT();
+
     // オブジェクト描画
     GameObjectManager::Instance().ObjectRender(renderer);
-
 
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
@@ -351,6 +374,7 @@ void SceneManager::Draw(RendererManager& renderer)
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
+
 
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);

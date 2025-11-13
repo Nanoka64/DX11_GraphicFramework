@@ -85,6 +85,8 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE))return false;
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD))return false;
 
     //** リソース管理の初期化 **/
     //** 描画クラスの弱参照を入れる   **/

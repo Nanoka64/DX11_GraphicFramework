@@ -65,6 +65,28 @@ struct CreateUtilityMeshInfo
     {};
 };
 
+/// <summary>
+/// スプライト生成情報
+/// </summary>
+struct CreateSpriteInfo
+{
+    RendererManager *pRenderer;         // 描画
+    std::string ObjTag;                 // オブジェクトのタグ
+    bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
+    std::weak_ptr<Texture> pTexture;    // テクスチャ
+
+    // 幅
+    float Width;
+    float Height;
+
+    CreateSpriteInfo():
+        pRenderer(nullptr),
+        IsActive(true),
+        Width(0.0f),
+        Height(0.0f)
+    {};
+};
+
 class MeshFactory : public Object
 {
 private:
@@ -73,5 +95,6 @@ private:
 public:
     static std::weak_ptr<class GameObject> CreateModel(const CreateModelInfo& info);
     static std::weak_ptr<class GameObject> CreateUtilityMesh(const CreateUtilityMeshInfo& info);
+    static std::weak_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
 };
 

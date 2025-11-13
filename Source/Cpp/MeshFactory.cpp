@@ -7,6 +7,7 @@
 #include "Component_ModelMeshRenderer.h"
 #include "Component_MeshRenderer.h"
 #include "Component_SkinnedMeshAnimator.h"
+#include "Component_SpriteRenderer.h"
 #include "ResourceManager.h"
 #include "Texture.h"
 
@@ -99,6 +100,34 @@ std::weak_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUtili
     
     // Rendererにリソースを設定
     meshRenderer->set_MeshResource(meshResource);
+
+    return pObj;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:MeshFactory Class 
+//*【?】スプライトの生成
+//* 引数：1.CreateSpriteInfo&
+//* 返値：std::weak_ptr<GameObject>
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteInfo &info)
+{
+    // オブジェクトの生成
+    std::weak_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    pObj.lock()->Init(*info.pRenderer);
+    pObj.lock()->set_Tag(info.ObjTag.c_str());
+
+    // オブジェクトの状態をアクティブにする
+    if (info.IsActive) {
+        pObj.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    }
+
+    // コンポーネントの追加
+    auto sprite = pObj.lock()->add_Component<SpriteRenderer>();
+
+    // リソースのセットアップ
+    if (!sprite->Setup(*info.pRenderer, info.pTexture, info.Width, info.Height))return {};
 
     return pObj;
 }

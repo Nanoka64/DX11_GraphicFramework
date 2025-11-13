@@ -28,13 +28,29 @@ private:
     ID3D11Texture2D                         * m_pDepthStencil;        // 画像を読み込んで使えるようにするもの
     ID3D11DepthStencilView                  * m_pDepthStencilView;    // 深度バッファ(ZBuffer)奥行き
     ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
-    ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
     ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
     ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用
     ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
 	
+
+    ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
+    ID3D11Buffer                            * m_pIndexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
+    
+    // MRT テスト用
+    ID3D11RenderTargetView *m_pOffScreenRTV_0;  // カラー
+    ID3D11RenderTargetView *m_pOffScreenRTV_1;  // 法線
+    ID3D11RenderTargetView *m_pOffScreenRTV_2;  // 深度
+    ID3D11Texture2D *m_pTexture_0;
+    ID3D11Texture2D *m_pTexture_1;
+    ID3D11Texture2D *m_pTexture_2;
+    ID3D11ShaderResourceView *m_pDefferdSRV_0;
+    ID3D11ShaderResourceView *m_pDefferdSRV_1;
+    ID3D11ShaderResourceView *m_pDefferdSRV_2;
+
+
+
     RenderParam m_RenderParam;  // 描画パラメータ
 
     UINT m_ScreenWidht; // ウインドウ横幅
@@ -68,6 +84,7 @@ private:
     void EnableDebugLayer();                    // デバッグレイヤーの有効化
     bool SetupProjectionTransform();            //透視投影変換計算
 
+
 public:
     ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
     ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
@@ -76,6 +93,8 @@ public:
     RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
 
+    void ChangeTestRT();
+    void ChangeFrameBufferRT();
 
     /// <summary>
     /// ビューマトリクスを設定し更新

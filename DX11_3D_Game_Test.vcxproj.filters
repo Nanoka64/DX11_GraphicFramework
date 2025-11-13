@@ -109,6 +109,9 @@
     <Filter Include="ソース ファイル\Component\Light">
       <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\UI">
+      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\RendererManager.cpp">
@@ -293,6 +296,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\IComponent.cpp">
       <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp">
+      <Filter>ソース ファイル\Component\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -509,6 +515,9 @@
     <ClInclude Include="Source\Header\IComponent.h">
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_SpriteRenderer.h">
+      <Filter>ソース ファイル\Component\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -540,6 +549,15 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\UtilityHeader.hlsli">
       <Filter>HLSL\HEAD</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\DefefferdTest.hlsl">
+      <Filter>HLSL\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteVS.hlsl">
+      <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpritePS.hlsl">
+      <Filter>HLSL\PS</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

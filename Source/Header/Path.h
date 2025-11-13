@@ -17,6 +17,14 @@ namespace Path
     //     ファイル種別↓    ↓ファイル名  
     const std::wstring HLSL__VS_PATH = std::wstring(Shader) + L"VS.hlsl"; 
     const std::wstring HLSL__PS_PATH = std::wstring(Shader) + L"PS.hlsl"; 
+    
+    // シンプル
     const std::wstring HLSL__SimplePS_PATH = std::wstring(Shader) + L"SimplePS.hlsl";
     const std::wstring HLSL__SimpleVS_PATH = std::wstring(Shader) + L"SimpleVS.hlsl";
+    
+    // スプライト
+    const std::wstring HLSL__SpriteVS_PATH = std::wstring(Shader) + L"SpriteVS.hlsl";
+    const std::wstring HLSL__SpritePS_PATH = std::wstring(Shader) + L"SpritePS.hlsl";
+    
+    const std::wstring HLSL__DefferdPS_PATH = std::wstring(Shader) + L"DefefferdTest.hlsl";
 }

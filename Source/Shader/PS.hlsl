@@ -7,7 +7,10 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include "LightFunctionHeader.hlsli"    // ライトヘッダー
-
+SamplerState mySampler : register(s0);
+Texture2D g_DiffuseTex : register(t0); // ディフューズ
+Texture2D g_NormalTex : register(t1); // ノーマル
+Texture2D g_SpecularTex : register(t2); // スペキュラ
 
 /* =========================================================================
 /* - @:PS_INPUT構造体 - */

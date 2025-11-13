@@ -11,7 +11,7 @@
 
 using namespace Path;
 
-// シンプルシェーダ
+// シンプルシェーダ（スプライト兼用）
 static const D3D11_INPUT_ELEMENT_DESC SimpleLayout[] =
 {
     {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(BASE_VERTEX::VERTEX, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -32,6 +32,8 @@ static const D3D11_INPUT_ELEMENT_DESC ModelLayout[] =
     {"TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BINORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, biNormal),   D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
+
+
 
 /* ---------------------------------------------------------------------------------------
 /* - @:ShaderManager Class - デストラクタ - * - */
@@ -62,6 +64,18 @@ bool ShaderManager::Init(std::shared_ptr<RendererManager> renderer)
             ARRAYSIZE(ModelLayout),
             ModelLayout,
         },      
+        {
+            /* スプライト用 */
+            SHADER_TYPE::SPRITE,
+            ARRAYSIZE(SimpleLayout),
+            SimpleLayout,
+        }, 
+        {
+            /* ディファードシェーディング用 */
+            SHADER_TYPE::DEFFERD,
+            ARRAYSIZE(SimpleLayout),
+            SimpleLayout,
+        },
     };
 
     // 格納
@@ -208,6 +222,12 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
     case SHADER_TYPE::MODEL:
         hr = this->CompileShader(HLSL__VS_PATH.c_str(), "VS", "vs_5_0", &pVSBlob);
         break;
+    case SHADER_TYPE::SPRITE:
+        hr = this->CompileShader(HLSL__SimpleVS_PATH.c_str(), "SimpleVSMain", "vs_5_0", &pVSBlob);
+        break;
+    case SHADER_TYPE::DEFFERD:
+        hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+        break;
     default:
         MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
         break;
@@ -275,6 +295,12 @@ bool ShaderManager::SetupPixelShader(SHADER_TYPE type, ShaderInfo* out)
         break;
     case SHADER_TYPE::MODEL:
         hr = CompileShader(HLSL__PS_PATH.c_str(), "PS", "ps_5_0", &pPSBlob);
+        break;    
+    case SHADER_TYPE::SPRITE:
+        hr = this->CompileShader(HLSL__SpritePS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+        break;
+    case SHADER_TYPE::DEFFERD:
+        hr = this->CompileShader(HLSL__DefferdPS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
         break;
     default:
         break;

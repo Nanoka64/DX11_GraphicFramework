@@ -35,6 +35,9 @@ namespace BASE_VERTEX
         }
     };
 
+    /// <summary>
+    /// モデル用
+    /// </summary>
     struct MODEL_VERTEX : public VERTEX
     {
         int boneIDs[4] = { -1, -1, -1, -1 }; //影響を与えるボーンのインデックス
@@ -43,6 +46,7 @@ namespace BASE_VERTEX
         VEC3 tangent;   // 接ベクトル
         VEC3 biNormal;  // 従ベクトル
     };
+
 
     namespace Utils
     {

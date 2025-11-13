@@ -17,6 +17,10 @@ enum class SHADER_TYPE
     NONE,       // なし
     SIMPLE,     // 単純な表示用
     MODEL,      // モデルの表示用
+
+    SPRITE,     // スプライト
+
+    DEFFERD,    // ディファードシェーディング
     
     NUM,
 };

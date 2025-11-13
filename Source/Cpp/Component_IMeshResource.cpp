@@ -216,6 +216,7 @@ bool IMeshResource::Setup(RendererManager& renderer, UTILITY_MESH_TYPE type, MAT
 	/*
 	*  ƒƒbƒVƒ…î•ñ‚Ìì¬
 	*/
+
 	switch (type)
 	{
 	case UTILITY_MESH_TYPE::NONE:
