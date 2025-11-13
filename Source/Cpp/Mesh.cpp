@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Mesh.h"
+#include "Window.h"
 
 using namespace BASE_VERTEX;
 using namespace Tool::UV;
@@ -218,3 +219,43 @@ MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
 	return meshInfo;
 }
 
+
+// ----------------------------------------------------------------------------------------------------------------------
+//       * MeshFactory Class - スプライト用クアッドの作成- *
+// ----------------------------------------------------------------------------------------------------------------------
+MeshInfo* MeshInfoFactory::CreateSpriteQuadInfo(float w, float h)
+{
+	MeshInfo* meshInfo = new MeshInfo();
+
+	// 頂点数
+	meshInfo->NumVertex = 4;
+
+	// 中心位置
+	VEC2 centerVec = VEC2(0.0f, 0.0f);
+	float hw  = w * 0.5f;
+	float hh  = h * 0.5f;
+
+	// 頂点情報
+	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+		// 座標                       // 法線                  // カラー                      // uv
+		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
+		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
+		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下
+		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 1.0f)}, // 11右下
+	};
+
+	// インデックス数
+	meshInfo->NumIndex = 6;
+
+	// インデックス情報
+	meshInfo->pIndices = new WORD[meshInfo->NumIndex]{
+		0,1,2,
+		1,3,2
+	};
+
+	// マテリアル情報設定
+	meshInfo->pMaterials = nullptr;
+	meshInfo->NumMaterial = 0;
+
+	return meshInfo;
+}

@@ -73,28 +73,6 @@ void SpriteRenderer::Draw(RendererManager &renderer)
     // シェーダセット ==========================
     ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::SPRITE);
 
-    /* ========== 定数バッファの更新 ========== */
-
-	// ワールド行列セット ==========================
-	XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
-	XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
-	XMStoreFloat4x4(&m_pCBTransformSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
-
-	// 定数バッファに転送
-	pContext->UpdateSubresource(
-		m_pCBTransformSet->pBuff,
-		0,
-		nullptr,
-		&m_pCBTransformSet->Data,
-		0,
-		0
-	);
-
-
-    // 定数バッファをセット ==========================
-    pContext->VSSetConstantBuffers(0, 1, &m_pCBTransformSet->pBuff);
-
-
     // テクスチャセット ==========================
     ID3D11ShaderResourceView *textureSRV = nullptr;
     if (auto tex = m_pTexture.lock()) {
@@ -133,7 +111,7 @@ bool SpriteRenderer::Setup(RendererManager &renderer, std::weak_ptr<class Textur
 	m_pTexture = pTex;
 
 	// クアッド生成
-	m_pMeshInfo = MeshInfoFactory::CreateQuadInfo(nullptr, 0);
+	m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(w,h);
 
 	if (m_pMeshInfo == nullptr){
 		assert(false);
@@ -230,3 +208,27 @@ bool SpriteRenderer::CreateCBuffer(ID3D11Device *pDevice)
 
 	return true;
 }
+
+void SpriteRenderer::set_Width()
+{
+
+}
+
+
+void SpriteRenderer::set_Height()
+{
+
+}
+
+
+float SpriteRenderer::get_Width()const
+{
+	return m_Width;
+}
+
+
+float SpriteRenderer::get_Height()const
+{
+	return m_Height;
+}
+

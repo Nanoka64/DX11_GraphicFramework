@@ -61,12 +61,6 @@
     <Filter Include="CordingRules">
       <UniqueIdentifier>{10c6a075-0fbf-4dcd-9699-f992cdd2686a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSL\PS">
-      <UniqueIdentifier>{743b417f-19df-48d6-89e8-57c8239f34bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\VS">
-      <UniqueIdentifier>{98fe3628-3c54-4905-9a2f-5b250cbfd1e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
     </Filter>
@@ -111,6 +105,18 @@
     </Filter>
     <Filter Include="ソース ファイル\Component\UI">
       <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Simple">
+      <UniqueIdentifier>{c3033428-26cf-4f15-a180-d823df30a524}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Sprite">
+      <UniqueIdentifier>{72503ec0-8e95-4c02-85f9-8e154a6bcbad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Model">
+      <UniqueIdentifier>{495885f1-3d17-4f45-9b99-ecede906af08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Other">
+      <UniqueIdentifier>{743b417f-19df-48d6-89e8-57c8239f34bf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -533,31 +539,31 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\SimpleLightingPS.hlsl">
-      <Filter>HLSL\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\SimplePS.hlsl">
-      <Filter>HLSL\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\PS.hlsl">
-      <Filter>HLSL\PS</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\SimpleVS.hlsl">
-      <Filter>HLSL\VS</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\VS.hlsl">
-      <Filter>HLSL\VS</Filter>
+      <Filter>HLSL\Other</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\UtilityHeader.hlsli">
       <Filter>HLSL\HEAD</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\DefefferdTest.hlsl">
-      <Filter>HLSL\PS</Filter>
+      <Filter>HLSL\Other</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SpriteVS.hlsl">
-      <Filter>HLSL\VS</Filter>
+    <FxCompile Include="Source\Shader\PS.hlsl">
+      <Filter>HLSL\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\VS.hlsl">
+      <Filter>HLSL\Model</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\SpritePS.hlsl">
-      <Filter>HLSL\PS</Filter>
+      <Filter>HLSL\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SpriteVS.hlsl">
+      <Filter>HLSL\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SimplePS.hlsl">
+      <Filter>HLSL\Simple</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SimpleVS.hlsl">
+      <Filter>HLSL\Simple</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

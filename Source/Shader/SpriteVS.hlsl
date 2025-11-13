@@ -40,9 +40,9 @@ VS_OUT VSMain(VS_INPUT input)
     float2 uv = input.UV;
     float4 color = input.Color;
     
-    pos = mul(pos, Transform);  // ワールド変換
-    pos = mul(pos, View);       // ビュー変換
-    pos = mul(pos, Projection); // 投影変換
+    //pos = mul(pos, Transform); // ワールド変換
+    //pos = mul(pos, View); // ビュー変換
+    //pos = mul(pos, Projection); // 投影変換
     
     output.Pos = pos;
     output.Color = color;

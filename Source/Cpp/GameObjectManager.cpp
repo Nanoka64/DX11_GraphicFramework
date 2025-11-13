@@ -115,7 +115,7 @@ std::weak_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_pt
     pObj->m_pTransform = pObj->get_Component<Transform>();
     pObj->m_pTransform->set_Pos(pos);
     pObj->m_pTransform->set_RotateToDeg(rot);
-     
+
     // e‚ªİ’è‚³‚ê‚Ä‚¢‚é‚©
     if (parent.lock() != nullptr) {
         pObj->m_pTransform->set_Parent(parent);

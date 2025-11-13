@@ -227,10 +227,9 @@ bool SceneManager::Init(RendererManager &renderer)
             sprite.pRenderer = &renderer;
             sprite.ObjTag = "RenderTarget";
             sprite.pTexture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040.jpg");
-            sprite.Width = 500.0f;
-            sprite.Height = 500.0f;
+            sprite.Width  = 0.1f;
+            sprite.Height = 0.1f;
             auto obj = MeshFactory::CreateSprite(sprite);
-            obj.lock()->get_Transform().lock()->set_Scale(1000, 500.0f, 1000);
         }
 
         //{
@@ -274,6 +273,28 @@ bool SceneManager::Init(RendererManager &renderer)
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
+        }       
+        
+        {
+            // SPHERE
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040.jpg");
+            mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040_n.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+            mesh.ObjTag = "sphere";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
+            obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
         }
     }
 
@@ -324,12 +345,17 @@ void SceneManager::Update(RendererManager& renderer)
 
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, 0.0, sin(a));
+    rad->set_RotateToRad(0.0, 0.0, sin(a) );
 
 
-    auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
-    auto tf = skyObj.lock()->get_Component<Transform>();
-    tf->set_Pos(camPos);
+    auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
+    rad = sphereObj.lock()->get_Component<Transform>();
+    rad->set_RotateToRad(0.0, a * 30, 0.0f);
+
+
+    //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
+    //auto tf = skyObj.lock()->get_Component<Transform>();
+    //tf->set_Pos(camPos);
 
 
     Debugger::Instance().BeginDebugWindow("Light");

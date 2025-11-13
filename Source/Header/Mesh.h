@@ -26,4 +26,8 @@ public:
 	static MeshInfo *CreateSphereInfo(MATERIAL* materials, UINT matNum);
 	static MeshInfo *CreateCylinderInfo();
 	static MeshInfo *CreateTorusInfo();
+
+	static MeshInfo* CreateSpriteQuadInfo(float w, float h);
+
+
 };
