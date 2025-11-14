@@ -118,6 +118,9 @@
     <Filter Include="HLSL\Other">
       <UniqueIdentifier>{743b417f-19df-48d6-89e8-57c8239f34bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Graphics\RT">
+      <UniqueIdentifier>{e9bf896b-0eb7-47a5-b946-b7ef37ba334c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\RendererManager.cpp">
@@ -305,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp">
       <Filter>ソース ファイル\Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RenderTarget.cpp">
+      <Filter>ソース ファイル\Graphics\RT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,6 +529,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h">
       <Filter>ソース ファイル\Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RenderTarget.h">
+      <Filter>ソース ファイル\Graphics\RT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

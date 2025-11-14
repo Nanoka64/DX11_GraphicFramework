@@ -237,7 +237,7 @@ MeshInfo* MeshInfoFactory::CreateSpriteQuadInfo(float w, float h)
 
 	// 頂点情報
 	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
-		// 座標                       // 法線                  // カラー                      // uv
+		// 座標												// 法線                  // カラー                      // uv
 		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
 		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
 		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下

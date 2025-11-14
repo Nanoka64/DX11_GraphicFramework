@@ -25,6 +25,11 @@
 #pragma comment(lib, "d3d11.lib")			  // directX11ライブラリのリンク
 
 
+// COMポインタ用
+#include <wrl/client.h>
+
+
+
 // 文字表示用
 #include <d2d1.h>   // Direct2D用
 #include <dwrite.h> // DirectWrite用

@@ -5,6 +5,7 @@
 #include "RendererManager.h"
 #include "MyStruct.h"
 #include "Path.h"
+#include "RenderTarget.h"
 #include <string>
 
 //*---------------------------------------------------------------------------------------
@@ -106,12 +107,18 @@ bool RendererManager::Init(HWND hWnd)
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererManager Class 
-//*【?】描画
+//*【?】描画の開始
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::Draw()
+void RendererManager::BeginRender()
 {
+    // フレームバッファのレンダリングターゲットとデプスステンシルのクリア
+    FLOAT clearColor[] = { 1.0f,1.0f,1.0f,1.0f };
+    m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
+    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+
+
     // OMにブレンドステートオブジェクトを設定
     FLOAT BlendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
     m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, nullptr, 1);   
@@ -126,6 +133,17 @@ void RendererManager::Draw()
     m_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
 }
 
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】描画の終了
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererManager::EndRender()
+{
+    // なにかあれば
+}
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererManager Class 
@@ -178,7 +196,6 @@ void RendererManager::EnableDebugLayer()
 //*----------------------------------------------------------------------------------------
 bool RendererManager::InitDx11()
 {
-
     // ＤｉｒｅｃｔＸ１１ 各初期化
     if (FAILED(InitDX11_SwapChain()))       return false;
     if (FAILED(InitDX11_RenderTargetView()))return false;
@@ -187,35 +204,8 @@ bool RendererManager::InitDx11()
     if (FAILED(InitDX11_Sampler()))         return false;
     if (FAILED(InitDX11_BlendState()))      return false;
 
-
-    // マルチレンダリングテスト用
-    HRESULT hr = S_OK;
-
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = m_ScreenWidht;
-    desc.Height = m_Screenheight;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.SampleDesc.Count = 1;
-    desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_0);
-    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_1);
-    m_pd3dDevice->CreateTexture2D(&desc, nullptr, &m_pTexture_2);
-
-    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_0, nullptr, &m_pOffScreenRTV_0)))return false;
-    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_0, nullptr, &m_pDefferdSRV_0)))return false;
-    
-    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_1, nullptr, &m_pOffScreenRTV_1)))return false;
-    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_1, nullptr, &m_pDefferdSRV_1)))return false;
-    
-    if(FAILED(m_pd3dDevice->CreateRenderTargetView(m_pTexture_2, nullptr, &m_pOffScreenRTV_2)))return false;
-    if(FAILED(m_pd3dDevice->CreateShaderResourceView(m_pTexture_2, nullptr, &m_pDefferdSRV_2)))return false;
-
     return true;
 }
-
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererManager Class 
@@ -666,36 +656,61 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
     return true;
 }
 
-void RendererManager::ChangeTestRT()
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】レンダーターゲットをフレームバッファに変更
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererManager::ChangeRenderTargetFrameBuffer()
 {
-    // MRT テスト用
-    ID3D11RenderTargetView *rtv[] = {
-        m_pOffScreenRTV_0,
-        m_pOffScreenRTV_1,
-        m_pOffScreenRTV_2,
-    };
-    m_pImmediateContext->OMSetRenderTargets(3, rtv, m_pDepthStencilView);
-
-    // 深度ステンシルビューをクリア
-    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-    float clearColor[4] = { 0, 0, 0, 0 };
-    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_0, clearColor);
-    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_1, clearColor);
-    m_pImmediateContext->ClearRenderTargetView(m_pOffScreenRTV_2, clearColor);
+    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 }
 
-void RendererManager::ChangeFrameBufferRT()
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】レンダーターゲットの登録
+//* 引数：1.ターゲットの数
+//* 引数：2.ターゲットの配列
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererManager::RegisterRenderTargets(UINT num, class RenderTarget *renderTargets[])
 {
-    // 描画ターゲット (深度ステンシルビューもここに入れる)
-    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+    ID3D11RenderTargetView *rtv[16]{};
 
-    float clearColor[4] = { 0, 0, 0, 0 };
-    m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
+    for (int i = 0; i < num; i++){
+        rtv[i] = renderTargets[i]->get_RTV();
+    }
 
-    // 深度ステンシルビューをクリア
-    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    if (renderTargets[0]->HasDepthStencilBuffer()) {
+        //深度バッファがある。
+        m_pImmediateContext->OMSetRenderTargets(num, rtv, m_pDepthStencilView);
+    }
+    else  {
+        //深度バッファがない。
+        m_pImmediateContext->OMSetRenderTargets(num, rtv, nullptr);
+    }
+}
 
-    ID3D11ShaderResourceView *srvs[] = { m_pDefferdSRV_0, m_pDefferdSRV_1, m_pDefferdSRV_2 };
-    m_pImmediateContext->PSSetShaderResources(3, 3, srvs);
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】レンダーターゲットのクリア
+//* 引数：1.ターゲットの数
+//* 引数：2.ターゲットの配列
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererManager::ClearRenderTargetViews(UINT num, class RenderTarget *renderTargets[])
+{
+    if (renderTargets[0]->HasDepthStencilBuffer()) {
+        // デプスステンシルバッファがあるならクリア 
+        m_pImmediateContext->ClearDepthStencilView(renderTargets[0]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+    }
+
+    for (int i = 0; i < num; i++) {
+        // ターゲットのクリア
+        m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
+    }
 }

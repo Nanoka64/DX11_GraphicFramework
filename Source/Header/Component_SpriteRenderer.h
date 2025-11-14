@@ -37,12 +37,18 @@ public:
 	void Draw(RendererManager &renderer) override;		// 描画処理
 
 
-	void set_Width();
-	void set_Height();
+	void set_Width(float w);
+	void set_Height(float h);
 	float get_Width()const;
 	float get_Height()const;
 
 private:
+
+	/// <summary>
+	/// 頂点情報の更新
+	/// </summary>
+	void VertexUpdate(RendererManager &renderer);
+
 	// ※const void*はどんな型のアドレスでも受け取れる
 	/// <summary>
 	/// 頂点バッファの作成

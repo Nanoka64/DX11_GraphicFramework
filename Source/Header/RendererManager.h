@@ -35,20 +35,13 @@ private:
     ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
 	
 
-    ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
-    ID3D11Buffer                            * m_pIndexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
-    
-    // MRT テスト用
-    ID3D11RenderTargetView *m_pOffScreenRTV_0;  // カラー
-    ID3D11RenderTargetView *m_pOffScreenRTV_1;  // 法線
-    ID3D11RenderTargetView *m_pOffScreenRTV_2;  // 深度
-    ID3D11Texture2D *m_pTexture_0;
-    ID3D11Texture2D *m_pTexture_1;
-    ID3D11Texture2D *m_pTexture_2;
-    ID3D11ShaderResourceView *m_pDefferdSRV_0;
-    ID3D11ShaderResourceView *m_pDefferdSRV_1;
-    ID3D11ShaderResourceView *m_pDefferdSRV_2;
 
+    // レンダーターゲット用
+    std::shared_ptr<class RenderTarget> m_pRenderTarget;
+
+
+    ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
+    ID3D11Buffer                            * m_pIndexBuffer;         // 頂点バッファ(実際の頂点のデータが詰まっている)
 
 
     RenderParam m_RenderParam;  // 描画パラメータ
@@ -69,7 +62,8 @@ public:
     ~RendererManager();
 
     bool Init(HWND hWnd);
-	void Draw();
+	void BeginRender();
+    void EndRender();
 	void Term();
     void Swap();    // 裏表切り替え
 private:
@@ -93,8 +87,24 @@ public:
     RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
 
-    void ChangeTestRT();
-    void ChangeFrameBufferRT();
+    /// <summary>
+    /// レンダーターゲットをフレームバッファに変更
+    /// </summary>
+    void ChangeRenderTargetFrameBuffer();
+
+
+    /// <summary>
+    /// レンダーターゲットを登録
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="renderTargets"></param>
+    void RegisterRenderTargets(UINT num, class RenderTarget *renderTargets[]);
+
+    /// <summary>
+    /// レンダーターゲットのクリア
+    /// </summary>
+    void ClearRenderTargetViews(UINT num, class RenderTarget *renderTargets[]);
+
 
     /// <summary>
     /// ビューマトリクスを設定し更新

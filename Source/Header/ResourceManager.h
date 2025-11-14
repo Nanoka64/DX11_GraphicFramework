@@ -24,6 +24,11 @@ private:
 
     // テクスチャリソース Textureの共有ポインタを持つ
     std::unordered_map<std::wstring, std::shared_ptr<Texture>> m_TexturesMap;
+
+    // レンダーターゲット用のテクスチャ
+    std::unordered_map<std::string, std::shared_ptr<Texture>> m_RTTextureMap;
+    
+    // モデルリソース
     std::unordered_map<std::string, std::shared_ptr<ModelData>> m_ModelsMap;
 
     std::weak_ptr<class RendererManager> m_pRenderer;    // 描画クラスの弱参照を持つ
@@ -40,5 +45,8 @@ public:
 
     std::shared_ptr<Texture> LoadTexture(const std::wstring &path);    // テクスチャのロード
     std::shared_ptr<ModelData> LoadModel(const char* path);    // テクスチャのロード
+
+    // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）
+    std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv);
 };
 

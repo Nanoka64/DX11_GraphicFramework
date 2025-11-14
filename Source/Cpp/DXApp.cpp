@@ -187,11 +187,14 @@ int DXApp::MainLoop()
                 // “ü—ÍXV
                 InputManager::GetInstance().Update();
 
-                // •`‰æŠÇ—ƒNƒ‰ƒX
-                m_pRenderer->Draw();
+                // •`‰æ‚ÌŠJŽn
+                m_pRenderer->BeginRender();
 
                 // ƒQ[ƒ€•`‰æ
                 m_pGameManager->Draw(*m_pRenderer);
+
+                // •`‰æ‚ÌI—¹
+                m_pRenderer->EndRender();
 
                 Debugger::Instance().EndFrame();
 

@@ -27,6 +27,9 @@ private:
 	float m_PointLightRange;
 	VECTOR3::VEC3 m_LightDir;
 
+	class RenderTarget *m_pRT_1;
+	class RenderTarget *m_pRT_2;
+
 public:
 	SceneManager();
 	~SceneManager();

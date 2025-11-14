@@ -12,15 +12,43 @@
 class Texture
 {
 private:
-    ID3D11ShaderResourceView* m_pSRV;   // テクスチャをシェーダに渡すためのもの
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV;   // テクスチャをシェーダに渡すためのもの
     std::wstring m_FilePath;
 
 public:
     Texture();
     ~Texture();
+
+    /// <summary>
+    /// テクスチャのロード
+    /// </summary>
+    /// <param name="path">ファイルパス</param>
+    /// <param name="renderer"></param>
+    /// <returns></returns>
     HRESULT Load(const std::wstring& path, class RendererManager &renderer);
+    
+    /// <summary>
+    /// 外からそのままSRVをセット
+    /// Comポインタで渡す
+    /// レンダリングターゲットなど
+    /// </summary>
+    /// <param name="pSrv"></param>
+    /// <returns></returns>
+    void set_SRV_ComPtr(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pSrv);
+
+
     void Release();
+    
+    /// <summary>
+    /// ファイルパスの取得
+    /// </summary>
+    /// <returns></returns>
     std::wstring get_FilePath()const { return m_FilePath; }
-    ID3D11ShaderResourceView* get_SRV() { return m_pSRV; }  // ビューの取得
+    
+    /// <summary>
+    /// SRビューの取得
+    /// </summary>
+    /// <returns></returns>
+    ID3D11ShaderResourceView* get_SRV() { return m_pSRV.Get(); }  
 };
 

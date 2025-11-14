@@ -40,7 +40,7 @@ HRESULT Texture::Load(const std::wstring& path, RendererManager& renderer)
 		image.GetImages(), 
 		image.GetImageCount(), 
 		metadata, 
-		&m_pSRV
+		m_pSRV.GetAddressOf()
 	);
 
 	if (FAILED(hr))return hr;
@@ -51,7 +51,14 @@ HRESULT Texture::Load(const std::wstring& path, RendererManager& renderer)
 }
 
 
+void Texture::set_SRV_ComPtr(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& pSrv)
+{
+	m_pSRV = pSrv;
+}
+
+
 void Texture::Release()
 {
 	SAFE_RELEASE(m_pSRV);
 }
+

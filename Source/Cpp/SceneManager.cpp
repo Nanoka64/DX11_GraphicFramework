@@ -17,6 +17,8 @@
 #include "MeshFactory.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
+#include "Component_SpriteRenderer.h"
+#include "RenderTarget.h"
 
 using namespace VECTOR4;
 using namespace VECTOR3;
@@ -223,13 +225,7 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
         {
-            CreateSpriteInfo sprite;
-            sprite.pRenderer = &renderer;
-            sprite.ObjTag = "RenderTarget";
-            sprite.pTexture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-            sprite.Width  = 0.1f;
-            sprite.Height = 0.1f;
-            auto obj = MeshFactory::CreateSprite(sprite);
+
         }
 
         //{
@@ -300,6 +296,32 @@ bool SceneManager::Init(RendererManager &renderer)
 
     // 参照を持たせる
     m_pCamera = GameObjectManager::Instance().get_ObjectByTag("Camera");
+
+
+
+
+    m_pRT_1 = new RenderTarget();
+    // レンダリングターゲットの生成
+    m_pRT_1->Create(
+        renderer,
+        1920,
+        1280,
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+
+    /* スプライト */
+    CreateSpriteInfo sprite;
+    sprite.pRenderer = &renderer;
+    sprite.ObjTag = "RenderTarget";
+    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pRT_1->get_SRV_ComPtr());
+    sprite.Width  = 2.0f;
+    sprite.Height = 2.0f;
+    sprite.IsActive = false;    // ２重更新されてしまうのでマネージャ側では何もしないように「
+    auto obj = MeshFactory::CreateSprite(sprite);
+
     return true;
 }
 
@@ -320,6 +342,8 @@ void SceneManager::Update(RendererManager& renderer)
     //{
     //    m_CrntSceneState = newState;
     //}
+
+
 
     static float a = 0.f;
     a += 0.01f;
@@ -351,7 +375,6 @@ void SceneManager::Update(RendererManager& renderer)
     auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
     rad = sphereObj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, a * 30, 0.0f);
-
 
     //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
     //auto tf = skyObj.lock()->get_Component<Transform>();
@@ -388,10 +411,23 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
-    renderer.ChangeFrameBufferRT();
+    RenderTarget *rt[] ={
+        m_pRT_1 
+    };
+
+    // レンダリングターゲットの設定とクリア
+    renderer.RegisterRenderTargets(ARRAYSIZE(rt), rt);
+    renderer.ClearRenderTargetViews(ARRAYSIZE(rt), rt);
 
     // オブジェクト描画
     GameObjectManager::Instance().ObjectRender(renderer);
+
+    // レンダリングターゲットをフレームバッファに変更
+    renderer.ChangeRenderTargetFrameBuffer();
+
+    auto renderSprite = GameObjectManager::Instance().get_ObjectByTag("RenderTarget").lock()->get_Component<SpriteRenderer>();
+    renderSprite->Draw(renderer);
+
 
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
@@ -400,8 +436,6 @@ void SceneManager::Draw(RendererManager& renderer)
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
-
-
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
 }
