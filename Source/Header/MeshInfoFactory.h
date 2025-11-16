@@ -1,6 +1,5 @@
 #pragma once
 
-
 /*
 *  ƒƒbƒVƒ…î•ñ
 */
@@ -28,6 +27,5 @@ public:
 	static MeshInfo *CreateTorusInfo();
 
 	static MeshInfo* CreateSpriteQuadInfo(float w, float h);
-
-
+	static MeshInfo* CreateRTSpriteInfo(float w, float h);
 };

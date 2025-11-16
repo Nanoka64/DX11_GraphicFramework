@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "Component_IMeshResource.h"
+#include "Component_SpriteRenderer.h"
 
 
 // 入力マテリアル情報
@@ -65,6 +66,7 @@ struct CreateUtilityMeshInfo
     {};
 };
 
+
 /// <summary>
 /// スプライト生成情報
 /// </summary>
@@ -74,6 +76,7 @@ struct CreateSpriteInfo
     std::string ObjTag;                 // オブジェクトのタグ
     bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
     std::weak_ptr<Texture> pTexture;    // テクスチャ
+    SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
 
     // 幅
     float Width;
@@ -83,9 +86,11 @@ struct CreateSpriteInfo
         pRenderer(nullptr),
         IsActive(true),
         Width(0.0f),
-        Height(0.0f)
+        Height(0.0f),
+        Type(SPRITE_USAGE_TYPE::NORMAL)
     {};
 };
+
 
 class MeshFactory : public Object
 {

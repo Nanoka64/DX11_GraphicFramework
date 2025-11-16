@@ -1,6 +1,6 @@
 #pragma once
 #include "IComponent.h"
-#include "Mesh.h"
+#include "MeshInfoFactory.h"
 
 //* =========================================================================
 //* - @:UTILITY_MESH_TYPE—ñ‹“‘Ì - */

@@ -29,6 +29,7 @@ private:
 
 	class RenderTarget *m_pRT_1;
 	class RenderTarget *m_pRT_2;
+	class RenderTarget *m_pRT_3;
 
 public:
 	SceneManager();

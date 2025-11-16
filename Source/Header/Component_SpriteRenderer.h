@@ -1,6 +1,18 @@
 #pragma once
 #include "IComponent.h"
-#include "Mesh.h"
+#include "MeshInfoFactory.h"
+
+
+/// <summary>
+/// スプライト種別
+/// </summary>
+enum class SPRITE_USAGE_TYPE
+{
+	NORMAL,			// 通常
+	RENDER_TARGET,	// レンダーターゲット用
+};
+
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -30,7 +42,7 @@ public:
 	SpriteRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SpriteRenderer();
 
-	bool Setup(RendererManager &renderer, std::weak_ptr<class Texture> pTex, float w, float h);
+	bool Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, std::weak_ptr<class Texture> pTex, float w, float h);
 
 	void Init(RendererManager &renderer) override;		// 初期化
 	void Update(RendererManager &renderer) override;	// 更新処理

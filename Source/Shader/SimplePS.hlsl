@@ -27,7 +27,7 @@ struct PSOutPut
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-float4 SimplePSMain(PS_SimpleLightingInput input) : SV_Target0
+PSOutPut SimplePSMain(PS_SimpleLightingInput input) : SV_Target0
 {
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
@@ -36,13 +36,12 @@ float4 SimplePSMain(PS_SimpleLightingInput input) : SV_Target0
     
     finalCol = diffuseMap * DiffuseColor;
     
-    
     // テスト出力
     PSOutPut output;
     output.Color   = finalCol;
     output.Normal  = float4(input.Normal.xyz, 1.0);
     output.Depth.x = input.WPos.z;
-    //return output;
+    return output;
     
     
     // 法線をTBN空間 ワールドスペースに変換して取得
@@ -66,5 +65,5 @@ float4 SimplePSMain(PS_SimpleLightingInput input) : SV_Target0
     // 最終色
     finalCol.xyz *= lighting;
     
-    return float4(finalCol);
+    //return float4(finalCol);
 }

@@ -134,7 +134,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
             mat[0].SpecularPower = 16.0f;
-            mat[0].SpecularColor = VEC4(0.0f, 0.0f, 1.0f, 1.0f);
+            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -248,7 +248,27 @@ bool SceneManager::Init(RendererManager &renderer)
         //    obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
         //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
         //}      
-        
+        {
+            // SPHERE
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+            mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+            mesh.ObjTag = "sphere";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
+            obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
+        }        
         {
             // SPHERE
             MATERIAL* mat = new MATERIAL;
@@ -271,27 +291,7 @@ bool SceneManager::Init(RendererManager &renderer)
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }       
         
-        {
-            // SPHERE
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-            mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.ObjTag = "sphere";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
-
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
-            obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
-        }
     }
 
     // 参照を持たせる
@@ -304,8 +304,33 @@ bool SceneManager::Init(RendererManager &renderer)
     // レンダリングターゲットの生成
     m_pRT_1->Create(
         renderer,
-        1920,
-        1280,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+
+
+    m_pRT_2 = new RenderTarget();
+    // レンダリングターゲットの生成
+    m_pRT_2->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    
+    m_pRT_3 = new RenderTarget();
+    // レンダリングターゲットの生成
+    m_pRT_3->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
         1,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -317,10 +342,24 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.pRenderer = &renderer;
     sprite.ObjTag = "RenderTarget";
     sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pRT_1->get_SRV_ComPtr());
-    sprite.Width  = 2.0f;
-    sprite.Height = 2.0f;
-    sprite.IsActive = false;    // ２重更新されてしまうのでマネージャ側では何もしないように「
-    auto obj = MeshFactory::CreateSprite(sprite);
+    sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    sprite.Width  = 1.0f;
+    sprite.Height = 1.0f;
+    sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
+    auto obj = MeshFactory::CreateSprite(sprite);    
+    
+    sprite.ObjTag = "RenderTarget2";
+    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pRT_2->get_SRV_ComPtr());
+    obj = MeshFactory::CreateSprite(sprite);    
+    
+    sprite.ObjTag = "RenderTarget3";
+    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pRT_3->get_SRV_ComPtr());
+    obj = MeshFactory::CreateSprite(sprite);    
+
+
+    sprite.ObjTag = "RenderTarget4";
+    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pRT_1->get_SRV_ComPtr());
+    obj = MeshFactory::CreateSprite(sprite);
 
     return true;
 }
@@ -412,7 +451,9 @@ void SceneManager::Update(RendererManager& renderer)
 void SceneManager::Draw(RendererManager& renderer)
 {
     RenderTarget *rt[] ={
-        m_pRT_1 
+        m_pRT_1 ,
+        m_pRT_2,
+        m_pRT_3
     };
 
     // レンダリングターゲットの設定とクリア
@@ -425,9 +466,21 @@ void SceneManager::Draw(RendererManager& renderer)
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
-    auto renderSprite = GameObjectManager::Instance().get_ObjectByTag("RenderTarget").lock()->get_Component<SpriteRenderer>();
-    renderSprite->Draw(renderer);
+    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::DEFFERD);
+    auto srv = m_pRT_1->get_SRV();
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 1, &srv);
 
+
+    //// ターゲット描画
+    //auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget").lock();
+    //auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
+    //auto renderSpriteObj3 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget3").lock();
+    //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
+    //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
+    //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
+    //sprite->Draw(renderer);
+    //sprite2->Draw(renderer);
+    //sprite3->Draw(renderer);
 
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();

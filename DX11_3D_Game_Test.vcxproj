@@ -198,7 +198,7 @@
     <ClInclude Include="Source\Header\InputManager.h" />
     <ClInclude Include="Source\Header\Component_IMeshResource.h" />
     <ClInclude Include="Source\Header\Component_Light.h" />
-    <ClInclude Include="Source\Header\Mesh.h" />
+    <ClInclude Include="Source\Header\MeshInfoFactory.h" />
     <ClInclude Include="Source\Header\ModelMesh.h" />
     <ClInclude Include="Source\Header\MyStruct.h" />
     <ClInclude Include="Source\Header\GameObjectManager.h" />
@@ -334,7 +334,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Light.cpp" />
-    <ClCompile Include="Source\Cpp\Mesh.cpp">
+    <ClCompile Include="Source\Cpp\MeshInfoFactory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Mesh.h"
+#include "MeshInfoFactory.h"
 #include "Window.h"
 
 using namespace BASE_VERTEX;
@@ -152,8 +152,8 @@ MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
 	MeshInfo* meshInfo = new MeshInfo();
 
 	// 分割数（増やすと滑らかになる）
-	const UINT stackCount = 20; // 緯度分割
-	const UINT sliceCount = 20; // 経度分割
+	const UINT stackCount = 24; // 緯度分割
+	const UINT sliceCount = 24; // 経度分割
 	const float radius = 1.0f;
 
 	// 頂点数
@@ -251,6 +251,66 @@ MeshInfo* MeshInfoFactory::CreateSpriteQuadInfo(float w, float h)
 	meshInfo->pIndices = new WORD[meshInfo->NumIndex]{
 		0,1,2,
 		1,3,2
+	};
+
+	// マテリアル情報設定
+	meshInfo->pMaterials = nullptr;
+	meshInfo->NumMaterial = 0;
+
+	return meshInfo;
+}
+
+
+// ----------------------------------------------------------------------------------------------------------------------
+//       * MeshFactory Class - レンダーターゲット用スプライトクアッドの作成- *
+// ----------------------------------------------------------------------------------------------------------------------
+MeshInfo* MeshInfoFactory::CreateRTSpriteInfo(float w, float h)
+{
+	MeshInfo* meshInfo = new MeshInfo();
+
+	// 頂点数
+	meshInfo->NumVertex = 4;
+
+	// 中心位置
+	VEC2 centerVec = VEC2(0.0f, 0.0f);
+	float hw = w;
+	float hh = h;
+
+
+	/* テクスチャ座標では
+	* 上：0.0
+	* 下：1.0
+	* だけど、 3D座標系では反対の為、レンダーターゲットにする場合はV座標を反転させる
+	*/
+
+
+	// 画面分割的なのができた
+	
+	//int bunkatu = 6;
+	// 頂点情報
+	//meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	//	// 座標												// 法線                  // カラー                      // uv
+	//	{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f - bunkatu + 1,	1.0f + bunkatu)}, // 8 左上
+	//	{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f + bunkatu,		1.0f + bunkatu)}, // 9 右上
+	//	{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f - bunkatu + 1,	0.0f - bunkatu + 1)}, // 10左下
+	//	{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f + bunkatu,		0.0f - bunkatu + 1)}, // 11右下
+	//};
+		
+	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+		// 座標												// 法線                  // カラー                      // uv
+		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f,1.0f)}, // 8 左上
+		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f,1.0f)}, // 9 右上
+		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f,0.0f)}, // 10左下
+		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f,0.0f)}, // 11右下
+	};
+
+	// インデックス数
+	meshInfo->NumIndex = 6;
+
+	// インデックス情報
+	meshInfo->pIndices = new WORD[meshInfo->NumIndex]{
+		0,2,1,
+		1,2,3
 	};
 
 	// マテリアル情報設定

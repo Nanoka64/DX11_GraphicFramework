@@ -2,7 +2,7 @@
 #include "Component_SpriteRenderer.h"
 #include "GameObject.h"
 #include "RendererManager.h"
-#include "Component_IMeshResource.h"
+#include "MeshInfoFactory.h"
 #include "Texture.h"
 #include "MeshFactory.h"
 
@@ -105,7 +105,7 @@ void SpriteRenderer::Draw(RendererManager &renderer)
 //* 引数：4. 高さ
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool SpriteRenderer::Setup(RendererManager &renderer, std::weak_ptr<class Texture> pTex, float w, float h)
+bool SpriteRenderer::Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, std::weak_ptr<class Texture> pTex, float w, float h)
 {
 	auto pDevice = renderer.get_Device();
 
@@ -114,7 +114,17 @@ bool SpriteRenderer::Setup(RendererManager &renderer, std::weak_ptr<class Textur
 	m_pTexture = pTex;
 
 	// クアッド生成
-	m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(w,h);
+	switch (type)
+	{
+	case SPRITE_USAGE_TYPE::NORMAL:
+		m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(w, h);
+		break;
+	case SPRITE_USAGE_TYPE::RENDER_TARGET:
+		m_pMeshInfo = MeshInfoFactory::CreateRTSpriteInfo(w, h);
+		break;
+	default:
+		break;
+	}
 
 	if (m_pMeshInfo == nullptr){
 		assert(false);
@@ -140,8 +150,8 @@ void SpriteRenderer::VertexUpdate(RendererManager& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 
-	float hw = m_Width * 0.5f;
-	float hh = m_Height * 0.5f;
+	float hw = m_Width;
+	float hh = m_Height;
 	VEC3 centerPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 
 	m_pMeshInfo->pVertices[0].pos = VEC3(centerPos.x - hw, centerPos.y - hh,  0.0f);

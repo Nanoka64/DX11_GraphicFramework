@@ -115,9 +115,10 @@ bool ShaderManager::CreateShader(SHADER_TYPE type)
 /* ---------------------------------------------------------------------------------------*/
 void ShaderManager::DeviceToSetShader(SHADER_TYPE type)
 {
-    // 指定シェーダを探す
     auto begin = m_ShaderList.begin();
     auto end = m_ShaderList.end();
+
+    // 指定シェーダを探す
     auto shader = std::find_if(begin, end,
         [type](const ShaderInfo& val)
         {

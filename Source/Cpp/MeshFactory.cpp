@@ -127,7 +127,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteInfo
     auto sprite = pObj.lock()->add_Component<SpriteRenderer>();
 
     // リソースのセットアップ
-    if (!sprite->Setup(*info.pRenderer, info.pTexture, info.Width, info.Height))return {};
+    if (!sprite->Setup(*info.pRenderer, info.Type, info.pTexture, info.Width, info.Height))return {};
 
     return pObj;
 }

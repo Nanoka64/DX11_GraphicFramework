@@ -13,7 +13,8 @@ RenderTarget::RenderTarget():
     m_Height(0),
     m_pRenderTargetTexture(nullptr),
     m_pRendertargetView(nullptr),
-    m_pShaderResouceView(nullptr)
+    m_pShaderResouceView(nullptr),
+    m_ClearColor{ 0.0f,0.0f,0.0f,0.0f }
 {
 }
 
@@ -119,6 +120,46 @@ bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, int w, i
 //*----------------------------------------------------------------------------------------
 bool RenderTarget::CreateDepthStencil(RendererManager &renderer, float w, float h, DXGI_FORMAT format)
 {
+    auto pDevice = renderer.get_Device();
+    HRESULT hr = S_OK;
+
+    // 深度ステンシル用テクスチャリソース作成
+    D3D11_TEXTURE2D_DESC descDepth;                     // テクスチャの情報を入れる構造体
+    ZeroMemory(&descDepth, sizeof(descDepth));          // メモリを0で埋める
+    descDepth.Width = w;                                // バックバッファと同じサイズ
+    descDepth.Height = h;                               //...
+    descDepth.MipLevels = 1;                            // LOD処理の一つ0にすると限界まで作成する
+    descDepth.ArraySize = 1;                            // 基本的には１(キューブマップとかやる場合は使う)
+    descDepth.SampleDesc.Count = 1;                     // MSAA(マルチサンプリングエイリアス)の設定
+    descDepth.SampleDesc.Quality = 0;                   // サンプリングのモード切替え(ハードウェア依存) 基本的に 0 
+    descDepth.Format = format;                          // デプスバッファを24分割(0.0～1.0) 32bitのうちデプス24、ステンシル8
+
+    // D3D11_USAGE_DEFAULT = 0,     // GPUからRead,Write
+    // D3D11_USAGE_IMMUTABLE = 1,   // GPUからRead
+    // D3D11_USAGE_DYNAMIC = 2,     // CPUからWrite,GPUからRead
+    // D3D11_USAGE_STAGING = 3      // CPUからRead,Write
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    // D3D11_CPU_ACCESS_READ
+    // D3D11_CPU_ACCESS_WRITE
+    descDepth.CPUAccessFlags = 0;   // ＣＰＵの読み書き
+    descDepth.MiscFlags = 0;   // 基本的に 0 (特殊なフラグ)
+
+    // 作成
+    hr = pDevice->CreateTexture2D(&descDepth, NULL, m_pDepthStencilTexture.GetAddressOf());
+    if (FAILED(hr)) return false;
+
+    // 深度ステンシルビュー作成
+    D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+    ZeroMemory(&descDSV, sizeof(descDSV));
+    descDSV.Format              = descDepth.Format;              // 上で設定したものを入れる
+    descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+    descDSV.Texture2D.MipSlice  = 0;
+
+    // 作成
+    hr = pDevice->CreateDepthStencilView(m_pDepthStencilTexture.Get(), &descDSV, m_pDepthStencilView.GetAddressOf());
+    if (FAILED(hr))return false;
+
     return true;
 }
 
