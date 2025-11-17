@@ -38,7 +38,7 @@ RenderTarget::~RenderTarget()
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::Create(RendererManager &renderer, int w, int h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
+bool RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
 
@@ -77,7 +77,7 @@ bool RenderTarget::Create(RendererManager &renderer, int w, int h, int mipLevel,
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, int w, int h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
+bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;
@@ -118,7 +118,7 @@ bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, int w, i
 //* 引数：4.テクスチャのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::CreateDepthStencil(RendererManager &renderer, float w, float h, DXGI_FORMAT format)
+bool RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT h, DXGI_FORMAT format)
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;

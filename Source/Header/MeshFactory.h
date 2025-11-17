@@ -75,8 +75,10 @@ struct CreateSpriteInfo
     RendererManager *pRenderer;         // 描画
     std::string ObjTag;                 // オブジェクトのタグ
     bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
-    std::weak_ptr<Texture> pTexture;    // テクスチャ
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
+    SHADER_TYPE ShaderType;             // 使用するシェーダの種類
+
+    std::map<int, std::weak_ptr<class Texture>> pTextureMap;    // テクスチャマップ
 
     // 幅
     float Width;
@@ -87,7 +89,8 @@ struct CreateSpriteInfo
         IsActive(true),
         Width(0.0f),
         Height(0.0f),
-        Type(SPRITE_USAGE_TYPE::NORMAL)
+        Type(SPRITE_USAGE_TYPE::NORMAL),
+        ShaderType(SHADER_TYPE::SPRITE)
     {};
 };
 

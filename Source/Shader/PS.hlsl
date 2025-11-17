@@ -27,18 +27,20 @@ struct PS_INPUT
     float3 BiNorm   : BINORMAL; // 従ベクトル
 };
 
-struct PS_OUT
+
+//ピクセルシェーダーの出力構造体
+struct PSOutPut
 {
-    float test0 : SV_Target0;
-    float test1 : SV_Target1;
-    float test2 : SV_Target2;
-    float test3 : SV_Target3;
+    float4 Albedo : SV_Target0;
+    float4 Normal : SV_Target1;
+    float Depth : SV_Target2;
 };
+
 
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定しないといけない(描画ターゲットごとに末尾変更0,1,2...)
+PSOutPut PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定しないといけない(描画ターゲットごとに末尾変更0,1,2...)
 {
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
@@ -50,34 +52,42 @@ float4 PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定
     
     // ディフューズマップとcpp側で設定したカラーを足す
     finalCol = diffuseMap * DiffuseColor;
-    
-    // 法線をTBN空間 ワールドスペースに変換して取得
     float3 normal = GetNorm(normalMap, input.Tan, input.BiNorm, input.Normal);
     
-    //finalCol.xyz = normal.xyz;
-    //return finalCol;
+    // テスト出力
+    PSOutPut output;
+    output.Albedo = finalCol;
+    output.Normal = float4(normal, 1.0);
+    output.Depth = input.WPos.z;
+    return output;
+    
+    //// 法線をTBN空間 ワールドスペースに変換して取得
+    //float3 normal = GetNorm(normalMap, input.Tan, input.BiNorm, input.Normal);
+    
+    ////finalCol.xyz = normal.xyz;
+    ////return finalCol;
 
-    float3 specularCol = SpecularColor.xyz * cb_PointLightData.SpecularColor;
+    //float3 specularCol = SpecularColor.xyz * cb_PointLightData.SpecularColor;
     
-    // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, specularCol, SpecularPower, input.WPos.xyz, normal);
+    //// ディレクションライト計算
+    //float3 dirLig = DirectionLightCalc(cb_DirLightData, specularCol, SpecularPower, input.WPos.xyz, normal);
     
-    // ポイントライト計算
-    float3 pointLig = PointLightCalc(cb_PointLightData, specularCol, SpecularPower, input.WPos.xyz, normal);
+    //// ポイントライト計算
+    //float3 pointLig = PointLightCalc(cb_PointLightData, specularCol, SpecularPower, input.WPos.xyz, normal);
     
-    // 天球ライト
-    float3 hemiLig = HemisphereLightCalc(normal);
+    //// 天球ライト
+    //float3 hemiLig = HemisphereLightCalc(normal);
 
-    // ディレクションライト + ポイントライト + 天球 + アンビエント
-    float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
+    //// ディレクションライト + ポイントライト + 天球 + アンビエント
+    //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
     
-    // 最終色
-    finalCol.xyz *= lighting;
+    //// 最終色
+    //finalCol.xyz *= lighting;
     
     //finalCol = c * diffuseColor;    // 頂点カラーとディフューズを乗算
     //return float4(c);               // 頂点カラー
     //return float4(t, 1, 1);         // UVカラー
-    return saturate(finalCol);        // テクスチャカラー
+    //return saturate(finalCol);        // テクスチャカラー
 }
 
 

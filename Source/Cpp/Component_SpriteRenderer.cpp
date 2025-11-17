@@ -71,18 +71,18 @@ void SpriteRenderer::Draw(RendererManager &renderer)
     auto pContext = renderer.get_DeviceContext();
 
     // シェーダセット ==========================
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::SPRITE);
-
+    ShaderManager::Instance().DeviceToSetShader(m_ShaderType);
+	
 	// 頂点情報の更新
 	VertexUpdate(renderer);
 
     // テクスチャセット ==========================
-    ID3D11ShaderResourceView *textureSRV = nullptr;
-    if (auto tex = m_pTexture.lock()) {
-        textureSRV = tex.get()->get_SRV();
-    }
-    pContext->PSSetShaderResources(0, 1, &textureSRV);
-
+	for (auto it = m_pTextureMap.begin(); it != m_pTextureMap.end(); it++)
+	{
+		int slot = it->first;
+		ID3D11ShaderResourceView *srv = it->second.lock()->get_SRV();
+		pContext->PSSetShaderResources(slot, 1, &srv);
+	}
 
     // 頂点＆インデックスバッファ設定 ==========================
     UINT stride = sizeof(VERTEX);
@@ -105,13 +105,13 @@ void SpriteRenderer::Draw(RendererManager &renderer)
 //* 引数：4. 高さ
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool SpriteRenderer::Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, std::weak_ptr<class Texture> pTex, float w, float h)
+bool SpriteRenderer::Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> &pTexMap, float w, float h)
 {
 	auto pDevice = renderer.get_Device();
 
 	m_Width = w;
 	m_Height = h;
-	m_pTexture = pTex;
+	m_pTextureMap = pTexMap;
 
 	// クアッド生成
 	switch (type)
@@ -286,5 +286,17 @@ float SpriteRenderer::get_Width()const
 float SpriteRenderer::get_Height()const
 {
 	return m_Height;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:SpriteRenderer Class 
+//*【?】スプライトの縦幅ゲット
+//* 引数：なし
+//* 返値：縦幅
+//*----------------------------------------------------------------------------------------
+void SpriteRenderer::set_ShaderType(SHADER_TYPE type)
+{
+	m_ShaderType = type;
 }
 

@@ -81,7 +81,7 @@ public:
 	/// オブジェクト数取得
 	/// </summary>
 	/// <returns></returns>
-	int get_ObjectNum()const;
+	size_t get_ObjectNum()const;
 
 
 	/// <summary>

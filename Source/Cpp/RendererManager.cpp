@@ -116,7 +116,7 @@ void RendererManager::BeginRender()
     // フレームバッファのレンダリングターゲットとデプスステンシルのクリア
     FLOAT clearColor[] = { 1.0f,1.0f,1.0f,1.0f };
     m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
-    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+    m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
 
     // OMにブレンドステートオブジェクトを設定
@@ -680,7 +680,7 @@ void RendererManager::RegisterRenderTargets(UINT num, class RenderTarget *render
 {
     ID3D11RenderTargetView *rtv[16]{};
 
-    for (int i = 0; i < num; i++){
+    for (UINT i = 0; i < num; i++){
         rtv[i] = renderTargets[i]->get_RTV();
     }
 
@@ -706,10 +706,10 @@ void RendererManager::ClearRenderTargetViews(UINT num, class RenderTarget *rende
 {
     if (renderTargets[0]->HasDepthStencilBuffer()) {
         // デプスステンシルバッファがあるならクリア 
-        m_pImmediateContext->ClearDepthStencilView(renderTargets[0]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+        m_pImmediateContext->ClearDepthStencilView(renderTargets[0]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
     }
 
-    for (int i = 0; i < num; i++) {
+    for (UINT i = 0; i < num; i++) {
         // ターゲットのクリア
         m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
     }

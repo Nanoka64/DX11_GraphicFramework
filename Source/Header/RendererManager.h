@@ -86,8 +86,8 @@ public:
     ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
     RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
-    float get_ScreenWidth()const { return m_ScreenWidht; };
-    float get_ScreenHeight()const { return m_Screenheight; };
+    UINT get_ScreenWidth()const { return m_ScreenWidht; };
+    UINT get_ScreenHeight()const { return m_Screenheight; };
 
 
     /// <summary>

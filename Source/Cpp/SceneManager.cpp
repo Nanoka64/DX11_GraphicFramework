@@ -218,36 +218,33 @@ bool SceneManager::Init(RendererManager &renderer)
                 mesh.MaterialData->pMat = mat;
 
                 auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Scale(1000, 10, 1000);
-                obj.lock()->get_Transform().lock()->set_Pos((i * 1000), -100, 0);
-                obj.lock()->get_Transform().lock()->set_RotateToDeg(0, 0, (i * 90));
+                obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 10.0f, 1000.0f);
+                obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), -100.0f, 0.0f);
+                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, (i * 90.0f));
             }
         }
 
         {
+            // CUBE
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
 
-        }
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "Cubu";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
 
-        //{
-        //    // CUBE
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 0.5f;
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
+        }      
 
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
-        //    mesh.ObjTag = "Cubu";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
-
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
-        //}      
         {
             // SPHERE
             MATERIAL* mat = new MATERIAL;
@@ -290,8 +287,6 @@ bool SceneManager::Init(RendererManager &renderer)
             obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }       
-        
-
     }
 
     // 参照を持たせる
@@ -299,10 +294,10 @@ bool SceneManager::Init(RendererManager &renderer)
 
 
 
-
-    m_pRT_1 = new RenderTarget();
+    // ****************************************************************
+    m_pAlbedo_RT = new RenderTarget();
     // レンダリングターゲットの生成
-    m_pRT_1->Create(
+    m_pAlbedo_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
@@ -313,9 +308,10 @@ bool SceneManager::Init(RendererManager &renderer)
     );
 
 
-    m_pRT_2 = new RenderTarget();
+    // ****************************************************************
+    m_pNormal_RT = new RenderTarget();
     // レンダリングターゲットの生成
-    m_pRT_2->Create(
+    m_pNormal_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
@@ -325,41 +321,75 @@ bool SceneManager::Init(RendererManager &renderer)
         DXGI_FORMAT_D32_FLOAT
     );
     
-    m_pRT_3 = new RenderTarget();
+    // ****************************************************************
+    m_pDepth_RT = new RenderTarget();
     // レンダリングターゲットの生成
-    m_pRT_3->Create(
+    m_pDepth_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_R32_FLOAT,
+        DXGI_FORMAT_UNKNOWN
     );
 
-    /* スプライト */
+
+    //========================================================================================
+    //
+    /* レンダリングターゲット用スプライト */
+    //
+    //========================================================================================
+    /*************************************
+    * アルベド用
+    *************************************/
     CreateSpriteInfo sprite;
     sprite.pRenderer = &renderer;
-    sprite.ObjTag = "RenderTarget";
-    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pRT_1->get_SRV_ComPtr());
     sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    sprite.Width  = 1.0f;
-    sprite.Height = 1.0f;
+    sprite.ShaderType = SHADER_TYPE::SPRITE;
     sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
+
+
+    sprite.ObjTag = "RenderTarget1";
+    sprite.Width = 0.5f;
+    sprite.Height = 0.5f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     auto obj = MeshFactory::CreateSprite(sprite);    
-    
+    obj.lock()->get_Transform().lock()->set_Pos(0.5, 0.5, 0.0);
+    sprite.pTextureMap.clear();
+
+    /*************************************
+    * 法線用
+    *************************************/
     sprite.ObjTag = "RenderTarget2";
-    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pRT_2->get_SRV_ComPtr());
+    sprite.Width = 0.5;
+    sprite.Height = 0.5f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     obj = MeshFactory::CreateSprite(sprite);    
-    
+    obj.lock()->get_Transform().lock()->set_Pos(-0.5, 0.5, 0.0);
+    sprite.pTextureMap.clear();
+
+    /*************************************
+    * Z値用
+    *************************************/
     sprite.ObjTag = "RenderTarget3";
-    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pRT_3->get_SRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_SRV_ComPtr());
     obj = MeshFactory::CreateSprite(sprite);    
+    sprite.pTextureMap.clear();
 
-
-    sprite.ObjTag = "RenderTarget4";
-    sprite.pTexture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pRT_1->get_SRV_ComPtr());
+    /*************************************
+    * 最終出力用
+    *************************************/
+    sprite.ObjTag = "DefferdRenderTarget";
+    sprite.Width = 0.5;
+    sprite.Height = 0.5f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_SRV_ComPtr());
+    sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
+    obj.lock()->get_Transform().lock()->set_Pos(0.0, -0.5, 0.0);
+    sprite.pTextureMap.clear();    
 
     return true;
 }
@@ -381,8 +411,6 @@ void SceneManager::Update(RendererManager& renderer)
     //{
     //    m_CrntSceneState = newState;
     //}
-
-
 
     static float a = 0.f;
     a += 0.01f;
@@ -415,9 +443,9 @@ void SceneManager::Update(RendererManager& renderer)
     rad = sphereObj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, a * 30, 0.0f);
 
-    //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
-    //auto tf = skyObj.lock()->get_Component<Transform>();
-    //tf->set_Pos(camPos);
+    auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
+    auto tf = skyObj.lock()->get_Component<Transform>();
+    tf->set_Pos(camPos);
 
 
     Debugger::Instance().BeginDebugWindow("Light");
@@ -450,15 +478,15 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
-    RenderTarget *rt[] ={
-        m_pRT_1 ,
-        m_pRT_2,
-        m_pRT_3
+    RenderTarget *gbuffer[] ={
+        m_pAlbedo_RT ,
+        m_pNormal_RT,
+        m_pDepth_RT
     };
 
     // レンダリングターゲットの設定とクリア
-    renderer.RegisterRenderTargets(ARRAYSIZE(rt), rt);
-    renderer.ClearRenderTargetViews(ARRAYSIZE(rt), rt);
+    renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
+    renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
 
     // オブジェクト描画
     GameObjectManager::Instance().ObjectRender(renderer);
@@ -466,21 +494,24 @@ void SceneManager::Draw(RendererManager& renderer)
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::DEFFERD);
-    auto srv = m_pRT_1->get_SRV();
-    renderer.get_DeviceContext()->PSSetShaderResources(0, 1, &srv);
-
-
-    //// ターゲット描画
-    //auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget").lock();
-    //auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
-    //auto renderSpriteObj3 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget3").lock();
-    //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
-    //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
-    //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
-    //sprite->Draw(renderer);
-    //sprite2->Draw(renderer);
+    // ターゲット描画
+    auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget1").lock();
+    auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
+    auto renderSpriteObj3 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget3").lock();
+    auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
+    auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
+    auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
+    sprite->Draw(renderer);
+    sprite2->Draw(renderer);
     //sprite3->Draw(renderer);
+    
+    // ディファードスプライト
+    auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();
+    auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
+    defferd->Draw(renderer);
+
+    //// シーンの描画
+    //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
 
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
@@ -489,8 +520,6 @@ void SceneManager::Draw(RendererManager& renderer)
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
-    //// シーンの描画
-    //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
 }
 
 

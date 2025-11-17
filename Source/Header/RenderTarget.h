@@ -22,8 +22,8 @@ public:
 
     bool Create(
         RendererManager& renderer,
-        int w,
-        int h,
+        UINT w,
+        UINT h,
         int mipLevel,
         int arraySize,
         DXGI_FORMAT colorFormat,
@@ -79,8 +79,8 @@ private:
     /// <returns></returns>
     bool CreateRenderTargetTexture(
         RendererManager &renderer,
-        int w,
-        int h,
+        UINT w,
+        UINT h,
         int mipLevel,
         int arraySize,
         DXGI_FORMAT format,
@@ -98,8 +98,8 @@ private:
     /// <returns></returns>
     bool CreateDepthStencil(
         RendererManager &renderer,
-        float w,
-        float h,
+        UINT w,
+        UINT h,
         DXGI_FORMAT format
     );
 

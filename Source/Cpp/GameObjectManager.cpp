@@ -241,7 +241,7 @@ std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(cons
 //* 引数：なし
 //* 返値：オブジェクト数
 //*----------------------------------------------------------------------------------------
-int GameObjectManager::get_ObjectNum()const
+size_t GameObjectManager::get_ObjectNum()const
 {
     return m_pObjectList.size();
 }

@@ -55,7 +55,7 @@ void SkinnedMeshAnimator::Draw(RendererManager& renderer)
     Debugger::Instance().DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
     Debugger::Instance().DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
     Debugger::Instance().EndDebugWindow();
-
+    
     m_AnimProcTime += 0.023f;
     BoneTransformsUpdate(renderer, m_AnimProcTime);
 }
@@ -323,7 +323,7 @@ void SkinnedMeshAnimator::CalcInterpolatedPosition(DirectX::XMMATRIX &out, float
     assert(factor >= 0.0f && factor <= 1.0f);
 
     // 線形補間
-    VEC3 tempVec = VEC3::Lerp(startPos, endPos, factor);
+    VEC3 tempVec = VEC3::Lerp(startPos, endPos, static_cast<float>(factor));
 
     //平行移動行列を作成する
     out = XMMatrixTranslation(tempVec.x, tempVec.y, tempVec.z);
@@ -352,7 +352,7 @@ void SkinnedMeshAnimator::CalcInterpolatedRotation(DirectX::XMMATRIX &out, float
     assert(factor >= 0.0f && factor <= 1.0f);
 
     aiQuaternion res{};
-    aiQuaternion::Interpolate(res, startRot, endRot, factor);
+    aiQuaternion::Interpolate(res, startRot, endRot, static_cast<float>(factor));
     res.Normalize();
 
     // XMVECTORへ変換
@@ -384,7 +384,7 @@ void SkinnedMeshAnimator::CalcInterpolatedScaling(DirectX::XMMATRIX &out, float 
     assert(factor >= 0.0f && factor <= 1.0f);
 
     // 線形補間
-    VEC3 tempVec = VEC3::Lerp(startScl, endScl, factor);
+    VEC3 tempVec = VEC3::Lerp(startScl, endScl, static_cast<float>(factor));
 
     //スケール行列を作成する
     out = XMMatrixScaling(tempVec.x, tempVec.y, tempVec.z);

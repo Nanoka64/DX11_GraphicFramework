@@ -12,8 +12,6 @@ enum class SPRITE_USAGE_TYPE
 	RENDER_TARGET,	// レンダーターゲット用
 };
 
-
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:SpriteRenderer Class --- */
@@ -33,16 +31,18 @@ private:
 	ID3D11Buffer *m_pVertexBuffer;	// 頂点バッファ
 	ID3D11Buffer *m_pIndexBuffer;	// インデックスバッファ
 	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
-	std::weak_ptr<class Texture> m_pTexture;
+	std::map<int , std::weak_ptr<class Texture>> m_pTextureMap;	// スロット番号とtexture
 
 	float m_Width;
 	float m_Height;
+
+	SHADER_TYPE m_ShaderType;	// 使用するシェーダの種類
 
 public:
 	SpriteRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SpriteRenderer();
 
-	bool Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, std::weak_ptr<class Texture> pTex, float w, float h);
+	bool Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> & pTexList, float w, float h);
 
 	void Init(RendererManager &renderer) override;		// 初期化
 	void Update(RendererManager &renderer) override;	// 更新処理
@@ -53,6 +53,8 @@ public:
 	void set_Height(float h);
 	float get_Width()const;
 	float get_Height()const;
+
+	void set_ShaderType(SHADER_TYPE type);
 
 private:
 

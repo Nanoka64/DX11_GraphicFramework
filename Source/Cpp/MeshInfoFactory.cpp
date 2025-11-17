@@ -164,7 +164,7 @@ MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
 	UINT vertexIndex = 0;
 	for (UINT i = 0; i <= stackCount; ++i)
 	{
-		float phi = M_PI * i / stackCount; // 緯度 [0, π]
+		float phi = static_cast<float>(M_PI) * i / stackCount; // 緯度 [0, π]
 
 		for (UINT j = 0; j <= sliceCount; ++j)
 		{
@@ -286,8 +286,8 @@ MeshInfo* MeshInfoFactory::CreateRTSpriteInfo(float w, float h)
 
 	// 画面分割的なのができた
 	
-	//int bunkatu = 6;
-	// 頂点情報
+	//int bunkatu = 2;
+	//// 頂点情報
 	//meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
 	//	// 座標												// 法線                  // カラー                      // uv
 	//	{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f - bunkatu + 1,	1.0f + bunkatu)}, // 8 左上

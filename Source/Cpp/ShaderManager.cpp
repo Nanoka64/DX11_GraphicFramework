@@ -227,7 +227,7 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
         hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
         break;
     case SHADER_TYPE::DEFFERD:
-        hr = this->CompileShader(HLSL__SimpleVS_PATH.c_str(), "SimpleVSMain", "vs_5_0", &pVSBlob);
+        hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
         break;
     default:
         MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
