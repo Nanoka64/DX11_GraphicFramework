@@ -34,13 +34,14 @@ struct PSOutPut
     float4 Albedo : SV_Target0;
     float4 Normal : SV_Target1;
     float Depth : SV_Target2;
+    float4 Specular : SV_Target3;
 };
 
 
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-PSOutPut PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指定しないといけない(描画ターゲットごとに末尾変更0,1,2...)
+PSOutPut PS(PS_INPUT input) 
 {
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
@@ -58,7 +59,9 @@ PSOutPut PS(PS_INPUT input) : SV_TARGET // ピクセルシェーダの出力はSV_Targetを指
     PSOutPut output;
     output.Albedo = finalCol;
     output.Normal = float4(normal, 1.0);
-    output.Depth = input.WPos.z;
+    output.Depth = input.Pos.z;
+    output.Specular.xyz = SpecularColor;
+    output.Specular.w = SpecularPower;
     return output;
     
     //// 法線をTBN空間 ワールドスペースに変換して取得

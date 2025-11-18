@@ -115,5 +115,20 @@ public:
     /// <param name="viewMat"></param>
     /// <returns></returns>
     bool SetupViewTransform(const XMMATRIX& viewMat);
+
+
+    /// <summary>
+    /// ビュープロジェクション行列の取得
+    /// </summary>
+    /// <returns></returns>
+    XMMATRIX get_ViewProjectionMatrix();
+
+
+    /// <summary>
+    /// ビュープロジェクション行列の逆行列取得
+    /// </summary>
+    /// <returns></returns>
+    XMFLOAT4X4 get_ViewProjectionInvMatrix();
+
 };
 

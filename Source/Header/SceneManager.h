@@ -30,6 +30,7 @@ private:
 	class RenderTarget *m_pAlbedo_RT;
 	class RenderTarget *m_pNormal_RT;
 	class RenderTarget *m_pDepth_RT;
+	class RenderTarget *m_pSpecular_RT;
 
 public:
 	SceneManager();

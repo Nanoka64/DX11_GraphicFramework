@@ -26,6 +26,9 @@ struct CB_PROJECTION_SET
 struct CB_VIEW
 {
     DirectX::XMFLOAT4X4 View;
+
+    // ビュープロジェクション行列の逆行列
+    DirectX::XMFLOAT4X4 ViewProjInvMatrix;
 };
 
 struct CB_VIEW_SET

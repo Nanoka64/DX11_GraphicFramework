@@ -75,6 +75,7 @@ cbuffer CB_TRANSFORM : register(b0)
 cbuffer CB_VIEW : register(b1)
 {
     matrix View;
+    matrix viewProjInvMatrix; // ビュープロジェクション行列の逆行列。
 };
 
 // -------------------------------------------------

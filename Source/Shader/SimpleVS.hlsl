@@ -42,10 +42,12 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
     float4 norm  = float4(input.Normal, 0.0f);
     float2 uv    = input.UV;
     float4 color = input.Color;
+    norm = normalize(mul(norm, Transform));
     
     pos = mul(pos, Transform);  // ワールド変換
     output.World = pos;
     pos = mul(pos, View);       // ビュー変換
+    output.World.z = -pos.z;
     pos = mul(pos, Projection); // 投影変換
     
     output.Pos = pos;           // 画面空間の頂点座標

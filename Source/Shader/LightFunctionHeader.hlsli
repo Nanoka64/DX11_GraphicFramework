@@ -73,13 +73,19 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
 }
 
 
+struct OUT_DiffAndSpec
+{
+    float3 Diffuse;
+    float3 Specular;
+};
+
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライトの計算
 //* 引数：1.頂点ワールド座標
 //* 引数：2.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 pos, float3 norm)
+OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 pos, float3 norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
@@ -89,11 +95,16 @@ float3 DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow,
     // 鏡面（スペキュラ）反射
     float3 specularLig = SpecularLightCalc((ligData.Direction), spcCol, spcPow, pos, norm);
     
-    // 拡散反射と鏡面反射を足して最終的な光を求める
-    finalLig = diffuseLig + specularLig;
+    OUT_DiffAndSpec outData;
+    outData.Diffuse = diffuseLig * ligData.Intensity;
+    outData.Specular = specularLig * ligData.Intensity;
+    return outData;
     
-    // あとでIntensityとかにしてマジックナンバー消す
-    return finalLig * ligData.Intensity;
+    //// 拡散反射と鏡面反射を足して最終的な光を求める
+    //finalLig = diffuseLig + specularLig;
+    
+    //// あとでIntensityとかにしてマジックナンバー消す
+    //return finalLig * ligData.Intensity;
 }
 
 
@@ -107,7 +118,7 @@ float3 DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow,
 //* 引数：6.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
+OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0, 0, 0);
 
@@ -135,9 +146,14 @@ float3 PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, float3 wo
     diffPoint *= influencePower;
     spcPoint *= influencePower;
     
-    finalLig = diffPoint + spcPoint;
+    OUT_DiffAndSpec outData;
+    outData.Diffuse = diffPoint;
+    outData.Specular = spcPoint;
+    return outData;
     
-    return finalLig;
+    //finalLig = diffPoint + spcPoint;
+    
+    //return finalLig;
 }
 
 //*---------------------------------------------------------------------------------------

@@ -6,6 +6,8 @@ SamplerState mySampler : register(s0);
 Texture2D<float4> g_AlbedoTexture : register(t0);
 Texture2D<float4> g_NormalTexture : register(t1);
 Texture2D<float>  g_DepthTexture : register(t2);
+Texture2D<float4>  g_SpecularTexture : register(t3);
+
 /* =========================================================================
 /* - @:出力構造体 - */
 /* =========================================================================*/
@@ -22,6 +24,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 albedoTex = g_AlbedoTexture.Sample(mySampler, input.UV);
     float4 normalTex = g_NormalTexture.Sample(mySampler, input.UV);
     float depthTex = g_DepthTexture.Sample(mySampler, input.UV);
+    float4 specularTex = g_SpecularTexture.Sample(mySampler, input.UV);
+    
     // 深度情報からワールド座標を計算する。
     float4 worldPos;
 
@@ -32,38 +36,33 @@ float4 PSMain(PS_IN input) : SV_TARGET
     worldPos.xy = input.UV * float2(2.0f, -2.0f) - 1.0f;
     worldPos.w = 1.0f;
     // ビュープロジェクション行列の逆行列を乗算して、ワールド座標に戻す。
-    worldPos = mul(Projection, worldPos);
+    worldPos = mul(worldPos,viewProjInvMatrix );
     worldPos.xyz /= worldPos.w;
+    
     normalTex = (normalTex * 2.0f) - 1.0f;
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
-    finalCol = albedoTex;
     
     // 法線をTBN空間 ワールドスペースに変換して取得
     //float3 normal = GetNorm(normalMap, float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0), input.Normal);
     
-    // スペキュラ色
-    float3 specularCol = SpecularColor.xyz * cb_PointLightData.SpecularColor;
-    
     // ディレクションライト計算
-    float3 dirLig = DirectionLightCalc(cb_DirLightData, specularCol, SpecularPower, worldPos.xyz, normalTex.xyz);
-    
-    PointLight pl;
-    pl.DiffuseColor = float3(1.0,1.0,1.0);
-    pl.SpecularColor = float3(1.0, 1.0, 1.0);
-    pl.Range = cb_PointLightData.Range;
-    pl.Pos = float3(0.0, 0.0, 0.0);
-    
+    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, specularTex.rgb, specularTex.a, worldPos.xyz, normalTex.xyz);
+
     // ポイントライト計算
-    float3 pointLig = PointLightCalc(pl, specularCol, SpecularPower, worldPos.xyz, normalTex.xyz);
+    OUT_DiffAndSpec pointLig = PointLightCalc(cb_PointLightData, specularTex.rgb, specularTex.a, worldPos.xyz, normalTex.xyz);
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normalTex.xyz);
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
-    float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-
+    //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
+    float3 lighting = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.5f;
+    float3 specular = dirLig.Specular + pointLig.Specular;
+    
+    specular *= specularTex.a;
+    
     // 最終色
-    finalCol.xyz *= lighting;
+    finalCol.xyz = albedoTex.rgb * lighting + specular;
     return finalCol;
 }

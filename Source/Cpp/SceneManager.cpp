@@ -182,7 +182,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 12.0f;
+            mat[0].SpecularPower    = 5;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -267,7 +267,7 @@ bool SceneManager::Init(RendererManager &renderer)
             obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
         }        
         {
-            // SPHERE
+            // SkyDorm
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Night01.png");
             mat->DiffuseColor = VEC4(5.0f, 5.0f, 5.0f, 1.0f);
@@ -333,6 +333,19 @@ bool SceneManager::Init(RendererManager &renderer)
         DXGI_FORMAT_R32_FLOAT,
         DXGI_FORMAT_UNKNOWN
     );
+    
+    // ****************************************************************
+    m_pSpecular_RT = new RenderTarget();
+    // レンダリングターゲットの生成
+    m_pSpecular_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
 
 
     //========================================================================================
@@ -378,6 +391,15 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.pTextureMap.clear();
 
     /*************************************
+    * スペキュラ用
+    *************************************/
+    sprite.ObjTag = "RenderTarget4";
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
+    obj = MeshFactory::CreateSprite(sprite);    
+    obj.lock()->get_Transform().lock()->set_Pos(-0.5, -0.5, 0.0);
+    sprite.pTextureMap.clear();
+
+    /*************************************
     * 最終出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
@@ -386,9 +408,10 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
-    obj.lock()->get_Transform().lock()->set_Pos(0.0, -0.5, 0.0);
+    obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
 
     return true;
@@ -481,7 +504,8 @@ void SceneManager::Draw(RendererManager& renderer)
     RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,
         m_pNormal_RT,
-        m_pDepth_RT
+        m_pDepth_RT,
+        m_pSpecular_RT
     };
 
     // レンダリングターゲットの設定とクリア
@@ -498,12 +522,15 @@ void SceneManager::Draw(RendererManager& renderer)
     auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget1").lock();
     auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
     auto renderSpriteObj3 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget3").lock();
+    auto renderSpriteObj4 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget4").lock();
     auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
     auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
     auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
+    auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
     sprite->Draw(renderer);
     sprite2->Draw(renderer);
     //sprite3->Draw(renderer);
+    sprite4->Draw(renderer);
     
     // ディファードスプライト
     auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();

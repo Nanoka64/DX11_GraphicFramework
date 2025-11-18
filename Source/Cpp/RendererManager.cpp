@@ -631,6 +631,8 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 
     auto& cb = m_RenderParam.cbViewSet;
     XMStoreFloat4x4(&cb.Data.View, XMMatrixTranspose(viewMat));
+    cb.Data.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
+
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     ZeroMemory(&mappedResource, sizeof(mappedResource));
@@ -655,6 +657,35 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 
     return true;
 }
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】ビュープロジェクション行列を取得
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+XMMATRIX RendererManager::get_ViewProjectionMatrix()
+{
+    XMMATRIX view = XMLoadFloat4x4(&m_RenderParam.cbViewSet.Data.View);
+    XMMATRIX proj = XMLoadFloat4x4(&m_RenderParam.cbProjectionSet.Data.Projection);
+    return XMMatrixMultiply(view, proj);
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*【?】ビュープロジェクション行列の逆行列取得
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+XMFLOAT4X4 RendererManager::get_ViewProjectionInvMatrix()
+{
+    XMMATRIX vp = get_ViewProjectionMatrix();
+    XMFLOAT4X4 res{};
+    XMStoreFloat4x4(&res, XMMatrixInverse(NULL, vp));
+    return res;
+}
+
 
 
 //*---------------------------------------------------------------------------------------
