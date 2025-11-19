@@ -1,6 +1,14 @@
 #pragma once
 
-class RenderTarget
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:RenderTarget Class --- */
+//
+// 【?】レンダーターゲット
+//
+// ***************************************************************************************
+class DX_RenderTarget
 {
 private:
     Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pRenderTargetTexture;             // ターゲットとなるテクスチャ情報
@@ -16,8 +24,8 @@ private:
     float m_ClearColor[4];
 
 public:
-    RenderTarget();
-    ~RenderTarget();
+    DX_RenderTarget();
+    ~DX_RenderTarget();
 
 
     bool Create(

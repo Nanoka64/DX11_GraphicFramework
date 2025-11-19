@@ -4,21 +4,21 @@
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
-/* --- @:IndexBuffer Class --- */
+/* --- @:IDX_BlendState Class --- */
+//  
+// ★継承：IDXResource ★
 //
-//  ★継承：IDXResource ★
-//
-// 【?】インデックスバッファをラップする
+// 【?】ID3D11BlendStateをラップする
 //
 // ***************************************************************************************
-class IndexBuffer : public IDXResource<ID3D11Buffer>
+class IDX_BlendState : public IDXResource<ID3D11BlendState>
 {
 private:
 
 
 public:
-    IndexBuffer();
-    ~IndexBuffer();
+    IDX_BlendState();
+    ~IDX_BlendState();
 
     bool Setup() override;
     void Term() override;

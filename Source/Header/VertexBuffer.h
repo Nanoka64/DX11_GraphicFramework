@@ -10,7 +10,7 @@
 // 【?】頂点バッファをラップする
 //
 // ***************************************************************************************
-class VertexBuffer : public IDXResource<void>
+class VertexBuffer : public IDXResource<ID3D11Buffer>
 {
 private:
 

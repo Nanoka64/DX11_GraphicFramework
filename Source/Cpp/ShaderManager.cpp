@@ -10,6 +10,7 @@
 #define SHADER_NUM 2    // シェーダの数
 
 using namespace Path;
+using namespace Microsoft::WRL;
 
 // シンプルシェーダ（スプライト兼用）
 static const D3D11_INPUT_ELEMENT_DESC SimpleLayout[] =
@@ -133,9 +134,9 @@ void ShaderManager::DeviceToSetShader(SHADER_TYPE type)
 
     auto pContext = m_pRenderer.lock().get()->get_DeviceContext();
 
-    pContext->IASetInputLayout((*shader).pInputLayout.get()->get());
-    pContext->VSSetShader((*shader).pVShader.get()->get(), NULL, 0);
-    pContext->PSSetShader((*shader).pPShader.get()->get(), NULL, 0);
+    pContext->IASetInputLayout((*shader).pInputLayout->get());
+    pContext->VSSetShader((*shader).pVShader->get(), NULL, 0);
+    pContext->PSSetShader((*shader).pPShader->get(), NULL, 0);
 }
 
 
@@ -173,7 +174,7 @@ bool ShaderManager::SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob
     UINT numElements = target->LayoutArraySize;   // 配列の要素数取得
     const D3D11_INPUT_ELEMENT_DESC* pLayout = target->pLayout;
 
-    ID3D11InputLayout* pOutputLayout = nullptr; // 結果格納用
+    ComPtr<ID3D11InputLayout> pOutputLayout = nullptr; // 結果格納用
 
     // 入力レイアウト作成
     hr = pDevice->CreateInputLayout(
@@ -181,7 +182,7 @@ bool ShaderManager::SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob
         numElements,                 // 配列の要素数
         blob->GetBufferPointer(),    // コンパイルされたシェーダへのポインタ
         blob->GetBufferSize(),       // コンパイルされたシェーダのサイズ
-        &pOutputLayout               // 生成した入力レイアウトの出力先
+        pOutputLayout.GetAddressOf() // 生成した入力レイアウトの出力先
     );
 
     if (FAILED(hr)){
@@ -190,7 +191,7 @@ bool ShaderManager::SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob
     }
 
     out->pInputLayout = std::make_shared<InputLayout>();   // 共有ポインタ作成
-    out->pInputLayout.get()->set(pOutputLayout);  // レイアウトのセット
+    out->pInputLayout->set(std::move(pOutputLayout));  // レイアウトのセット
 
     return true;
 }
@@ -209,7 +210,7 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
 
     ID3DBlob* pVSBlob = NULL;
     HRESULT hr = S_OK;
-    ID3D11VertexShader* pVertex = nullptr;  // 結果格納用
+    ComPtr<ID3D11VertexShader> pVertex = nullptr;  // 結果格納用
 
     // 頂点シェーダのコンパイル
     switch (type)
@@ -246,7 +247,7 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
         pVSBlob->GetBufferPointer(),
         pVSBlob->GetBufferSize(),
         NULL,
-        &pVertex
+        pVertex.GetAddressOf()
     );
 
     if (FAILED(hr)) {
@@ -261,12 +262,11 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
 
     if (!res) {
         assert(false);
-        SAFE_DELETE(pVertex);
         return false;
     }
 
     out->pVShader = std::make_shared<VertexShader>();   // 共有ポインタ作成
-    out->pVShader.get()->set(pVertex);  // 頂点シェーダセット
+    out->pVShader->set(std::move(pVertex));  // 頂点シェーダセット
 
     return true;    // 成功
 }
@@ -284,7 +284,7 @@ bool ShaderManager::SetupPixelShader(SHADER_TYPE type, ShaderInfo* out)
     auto pContext = renderer.get()->get_DeviceContext();
     HRESULT hr = S_OK;
     ID3DBlob* pPSBlob = NULL;
-    ID3D11PixelShader* pPixel = nullptr;    // 結果格納用
+    ComPtr<ID3D11PixelShader> pPixel = nullptr;    // 結果格納用
 
     // ピクセルシェーダーのコンパイル
     switch (type)
@@ -318,14 +318,14 @@ bool ShaderManager::SetupPixelShader(SHADER_TYPE type, ShaderInfo* out)
         pPSBlob->GetBufferPointer(),
         pPSBlob->GetBufferSize(),
         NULL,
-        &pPixel
+        pPixel.GetAddressOf()
     );
 
     pPSBlob->Release();
     if (FAILED(hr))return false;    // 失敗
 
     out->pPShader = std::make_shared<PixelShader>();   // 共有ポインタ作成
-    out->pPShader.get()->set(pPixel);   // ピクセルシェーダのセット
+    out->pPShader.get()->set(std::move(pPixel));   // ピクセルシェーダのセット
     
     return true;    // 成功
 }

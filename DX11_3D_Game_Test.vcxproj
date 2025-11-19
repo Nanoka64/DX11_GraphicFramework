@@ -169,11 +169,12 @@
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
+    <ClInclude Include="Source\Header\IDX_BlendState.h" />
     <ClInclude Include="Source\Header\IChildSceneState.h" />
     <ClInclude Include="Source\Header\ModelData.h" />
     <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
-    <ClInclude Include="Source\Header\RenderTarget.h" />
+    <ClInclude Include="Source\Header\DX_RenderTarget.h" />
     <ClInclude Include="Source\Header\RootSceneState.h" />
     <ClInclude Include="Source\Header\IState.h" />
     <ClInclude Include="Source\Header\Object.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
+    <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
     <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -252,7 +254,7 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\MeshFactory.cpp" />
     <ClCompile Include="Source\Cpp\Component_PointLight.cpp" />
-    <ClCompile Include="Source\Cpp\RenderTarget.cpp" />
+    <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp" />
     <ClCompile Include="Source\Cpp\RootSceneState.cpp" />
     <ClCompile Include="Source\Cpp\IState.cpp" />
     <ClCompile Include="Source\Cpp\Object.cpp">

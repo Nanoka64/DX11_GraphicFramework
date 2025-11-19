@@ -5,7 +5,7 @@
 ・ポインタの場合は「m_p」とする
 ・vector/Listを使う場合は「m_...List」とする
 ・配列を使う場合は「m_...s」とする（複数形）
-
+・directXのラップクラス、それに関するクラスは名前の最初に「IDX_」を付ける
 
 ・ゲッタやセッタなどの書き方
 get_○○
@@ -37,6 +37,21 @@ private（変数用）
 public（メソッド用）
 ↓
 private（メソッド用）
+
+<派生について>
+IDXResource基底クラスが現在あいまいな立ち位置になってしまっている。
+本来、directXのグラフィカルな型をラップするためのもの。
+例：ID3D11Buffer→IDX__Buffer
+
+今後、一つ一つにクラスを作り派生させる必要あり。
+現在対応しているのは、
+
+・ID3D11VertexShader
+・ID3D11PixelShader
+・ID3D11BlendState
+
+※DX_RenderTargetなどのIDXが複数集まって振る舞う場合は「DX_」とする。
+
 
 <if文>
 ・if文の中が１行だけなら以下のパターン

@@ -1,14 +1,14 @@
 #include "pch.h"
-#include "RenderTarget.h"
+#include "DX_RenderTarget.h"
 #include "RendererManager.h"
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】コンストラクタ
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
-RenderTarget::RenderTarget():
+DX_RenderTarget::DX_RenderTarget():
     m_Width(0),
     m_Height(0),
     m_pRenderTargetTexture(nullptr),
@@ -19,15 +19,15 @@ RenderTarget::RenderTarget():
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】デストラクタ
 //*----------------------------------------------------------------------------------------
-RenderTarget::~RenderTarget()
+DX_RenderTarget::~DX_RenderTarget()
 {
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成 
 //* 引数：1.RendererManager&
 //* 引数：2.ターゲットの横幅
@@ -38,7 +38,7 @@ RenderTarget::~RenderTarget()
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
+bool DX_RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
 
@@ -66,7 +66,7 @@ bool RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLeve
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成  内部公開
 //* 引数：1.RendererManager&
 //* 引数：2.ターゲットの横幅
@@ -77,7 +77,7 @@ bool RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLeve
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
+bool DX_RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;
@@ -110,7 +110,7 @@ bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, 
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成  内部公開
 //* 引数：1.RendererManager&
 //* 引数：2.ターゲットの横幅
@@ -118,7 +118,7 @@ bool RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, 
 //* 引数：4.テクスチャのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT h, DXGI_FORMAT format)
+bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT h, DXGI_FORMAT format)
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;
@@ -165,48 +165,48 @@ bool RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT h,
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットテクスチャの取得
 //* 引数：なし
 //* 返値：テクスチャの参照ポインタ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<class Texture> RenderTarget::get_RTTexture()const
+std::weak_ptr<class Texture> DX_RenderTarget::get_RTTexture()const
 {
     return {};
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】横幅の取得
 //* 引数：なし
 //* 返値：横幅
 //*----------------------------------------------------------------------------------------
-int RenderTarget::get_Width()const
+int DX_RenderTarget::get_Width()const
 {
     return m_Width;
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】縦幅の取得
 //* 引数：なし
 //* 返値：縦幅
 //*----------------------------------------------------------------------------------------
-int RenderTarget::get_Height()const
+int DX_RenderTarget::get_Height()const
 {
     return m_Height;
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RenderTarget Class 
+//* @:DX_RenderTarget Class 
 //*【?】SRVのComポインタ取得
 //* 引数：なし
 //* 返値：ComPtr
 //*----------------------------------------------------------------------------------------
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> RenderTarget::get_SRV_ComPtr()
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DX_RenderTarget::get_SRV_ComPtr()
 {
     //  AddRef がかかってカウンタが増える
     return m_pShaderResouceView; 

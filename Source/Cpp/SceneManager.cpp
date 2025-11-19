@@ -18,7 +18,8 @@
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
 #include "Component_SpriteRenderer.h"
-#include "RenderTarget.h"
+#include "DX_RenderTarget.h"
+
 
 using namespace VECTOR4;
 using namespace VECTOR3;
@@ -271,8 +272,8 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             // SkyDorm
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Night01.png");
-            mat->DiffuseColor = VEC4(5.0f, 5.0f, 5.0f, 1.0f);
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Day01.png");
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 0.1;
@@ -297,7 +298,7 @@ bool SceneManager::Init(RendererManager &renderer)
 
 
     // ****************************************************************
-    m_pAlbedo_RT = new RenderTarget();
+    m_pAlbedo_RT = new DX_RenderTarget();
     // レンダリングターゲットの生成
     m_pAlbedo_RT->Create(
         renderer,
@@ -311,7 +312,7 @@ bool SceneManager::Init(RendererManager &renderer)
 
 
     // ****************************************************************
-    m_pNormal_RT = new RenderTarget();
+    m_pNormal_RT = new DX_RenderTarget();
     // レンダリングターゲットの生成
     m_pNormal_RT->Create(
         renderer,
@@ -324,7 +325,7 @@ bool SceneManager::Init(RendererManager &renderer)
     );
     
     // ****************************************************************
-    m_pDepth_RT = new RenderTarget();
+    m_pDepth_RT = new DX_RenderTarget();
     // レンダリングターゲットの生成
     m_pDepth_RT->Create(
         renderer,
@@ -337,7 +338,7 @@ bool SceneManager::Init(RendererManager &renderer)
     );
     
     // ****************************************************************
-    m_pSpecular_RT = new RenderTarget();
+    m_pSpecular_RT = new DX_RenderTarget();
     // レンダリングターゲットの生成
     m_pSpecular_RT->Create(
         renderer,
@@ -507,7 +508,7 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
-    RenderTarget *gbuffer[] ={
+    DX_RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,
         m_pNormal_RT,
         m_pDepth_RT,

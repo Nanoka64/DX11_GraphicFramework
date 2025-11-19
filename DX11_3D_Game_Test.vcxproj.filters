@@ -16,9 +16,6 @@
     <Filter Include="ソース ファイル\Graphics">
       <UniqueIdentifier>{08e8e6d4-6635-4fdb-8460-3d70d7028a4e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Shader">
-      <UniqueIdentifier>{cea0957e-fb00-4b9e-9786-dfc048c57a74}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\App">
       <UniqueIdentifier>{09bad568-1f75-4533-a715-e927b15a5256}</UniqueIdentifier>
     </Filter>
@@ -63,9 +60,6 @@
     </Filter>
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Buffers">
-      <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{3b7d2d54-5de9-4946-863e-76d7b31b612a}</UniqueIdentifier>
@@ -118,8 +112,20 @@
     <Filter Include="HLSL\Other">
       <UniqueIdentifier>{743b417f-19df-48d6-89e8-57c8239f34bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Graphics\RT">
+    <Filter Include="ソース ファイル\DXLap">
+      <UniqueIdentifier>{9d2bcabc-5b85-4ab0-b209-451caf531e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DXLap\RT">
       <UniqueIdentifier>{e9bf896b-0eb7-47a5-b946-b7ef37ba334c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DXLap\BlendState">
+      <UniqueIdentifier>{5de9c1bd-cbfb-4dcc-a801-0adf59c3b6fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DXLap\Shader">
+      <UniqueIdentifier>{cea0957e-fb00-4b9e-9786-dfc048c57a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\DXLap\Buffers">
+      <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,7 +133,7 @@
       <Filter>ソース ファイル\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\DXApp.cpp">
       <Filter>ソース ファイル\App</Filter>
@@ -199,16 +205,16 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ShaderManager.cpp">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\PixelShader.cpp">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\VertexShader.cpp">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\InputLayout.cpp">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDXResource.cpp">
       <Filter>ソース ファイル\Graphics</Filter>
@@ -223,16 +229,16 @@
       <Filter>ソース ファイル\Component\Light</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IndexBuffer.cpp">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\VertexBuffer.cpp">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\BufferManeger.cpp">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDXBuffer.cpp">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
       <Filter>ソース ファイル\Obj</Filter>
@@ -309,8 +315,11 @@
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp">
       <Filter>ソース ファイル\Component\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\RenderTarget.cpp">
-      <Filter>ソース ファイル\Graphics\RT</Filter>
+    <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp">
+      <Filter>ソース ファイル\DXLap\RT</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\IDX_BlendState.cpp">
+      <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -318,7 +327,7 @@
       <Filter>ソース ファイル\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\SHADER.h">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\DXApp.h">
       <Filter>ソース ファイル\App</Filter>
@@ -414,16 +423,16 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ShaderManager.h">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\PixelShader.h">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\VertexShader.h">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\InputLayout.h">
-      <Filter>ソース ファイル\Shader</Filter>
+      <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IDXResource.h">
       <Filter>ソース ファイル\Graphics</Filter>
@@ -438,16 +447,16 @@
       <Filter>ソース ファイル\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IndexBuffer.h">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\VertexBuffer.h">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\BufferManeger.h">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IDXBuffer.h">
-      <Filter>ソース ファイル\Graphics\Buffers</Filter>
+      <Filter>ソース ファイル\DXLap\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\GameObjectManager.h">
       <Filter>ソース ファイル\Obj</Filter>
@@ -530,8 +539,11 @@
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h">
       <Filter>ソース ファイル\Component\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\RenderTarget.h">
-      <Filter>ソース ファイル\Graphics\RT</Filter>
+    <ClInclude Include="Source\Header\DX_RenderTarget.h">
+      <Filter>ソース ファイル\DXLap\RT</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\IDX_BlendState.h">
+      <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

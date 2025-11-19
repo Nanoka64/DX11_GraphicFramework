@@ -101,12 +101,12 @@ public:
     /// </summary>
     /// <param name="num"></param>
     /// <param name="renderTargets"></param>
-    void RegisterRenderTargets(UINT num, class RenderTarget *renderTargets[]);
+    void RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[]);
 
     /// <summary>
     /// レンダーターゲットのクリア
     /// </summary>
-    void ClearRenderTargetViews(UINT num, class RenderTarget *renderTargets[]);
+    void ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[]);
 
 
     /// <summary>
@@ -129,6 +129,5 @@ public:
     /// </summary>
     /// <returns></returns>
     XMFLOAT4X4 get_ViewProjectionInvMatrix();
-
 };
 

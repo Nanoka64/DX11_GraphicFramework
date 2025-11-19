@@ -5,7 +5,7 @@
 #include "RendererManager.h"
 #include "MyStruct.h"
 #include "Path.h"
-#include "RenderTarget.h"
+#include "DX_RenderTarget.h"
 #include <string>
 
 //*---------------------------------------------------------------------------------------
@@ -707,7 +707,7 @@ void RendererManager::ChangeRenderTargetFrameBuffer()
 //* 引数：2.ターゲットの配列
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::RegisterRenderTargets(UINT num, class RenderTarget *renderTargets[])
+void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[])
 {
     ID3D11RenderTargetView *rtv[16]{};
 
@@ -733,7 +733,7 @@ void RendererManager::RegisterRenderTargets(UINT num, class RenderTarget *render
 //* 引数：2.ターゲットの配列
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::ClearRenderTargetViews(UINT num, class RenderTarget *renderTargets[])
+void RendererManager::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
 {
     if (renderTargets[0]->HasDepthStencilBuffer()) {
         // デプスステンシルバッファがあるならクリア 
