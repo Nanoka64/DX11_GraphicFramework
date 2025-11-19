@@ -111,7 +111,7 @@ void Camera3D::Update(RendererManager& renderer)
 	// Imgui デバッグ
 	static float debugSpeed = 0.1f;
 	Debugger::Instance().BeginDebugWindow("CameraInfo");
-	Debugger::Instance().DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 3.0f);
+	Debugger::Instance().DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
 	Debugger::Instance().DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));
 	Debugger::Instance().DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
 	Debugger::Instance().DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);

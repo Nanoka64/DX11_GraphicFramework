@@ -134,11 +134,8 @@ VS_OUTPUT VS(VS_INPUT input)
     
     pos = mul(pos,Transform);       // ワールド変換
     output.WPos = pos;
-    
     pos = mul(pos, View);           // ビュー変換
-    output.WPos.z = -pos.z;         // 
-    
-    pos = mul(pos, Projection); // 投影変換
+    pos = mul(pos, Projection);     // 投影変換
     
     output.Pos    = pos;            // 画面空間の頂点座標
     output.Normal = norm;           // スキニング後の法線

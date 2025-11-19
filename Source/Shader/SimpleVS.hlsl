@@ -47,7 +47,6 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
     pos = mul(pos, Transform);  // ワールド変換
     output.World = pos;
     pos = mul(pos, View);       // ビュー変換
-    output.World.z = -pos.z;
     pos = mul(pos, Projection); // 投影変換
     
     output.Pos = pos;           // 画面空間の頂点座標

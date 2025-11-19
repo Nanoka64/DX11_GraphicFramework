@@ -79,6 +79,7 @@ bool SceneManager::Init(RendererManager &renderer)
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 1.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -107,7 +108,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
+            mat->SpecularPower = 0.1f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -133,7 +134,7 @@ bool SceneManager::Init(RendererManager &renderer)
             MATERIAL mat[1];
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-            mat[0].SpecularPower = 16.0f;
+            mat[0].SpecularPower = 0.2f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -157,7 +158,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 100.0f;
+            mat[0].SpecularPower = 0.5f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -182,7 +183,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 5;
+            mat[0].SpecularPower    = 1.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -196,6 +197,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->set_LayerRank(0);
         }        
 
         {
@@ -207,7 +209,7 @@ bool SceneManager::Init(RendererManager &renderer)
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040_n.png");
                 mat->SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
-                mat->SpecularPower = 1.5f;
+                mat->SpecularPower = 0.5f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -273,7 +275,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat->DiffuseColor = VEC4(5.0f, 5.0f, 5.0f, 1.0f);
             mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW040_n.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
+            mat->SpecularPower = 0.1;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -464,7 +466,11 @@ void SceneManager::Update(RendererManager& renderer)
 
     auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
     rad = sphereObj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, a * 30, 0.0f);
+    rad->set_RotateToRad(0.0, 0.0, 0.0f);
+
+    auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
+    rad = cubuObj.lock()->get_Component<Transform>();
+    rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
     auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
     auto tf = skyObj.lock()->get_Component<Transform>();

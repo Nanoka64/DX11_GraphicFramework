@@ -56,39 +56,16 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     int dither = ditherPattern[x][y];
     
     // 閾値が 10 以下のピクセルはピクセルキルする
-    //clip(dither - 10);
+    //clip(dither - 30);
 
     
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal = float4(normal, 1.0);
+    output.Normal.xyz = normal;
+    output.Normal.w = 1.0f;
     output.Depth = input.Pos.z;    
     output.Specular.xyz = SpecularColor.xyz;
-    output.Specular.w = SpecularPower;
+    output.Specular.w = SpecularPower; // wに反射強度入れる
     return output;
-    
-    
-    //// 法線をTBN空間 ワールドスペースに変換して取得
-    //float3 normal = GetNorm(normalMap, float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0), input.Normal);
-    
-    //// スペキュラ色
-    //float3 specularCol = SpecularColor.xyz * cb_PointLightData.SpecularColor;
-    
-    //// ディレクションライト計算
-    //float3 dirLig = DirectionLightCalc(cb_DirLightData, specularCol, SpecularPower, input.WPos.xyz, input.Normal);
-    
-    //// ポイントライト計算
-    //float3 pointLig = PointLightCalc(cb_PointLightData, specularCol, SpecularPower, input.WPos.xyz, input.Normal);
-    
-    //// 天球ライト
-    //float3 hemiLig = HemisphereLightCalc(input.Normal);
-    
-    //// ディレクションライト + ポイントライト + 天球 + アンビエント
-    //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-
-    //// 最終色
-    //finalCol.xyz *= lighting;
-    
-    //return float4(finalCol);
 }

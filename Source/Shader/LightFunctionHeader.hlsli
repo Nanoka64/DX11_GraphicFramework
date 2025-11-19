@@ -60,9 +60,9 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
     
     // 光が入射したベクトルから視点に向かって伸びるベクトル
     float3 toEye = EyePos - pos;
-    
     toEye = normalize(toEye); // 正規化
-    float refFactor = dot(refVec, toEye); // 内積を求める
+    
+    float refFactor = dot(toEye, refVec); // 内積を求める
     refFactor = max(0.0, refFactor);      // マイナスにならないよう
     refFactor = pow(refFactor, spcPower); // 反射の強さ求める
     
@@ -90,10 +90,10 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, floa
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
     // 拡散（ディフューズ）反射
-    float3 diffuseLig = DiffuseLightCalc((ligData.Direction), ligData.DiffuseColor, norm);
+    float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc((ligData.Direction), spcCol, spcPow, pos, norm);
+    float3 specularLig = SpecularLightCalc(ligData.Direction, spcCol, spcPow, pos, norm);
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * ligData.Intensity;
@@ -122,19 +122,16 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
 {
     float3 finalLig = float3(0, 0, 0);
 
-    // 光の向きを求める（ライト→サーフェイス）
-    float3 ligDir = worldPos - ligData.Pos;
-    ligDir = normalize(ligDir);
+    float3 ligDir = worldPos - ligData.Pos;    // 光の向きを求める（ライト→サーフェイス）
+    float distance = length(ligDir);           // 頂点とライトの距離
+    ligDir = normalize(ligDir);                // 正規化
     
     // ディフューズ計算
     float3 diffPoint = DiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
     float3 spcPoint = SpecularLightCalc(ligDir, spcCol, spcPow, worldPos, norm);
-    
-    // 頂点とライトの距離
-    float distance = length(worldPos - ligData.Pos);
-    
+
     // 影響度計算
     float influencePower = 1.0f - (distance / ligData.Range);
     

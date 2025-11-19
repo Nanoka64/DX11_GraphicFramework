@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
+#include "Component_Transform.h"
 #include  <algorithm>
 
 

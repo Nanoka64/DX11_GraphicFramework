@@ -199,7 +199,7 @@ struct MATERIAL {
 
     MATERIAL():
         DiffuseColor(VECTOR4::VEC4(1.f,1.f,1.f,1.f)),
-        SpecularColor(),
+        SpecularColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
         NormalColor(),
         SpecularPower(0.0f),
         UV()

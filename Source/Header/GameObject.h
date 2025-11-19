@@ -23,13 +23,13 @@
 class GameObject : public std::enable_shared_from_this<GameObject> , public Object
 {
 private:	
+	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
+    std::shared_ptr<class Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
+
+
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
     
-	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
-    std::shared_ptr<Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
-
-
 public:
     GameObject();
     virtual ~GameObject();

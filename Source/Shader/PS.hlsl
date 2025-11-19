@@ -58,10 +58,11 @@ PSOutPut PS(PS_INPUT input)
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal = float4(normal, 1.0);
+    output.Normal.xyz = normal;
+    output.Normal.w = 1.0f;
     output.Depth = input.Pos.z;
-    output.Specular.xyz = SpecularColor;
-    output.Specular.w = SpecularPower;
+    output.Specular.xyz = SpecularColor.xyz;
+    output.Specular.w = SpecularPower; // wに反射強度入れる
     return output;
     
     //// 法線をTBN空間 ワールドスペースに変換して取得

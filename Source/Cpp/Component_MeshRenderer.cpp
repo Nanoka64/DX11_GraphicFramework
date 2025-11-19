@@ -142,7 +142,7 @@ void MeshRenderer::Draw(RendererManager& renderer)
     pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
-    // 描画コール：インデックス数は36（三角形12個 × 3頂点） ==========================
+    // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
 }
 
