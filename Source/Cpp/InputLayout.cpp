@@ -11,12 +11,12 @@ InputLayout::~InputLayout()
 
 }
 
-bool InputLayout::Setup()
+bool InputLayout::Create()
 {
 	return true;
 }
 
-void InputLayout::Term()
+void InputLayout::Release()
 {
 
 }

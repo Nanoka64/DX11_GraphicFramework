@@ -55,8 +55,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //worldPos.xyz /= worldPos.w;   // wで割るとうまく反映されない
     
     // 法線取り出す
-    normalTex.xyz = (normalTex.xyz * 2.0f) - 1.0f;
-    float3 normal = normalize(normalTex.xyz);
+    float3 normal = (normalTex.xyz * 2.0f) - 1.0f;
+    normal = normalize(normal);
     
     // スペキュラ強度
     float spcPow = specularTex.w;
@@ -72,7 +72,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-    float3 lighting = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.5f;
+    float3 lighting = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;
     float3 specular = dirLig.Specular + pointLig.Specular;
     
     // スペキュラ強度の反映

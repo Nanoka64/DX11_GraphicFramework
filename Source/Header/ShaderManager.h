@@ -37,10 +37,11 @@ struct ShaderInfo
     std::shared_ptr<InputLayout> pInputLayout;
 };
 
-/* =========================================================================
-/* - @:InputLayoutData構造体 - */
-/* 【?】入力レイアウトセットアップ用のデータをまとめたもの
-/* =========================================================================*/
+
+//* =========================================================================
+//* - @:InputLayoutData構造体 - */
+//* 【?】入力レイアウトセットアップ用のデータをまとめたもの
+//* =========================================================================
 struct InputLayoutSetupData
 {
     SHADER_TYPE type;
@@ -112,8 +113,8 @@ private:
     /// <param name="ppBlobOut"></param>
     /// <returns>コンパイル出来たか</returns>
     HRESULT CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob **ppBlobOut);
-    bool SetupVertexShader(SHADER_TYPE type, ShaderInfo* out);
-    bool SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob* blob);
-    bool SetupPixelShader(SHADER_TYPE type, ShaderInfo* out);
+    bool VertexShaderFactory(SHADER_TYPE type, ShaderInfo *out);
+    bool InputLayoutFactory(SHADER_TYPE type, ShaderInfo *out, ID3DBlob *blob);
+    bool PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out);
 };
 

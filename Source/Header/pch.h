@@ -72,6 +72,7 @@
 #include "Helper.h"			// ヘルパー
 #include "MyStruct.h"		// 定数バッファ用構造体
 #include "Debugger.h"	    // Imguiデバッグ用
+#include "BlendManager.h"   // ブレンドステート用
 
 //#include "InputFactory.h"// 入力処理
 

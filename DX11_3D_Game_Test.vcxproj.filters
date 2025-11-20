@@ -61,9 +61,6 @@
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component">
-      <UniqueIdentifier>{3b7d2d54-5de9-4946-863e-76d7b31b612a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Scene">
       <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
     </Filter>
@@ -84,21 +81,6 @@
     </Filter>
     <Filter Include="ソース ファイル\Graphics\Mesh">
       <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Component\Mesh">
-      <UniqueIdentifier>{b0993894-71f6-4681-a4e5-247cb2e61410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Component\Camera">
-      <UniqueIdentifier>{fb43e8a1-5573-4ccd-bd25-3ff510b7fdb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Component\Utility">
-      <UniqueIdentifier>{75a97a67-7ffb-40ed-b03a-0cb20f935867}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Component\Light">
-      <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Component\UI">
-      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
     </Filter>
     <Filter Include="HLSL\Simple">
       <UniqueIdentifier>{c3033428-26cf-4f15-a180-d823df30a524}</UniqueIdentifier>
@@ -127,11 +109,26 @@
     <Filter Include="ソース ファイル\DXLap\Buffers">
       <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component">
+      <UniqueIdentifier>{3b7d2d54-5de9-4946-863e-76d7b31b612a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh">
+      <UniqueIdentifier>{b0993894-71f6-4681-a4e5-247cb2e61410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Camera">
+      <UniqueIdentifier>{fb43e8a1-5573-4ccd-bd25-3ff510b7fdb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Utility">
+      <UniqueIdentifier>{75a97a67-7ffb-40ed-b03a-0cb20f935867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Light">
+      <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\UI">
+      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Cpp\RendererManager.cpp">
-      <Filter>ソース ファイル\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
       <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClCompile>
@@ -215,9 +212,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\InputLayout.cpp">
       <Filter>ソース ファイル\DXLap\Shader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\IDXResource.cpp">
-      <Filter>ソース ファイル\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GameObject.cpp">
       <Filter>ソース ファイル\Obj</Filter>
@@ -321,11 +315,17 @@
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\IDXResource.cpp">
+      <Filter>ソース ファイル\DXLap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\BlendManager.cpp">
+      <Filter>ソース ファイル\DXLap\BlendState</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RendererManager.cpp">
+      <Filter>ソース ファイル\DXLap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Header\RendererManager.h">
-      <Filter>ソース ファイル\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\SHADER.h">
       <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
@@ -434,9 +434,6 @@
     <ClInclude Include="Source\Header\InputLayout.h">
       <Filter>ソース ファイル\DXLap\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\IDXResource.h">
-      <Filter>ソース ファイル\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\GameObject.h">
       <Filter>ソース ファイル\Obj</Filter>
     </ClInclude>
@@ -544,6 +541,15 @@
     </ClInclude>
     <ClInclude Include="Source\Header\IDX_BlendState.h">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\IDXResource.h">
+      <Filter>ソース ファイル\DXLap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BlendManager.h">
+      <Filter>ソース ファイル\DXLap\BlendState</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RendererManager.h">
+      <Filter>ソース ファイル\DXLap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

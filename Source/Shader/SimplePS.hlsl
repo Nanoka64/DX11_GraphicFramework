@@ -45,8 +45,7 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * DiffuseColor;
-    float3 normal = GetNorm(normalMap, float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0), input.Normal);
-    
+    float3 normal = GetNorm(normalMap, float3(0.0, 1.0, 0.0), float3(0.0, 1.0, 0.0), input.Normal);
     
     // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
     int x = (int) fmod(input.Pos.x, 4.0f);
@@ -62,7 +61,7 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal.xyz = normal;
+    output.Normal.xyz = float3(0,0,0);
     output.Normal.w = 1.0f;
     output.Depth = input.Pos.z;    
     output.Specular.xyz = SpecularColor.xyz;

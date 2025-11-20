@@ -55,7 +55,7 @@ SceneManager::~SceneManager()
 //* @:SceneManager Class 
 //*【?】初期化
 //* 引数：1.RendererManager
-//* 返値：bool
+//* 返値：成功したか
 //*----------------------------------------------------------------------------------------
 bool SceneManager::Init(RendererManager &renderer)
 {
@@ -80,7 +80,7 @@ bool SceneManager::Init(RendererManager &renderer)
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 1.0f;
+            mat->SpecularPower = 0.1f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -122,6 +122,7 @@ bool SceneManager::Init(RendererManager &renderer)
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
             obj.lock()->get_Transform().lock()->set_Scale(VEC3(100, 100, 100));
+            obj.lock()->set_Tag("PointLight");
             auto light = obj.lock()->add_Component<PointLight>();
             light->CreateCBuffer(renderer.get_Device());
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
@@ -269,27 +270,27 @@ bool SceneManager::Init(RendererManager &renderer)
             obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
             obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
         }        
-        {
-            // SkyDorm
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Day01.png");
-            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.1;
+        //{
+        //    // SkyDorm
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Day01.png");
+        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 0.1;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.ObjTag = "SkyDorm";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+        //    mesh.ObjTag = "SkyDorm";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
-        }       
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
+        //}       
     }
 
     // 参照を持たせる
@@ -452,8 +453,11 @@ void SceneManager::Update(RendererManager& renderer)
     VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    lig.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, (cos(a) * 1000.0f) * -1, 0);
+    lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1,50.0f, 0);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+
+
+
 
     auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
@@ -473,13 +477,13 @@ void SceneManager::Update(RendererManager& renderer)
     rad = cubuObj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
-    auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
-    auto tf = skyObj.lock()->get_Component<Transform>();
-    tf->set_Pos(camPos);
+    //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
+    //auto tf = skyObj.lock()->get_Component<Transform>();
+    //tf->set_Pos(camPos);
 
 
     Debugger::Instance().BeginDebugWindow("Light");
-    Debugger::Instance().DG_SliderFloat("dir", &m_LightDir, -1.0f, 1.0f);
+    Debugger::Instance().DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
     Debugger::Instance().DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
     Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Debugger::Instance().EndDebugWindow();
@@ -542,6 +546,7 @@ void SceneManager::Draw(RendererManager& renderer)
     // ディファードスプライト
     auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();
     auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
+    BlendManager::Instance().DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
 
     //// シーンの描画

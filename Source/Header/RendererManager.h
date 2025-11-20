@@ -30,9 +30,9 @@ private:
     ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
     ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
-    ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
-    ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用
-    ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
+    //ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
+    //ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用
+    //ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
 	
 
 
@@ -73,7 +73,7 @@ private:
     HRESULT InitDX11_ZBuff();                   // ＤＸ１１ Ｚバッファ初期化
     HRESULT InitDX11_Rasterizer();              // ＤＸ１１ ラスタライザ初期化
     HRESULT InitDX11_Sampler();                 // ＤＸ１１ サンプラー初期化
-    HRESULT InitDX11_BlendState();              // ＤＸ１１ ブレンドステート初期化
+    //HRESULT InitDX11_BlendState();              // ＤＸ１１ ブレンドステート初期化
     void CleanupDX11();                         // ＤＸ１１ 開放
     void EnableDebugLayer();                    // デバッグレイヤーの有効化
     bool SetupProjectionTransform();            //透視投影変換計算

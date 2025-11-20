@@ -29,7 +29,7 @@ IndexBuffer::~IndexBuffer()
 //* 引数：なし
 //* 戻値：bool
 //*----------------------------------------------------------------------------------------
-bool IndexBuffer::Setup()
+bool IndexBuffer::Create()
 {
 	return true;
 }
@@ -41,7 +41,7 @@ bool IndexBuffer::Setup()
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void IndexBuffer::Term()
+void IndexBuffer::Release()
 {
 
 }

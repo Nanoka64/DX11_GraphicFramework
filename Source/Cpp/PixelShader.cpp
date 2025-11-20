@@ -12,12 +12,12 @@ PixelShader::~PixelShader()
 
 }
 
-bool PixelShader::Setup()
+bool PixelShader::Create()
 {
 	return true;
 }
 
-void PixelShader::Term()
+void PixelShader::Release()
 {
 
 }

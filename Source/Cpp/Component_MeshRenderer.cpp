@@ -4,6 +4,7 @@
 #include "Component_IMeshResource.h"
 #include "Component_MeshRenderer.h"
 #include "Texture.h"
+#include "BlendManager.h"
 
 using namespace DirectX;
 using namespace BASE_VERTEX;
@@ -12,7 +13,8 @@ using namespace Tool::UV;
 //*---------------------------------------------------------------------------------------
 //* @:MeshRenderer Class 
 //*【?】コンストラクタ
-//* 引数：1.
+//* 引数：1.オーナーオブジェクト
+//* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 MeshRenderer::MeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner,updateRank)
 {
@@ -144,6 +146,7 @@ void MeshRenderer::Draw(RendererManager& renderer)
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
+
 }
 
 

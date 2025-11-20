@@ -99,8 +99,8 @@ bool ShaderManager::CreateShader(SHADER_TYPE type)
     ShaderInfo shaderInfo{};
 
     // 頂点・ピクセルシェーダ、入力レイアウトのセットアップ
-    if (!SetupVertexShader(type, &shaderInfo))return false; 
-    if (!SetupPixelShader(type, &shaderInfo))return false;
+    if (!VertexShaderFactory(type, &shaderInfo))return false;
+    if (!PixelShaderFactory(type, &shaderInfo))return false;
     
     shaderInfo.Type = type;
 
@@ -145,7 +145,7 @@ void ShaderManager::DeviceToSetShader(SHADER_TYPE type)
 /* - @:ShaderManager Class - 入力レイアウトの作成 - * - */
 /* 【?】入力レイアウト作成
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob* blob)
+bool ShaderManager::InputLayoutFactory(SHADER_TYPE type, ShaderInfo* out, ID3DBlob* blob)
 {
     auto renderer = m_pRenderer.lock();
     if (renderer == nullptr)return false;
@@ -201,7 +201,7 @@ bool ShaderManager::SetupInputLayout(SHADER_TYPE type, ShaderInfo* out, ID3DBlob
 /* - @:ShaderManager Class - 頂点シェーダの作成 - * - */
 /* 【?】頂点シェーダの作成
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
+bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out)
 {
     auto renderer = m_pRenderer.lock();
     if (renderer == nullptr)return false;
@@ -257,7 +257,7 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
     }
 
     // 頂点レイアウトの作成
-    bool res = SetupInputLayout(type, out, pVSBlob);
+    bool res = InputLayoutFactory(type, out, pVSBlob);
     pVSBlob->Release();
 
     if (!res) {
@@ -276,7 +276,7 @@ bool ShaderManager::SetupVertexShader(SHADER_TYPE type, ShaderInfo* out)
 /* - @:ShaderManager Class - ピクセルシェーダの作成 - * - */
 /* 【?】ピクセルシェーダの作成
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::SetupPixelShader(SHADER_TYPE type, ShaderInfo* out)
+bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out)
 {
     auto renderer = m_pRenderer.lock();
     if (renderer == nullptr)return false;
@@ -340,7 +340,7 @@ HRESULT ShaderManager::CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LP
 {
     HRESULT hr = S_OK;
     //DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-    DWORD dwShaderFlags = D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;  // こっちの方が計算が速いらしい https://proglog.site/triangle-transform-on-shader/
+    DWORD dwShaderFlags = 0;//D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;  // こっちの方が計算が速いらしい https://proglog.site/triangle-transform-on-shader/
 
 #if defined(DEBUG) || defined(_DEBUG)
     // D3DCOMPILE_DEBUG フラグを設定して、シェーダーにデバッグ情報を埋め込む。

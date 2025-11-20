@@ -64,69 +64,102 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     m_pGameManager = new GameManager();
     m_pRenderer = std::make_shared<RendererManager>();
 
+    // *************************************************************************************************
     /**  ウインドウの初期化 **/
-    if (FAILED(this->InitWindow(hInstance, nCmdShow))) {
+    // *************************************************************************************************
+    if (FAILED(this->InitWindow(hInstance, nCmdShow))) 
+    {
         assert(false);
         return false;
     }
 
+    // *************************************************************************************************
     /**  描画(directX)初期化 **/
-    if (!m_pRenderer->Init(m_hWnd)) {
+    // *************************************************************************************************
+    if (!m_pRenderer->Init(m_hWnd))
+    {
         assert(false);
         return false;
     }
 
+    // *************************************************************************************************
+    //** ブレンドステートの初期化 **/
+    // *************************************************************************************************
+    if (!BlendManager::Instance().Init(m_pRenderer))
+    {
+        assert(false);
+        return false;
+    }
+
+    // *************************************************************************************************
     //** シェーダ管理の初期化 **/
     //** 描画クラスの弱参照を入れる   **/
-    if (!ShaderManager::Instance().Init(m_pRenderer)){
+    // *************************************************************************************************
+    if (!ShaderManager::Instance().Init(m_pRenderer))
+    {
         assert(false);
         return false;
     }
-
+    // シェーダ作成
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE))return false;
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL))return false;
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE))return false;
     if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD))return false;
 
+    // *************************************************************************************************
     //** リソース管理の初期化 **/
     //** 描画クラスの弱参照を入れる   **/
-    if (!ResourceManager::Instance().Init(m_pRenderer)) {
+    // *************************************************************************************************
+    if (!ResourceManager::Instance().Init(m_pRenderer))
+    {
         assert(false);
         return false;
     }
 
+    // *************************************************************************************************
     /**  directWrire 初期化 **/
-    if (FAILED(DirectWriteManager::Instance().Init(*m_pRenderer))) {
-        assert(false);
-        return false;
-    }
+    // *************************************************************************************************
+    //if (FAILED(DirectWriteManager::Instance().Init(*m_pRenderer)))
+    //{
+    //    assert(false);
+    //    return false;
+    //}
 
+    // *************************************************************************************************
     /**  ゲームマネージャー初期化 **/
-    if (!m_pGameManager->Init(*m_pRenderer)) {
+    // *************************************************************************************************
+    if (!m_pGameManager->Init(*m_pRenderer))
+    {
         assert(false);
         return false;
     }
 
+    // *************************************************************************************************
     /** デバッガー初期化 **/
-    if (!Debugger::Instance().Init(m_hWnd,m_pRenderer)){
+    // *************************************************************************************************
+    if (!Debugger::Instance().Init(m_hWnd,m_pRenderer))
+    {
         assert(false);
         return false;
     }
 
+    // *************************************************************************************************
     /**  入力マネージャー初期化 **/
-    if (!InputManager::GetInstance().Init(m_hWnd)) {
+    // *************************************************************************************************
+    if (!InputManager::GetInstance().Init(m_hWnd))
+    {
         assert(false);
         return false;
     }
 
-    /** フォントデータ作成 **/
-    FONT_DATA *pFontData = new FONT_DATA();
-    pFontData->fontSize = 20.0f;
-    pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
-    pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
+    ///** フォントデータ作成 **/
+    //FONT_DATA *pFontData = new FONT_DATA();
+    //pFontData->fontSize = 20.0f;
+    //pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
+    //pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
 
-    // フォントデータをDirectWriteManagerに設定
-    DirectWriteManager::Instance().SetFontData(pFontData);
+    //// フォントデータをDirectWriteManagerに設定
+    //DirectWriteManager::Instance().SetFontData(pFontData);
 
     // 正常終了
     return true;

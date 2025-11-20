@@ -39,10 +39,10 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
 {
     VS_SimpleOutput output;
     float4 pos   = float4(input.Pos, 1.0f);
-    float4 norm  = float4(input.Normal, 0.0f);
+    float3 norm  = float3(input.Normal);
     float2 uv    = input.UV;
     float4 color = input.Color;
-    norm = normalize(mul(norm, Transform));
+    norm = normalize(mul(norm, (float3x3) Transform)).xyz;
     
     pos = mul(pos, Transform);  // ÉèÅ[ÉãÉhïœä∑
     output.World = pos;

@@ -27,8 +27,7 @@ float3 DiffuseLightCalc(float3 ligDir, float3 ligCol, float3 norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = -dot(norm, ligDir);
-    diffuseFactor = saturate(diffuseFactor); // saturate：0～1にクランプする
+    float diffuseFactor = max(0.0f, -dot(norm, ligDir));
     
     // 拡散反射求める
     finalDfs = ligCol * diffuseFactor;
@@ -85,7 +84,7 @@ struct OUT_DiffAndSpec
 //* 引数：2.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 pos, float3 norm)
+OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
@@ -93,7 +92,7 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, floa
     float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc(ligData.Direction, spcCol, spcPow, pos, norm);
+    float3 specularLig = SpecularLightCalc(ligData.Direction, spcCol, spcPow, worldPos, norm);
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * ligData.Intensity;
@@ -130,10 +129,10 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
     float3 diffPoint = DiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
-    float3 spcPoint = SpecularLightCalc(ligDir, spcCol, spcPow, worldPos, norm);
+    float3 spcPoint = SpecularLightCalc(ligDir,  ligData.DiffuseColor, spcPow, worldPos, norm);
 
     // 影響度計算
-    float influencePower = 1.0f - (distance / ligData.Range);
+    float influencePower = 1.0f - min(1.0f, distance / ligData.Range);
     
     // マイナスにならないように
     influencePower = max(0.0, influencePower);
@@ -141,16 +140,12 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
     
     // 影響度を拡散・鏡面に反映させる
     diffPoint *= influencePower;
-    spcPoint *= influencePower;
+    spcPoint  *= influencePower;
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffPoint;
     outData.Specular = spcPoint;
     return outData;
-    
-    //finalLig = diffPoint + spcPoint;
-    
-    //return finalLig;
 }
 
 //*---------------------------------------------------------------------------------------

@@ -7,6 +7,12 @@ using namespace DirectX;
 using namespace BASE_VERTEX;
 using namespace Tool::UV;
 
+//*---------------------------------------------------------------------------------------
+//* @:SkinnedMeshAnimator Class 
+//*【?】コンストラクタ
+//* 引数：1.オーナーオブジェクト
+//* 引数：2.更新レイヤー
+//*----------------------------------------------------------------------------------------
 SkinnedMeshAnimator::SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
 m_AnimationTime(0.0),
 m_CurrentAnimIndex(0),

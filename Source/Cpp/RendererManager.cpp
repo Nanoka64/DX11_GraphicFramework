@@ -6,6 +6,7 @@
 #include "MyStruct.h"
 #include "Path.h"
 #include "DX_RenderTarget.h"
+#include "BlendManager.h"
 #include <string>
 
 //*---------------------------------------------------------------------------------------
@@ -26,9 +27,9 @@ RendererManager::RendererManager():
     m_pSamplerLinear(nullptr),
     m_pRasterState(nullptr),
     m_pDepthStencilState(nullptr),
-    m_pBlendStateAlpha(nullptr),
-    m_pBlendStateAdd(nullptr),
-    m_pBlendStateSub(nullptr),
+    //m_pBlendStateAlpha(nullptr),
+    //m_pBlendStateAdd(nullptr),
+    //m_pBlendStateSub(nullptr),
     m_ScreenWidht(0),
     m_Screenheight(0),
     m_hWnd(0),
@@ -71,9 +72,9 @@ bool RendererManager::Init(HWND hWnd)
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
-    m_pBlendStateAlpha = NULL;        // αブレンド用
-    m_pBlendStateAdd   = NULL;        // 加算合成用
-    m_pBlendStateSub   = NULL;        // 減算合成用
+    //m_pBlendStateAlpha = NULL;        // αブレンド用
+    //m_pBlendStateAdd   = NULL;        // 加算合成用
+    //m_pBlendStateSub   = NULL;        // 減算合成用
 
     m_NearClipDist = 0.1f;
     m_FarClipDist  = 30000.0f;
@@ -119,9 +120,9 @@ void RendererManager::BeginRender()
     m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
 
-    // OMにブレンドステートオブジェクトを設定
-    FLOAT BlendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
-    m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, nullptr, 1);   
+    //// OMにブレンドステートオブジェクトを設定
+    //FLOAT BlendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
+    //m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, nullptr, 1);   
     
     // 深度ステンシルステート設定
     m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);   
@@ -202,7 +203,9 @@ bool RendererManager::InitDx11()
     if (FAILED(InitDX11_ZBuff()))           return false;
     if (FAILED(InitDX11_Rasterizer()))      return false;
     if (FAILED(InitDX11_Sampler()))         return false;
-    if (FAILED(InitDX11_BlendState()))      return false;
+
+
+    //if (FAILED(InitDX11_BlendState()))      return false;
 
     return true;
 }
@@ -433,7 +436,7 @@ HRESULT RendererManager::InitDX11_Rasterizer()
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
     // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
     // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回り)
-    rd.CullMode              = D3D11_CULL_BACK;
+    rd.CullMode              = D3D11_CULL_NONE;
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面
@@ -499,50 +502,50 @@ HRESULT RendererManager::InitDX11_Sampler()
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_BlendState()
-{
-    /* ブレンドステート設定 */
-
-    HRESULT hr = S_OK;
-
-    D3D11_BLEND_DESC blendDesc;
-    ZeroMemory(&blendDesc, sizeof(blendDesc));
-    blendDesc.AlphaToCoverageEnable       = FALSE;  // α値をカバレッジマスクに変換するか(高密度の葉のようなものに使用するといいらしい？)
-    blendDesc.IndependentBlendEnable      = FALSE;  // 複数のレンダーターゲットでブレンド設定を独立させるかどうか
-    blendDesc.RenderTarget[0].BlendEnable = TRUE;   // そのレンダーターゲットのブレンド設定を有効にするかどうか
-
-    // αブレンド
-    blendDesc.RenderTarget[0].BlendOp               = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].DestBlend             = D3D11_BLEND_INV_SRC_ALPHA;
-    blendDesc.RenderTarget[0].SrcBlend              = D3D11_BLEND_SRC_ALPHA;
-    blendDesc.RenderTarget[0].BlendOpAlpha          = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].DestBlendAlpha        = D3D11_BLEND_ZERO;
-    blendDesc.RenderTarget[0].SrcBlendAlpha         = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-    hr = m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAlpha);
-    if (FAILED(hr))return hr;
-
-    // 加算ブレンド
-    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_ADD;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
-    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAdd);
-    if (FAILED(hr))return hr;
-
-    // 減算ブレンド
-    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_SUBTRACT;
-    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
-    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateSub);
-    if (FAILED(hr))return hr;
-
-    // ブレンドステートを設定 ( ここではとりまαブレンドで )
-    float blendFactor[4]{ 0.0f,0.0f,0.0f,0.0f };
-    m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, blendFactor, 0xffffffff);
-
-    return hr;
-}
-
+//HRESULT RendererManager::InitDX11_BlendState()
+//{
+//    /* ブレンドステート設定 */
+//
+//    HRESULT hr = S_OK;
+//
+//    D3D11_BLEND_DESC blendDesc;
+//    ZeroMemory(&blendDesc, sizeof(blendDesc));
+//    blendDesc.AlphaToCoverageEnable       = FALSE;  // α値をカバレッジマスクに変換するか(高密度の葉のようなものに使用するといいらしい？)
+//    blendDesc.IndependentBlendEnable      = FALSE;  // 複数のレンダーターゲットでブレンド設定を独立させるかどうか
+//    blendDesc.RenderTarget[0].BlendEnable = TRUE;   // そのレンダーターゲットのブレンド設定を有効にするかどうか
+//
+//    // αブレンド
+//    blendDesc.RenderTarget[0].BlendOp               = D3D11_BLEND_OP_ADD;
+//    blendDesc.RenderTarget[0].DestBlend             = D3D11_BLEND_INV_SRC_ALPHA;
+//    blendDesc.RenderTarget[0].SrcBlend              = D3D11_BLEND_SRC_ALPHA;
+//    blendDesc.RenderTarget[0].BlendOpAlpha          = D3D11_BLEND_OP_ADD;
+//    blendDesc.RenderTarget[0].DestBlendAlpha        = D3D11_BLEND_ZERO;
+//    blendDesc.RenderTarget[0].SrcBlendAlpha         = D3D11_BLEND_ONE;
+//    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+//    hr = m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAlpha);
+//    if (FAILED(hr))return hr;
+//
+//    // 加算ブレンド
+//    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_ADD;
+//    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+//    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
+//    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAdd);
+//    if (FAILED(hr))return hr;
+//
+//    // 減算ブレンド
+//    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_SUBTRACT;
+//    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+//    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
+//    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateSub);
+//    if (FAILED(hr))return hr;
+//
+//    // ブレンドステートを設定 ( ここではとりまαブレンドで )
+//    float blendFactor[4]{ 0.0f,0.0f,0.0f,0.0f };
+//    m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, blendFactor, 0xffffffff);
+//
+//    return hr;
+//}
+//
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererManager Class 
@@ -557,9 +560,9 @@ void RendererManager::CleanupDX11()
     SAFE_RELEASE(m_pRasterState);
     SAFE_RELEASE(m_pDepthStencilState);
     SAFE_RELEASE(m_pSamplerLinear);
-    SAFE_RELEASE(m_pBlendStateAlpha);
-    SAFE_RELEASE(m_pBlendStateAdd);
-    SAFE_RELEASE(m_pBlendStateSub);
+    //SAFE_RELEASE(m_pBlendStateAlpha);
+    //SAFE_RELEASE(m_pBlendStateAdd);
+    //SAFE_RELEASE(m_pBlendStateSub);
     SAFE_RELEASE(m_pVertexBuffer);
     SAFE_RELEASE(m_pDepthStencil);
     SAFE_RELEASE(m_pDepthStencilView);

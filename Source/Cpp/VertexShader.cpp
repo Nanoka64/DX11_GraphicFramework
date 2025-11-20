@@ -11,12 +11,12 @@ VertexShader::~VertexShader()
 
 }
 
-bool VertexShader::Setup()
+bool VertexShader::Create()
 {
 	return true;
 }
 
-void VertexShader::Term()
+void VertexShader::Release()
 {
 
 }

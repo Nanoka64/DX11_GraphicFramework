@@ -5,10 +5,13 @@
 
 using namespace BASE_VERTEX;
 
-// ----------------------------------------------------------------------------------------------------------------------
-/// <summary>
-/// コンストラクタ
-/// </summary>
+
+//*---------------------------------------------------------------------------------------
+//* @:DirectionalLight Class 
+//*【?】コンストラクタ
+//* 引数：1.オーナーオブジェクト
+//* 引数：2.更新レイヤー
+//*----------------------------------------------------------------------------------------
 IMeshResource::IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank ) :IComponent(pOwner, updateRank),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),

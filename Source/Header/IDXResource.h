@@ -20,8 +20,7 @@ public:
 	IDXResource() : m_pResource(nullptr) {};
 	virtual ~IDXResource() = default;
 
-	virtual bool Setup() = 0; 
-	virtual void Term() = 0;
+	virtual void Release() = 0;
 
 	T* get()const { return m_pResource.Get(); };
 	void set(Microsoft::WRL::ComPtr<T> res) { m_pResource = std::move(res); }

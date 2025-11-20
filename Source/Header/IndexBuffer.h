@@ -20,7 +20,7 @@ public:
     IndexBuffer();
     ~IndexBuffer();
 
-    bool Setup() override;
-    void Term() override;
+    bool Create();
+    void Release() override;
 };
 

@@ -27,7 +27,7 @@ VertexBuffer::~VertexBuffer()
 //* 引数：なし
 //* 戻値：bool
 //*----------------------------------------------------------------------------------------
-bool VertexBuffer::Setup()
+bool VertexBuffer::Create()
 {
 	return true;
 }
@@ -39,7 +39,7 @@ bool VertexBuffer::Setup()
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void VertexBuffer::Term()
+void VertexBuffer::Release()
 {
 
 }
