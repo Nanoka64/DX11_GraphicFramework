@@ -44,19 +44,21 @@ float4 PSMain(PS_IN input) : SV_TARGET
 
     // 正規化スクリーン座標系での座標を計算する。
     // z座標は深度テクスチャから引っ張ってくる。
-    worldPos.z = depthTex;
+    worldPos.z = depthTex ;
     
     // xy座標はUV座標から計算する。
     worldPos.xy = input.UV * float2(2.0f, -2.0f) + float2(-1.0f, 1.0f);
     worldPos.w = 1.0f;
     
     // クリップ座標にビュープロジェクション行列の逆行列を乗算して、ワールド座標に戻す。
-    worldPos = mul(viewProjInvMatrix, worldPos );
-    //worldPos.xyz /= worldPos.w;   // wで割るとうまく反映されない
+    worldPos = mul(worldPos, viewProjInvMatrix);
+    
+    worldPos.xyz /= worldPos.w;   
     
     // 法線取り出す
-    float3 normal = (normalTex.xyz * 2.0f) - 1.0f;
+    float3 normal = (normalTex.xyz - 0.5f) * 2.0f;
     normal = normalize(normal);
+    
     
     // スペキュラ強度
     float spcPow = specularTex.w;
@@ -76,7 +78,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 specular = dirLig.Specular + pointLig.Specular;
     
     // スペキュラ強度の反映
-    specular *= spcPow;
+    //specular *= spcPow;
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.rgb * lighting + specular;

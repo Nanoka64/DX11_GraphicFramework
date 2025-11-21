@@ -42,6 +42,8 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
     
+    normalMap.y *= -1.0f;
+    
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * DiffuseColor;
@@ -55,13 +57,13 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     int dither = ditherPattern[x][y];
     
     // 閾値が 10 以下のピクセルはピクセルキルする
-    //clip(dither - 30);
+    //clip(dither - 50);
 
     
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal.xyz = float3(0,0,0);
+    output.Normal.xyz = input.Normal;
     output.Normal.w = 1.0f;
     output.Depth = input.Pos.z;    
     output.Specular.xyz = SpecularColor.xyz;

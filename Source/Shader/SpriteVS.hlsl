@@ -44,8 +44,8 @@ VS_OUT VSMain(VS_INPUT input)
     //pos = mul(pos, View); // ƒrƒ…[•ÏŠ·
     //pos = mul(pos, Projection); // “Š‰e•ÏŠ·
     
-    output.Pos = pos;
+    output.Pos   = pos;
     output.Color = color;
-    output.UV = uv;
+    output.UV    = uv;
     return output;
 }

@@ -590,6 +590,10 @@ bool RendererManager::SetupProjectionTransform()
         m_FarClipDist
     );
 
+
+    // 保持
+    m_Proj = mat;
+
     mat = XMMatrixTranspose(mat);   // 転置
 
     auto& cb = m_RenderParam.cbProjectionSet;
@@ -632,10 +636,16 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 {
     auto pDeviceContext = get_DeviceContext();
 
+
+    // 保持
+    m_View = viewMat;
+
+
     auto& cb = m_RenderParam.cbViewSet;
     XMStoreFloat4x4(&cb.Data.View, XMMatrixTranspose(viewMat));
-    cb.Data.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
 
+
+    cb.Data.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
     ZeroMemory(&mappedResource, sizeof(mappedResource));
@@ -658,6 +668,9 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
     // VSにViewMatrixをセット
     pDeviceContext->VSSetConstantBuffers(1, 1, &cb.pBuff);
 
+    // ピクセルシェーダにもセット！！
+    pDeviceContext->PSSetConstantBuffers(1, 1, &cb.pBuff);
+
     return true;
 }
 
@@ -669,8 +682,8 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 //*----------------------------------------------------------------------------------------
 XMMATRIX RendererManager::get_ViewProjectionMatrix()
 {
-    XMMATRIX view = XMLoadFloat4x4(&m_RenderParam.cbViewSet.Data.View);
-    XMMATRIX proj = XMLoadFloat4x4(&m_RenderParam.cbProjectionSet.Data.Projection);
+    XMMATRIX view = m_View;
+    XMMATRIX proj = m_Proj;
     return XMMatrixMultiply(view, proj);
 }
 
@@ -685,7 +698,9 @@ XMFLOAT4X4 RendererManager::get_ViewProjectionInvMatrix()
 {
     XMMATRIX vp = get_ViewProjectionMatrix();
     XMFLOAT4X4 res{};
-    XMStoreFloat4x4(&res, XMMatrixInverse(NULL, vp));
+
+    // 転置逆行列
+    XMStoreFloat4x4(&res, XMMatrixTranspose(XMMatrixInverse(NULL, vp)));
     return res;
 }
 

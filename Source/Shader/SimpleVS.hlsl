@@ -42,17 +42,17 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
     float3 norm  = float3(input.Normal);
     float2 uv    = input.UV;
     float4 color = input.Color;
-    norm = normalize(mul(norm, (float3x3) Transform)).xyz;
+    norm = normalize(mul(norm, (float3x3) Transform));
     
     pos = mul(pos, Transform);  // ワールド変換
     output.World = pos;
     pos = mul(pos, View);       // ビュー変換
     pos = mul(pos, Projection); // 投影変換
     
-    output.Pos = pos;           // 画面空間の頂点座標
+    output.Pos    = pos;        // 画面空間の頂点座標
     output.Normal = norm.xyz;   // 法線
-    output.UV = input.UV;       // テクスチャ座標
-    output.Color = color;
+    output.UV     = input.UV;   // テクスチャ座標
+    output.Color  = color;
     
     return output;
 }

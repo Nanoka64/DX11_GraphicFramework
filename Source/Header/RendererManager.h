@@ -35,6 +35,8 @@ private:
     //ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
 	
 
+    DirectX::XMMATRIX m_Proj;
+    DirectX::XMMATRIX m_View;
 
     // レンダーターゲット用
     std::shared_ptr<class RenderTarget> m_pRenderTarget;

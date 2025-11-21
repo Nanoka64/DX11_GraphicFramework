@@ -110,7 +110,7 @@ void Camera3D::Update(RendererManager& renderer)
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 
 	// Imgui デバッグ
-	static float debugSpeed = 0.1f;
+	static float debugSpeed = 5.1f;
 	Debugger::Instance().BeginDebugWindow("CameraInfo");
 	Debugger::Instance().DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
 	Debugger::Instance().DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));

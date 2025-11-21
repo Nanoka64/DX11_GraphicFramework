@@ -143,8 +143,8 @@ VS_OUTPUT VS(VS_INPUT input)
     output.Col    = input.Col;      // カラー
 
     // 接ベクトルと従ベクトルをワールド空間に変換する
-    output.Tan    = normalize(mul((float3x3) Transform, input.Tan));
-    output.BiNorm = normalize(mul((float3x3) Transform, input.BiNorm));
+    output.Tan    = normalize(mul(input.Tan, (float3x3) Transform));
+    output.BiNorm = normalize(mul(input.BiNorm, (float3x3) Transform));
     
     //output.Col = float4(0.5f, 0.5f, 0.5f, 1.0f);
     

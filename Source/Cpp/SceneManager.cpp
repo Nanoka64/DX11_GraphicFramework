@@ -72,7 +72,7 @@ bool SceneManager::Init(RendererManager &renderer)
             pCam.lock()->Init(renderer);
             pCam.lock()->set_Tag("Camera");
             pCam.lock()->add_Component<Camera3D>();
-            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -10.0f);
+            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 700.0f, -3000.0f);
         }
 
         {
@@ -118,6 +118,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
+            mesh.IsActive = false;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
@@ -149,7 +150,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(false);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -173,7 +174,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -198,7 +199,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
             obj.lock()->set_LayerRank(0);
         }        
 
@@ -245,7 +246,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mesh.MaterialData->pMat = mat;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(100, 100, 100);
+            obj.lock()->get_Transform().lock()->set_Scale(200, 200, 200);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
         }      
 
@@ -322,7 +323,7 @@ bool SceneManager::Init(RendererManager &renderer)
         1,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_UNKNOWN
     );
     
     // ****************************************************************
@@ -449,8 +450,12 @@ void SceneManager::Update(RendererManager& renderer)
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
+
+
     auto cam = GameObjectManager::Instance().get_ObjectByTag("Camera");
     VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
+
+
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
     lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1,50.0f, 0);
@@ -464,23 +469,27 @@ void SceneManager::Update(RendererManager& renderer)
     rad->set_RotateToRad(m_LightDir);
     dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
+
+
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, 0.0, sin(a) );
+
 
 
     auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
     rad = sphereObj.lock()->get_Component<Transform>();
     rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
+
+
     auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
     rad = cubuObj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, 0.0, 0.0f);
+    rad->set_RotateToRad(cos(a), sin(a), sin(a));
 
     //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
     //auto tf = skyObj.lock()->get_Component<Transform>();
     //tf->set_Pos(camPos);
-
 
     Debugger::Instance().BeginDebugWindow("Light");
     Debugger::Instance().DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
