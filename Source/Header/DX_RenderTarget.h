@@ -17,6 +17,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pDepthStencilTexture;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView;
 
     int m_Width;
     int m_Height;
@@ -58,6 +59,12 @@ public:
     /// <returns></returns>
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_SRV_ComPtr();
 
+
+    /// <summary>
+    /// デプスステンシル用のSRVのComポインタ取得
+    /// </summary>
+    /// <returns></returns>
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_DepthSRV_ComPtr();
 
     /// <summary>
     /// デプスステンシルバッファを保持しているか

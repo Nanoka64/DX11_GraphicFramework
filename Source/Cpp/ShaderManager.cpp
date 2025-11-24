@@ -340,7 +340,7 @@ HRESULT ShaderManager::CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LP
 {
     HRESULT hr = S_OK;
     //DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-    DWORD dwShaderFlags = 0;//D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;  // こっちの方が計算が速いらしい https://proglog.site/triangle-transform-on-shader/
+    DWORD dwShaderFlags =D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;  // こっちの方が計算が速いらしい https://proglog.site/triangle-transform-on-shader/
 
 #if defined(DEBUG) || defined(_DEBUG)
     // D3DCOMPILE_DEBUG フラグを設定して、シェーダーにデバッグ情報を埋め込む。

@@ -17,6 +17,7 @@
 using namespace Input;
 using namespace BASE_VERTEX;
 
+
 //*---------------------------------------------------------------------------------------
 //* @:DXApp Class 
 //*【?】コンストラクタ
@@ -203,9 +204,10 @@ int DXApp::MainLoop()
         else
         {
             crntTime = timeGetTime();   // 現在時刻を更新
+            float difference = (crntTime - lastTime);
 
             // 現在時刻と前回更新時刻の差分が１６.６６msより大きければゲーム処理を実行する
-            if ((crntTime - lastTime) > 1000.0f / 60.0f)
+            if (difference > 1000.0f / g_Fps)
             {
                 if (GetInput(CONFIG_INPUT::PAUSE)) break;   // 終了ボタン
 
@@ -213,6 +215,15 @@ int DXApp::MainLoop()
                 lastTime = crntTime;
 
                 Debugger::Instance().BeginFrame();
+
+
+                // アプリケーション情報
+                Debugger::Instance().BeginDebugWindow("Application");
+                Debugger::Instance().DG_TextValue("CrntTime : %d", crntTime);
+                Debugger::Instance().DG_TextValue("LastTime : %d", lastTime);
+                Debugger::Instance().DG_TextValue("Difference : %f.3", difference);
+                Debugger::Instance().EndDebugWindow();
+
 
                 // ゲーム更新
                 m_pGameManager->Update(*m_pRenderer);
@@ -296,7 +307,7 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);   // マウスカーソルのハンドル
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);    // ウインドウ背景色
     wcex.lpszMenuName  = NULL;                  // デフォルトメニュー名
-    wcex.lpszClassName = "DX11_3DGAME_SL";      // オリジナルの名前付ける
+    wcex.lpszClassName = g_WindowClassNameA;    // オリジナルの名前付ける
     wcex.hIconSm       = NULL;                  // 左上やタスクバーの小さいアイコン
     
     if (!RegisterClassEx(&wcex))                // この設定でウインドウズにお願いする
@@ -307,9 +318,11 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     m_hInst = hInstance;
     RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  WND_RECT_RIGHT, WND_RECT_BOTTOM };      // 矩形を設定する
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);  // ウインドウの形を整える
-    m_hWnd = CreateWindow("DX11_3DGAME_SL",             // 上で設定した名前と合わせる
-        "SANDBOT",                                      // ウインドウタイトル
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,        // ウインドウスタイル
+    m_hWnd = CreateWindowW(
+        g_WindowClassNameW,                             // 上で設定した名前と合わせる
+        g_WindowTitle,                                  // ウインドウタイトル
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU         // ウインドウスタイル
+        /*| WS_OVERLAPPEDWINDOW | WS_POPUP*/,           // 基本ウインドウ、タイトルバー表示、Xボタンなど、サイズ変更、全画面
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         rc.right - rc.left,

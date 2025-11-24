@@ -33,7 +33,7 @@ struct PSOutPut
 {
     float4 Albedo : SV_Target0;
     float4 Normal : SV_Target1;
-    float Depth : SV_Target2;
+    float4 Depth : SV_Target2;
     float4 Specular : SV_Target3;
 };
 
@@ -60,7 +60,7 @@ PSOutPut PS(PS_INPUT input)
     output.Albedo = finalCol;
     output.Normal.xyz = normal;
     output.Normal.w = 1.0f;
-    output.Depth = input.Pos.z;
+    output.Depth.x = input.Pos.z;
     output.Specular.xyz = SpecularColor.xyz;
     output.Specular.w = SpecularPower; // w‚É”½ŽË‹­“x“ü‚ê‚é
     return output;

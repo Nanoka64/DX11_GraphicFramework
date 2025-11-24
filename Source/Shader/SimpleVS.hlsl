@@ -25,11 +25,11 @@ struct VS_SimpleInput
 /* =========================================================================*/
 struct VS_SimpleOutput
 {
-    float4 Pos : SV_POSITION;
-    float4 World : WORLD;
-    float3 Normal : NORMAL0;
-    float4 Color : COLOR0;
-    float2 UV : TEXCOORD0;
+    float4 Pos      : SV_Position;
+    float4 World    : WORLD0;
+    float3 Normal   : NORMAL0;
+    float4 Color    : COLOR0;
+    float2 UV       : TEXCOORD0;
 };
 
 // **************************************************************************
@@ -44,10 +44,10 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
     float4 color = input.Color;
     norm = normalize(mul(norm, (float3x3) Transform));
     
-    pos = mul(pos, Transform);  // ワールド変換
+    pos = mul(pos, Transform);  // ワールド変換（ワールド空間）
     output.World = pos;
-    pos = mul(pos, View);       // ビュー変換
-    pos = mul(pos, Projection); // 投影変換
+    pos = mul(pos, View);       // ビュー変換（ビュー空間）
+    pos = mul(pos, Projection); // 投影変換（クリッピング空間）
     
     output.Pos    = pos;        // 画面空間の頂点座標
     output.Normal = norm.xyz;   // 法線

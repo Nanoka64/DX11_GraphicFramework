@@ -637,14 +637,14 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
     auto pDeviceContext = get_DeviceContext();
 
 
-    // 保持
+    // ビュー行列保持
     m_View = viewMat;
 
 
     auto& cb = m_RenderParam.cbViewSet;
     XMStoreFloat4x4(&cb.Data.View, XMMatrixTranspose(viewMat));
 
-
+    // ビュープロジェクション逆行列取得
     cb.Data.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
 
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -733,9 +733,9 @@ void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *ren
         rtv[i] = renderTargets[i]->get_RTV();
     }
 
-    if (renderTargets[0]->HasDepthStencilBuffer()) {
+    if (renderTargets[2]->HasDepthStencilBuffer()) {
         //深度バッファがある。
-        m_pImmediateContext->OMSetRenderTargets(num, rtv, m_pDepthStencilView);
+        m_pImmediateContext->OMSetRenderTargets(num, rtv, renderTargets[2]->get_DSV());
     }
     else  {
         //深度バッファがない。
@@ -753,9 +753,9 @@ void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *ren
 //*----------------------------------------------------------------------------------------
 void RendererManager::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
 {
-    if (renderTargets[0]->HasDepthStencilBuffer()) {
+    if (renderTargets[2]->HasDepthStencilBuffer()) {
         // デプスステンシルバッファがあるならクリア 
-        m_pImmediateContext->ClearDepthStencilView(renderTargets[0]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
+        m_pImmediateContext->ClearDepthStencilView(renderTargets[2]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
     }
 
     for (UINT i = 0; i < num; i++) {

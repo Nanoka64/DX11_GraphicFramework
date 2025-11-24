@@ -20,7 +20,7 @@ struct PSOutPut
 {
     float4 Albedo : SV_Target0;
     float4 Normal : SV_Target1;
-    float Depth : SV_Target2;
+    float4 Depth : SV_Target2;
     float4 Specular : SV_Target3;
 };
 
@@ -37,7 +37,7 @@ static const int ditherPattern[4][4] =
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-PSOutPut SimplePSMain(PS_SimpleLightingInput input)
+PSOutPut SimplePSMain(PS_SimpleLightingInput input) 
 {
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
@@ -47,7 +47,7 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * DiffuseColor;
-    float3 normal = GetNorm(normalMap, float3(0.0, 1.0, 0.0), float3(0.0, 1.0, 0.0), input.Normal);
+    float3 normal = GetNorm(normalMap, float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0), input.Normal);
     
     // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
     int x = (int) fmod(input.Pos.x, 4.0f);
@@ -58,14 +58,13 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     
     // 閾値が 10 以下のピクセルはピクセルキルする
     //clip(dither - 50);
-
     
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal.xyz = input.Normal;
+    output.Normal.xyz = (input.Normal * 0.5f) + 0.5f;   // 0～1に収める
     output.Normal.w = 1.0f;
-    output.Depth = input.Pos.z;    
+    output.Depth.x = input.Pos.z;    
     output.Specular.xyz = SpecularColor.xyz;
     output.Specular.w = SpecularPower; // wに反射強度入れる
     return output;

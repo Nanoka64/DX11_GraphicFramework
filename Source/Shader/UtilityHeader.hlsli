@@ -25,10 +25,10 @@ struct PS_SimpleInput
 struct PS_SimpleLightingInput
 {
     float4 Pos    : SV_Position;
-    float4 WPos   : WORLD;
-    float3 Normal : NORMAL;
-    float4 Color  : COLOR;
-    float2 UV     : TEXCOORD;
+    float4 WPos   : WORLD0;
+    float3 Normal : NORMAL0;
+    float4 Color  : COLOR0;
+    float2 UV     : TEXCOORD0;
 };
 
 /* =========================================================================

@@ -46,10 +46,13 @@ bool DX_RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipL
     m_Height = h;
 
     // レンダリングターゲットとなるテクスチャの作成
-    if (!CreateRenderTargetTexture(renderer, w, h, mipLevel, arraySize, colorFormat, clearColor))
+    if (colorFormat != DXGI_FORMAT_UNKNOWN)
     {
-        MessageBoxA(nullptr, "レンダリングターゲットとなるテクスチャの作成に失敗しました。", "エラー", MB_OK);
-        return false;
+        if (!CreateRenderTargetTexture(renderer, w, h, mipLevel, arraySize, colorFormat, clearColor))
+        {
+            MessageBoxA(nullptr, "レンダリングターゲットとなるテクスチャの作成に失敗しました。", "エラー", MB_OK);
+            return false;
+        }
     }
 
     // 深度ステンシルバッファの作成
@@ -132,34 +135,45 @@ bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT
     descDepth.ArraySize = 1;                            // 基本的には１(キューブマップとかやる場合は使う)
     descDepth.SampleDesc.Count = 1;                     // MSAA(マルチサンプリングエイリアス)の設定
     descDepth.SampleDesc.Quality = 0;                   // サンプリングのモード切替え(ハードウェア依存) 基本的に 0 
-    descDepth.Format = format;                          // デプスバッファを24分割(0.0～1.0) 32bitのうちデプス24、ステンシル8
+    descDepth.Format = DXGI_FORMAT_R32_TYPELESS;        // 
 
     // D3D11_USAGE_DEFAULT = 0,     // GPUからRead,Write
     // D3D11_USAGE_IMMUTABLE = 1,   // GPUからRead
     // D3D11_USAGE_DYNAMIC = 2,     // CPUからWrite,GPUからRead
     // D3D11_USAGE_STAGING = 3      // CPUからRead,Write
     descDepth.Usage = D3D11_USAGE_DEFAULT;
-    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
     // D3D11_CPU_ACCESS_READ
     // D3D11_CPU_ACCESS_WRITE
     descDepth.CPUAccessFlags = 0;   // ＣＰＵの読み書き
     descDepth.MiscFlags = 0;   // 基本的に 0 (特殊なフラグ)
 
-    // 作成
+    // テクスチャ作成
     hr = pDevice->CreateTexture2D(&descDepth, NULL, m_pDepthStencilTexture.GetAddressOf());
     if (FAILED(hr)) return false;
 
     // 深度ステンシルビュー作成
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
     ZeroMemory(&descDSV, sizeof(descDSV));
-    descDSV.Format              = descDepth.Format;              // 上で設定したものを入れる
+    descDSV.Format              = DXGI_FORMAT_D32_FLOAT;         // 上で設定したものを入れる
     descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
     descDSV.Texture2D.MipSlice  = 0;
 
-    // 作成
+    // 深度ステンシルビュー作成
     hr = pDevice->CreateDepthStencilView(m_pDepthStencilTexture.Get(), &descDSV, m_pDepthStencilView.GetAddressOf());
     if (FAILED(hr))return false;
 
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+    ZeroMemory(&srvDesc, sizeof(srvDesc));
+    srvDesc.Format                    = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels       = 1;
+    srvDesc.Texture2D.MostDetailedMip = 0;
+
+    // SRV作成
+    hr = pDevice->CreateShaderResourceView(m_pDepthStencilTexture.Get(), &srvDesc, m_pDepthShaderResourceView.GetAddressOf());
+    if (FAILED(hr))return false;
+    
     return true;
 }
 
@@ -210,4 +224,16 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DX_RenderTarget::get_SRV_ComPtr
 {
     //  AddRef がかかってカウンタが増える
     return m_pShaderResouceView; 
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:DX_RenderTarget Class 
+//*【?】デプスステンシル用のSRVComポインタ取得
+//* 引数：なし
+//* 返値：ComPtr
+//*----------------------------------------------------------------------------------------
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DX_RenderTarget::get_DepthSRV_ComPtr()
+{
+    //  AddRef がかかってカウンタが増える
+    return m_pDepthShaderResourceView;
 }

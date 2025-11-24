@@ -229,26 +229,26 @@ bool SceneManager::Init(RendererManager &renderer)
             }
         }
 
-        {
-            // CUBE
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
+        //{
+        //    // CUBE
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 0.5f;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.ObjTag = "Cubu";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
+        //    mesh.ObjTag = "Cubu";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(200, 200, 200);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
-        }      
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(200, 200, 200);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
+        //}      
 
         {
             // SPHERE
@@ -297,26 +297,26 @@ bool SceneManager::Init(RendererManager &renderer)
     // 参照を持たせる
     m_pCamera = GameObjectManager::Instance().get_ObjectByTag("Camera");
 
-
+    bool result = true;
 
     // ****************************************************************
     m_pAlbedo_RT = new DX_RenderTarget();
-    // レンダリングターゲットの生成
-    m_pAlbedo_RT->Create(
+    // アルベド
+    result = m_pAlbedo_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
         1,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_UNKNOWN
     );
-
+    if (result == false)return false;
 
     // ****************************************************************
     m_pNormal_RT = new DX_RenderTarget();
-    // レンダリングターゲットの生成
-    m_pNormal_RT->Create(
+    // 法線
+    result = m_pNormal_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
@@ -325,24 +325,26 @@ bool SceneManager::Init(RendererManager &renderer)
         DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
     );
-    
+    if (result == false)return false;
+
     // ****************************************************************
     m_pDepth_RT = new DX_RenderTarget();
-    // レンダリングターゲットの生成
-    m_pDepth_RT->Create(
+    // デプス
+    result = m_pDepth_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R32_FLOAT,
-        DXGI_FORMAT_UNKNOWN
+        DXGI_FORMAT_UNKNOWN,
+        DXGI_FORMAT_D32_FLOAT
     );
-    
+    if (result == false)return false;
+
     // ****************************************************************
     m_pSpecular_RT = new DX_RenderTarget();
-    // レンダリングターゲットの生成
-    m_pSpecular_RT->Create(
+    // スペキュラ
+    result = m_pSpecular_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
@@ -351,7 +353,7 @@ bool SceneManager::Init(RendererManager &renderer)
         DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
     );
-
+    if (result == false)return false;
 
     //========================================================================================
     //
@@ -391,7 +393,7 @@ bool SceneManager::Init(RendererManager &renderer)
     * Z値用
     *************************************/
     sprite.ObjTag = "RenderTarget3";
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
     obj = MeshFactory::CreateSprite(sprite);    
     sprite.pTextureMap.clear();
 
@@ -412,7 +414,7 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.Height = 0.5f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
@@ -483,9 +485,9 @@ void SceneManager::Update(RendererManager& renderer)
 
 
 
-    auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
-    rad = cubuObj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(cos(a), sin(a), sin(a));
+    //auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
+    //rad = cubuObj.lock()->get_Component<Transform>();
+    //rad->set_RotateToRad(cos(a), sin(a), sin(a));
 
     //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
     //auto tf = skyObj.lock()->get_Component<Transform>();
