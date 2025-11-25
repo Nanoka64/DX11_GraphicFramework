@@ -21,7 +21,9 @@ m_Width(0.0f),
 m_Height(0.0f),
 m_pVertexBuffer(nullptr),
 m_pIndexBuffer(nullptr),
-m_pCBTransformSet(nullptr)
+m_pCBTransformSet(nullptr),
+m_pMeshInfo(nullptr),
+m_ShaderType(SHADER_TYPE::NONE)
 {
     this->set_Tag("SpriteRenderer");
 }

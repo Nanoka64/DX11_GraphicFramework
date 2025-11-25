@@ -58,9 +58,8 @@ PSOutPut PS(PS_INPUT input)
     // テスト出力
     PSOutPut output;
     output.Albedo = finalCol;
-    output.Normal.xyz = normal;
+    output.Normal.xyz = (normal * 0.5f) + 0.5f;
     output.Normal.w = 1.0f;
-    output.Depth.x = input.Pos.z;
     output.Specular.xyz = SpecularColor.xyz;
     output.Specular.w = SpecularPower; // wに反射強度入れる
     return output;

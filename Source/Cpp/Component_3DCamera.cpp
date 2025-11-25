@@ -64,26 +64,30 @@ void Camera3D::Update(RendererManager& renderer)
 	if (GetInput(CONFIG_INPUT::DOWN))	// 上
 	{
 		m_Angle_V += CAMERA_ANGLE_SPEED;
-		if (m_Angle_V >= 80.f)
-			m_Angle_V = 80.f;
+		if (m_Angle_V >= 1.5f) {
+			m_Angle_V = 1.5f;
+		}
 	}
 	if (GetInput(CONFIG_INPUT::UP))		// 下
 	{
 		m_Angle_V -= CAMERA_ANGLE_SPEED;
-		if (m_Angle_V <= -60.f)
-			m_Angle_V = -60.f;
+		if (m_Angle_V <= -1.3f) {
+			m_Angle_V = -1.3f;
+		}
 	}
 	if (GetInput(CONFIG_INPUT::LEFT))	// 右
 	{
 		m_Angle_H += CAMERA_ANGLE_SPEED;
-		if (m_Angle_H >= 180.f)
-			m_Angle_H -= 360.f;
+		if (m_Angle_H >= 3.14f) {
+			m_Angle_H -= 6.28f;
+		}
 	}
 	if (GetInput(CONFIG_INPUT::RIGHT))	// 左
 	{
 		m_Angle_H -= CAMERA_ANGLE_SPEED;
-		if (m_Angle_H <= -180.f)
-			m_Angle_H += 360.0f;
+		if (m_Angle_H <= -3.14f) {
+			m_Angle_H += 6.28f;
+		}
 	}
 
 	// 方向ベクトルを作る
@@ -114,6 +118,8 @@ void Camera3D::Update(RendererManager& renderer)
 	Debugger::Instance().BeginDebugWindow("CameraInfo");
 	Debugger::Instance().DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
 	Debugger::Instance().DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));
+	Debugger::Instance().DG_TextValue("Angle_H: %f.1", m_Angle_H);
+	Debugger::Instance().DG_TextValue("Angle_V: %f.1", m_Angle_V);
 	Debugger::Instance().DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
 	Debugger::Instance().DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);
 	Debugger::Instance().EndDebugWindow();

@@ -99,6 +99,11 @@ public:
 
 
     /// <summary>
+    /// レンダーターゲットを解除しNULL設定
+    /// </summary>
+    void ReleaseRenderTargetSetNull();
+
+    /// <summary>
     /// レンダーターゲットを登録
     /// </summary>
     /// <param name="num"></param>

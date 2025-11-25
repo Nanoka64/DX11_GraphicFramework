@@ -27,7 +27,7 @@ float3 DiffuseLightCalc(float3 ligDir, float3 ligCol, float3 norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = max(0.0f, -dot(norm, ligDir));
+    float diffuseFactor = max(0.0f, dot(norm, ligDir));
     
     // 拡散反射求める
     finalDfs = ligCol * diffuseFactor;
@@ -55,11 +55,11 @@ float3 SpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 po
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
 
     // 反射ベクトル
-    float3 refVec = reflect(ligDir, norm);
+    float3 refVec = reflect(-ligDir, norm);
     
     // 光が入射したベクトルから視点に向かって伸びるベクトル
     float3 toEye = EyePos - pos;
-    toEye = normalize(toEye); // 正規化
+    toEye = normalize(toEye);             // 正規化
     
     float refFactor = dot(toEye, refVec); // 内積を求める
     refFactor = max(0.0, refFactor);      // マイナスにならないよう
@@ -89,21 +89,15 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, floa
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
     // 拡散（ディフューズ）反射
-    float3 diffuseLig = DiffuseLightCalc(ligData.Direction, ligData.DiffuseColor, norm);
+    float3 diffuseLig = DiffuseLightCalc(-ligData.Direction, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = SpecularLightCalc(ligData.Direction, spcCol, spcPow, worldPos, norm);
+    float3 specularLig = SpecularLightCalc(-ligData.Direction, spcCol, spcPow, worldPos, norm);
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * ligData.Intensity;
     outData.Specular = specularLig * ligData.Intensity;
     return outData;
-    
-    //// 拡散反射と鏡面反射を足して最終的な光を求める
-    //finalLig = diffuseLig + specularLig;
-    
-    //// あとでIntensityとかにしてマジックナンバー消す
-    //return finalLig * ligData.Intensity;
 }
 
 
@@ -121,7 +115,7 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
 {
     float3 finalLig = float3(0, 0, 0);
 
-    float3 ligDir = worldPos - ligData.Pos;    // 光の向きを求める（ライト→サーフェイス）
+    float3 ligDir = ligData.Pos - worldPos;    // 光の向きを求める（ライト→サーフェイス）
     float distance = length(ligDir);           // 頂点とライトの距離
     ligDir = normalize(ligDir);                // 正規化
     
@@ -130,13 +124,13 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
     
     // スペキュラ計算
     float3 spcPoint = SpecularLightCalc(ligDir,  ligData.DiffuseColor, spcPow, worldPos, norm);
-
+    
     // 影響度計算
     float influencePower = 1.0f - min(1.0f, distance / ligData.Range);
     
     // マイナスにならないように
     influencePower = max(0.0, influencePower);
-    influencePower = pow(influencePower, 3.0f);
+    influencePower = pow(influencePower, spcPow);
     
     // 影響度を拡散・鏡面に反映させる
     diffPoint *= influencePower;
@@ -144,7 +138,7 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffPoint;
-    outData.Specular = spcPoint;
+    outData.Specular = spcPoint * spcCol;
     return outData;
 }
 

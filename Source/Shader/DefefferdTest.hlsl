@@ -42,11 +42,23 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float depth = depthTex.r; // 深度値
     float4 worldPos;    // 深度情報からワールド座標を計算する。
     float4 ndcPos;      // NDC空間（正規化デバイス座標）
-
-        
-    if (depth >= 1.0f)
-        return float4(0, 0, 0, 1);
     
+    if (depth >= 1.0f)
+    {
+        return float4(0, 0, 0, 1);
+    }
+    //if (depth >= 1.0)
+    //    return float4(0, 0, 0, 1);
+    //else if (depth > 0.8)
+    //    return float4(0, 1, 0, 1);
+    //else if (depth > 0.6)
+    //    return float4(0, 0, 1, 1);
+    //else if (depth > 0.4)
+    //    return float4(1, 1, 0, 1);
+    //else if (depth > 0.2)
+    //    return float4(0, 1, 1, 1);
+    //else
+    //    return float4(1, 0, 1, 1);
     
     // 正規化デバイス座標系での座標を計算する。
     // z座標は深度テクスチャから引っ張ってくる。
@@ -65,34 +77,39 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // Wで除算し、3D空間に戻す
     worldPos.xyz /= worldPos.w;
 
+    //return float4(abs(normalize(worldPos.xyz)), 1);
+    
     // 法線取り出す
     float3 normal = (normalTex.xyz - 0.5f) * 2.0f;
     normal = normalize(normal);
-    //return float4(abs(normalize(worldPos.xyz)), 1.0);
     
     // スペキュラ強度
     float spcPow = specularTex.w;
+    float3 speColor = specularTex.rgb;
+    //return float4(specularTex);
     
     // ディレクションライト計算
-    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, specularTex.rgb, spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, speColor, spcPow, worldPos.xyz, normal);
 
     // ポイントライト計算
-    OUT_DiffAndSpec pointLig = PointLightCalc(cb_PointLightData, specularTex.rgb, spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec pointLig = PointLightCalc(cb_PointLightData, speColor, spcPow, worldPos.xyz, normal);
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
+    
+    float4 debugWorldPos = normalize(worldPos);
+    debugWorldPos.xyz *= (pointLig.Diffuse + 0.1f) + pointLig.Specular;
+    //return float4(abs(debugWorldPos));
     
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
     float3 lighting = dirLig.Diffuse  + pointLig.Diffuse + hemiLig + 0.1f;
     float3 specular = dirLig.Specular + pointLig.Specular;
-    
-    // スペキュラ強度の反映
-    //specular *= spcPow;
-    
+
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.rgb * lighting + specular;
+    finalCol.xyz = saturate(finalCol.xyz);
     finalCol.a = 1.0f;
     return finalCol;
 }

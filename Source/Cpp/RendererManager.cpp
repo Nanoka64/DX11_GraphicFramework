@@ -76,7 +76,8 @@ bool RendererManager::Init(HWND hWnd)
     //m_pBlendStateAdd   = NULL;        // ‰ÁŽZ‡¬—p
     //m_pBlendStateSub   = NULL;        // Œ¸ŽZ‡¬—p
 
-    m_NearClipDist = 0.1f;
+    // ƒKƒN‚Â‚­‚Æ‚«‚Í‚±‚±‚ð‘å‚«‚­‚·‚é‚Æ‚æ‚¢
+    m_NearClipDist = 1.0f;
     m_FarClipDist  = 30000.0f;
     m_Fov = XMConvertToRadians(30.0f);
 
@@ -717,6 +718,17 @@ void RendererManager::ChangeRenderTargetFrameBuffer()
     m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 }
 
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererManager Class 
+//*y?zƒŒƒ“ƒ_[ƒ^[ƒQƒbƒg‚ð‰ðœ‚µNULLÝ’è
+//* ˆø”F‚È‚µ
+//* –ß’lFvoid
+//*----------------------------------------------------------------------------------------
+void RendererManager::ReleaseRenderTargetSetNull()
+{
+    m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererManager Class 

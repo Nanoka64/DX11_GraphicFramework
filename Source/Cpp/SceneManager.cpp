@@ -132,28 +132,28 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
 
-        {
-            /* プレイヤー モデルの生成 */
-            MATERIAL mat[1];
-            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-            mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-            mat[0].SpecularPower = 0.2f;
-            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //{
+        //    /* プレイヤー モデルの生成 */
+        //    MATERIAL mat[1];
+        //    mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+        //    mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
+        //    mat[0].SpecularPower = 0.2f;
+        //    mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
-            CreateModelInfo model;
-            model.pRenderer = &renderer;
-            model.Path = "Resource/Model/Player2/AL_Standard.fbx";
-            model.ObjTag = "Player";
-            model.IsAnim = true;
-            model.MatNum = 1;
-            model.MaterialData = new InputMaterial();
-            model.MaterialData->MatIndex = 0;
-            model.MaterialData->pMat = mat;
-            auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(false);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
-        }
+        //    CreateModelInfo model;
+        //    model.pRenderer = &renderer;
+        //    model.Path = "Resource/Model/Player2/AL_Standard.fbx";
+        //    model.ObjTag = "Player";
+        //    model.IsAnim = true;
+        //    model.MatNum = 1;
+        //    model.MaterialData = new InputMaterial();
+        //    model.MaterialData->MatIndex = 0;
+        //    model.MaterialData->pMat = mat;
+        //    auto obj = MeshFactory::CreateModel(model);
+        //    obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
+        //    obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(false);
+        //    obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+        //}
 
         {
             /* アリ モデルの生成 */
@@ -161,7 +161,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 0.5f;
+            mat[0].SpecularPower = 50.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -174,7 +174,7 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -186,7 +186,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 1.0f;
+            mat[0].SpecularPower    = 200.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -199,9 +199,10 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             obj.lock()->set_LayerRank(0);
         }        
+     
 
         {
             /* QUADの生成 */
@@ -211,8 +212,8 @@ bool SceneManager::Init(RendererManager &renderer)
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-                mat->SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
-                mat->SpecularPower = 0.5f;
+                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+                mat->SpecularPower = 100;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -250,27 +251,27 @@ bool SceneManager::Init(RendererManager &renderer)
         //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
         //}      
 
-        {
-            // SPHERE
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-            mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
+        //{
+        //    // SPHERE
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+        //    mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 0.5f;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.ObjTag = "sphere";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+        //    mesh.ObjTag = "sphere";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
-            obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
-        }        
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
+        //    obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
+        //}        
         //{
         //    // SkyDorm
         //    MATERIAL* mat = new MATERIAL;
@@ -394,7 +395,7 @@ bool SceneManager::Init(RendererManager &renderer)
     *************************************/
     sprite.ObjTag = "RenderTarget3";
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
-    obj = MeshFactory::CreateSprite(sprite);    
+    obj = MeshFactory::CreateSprite(sprite);  
     sprite.pTextureMap.clear();
 
     /*************************************
@@ -410,7 +411,7 @@ bool SceneManager::Init(RendererManager &renderer)
     * 最終出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 0.5;
+    sprite.Width = 0.5f;
     sprite.Height = 0.5f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
@@ -446,11 +447,11 @@ void SceneManager::Update(RendererManager& renderer)
     a += 0.01f;
 
     // 光強度
-    static float intensity = 1.0f;
+    static float intensity = 0.1f;
 
 
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
-    obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
+    //obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
 
 
@@ -460,7 +461,7 @@ void SceneManager::Update(RendererManager& renderer)
 
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1,50.0f, 0);
+    lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 50.0f, 0);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
 
 
@@ -474,14 +475,14 @@ void SceneManager::Update(RendererManager& renderer)
 
 
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
-    rad = b_2Obj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, 0.0, sin(a) );
+    //rad = b_2Obj.lock()->get_Component<Transform>();
+    //rad->set_RotateToRad(0.0, 0.0, sin(a) );
 
 
 
     auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
-    rad = sphereObj.lock()->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, 0.0, 0.0f);
+    //rad = sphereObj.lock()->get_Component<Transform>();
+    //rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
 
 
@@ -523,6 +524,14 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
+    // カメラ更新
+    auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
+
+    // ビュー変換
+    if (!renderer.SetupViewTransform(viewMatrix)) {
+        return;
+    };
+
     DX_RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,
         m_pNormal_RT,
@@ -536,6 +545,9 @@ void SceneManager::Draw(RendererManager& renderer)
 
     // オブジェクト描画
     GameObjectManager::Instance().ObjectRender(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
 
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
@@ -554,22 +566,17 @@ void SceneManager::Draw(RendererManager& renderer)
     //sprite3->Draw(renderer);
     sprite4->Draw(renderer);
     
+
     // ディファードスプライト
     auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();
     auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
     BlendManager::Instance().DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
 
+
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
 
-    // カメラ更新
-    auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
-
-    // ビュー変換
-    if (!renderer.SetupViewTransform(viewMatrix)) {
-        return;
-    };
 }
 
 

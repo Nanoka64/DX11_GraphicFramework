@@ -18,9 +18,9 @@ Texture2D g_SpecularTex : register(t2); // スペキュラ
 //ピクセルシェーダーの出力構造体
 struct PSOutPut
 {
-    float4 Albedo : SV_Target0;
-    float4 Normal : SV_Target1;
-    float4 Depth : SV_Target2;
+    float4 Albedo   : SV_Target0;
+    float4 Normal   : SV_Target1;
+    float4 Depth    : SV_Target2;
     float4 Specular : SV_Target3;
 };
 
@@ -42,8 +42,6 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
     
-    normalMap.y *= -1.0f;
-    
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * DiffuseColor;
@@ -61,11 +59,16 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     
     // テスト出力
     PSOutPut output;
-    output.Albedo = finalCol;
-    output.Normal.xyz = (input.Normal * 0.5f) + 0.5f;   // 0～1に収める
-    output.Normal.w = 1.0f;
-    output.Depth.x = input.Pos.z;    
+    output.Albedo       = finalCol;
+    output.Normal.xyz   = (input.Normal * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.w     = 1.0f;
     output.Specular.xyz = SpecularColor.xyz;
-    output.Specular.w = SpecularPower; // wに反射強度入れる
+    output.Specular.w   = SpecularPower;        // wに反射強度入れる
+    
+    // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ
+    // 理由はDSVをパイプラインにバインドしているので、ハードウェア側が自動で深度値を入れてくれている。
+    // output.Depth.x      = 0;
+    
+    
     return output;
 }

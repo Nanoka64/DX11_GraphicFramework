@@ -126,6 +126,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;
 
+    // ******************************************************************************************************
     // 深度ステンシル用テクスチャリソース作成
     D3D11_TEXTURE2D_DESC descDepth;                     // テクスチャの情報を入れる構造体
     ZeroMemory(&descDepth, sizeof(descDepth));          // メモリを0で埋める
@@ -141,17 +142,18 @@ bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT
     // D3D11_USAGE_IMMUTABLE = 1,   // GPUからRead
     // D3D11_USAGE_DYNAMIC = 2,     // CPUからWrite,GPUからRead
     // D3D11_USAGE_STAGING = 3      // CPUからRead,Write
-    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.Usage     = D3D11_USAGE_DEFAULT;
     descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
     // D3D11_CPU_ACCESS_READ
     // D3D11_CPU_ACCESS_WRITE
     descDepth.CPUAccessFlags = 0;   // ＣＰＵの読み書き
     descDepth.MiscFlags = 0;   // 基本的に 0 (特殊なフラグ)
 
-    // テクスチャ作成
+    // 作成
     hr = pDevice->CreateTexture2D(&descDepth, NULL, m_pDepthStencilTexture.GetAddressOf());
     if (FAILED(hr)) return false;
 
+    // ******************************************************************************************************
     // 深度ステンシルビュー作成
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
     ZeroMemory(&descDSV, sizeof(descDSV));
@@ -159,10 +161,12 @@ bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT
     descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
     descDSV.Texture2D.MipSlice  = 0;
 
-    // 深度ステンシルビュー作成
+    // 作成
     hr = pDevice->CreateDepthStencilView(m_pDepthStencilTexture.Get(), &descDSV, m_pDepthStencilView.GetAddressOf());
     if (FAILED(hr))return false;
 
+    // ******************************************************************************************************
+    // SRV作成
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
     srvDesc.Format                    = DXGI_FORMAT_R32_FLOAT;
@@ -170,7 +174,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT
     srvDesc.Texture2D.MipLevels       = 1;
     srvDesc.Texture2D.MostDetailedMip = 0;
 
-    // SRV作成
+    // 作成
     hr = pDevice->CreateShaderResourceView(m_pDepthStencilTexture.Get(), &srvDesc, m_pDepthShaderResourceView.GetAddressOf());
     if (FAILED(hr))return false;
     
