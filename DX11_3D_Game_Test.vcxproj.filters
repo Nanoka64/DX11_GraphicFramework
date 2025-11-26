@@ -82,9 +82,6 @@
     <Filter Include="ソース ファイル\Graphics\Mesh">
       <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSL\Simple">
-      <UniqueIdentifier>{c3033428-26cf-4f15-a180-d823df30a524}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HLSL\Sprite">
       <UniqueIdentifier>{72503ec0-8e95-4c02-85f9-8e154a6bcbad}</UniqueIdentifier>
     </Filter>
@@ -126,6 +123,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Component\UI">
       <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Simple">
+      <UniqueIdentifier>{c3033428-26cf-4f15-a180-d823df30a524}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -560,16 +560,22 @@
     <None Include="Source\Lib\DirectXTex\DirectXTex.pdb">
       <Filter>ヘッダー ファイル</Filter>
     </None>
-    <None Include="Source\Shader\LightFunctionHeader.hlsli">
+    <None Include="Source\Shader\LightFunctionsHeader.hlsli">
+      <Filter>HLSL\HEAD</Filter>
+    </None>
+    <None Include="Source\Shader\DebugFunctionsHeader.hlsli">
+      <Filter>HLSL\HEAD</Filter>
+    </None>
+    <None Include="Source\Shader\UtilityFunctionsHeader.hlsli">
+      <Filter>HLSL\HEAD</Filter>
+    </None>
+    <None Include="Source\Shader\UtilityHeader.hlsli">
       <Filter>HLSL\HEAD</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\SimpleLightingPS.hlsl">
       <Filter>HLSL\Other</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\UtilityHeader.hlsli">
-      <Filter>HLSL\HEAD</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\DefefferdTest.hlsl">
       <Filter>HLSL\Other</Filter>

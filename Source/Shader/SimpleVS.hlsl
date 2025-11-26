@@ -39,7 +39,7 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
 {
     VS_SimpleOutput output;
     float4 pos   = float4(input.Pos, 1.0f);
-    float3 norm  = float3(input.Normal);
+    float3 norm  = input.Normal;
     float2 uv    = input.UV;
     float4 color = input.Color;
     norm = normalize(mul(norm, (float3x3) Transform));

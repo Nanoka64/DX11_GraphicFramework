@@ -80,7 +80,6 @@ struct CB_DIRECTION_LIGHT
     float Padding2;
 
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-
     float Intensity;                // 光強度
 
     DirectX::XMFLOAT3 EyePos;       // 視点の位置
@@ -100,7 +99,6 @@ struct CB_POINT_LIGHT
     float Padding2;
     
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-
     float Range;                    // 影響範囲
 };
 
@@ -182,19 +180,19 @@ struct NORMAL_MAP_DATA
 
 // マテリアル情報 テクスチャの弱参照をそれぞれ持つ リソース管理から受け取る
 struct MATERIAL {
-    // ===基本パラメータ===
+    // 基本パラメータ================================================
     VECTOR4::VEC4 DiffuseColor;   // ディフューズ反射光
     VECTOR4::VEC4 SpecularColor;  // スペキュラ反射光
     VECTOR4::VEC4 NormalColor;    // 法線
     float SpecularPower;          // スペキュラの強さ
 
 
-    // ===テクスチャマップ===
-    DIFFUSE_MAP_DATA Diffuse;   // ディフューズ
-    SPECULAR_MAP_DATA Normal;   // ノーマル
-    NORMAL_MAP_DATA Specular;   // スペキュラ
+    // テクスチャマップ==============================================
+    DIFFUSE_MAP_DATA Diffuse;     // ディフューズ
+    NORMAL_MAP_DATA Normal;       // ノーマル
+    SPECULAR_MAP_DATA Specular;   // スペキュラ
 
-    // ===UV===
+    // UV=============================================================
     Tool::UV::SpriteUV UV;      // UV情報
 
     MATERIAL():

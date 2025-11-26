@@ -437,7 +437,7 @@ HRESULT RendererManager::InitDX11_Rasterizer()
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
     // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
     // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回り)
-    rd.CullMode              = D3D11_CULL_NONE;
+    rd.CullMode              = D3D11_CULL_BACK;
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面
@@ -681,7 +681,7 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-XMMATRIX RendererManager::get_ViewProjectionMatrix()
+XMMATRIX RendererManager::get_ViewProjectionMatrix() const
 {
     XMMATRIX view = m_View;
     XMMATRIX proj = m_Proj;

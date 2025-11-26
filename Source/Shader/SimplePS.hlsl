@@ -7,7 +7,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "LightFunctionHeader.hlsli"    // ライトヘッダー
+#include "LightFunctionsHeader.hlsli"    // ライトヘッダー
 
 SamplerState mySampler : register(s0);
 Texture2D g_DiffuseTex : register(t0);  // ディフューズ
@@ -34,10 +34,24 @@ static const int ditherPattern[4][4] =
     { 60,28,52,20 },
 };
 
+/* =========================================================================
+/* - @:入力構造体 - */
+//* 【?】ライティング用
+/* =========================================================================*/
+struct PS_IN
+{
+    float4 Pos : SV_Position;
+    float4 WPos : WORLD0;
+    float3 Normal : NORMAL0;
+    float4 Color : COLOR0;
+    float2 UV : TEXCOORD0;
+};
+
+
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-PSOutPut SimplePSMain(PS_SimpleLightingInput input) 
+PSOutPut SimplePSMain(PS_IN input)
 {
     float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
     float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
@@ -64,6 +78,9 @@ PSOutPut SimplePSMain(PS_SimpleLightingInput input)
     output.Normal.w     = 1.0f;
     output.Specular.xyz = SpecularColor.xyz;
     output.Specular.w   = SpecularPower;        // wに反射強度入れる
+    output.Specular = input.WPos;
+    
+    //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
     
     // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ
     // 理由はDSVをパイプラインにバインドしているので、ハードウェア側が自動で深度値を入れてくれている。

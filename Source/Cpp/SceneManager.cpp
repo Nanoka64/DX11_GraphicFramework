@@ -351,7 +351,7 @@ bool SceneManager::Init(RendererManager &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
@@ -411,15 +411,15 @@ bool SceneManager::Init(RendererManager &renderer)
     * 最終出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 0.5f;
-    sprite.Height = 0.5f;
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
-    obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
+    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
 
     return true;
@@ -461,7 +461,8 @@ void SceneManager::Update(RendererManager& renderer)
 
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 50.0f, 0);
+    //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, (cos(a) * 1000.0f) * -1);
+    lig.lock()->get_Component<Transform>()->set_Pos(0, -100,0);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
 
 
@@ -561,10 +562,10 @@ void SceneManager::Draw(RendererManager& renderer)
     auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
     auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
     auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
-    sprite->Draw(renderer);
-    sprite2->Draw(renderer);
-    //sprite3->Draw(renderer);
-    sprite4->Draw(renderer);
+    //sprite->Draw(renderer);
+    //sprite2->Draw(renderer);
+    ////sprite3->Draw(renderer);
+    //sprite4->Draw(renderer);
     
 
     // ディファードスプライト

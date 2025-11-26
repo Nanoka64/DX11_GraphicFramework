@@ -128,7 +128,7 @@ public:
     /// ビュープロジェクション行列の取得
     /// </summary>
     /// <returns></returns>
-    XMMATRIX get_ViewProjectionMatrix();
+    XMMATRIX get_ViewProjectionMatrix()const;
 
 
     /// <summary>

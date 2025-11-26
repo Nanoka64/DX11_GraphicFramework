@@ -6,7 +6,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "LightFunctionHeader.hlsli"    // ライトヘッダー
+#include "LightFunctionsHeader.hlsli"    // ライトヘッダー
 SamplerState mySampler : register(s0);
 Texture2D g_DiffuseTex : register(t0); // ディフューズ
 Texture2D g_NormalTex : register(t1); // ノーマル
@@ -60,8 +60,10 @@ PSOutPut PS(PS_INPUT input)
     output.Albedo = finalCol;
     output.Normal.xyz = (normal * 0.5f) + 0.5f;
     output.Normal.w = 1.0f;
-    output.Specular.xyz = SpecularColor.xyz;
-    output.Specular.w = SpecularPower; // wに反射強度入れる
+    output.Depth = float4(0, 0, 0, 0);
+    //output.Specular.xyz = SpecularColor.xyz;
+    //output.Specular.w = SpecularPower; // wに反射強度入れる
+    output.Specular = input.WPos;
     return output;
     
     //// 法線をTBN空間 ワールドスペースに変換して取得

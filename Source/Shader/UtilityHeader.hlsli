@@ -2,34 +2,11 @@
 // 
 /* - @:共通ヘッダー - */
 //
-//  【?】共通処理をまとめたもの
+//  【?】定数バッファ用
 // 
 /* ◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇ */
-
-/* =========================================================================
-/* - @:入力構造体 - */
-//* 【?】シンプル入力用
-/* =========================================================================*/
-struct PS_SimpleInput
-{
-    float4 Pos : SV_Position;
-    float3 Normal : NORMAL;
-    float4 Color : COLOR;
-    float2 UV : TEXCOORD;
-};
-
-/* =========================================================================
-/* - @:入力構造体 - */
-//* 【?】ライティング用
-/* =========================================================================*/
-struct PS_SimpleLightingInput
-{
-    float4 Pos    : SV_Position;
-    float4 WPos   : WORLD0;
-    float3 Normal : NORMAL0;
-    float4 Color  : COLOR0;
-    float2 UV     : TEXCOORD0;
-};
+#ifndef UTILITY_HLSLI
+#define UTILITY_HLSLI
 
 /* =========================================================================
 /* - @:ライト構造体 - */
@@ -38,8 +15,12 @@ struct PS_SimpleLightingInput
 struct DirectionalLight
 {
     float3 Direction;       // 方向
+    float pad0;
+    
     float3 DiffuseColor;    // ディフューズ
-    float3 SpecularColor;   // スペキュラ
+    float pad1;
+    
+    float3 SpecularColor; // スペキュラ
     float Intensity;        // 光強度
 };
 
@@ -50,7 +31,11 @@ struct DirectionalLight
 struct PointLight
 {
     float3 Pos;             // 座標   
+    float pad0;
+    
     float3 DiffuseColor;    // ディフューズ
+    float pad1;
+    
     float3 SpecularColor;   // スペキュラ
     float Range;            // 範囲
 };
@@ -103,7 +88,7 @@ cbuffer CB_MATERIAL : register(b4)
     float4 SpecularColor; // スペキュラカラー
     float4 Normal;        // スペキュラカラー
     float SpecularPower;  // スペキュラの強さ
-    
+    float3 pad0;
     // 16バイト境界調整（シェーダは16バイトが都合がいいらしい 上のfloatといい感じに合わせるため float3）
     // 追記:HLSLでは定数バッファの値が16の倍数のアドレスに格納されるらしい。
     //      c++側では4の倍数アドレスに配置されるためアクセスする際にアドレスの場所がずれ、間違った場所にアクセスしてしまう。
@@ -116,7 +101,9 @@ cbuffer CB_MATERIAL : register(b4)
 cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
 {
     DirectionalLight cb_DirLightData;
+    
     float3 EyePos; // 視点位置
+    float pad2;
 };
 
 
@@ -128,3 +115,4 @@ cbuffer CB_POINT_LIGHT : register(b6)
     PointLight cb_PointLightData;
 };
 
+#endif

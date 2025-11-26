@@ -53,11 +53,11 @@ void DirectionalLight::Update(RendererManager &renderer)
     auto pContext = renderer.get_DeviceContext();
 
     // バッファの更新
-    m_pCBLightSet->Data.Direction     = m_pOwnerTransform.lock()->get_Forward();
+	m_pCBLightSet->Data.Direction = VECTOR3::VEC3(0, 1, 0);
     m_pCBLightSet->Data.DiffuseColor  = m_LightColor;
     m_pCBLightSet->Data.SpecularColor = m_LightColor;
 	m_pCBLightSet->Data.Intensity     = m_Intensity;
-    m_pCBLightSet->Data.EyePos = m_pCameraTransform.lock()->get_VEC3ToPos();
+    m_pCBLightSet->Data.EyePos		  = m_pCameraTransform.lock()->get_VEC3ToPos();
     pContext->UpdateSubresource(m_pCBLightSet->pBuff, 0, nullptr, &m_pCBLightSet->Data, 0, 0);
     
     // ピクセルシェーダにセット
