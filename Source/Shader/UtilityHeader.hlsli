@@ -84,16 +84,16 @@ cbuffer CB_Bones : register(b3)
 // -------------------------------------------------
 cbuffer CB_MATERIAL : register(b4)
 { // スロット4マテリアル
-    float4 DiffuseColor;  // ディフューズカラー
-    float4 SpecularColor; // スペキュラカラー
-    float4 Normal;        // スペキュラカラー
-    float SpecularPower;  // スペキュラの強さ
+    float4 DiffuseColor;    // ディフューズカラー
+    float4 SpecularColor;   // スペキュラカラー
+    float4 Normal;          // スペキュラカラー
+    float SpecularPower;    // スペキュラの強さ
     float3 pad0;
     // 16バイト境界調整（シェーダは16バイトが都合がいいらしい 上のfloatといい感じに合わせるため float3）
     // 追記:HLSLでは定数バッファの値が16の倍数のアドレスに格納されるらしい。
     //      c++側では4の倍数アドレスに配置されるためアクセスする際にアドレスの場所がずれ、間違った場所にアクセスしてしまう。
     //      なので16の倍数になるよう調整するために、パンディングが必要。
-}
+};
 
 // -------------------------------------------------
 /* ディレクションライト            >>>>>>>【５】*/

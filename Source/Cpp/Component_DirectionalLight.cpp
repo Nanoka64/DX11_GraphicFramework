@@ -53,7 +53,7 @@ void DirectionalLight::Update(RendererManager &renderer)
     auto pContext = renderer.get_DeviceContext();
 
     // バッファの更新
-	m_pCBLightSet->Data.Direction = VECTOR3::VEC3(0, 1, 0);
+	m_pCBLightSet->Data.Direction = VECTOR3::VEC3(0, 0, 0);
     m_pCBLightSet->Data.DiffuseColor  = m_LightColor;
     m_pCBLightSet->Data.SpecularColor = m_LightColor;
 	m_pCBLightSet->Data.Intensity     = m_Intensity;

@@ -52,7 +52,7 @@ float3 LambertDiffuseLightCalc(float3 ligDir, float3 ligCol, float3 norm)
 //* 引数：5.頂点法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-float3 PhongSpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, float3 worldPos, float3 norm)
+float3 PhongSpecularLightCalc(float3 ligDir, float3 eyePos, float3 LigCol, float spcPower, float3 worldPos, float3 norm)
 {
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
 
@@ -60,11 +60,17 @@ float3 PhongSpecularLightCalc(float3 ligDir, float3 LigCol, float spcPower, floa
     float3 refVec = reflect(ligDir, norm);
     
     // 光が入射したベクトルから視点に向かって伸びるベクトル
-    float3 toEye = EyePos - worldPos;
+    float3 toEye = eyePos - worldPos;
     toEye = normalize(toEye);             // 正規化
     
     float refFactor = dot(refVec, toEye); // 内積を求める（鏡面反射の強さ）
-    refFactor = max(0.0, refFactor);      // マイナスにならないよう
+    
+    // ※ ポイントライトがおかしくなっていたのはここが原因…？
+    // ここを元々0.0だったところを1.0にしたら円形にはなったけど、果たしてこれでいいのだろうか？
+    // 魔導書などを見ても、0.0にするように書いてあったのでモヤモヤ...
+    // まあ確かに0にしたら0だからカメラと反対側は消えるけども…
+    refFactor = max(1.0, refFactor);      // マイナスにならないよう
+    
     refFactor = pow(refFactor, spcPower); // 反射の強さを絞る
         
     // 鏡面反射求める
@@ -82,11 +88,15 @@ struct OUT_DiffAndSpec
 
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライトの計算
-//* 引数：1.頂点ワールド座標
-//* 引数：2.頂点法線
+//* 引数：1.ライト情報
+//* 引数：2.カメラ座標
+//* 引数：3.スペキュラカラー
+//* 引数：4.スペキュラ強度
+//* 引数：5.サーフェイスのワールド座標
+//* 引数：6.サーフェイスのワールド法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
+OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 eyePos, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
@@ -96,7 +106,7 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, floa
     float3 diffuseLig = LambertDiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = PhongSpecularLightCalc(ligDir, spcCol, spcPow, worldPos, norm);
+    float3 specularLig = PhongSpecularLightCalc(ligDir, eyePos, spcCol, spcPow, worldPos, norm);
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * ligData.Intensity;
@@ -107,14 +117,15 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight ligData, float3 spcCol, floa
 //*---------------------------------------------------------------------------------------
 //*【?】ポイントライトの計算
 //* 引数：1.ライト座標
-//* 引数：2.ディフューズカラー
-//* 引数：3.スペキュラカラー
-//* 引数：4.影響範囲
-//* 引数：5.頂点ワールド座標
-//* 引数：6.頂点法線
+//* 引数：2.カメラ座標
+//* 引数：3.ディフューズカラー
+//* 引数：4.スペキュラカラー
+//* 引数：5.影響範囲
+//* 引数：6.サーフェイスのワールド座標
+//* 引数：7.サーフェイスのワールド法線
 //* 返値：float3
 //*----------------------------------------------------------------------------------------
-OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
+OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 eyePos, float3 spcCol, float spcPow, float3 worldPos, float3 norm)
 {
     float3 finalLig = float3(0, 0, 0);
 
@@ -125,7 +136,7 @@ OUT_DiffAndSpec PointLightCalc(PointLight ligData, float3 spcCol, float spcPow, 
     float3 diffPoint = LambertDiffuseLightCalc(ligDir, ligData.DiffuseColor, norm);
     
     // スペキュラ計算
-    float3 spcPoint = PhongSpecularLightCalc(ligDir,  ligData.DiffuseColor, spcPow, worldPos, norm);
+    float3 spcPoint = PhongSpecularLightCalc(ligDir, eyePos, ligData.DiffuseColor, spcPow, worldPos, norm);
     
     // 影響度計算
     float affect = 1.0f - min(1.0f, distance / ligData.Range);

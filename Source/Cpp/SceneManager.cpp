@@ -207,49 +207,49 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             /* QUADの生成 */
 
-            for (int i = -1; i < 2; i++)
-            {
-                MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 100;
+            //for (int i = -1; i < 2; i++)
+            //{
+            //    MATERIAL* mat = new MATERIAL;
+            //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+            //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+            //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            //    mat->SpecularPower = 100;
 
-                CreateUtilityMeshInfo mesh;
-                mesh.pRenderer = &renderer;
-                mesh.Type = UTILITY_MESH_TYPE::QUAD;
-                mesh.ObjTag = "Quad" + std::to_string(i);
-                mesh.MatNum = 1;
-                mesh.MaterialData = new InputMaterial();
-                mesh.MaterialData->pMat = mat;
+            //    CreateUtilityMeshInfo mesh;
+            //    mesh.pRenderer = &renderer;
+            //    mesh.Type = UTILITY_MESH_TYPE::QUAD;
+            //    mesh.ObjTag = "Quad" + std::to_string(i);
+            //    mesh.MatNum = 1;
+            //    mesh.MaterialData = new InputMaterial();
+            //    mesh.MaterialData->pMat = mat;
 
-                auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 10.0f, 1000.0f);
-                obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), -100.0f, 0.0f);
-                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, (i * 90.0f));
-            }
+            //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            //    obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 10.0f, 1000.0f);
+            //    obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), -100.0f, 0.0f);
+            //    obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, (i * 90.0f));
+            //}
         }
 
-        //{
-        //    // CUBE
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 0.5f;
+        {
+            // CUBE
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 0.5f;
 
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
-        //    mesh.ObjTag = "Cubu";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "Cubu";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
 
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(200, 200, 200);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 100, 0);
-        //}      
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(1000, 1000, 1000);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, -1100, 0);
+        }      
 
         //{
         //    // SPHERE
@@ -355,7 +355,7 @@ bool SceneManager::Init(RendererManager &renderer)
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
-
+    
     //========================================================================================
     //
     /* レンダリングターゲット用スプライト */
@@ -459,13 +459,12 @@ void SceneManager::Update(RendererManager& renderer)
     VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
 
 
+    static VEC3 pLigPos{};
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, (cos(a) * 1000.0f) * -1);
-    lig.lock()->get_Component<Transform>()->set_Pos(0, -100,0);
+    lig.lock()->get_Component<Transform>()->set_Pos(0,(sin(a) * 500),0);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-
-
 
 
     auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
@@ -495,10 +494,12 @@ void SceneManager::Update(RendererManager& renderer)
     //auto tf = skyObj.lock()->get_Component<Transform>();
     //tf->set_Pos(camPos);
 
+
     Debugger::Instance().BeginDebugWindow("Light");
     Debugger::Instance().DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
     Debugger::Instance().DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
     Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
+    Debugger::Instance().DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
     Debugger::Instance().EndDebugWindow();
 
     auto objList = GameObjectManager::Instance().get_ObjectList();

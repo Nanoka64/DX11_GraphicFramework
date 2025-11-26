@@ -30,7 +30,14 @@ struct PS_IN
     float4 Color : COLOR;
     float2 UV : TEXCOORD;
 };
-
+float rand(float2 uv)
+{
+    return frac(sin(dot(uv.xy, float2(150.9898, 701.233))) * 43758.5453);
+}
+float rand2(float2 uv)
+{
+    return frac(sin(dot(uv.xy, float2(502.9898, 181.233))) * 43758.5453);
+}
 
 // **************************************************************************
 /* - @:エントリーポイント - */
@@ -60,8 +67,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //return Debug_Pos(worldPos);
     
     // 法線取り出す（0～1 を -1～1 に）
-    float3 normal = (normalTex.xyz - 0.5f) * 2.0f;
-    normal = normalize(normal);
+    float3 normal = normalTex.xyz * 2.0f - 1.0f;
+    //normal = normalize(normal);
     
     
     // スペキュラ強度
@@ -71,10 +78,22 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 spcColor = float3(1, 1, 1);
     
     // ディレクションライト計算
-    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, spcColor, spcPow, worldPos.xyz, normal);
-
-    // ポイントライト計算
-    OUT_DiffAndSpec pointLig = PointLightCalc(cb_PointLightData, spcColor, spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, EyePos, spcColor, spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec pointLig;
+    for (int i = 0; i < 100; i++)
+    {
+        PointLight plig;
+        plig.DiffuseColor = float4(i * 0.01, i * 0.03, i * 0.02, 1);
+        plig.SpecularColor = float4(i * 0.01, i * 0.03, i * 0.02, 1);
+        plig.Range = 150;
+        plig.Pos = float3(worldPos.x + i * rand(input.UV), cb_PointLightData.Pos.y, worldPos.z + i * rand2(input.UV));
+        
+        // ポイントライト計算
+        OUT_DiffAndSpec res = PointLightCalc(plig, EyePos, spcColor, spcPow, worldPos.xyz, normal);
+        pointLig.Diffuse += res.Diffuse;
+        pointLig.Specular += res.Specular;
+    }
+    
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
@@ -86,7 +105,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     
     // 最終色 アルベド * 光度 + スペキュラ
-    finalCol.xyz = albedoTex.rgb * diffuse + specular;
+    finalCol.xyz = albedoTex.rgb * diffuse + specular ;
     finalCol.xyz = saturate(finalCol.xyz);
     finalCol.a = 1.0f;
     return finalCol;
