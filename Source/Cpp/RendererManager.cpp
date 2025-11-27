@@ -395,7 +395,7 @@ HRESULT RendererManager::InitDX11_ZBuff()
     if (FAILED(hr))return hr;
 
     // MRT(マルチレンダリングターゲット)の設定もできる
-    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+    //m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
 
     //
@@ -741,13 +741,15 @@ void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *ren
 {
     ID3D11RenderTargetView *rtv[16]{};
 
-    for (UINT i = 0; i < num; i++){
-        rtv[i] = renderTargets[i]->get_RTV();
+    for (UINT i = 0; i < num; i++) {
+        if (renderTargets[i]->get_RTV() != nullptr) {
+            rtv[i] = renderTargets[i]->get_RTV();
+        }
     }
 
-    if (renderTargets[2]->HasDepthStencilBuffer()) {
+    if (renderTargets[3]->HasDepthStencilBuffer()) {
         //深度バッファがある。
-        m_pImmediateContext->OMSetRenderTargets(num, rtv, renderTargets[2]->get_DSV());
+        m_pImmediateContext->OMSetRenderTargets(num, rtv, renderTargets[3]->get_DSV());
     }
     else  {
         //深度バッファがない。
@@ -765,13 +767,17 @@ void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *ren
 //*----------------------------------------------------------------------------------------
 void RendererManager::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
 {
-    if (renderTargets[2]->HasDepthStencilBuffer()) {
+    if (renderTargets[3]->HasDepthStencilBuffer()) {
         // デプスステンシルバッファがあるならクリア 
-        m_pImmediateContext->ClearDepthStencilView(renderTargets[2]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
+        m_pImmediateContext->ClearDepthStencilView(renderTargets[3]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
     }
 
     for (UINT i = 0; i < num; i++) {
-        // ターゲットのクリア
-        m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
+        if (renderTargets[i]->get_RTV() != nullptr) {
+            // ターゲットのクリア
+            m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
+        }
     }
 }
+
+

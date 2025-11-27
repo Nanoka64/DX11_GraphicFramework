@@ -329,6 +329,21 @@ bool SceneManager::Init(RendererManager &renderer)
     if (result == false)return false;
 
     // ****************************************************************
+    m_pSpecular_RT = new DX_RenderTarget();
+    // スペキュラ
+    result = m_pSpecular_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+
+
+    // ****************************************************************
     m_pDepth_RT = new DX_RenderTarget();
     // デプス
     result = m_pDepth_RT->Create(
@@ -342,19 +357,6 @@ bool SceneManager::Init(RendererManager &renderer)
     );
     if (result == false)return false;
 
-    // ****************************************************************
-    m_pSpecular_RT = new DX_RenderTarget();
-    // スペキュラ
-    result = m_pSpecular_RT->Create(
-        renderer,
-        renderer.get_ScreenWidth(),
-        renderer.get_ScreenHeight(),
-        1,
-        1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_UNKNOWN
-    );
-    if (result == false)return false;
     
     //========================================================================================
     //
@@ -391,21 +393,22 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.pTextureMap.clear();
 
     /*************************************
-    * Z値用
-    *************************************/
-    sprite.ObjTag = "RenderTarget3";
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
-    obj = MeshFactory::CreateSprite(sprite);  
-    sprite.pTextureMap.clear();
-
-    /*************************************
     * スペキュラ用
     *************************************/
-    sprite.ObjTag = "RenderTarget4";
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
+    sprite.ObjTag = "RenderTarget3";
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
     obj = MeshFactory::CreateSprite(sprite);    
     obj.lock()->get_Transform().lock()->set_Pos(-0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();
+
+    /*************************************
+    * Z値用
+    *************************************/
+    sprite.ObjTag = "RenderTarget4";
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
+    obj = MeshFactory::CreateSprite(sprite);  
+    sprite.pTextureMap.clear();
+
 
     /*************************************
     * 最終出力用
@@ -415,8 +418,8 @@ bool SceneManager::Init(RendererManager &renderer)
     sprite.Height = 0.5f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
-    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
     obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
@@ -537,8 +540,8 @@ void SceneManager::Draw(RendererManager& renderer)
     DX_RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,
         m_pNormal_RT,
-        m_pDepth_RT,
-        m_pSpecular_RT
+        m_pSpecular_RT,
+        m_pDepth_RT
     };
 
     // レンダリングターゲットの設定とクリア
@@ -565,8 +568,8 @@ void SceneManager::Draw(RendererManager& renderer)
     auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
     sprite->Draw(renderer);
     sprite2->Draw(renderer);
-    //sprite3->Draw(renderer);
-    sprite4->Draw(renderer);
+    sprite3->Draw(renderer);
+    //sprite4->Draw(renderer);
     
 
     // ディファードスプライト

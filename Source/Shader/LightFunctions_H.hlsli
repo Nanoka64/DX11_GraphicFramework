@@ -75,7 +75,6 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
     // まあ確かに0にしたら0だからカメラと反対側は消えるけども…
     //refFactor = max(0.0, refFactor);      // マイナスにならないよう
     
-    
     refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
 
     // 鏡面反射求める

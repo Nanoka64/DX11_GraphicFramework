@@ -18,8 +18,8 @@
 SamplerState g_sSampler : register(s0);
 Texture2D<float4> g_tAlbedoTexture : register(t0);
 Texture2D<float4> g_tNormalTexture : register(t1);   
-Texture2D<float4> g_tDepthTexture : register(t2);
-Texture2D<float4> g_tSpecularTexture : register(t3); // wにスペキュラ強度
+Texture2D<float4> g_tSpecularTexture : register(t2); // wにスペキュラ強度
+Texture2D<float4> g_tDepthTexture : register(t3);
 
 /* =========================================================================
 /* - @:出力構造体 - */
@@ -68,11 +68,13 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ディレクションライト計算
     OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
     OUT_DiffAndSpec pointLig;
-    for (int i = 0; i < 2; i++)
+    pointLig.Diffuse = float3(0, 0, 0);
+    pointLig.Specular = float3(0, 0, 0);
+    for (int i = 0; i < 1; i++)
     {
         PointLight plig;
-        plig.DiffuseColor = float4(1,1,1,1);
-        plig.SpecularColor = float4(1,1,1,1);
+        plig.DiffuseColor = float3(1,1,1);
+        plig.SpecularColor = float3(1,1,1);
         plig.Range = cb_PointLightData[0].Range;
         plig.Pos = float3(cb_PointLightData[0].Pos.x  + 800 * i, cb_PointLightData[0].Pos.y, cb_PointLightData[0].Pos.z);
         

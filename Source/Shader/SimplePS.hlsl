@@ -20,8 +20,8 @@ struct PS_OUT
 {
     float4 Albedo   : SV_Target0;
     float4 Normal   : SV_Target1;
-    float4 Depth    : SV_Target2;
-    float4 Specular : SV_Target3;
+    float4 Specular : SV_Target2;
+    float4 Depth    : SV_Target3;
 };
 
 
@@ -74,10 +74,11 @@ PS_OUT SimplePSMain(PS_IN input)
     // テスト出力
     PS_OUT output;
     output.Albedo       = finalCol;
-    output.Normal.xyz = (normal * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.xyz   = (normal * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
     output.Specular.w   = cb_SpecularPower;        // wに反射強度入れる
+    output.Depth;
     //output.Specular = input.WPos;
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
@@ -88,3 +89,4 @@ PS_OUT SimplePSMain(PS_IN input)
     
     return output;
 }
+
