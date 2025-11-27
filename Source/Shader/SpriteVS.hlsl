@@ -6,14 +6,14 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once;
-#include "UtilityHeader.hlsli"
+#include "ConstantBuffers_H.hlsli"
 
-Texture2D g_Texture : register(t0);
+Texture2D g_tTexture : register(t0);
 
 /* =========================================================================
 /* - @:入力構造体 - */
 /* =========================================================================*/
-struct VS_INPUT
+struct VS_IN
 {
     float3 Pos      : POSITION; // 頂点座標
     float3 Normal   : NORMAL;   // 法線（cpp側の都合で入れているが基本使わない）
@@ -33,7 +33,7 @@ struct VS_OUT
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-VS_OUT VSMain(VS_INPUT input) 
+VS_OUT VSMain(VS_IN input)
 {
     VS_OUT output;
     float4 pos = float4(input.Pos, 1.0f);

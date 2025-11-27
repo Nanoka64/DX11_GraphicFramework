@@ -7,16 +7,16 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "LightFunctionsHeader.hlsli"    // ライトヘッダー
+#include "LightFunctions_H.hlsli"    // ライトヘッダー
 
-SamplerState mySampler : register(s0);
-Texture2D g_DiffuseTex : register(t0);  // ディフューズ
-Texture2D g_NormalTex : register(t1);   // ノーマル
-Texture2D g_SpecularTex : register(t2); // スペキュラ
+SamplerState g_sSampler : register(s0);
+Texture2D g_tDiffuseTex : register(t0);  // ディフューズ
+Texture2D g_tNormalTex : register(t1);   // ノーマル
+Texture2D g_tSpecularTex : register(t2); // スペキュラ
 
 
 //ピクセルシェーダーの出力構造体
-struct PSOutPut
+struct PS_OUT
 {
     float4 Albedo   : SV_Target0;
     float4 Normal   : SV_Target1;
@@ -51,14 +51,14 @@ struct PS_IN
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-PSOutPut SimplePSMain(PS_IN input)
+PS_OUT SimplePSMain(PS_IN input)
 {
-    float4 diffuseMap = g_DiffuseTex.Sample(mySampler, input.UV);
-    float4 normalMap = g_NormalTex.Sample(mySampler, input.UV);
+    float4 diffuseMap = g_tDiffuseTex.Sample(g_sSampler, input.UV);
+    float4 normalMap = g_tNormalTex.Sample(g_sSampler, input.UV);
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
-    finalCol = diffuseMap * DiffuseColor;
+    finalCol = diffuseMap * cb_DiffuseColor;
     float3 normal = GetNorm(normalMap, float3(1.0, 1.0, 1.0), float3(1.0, 1.0, 1.0), input.Normal);
     
     // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
@@ -72,20 +72,19 @@ PSOutPut SimplePSMain(PS_IN input)
     //clip(dither - 50);
     
     // テスト出力
-    PSOutPut output;
+    PS_OUT output;
     output.Albedo       = finalCol;
-    output.Normal.xyz   = (input.Normal * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.xyz = (normal * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
-    output.Specular.xyz = SpecularColor.xyz;
-    output.Specular.w   = SpecularPower;        // wに反射強度入れる
-    output.Specular = input.WPos;
+    output.Specular.xyz = cb_SpecularColor.xyz;
+    output.Specular.w   = cb_SpecularPower;        // wに反射強度入れる
+    //output.Specular = input.WPos;
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
     
     // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ
     // 理由はDSVをパイプラインにバインドしているので、ハードウェア側が自動で深度値を入れてくれている。
     // output.Depth.x      = 0;
-    
     
     return output;
 }

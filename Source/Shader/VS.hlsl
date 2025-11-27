@@ -6,7 +6,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "UtilityHeader.hlsli"
+#include "ConstantBuffers_H.hlsli"
 
 
 
@@ -115,10 +115,10 @@ VS_OUTPUT VS(VS_INPUT input)
         if (input.boneIDs[i] >= 0)
         {
             // 頂点座標を求める
-            skinnedPos += mul(boneMatrices[input.boneIDs[i]], float4(input.Pos, 1.0f)) * input.boneWeights[i];
+            skinnedPos += mul(cb_BoneMatrices[input.boneIDs[i]], float4(input.Pos, 1.0f)) * input.boneWeights[i];
             
             // 法線を求める
-            skinnedNormal += mul((float3x3) boneMatrices[input.boneIDs[i]], input.Normal) * input.boneWeights[i];
+            skinnedNormal += mul((float3x3) cb_BoneMatrices[input.boneIDs[i]], input.Normal) * input.boneWeights[i];
         }
     }
     
@@ -132,10 +132,10 @@ VS_OUTPUT VS(VS_INPUT input)
     pos  = skinnedPos; // スキニング後の頂点座標
     norm = skinnedNormal; // スキニング後の法線
     
-    pos = mul(pos,Transform);       // ワールド変換
+    pos = mul(pos,cb_Transform);       // ワールド変換
     output.WPos = pos;
-    pos = mul(pos, View);           // ビュー変換
-    pos = mul(pos, Projection);     // 投影変換
+    pos = mul(pos, cb_View);           // ビュー変換
+    pos = mul(pos, cb_Projection);     // 投影変換
     
     output.Pos    = pos;            // 画面空間の頂点座標
     output.Normal = norm;           // スキニング後の法線
@@ -143,8 +143,8 @@ VS_OUTPUT VS(VS_INPUT input)
     output.Col    = input.Col;      // カラー
 
     // 接ベクトルと従ベクトルをワールド空間に変換する
-    output.Tan    = normalize(mul(input.Tan, (float3x3) Transform));
-    output.BiNorm = normalize(mul(input.BiNorm, (float3x3) Transform));
+    output.Tan    = normalize(mul(input.Tan, (float3x3) cb_Transform));
+    output.BiNorm = normalize(mul(input.BiNorm, (float3x3) cb_Transform));
     
     //output.Col = float4(0.5f, 0.5f, 0.5f, 1.0f);
     

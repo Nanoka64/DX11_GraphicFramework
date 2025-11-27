@@ -109,7 +109,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.1f;
+            mat->SpecularPower = 1.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -186,7 +186,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 200.0f;
+            mat[0].SpecularPower    = 2.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -207,49 +207,49 @@ bool SceneManager::Init(RendererManager &renderer)
         {
             /* QUADの生成 */
 
-            //for (int i = -1; i < 2; i++)
-            //{
-            //    MATERIAL* mat = new MATERIAL;
-            //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-            //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            //    mat->SpecularPower = 100;
+            for (int i = -1; i < 2; i++)
+            {
+                MATERIAL* mat = new MATERIAL;
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
+                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+                mat->SpecularPower = 1;
 
-            //    CreateUtilityMeshInfo mesh;
-            //    mesh.pRenderer = &renderer;
-            //    mesh.Type = UTILITY_MESH_TYPE::QUAD;
-            //    mesh.ObjTag = "Quad" + std::to_string(i);
-            //    mesh.MatNum = 1;
-            //    mesh.MaterialData = new InputMaterial();
-            //    mesh.MaterialData->pMat = mat;
+                CreateUtilityMeshInfo mesh;
+                mesh.pRenderer = &renderer;
+                mesh.Type = UTILITY_MESH_TYPE::QUAD;
+                mesh.ObjTag = "Quad" + std::to_string(i);
+                mesh.MatNum = 1;
+                mesh.MaterialData = new InputMaterial();
+                mesh.MaterialData->pMat = mat;
 
-            //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            //    obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 10.0f, 1000.0f);
-            //    obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), -100.0f, 0.0f);
-            //    obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, (i * 90.0f));
-            //}
+                auto obj = MeshFactory::CreateUtilityMesh(mesh);
+                obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 1.0f, 1000.0f);
+                obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), 0.0f, 0.0f);
+                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, (i * 90.0f));
+            }
         }
 
-        {
-            // CUBE
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.5f;
+        //{
+        //    // CUBE
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 0.5f;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.ObjTag = "Cubu";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
+        //    mesh.ObjTag = "Cubu";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(1000, 1000, 1000);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, -1100, 0);
-        }      
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(1000, 1000, 1000);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, -1100, 0);
+        //}      
 
         //{
         //    // SPHERE
@@ -351,7 +351,7 @@ bool SceneManager::Init(RendererManager &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
@@ -411,15 +411,15 @@ bool SceneManager::Init(RendererManager &renderer)
     * 最終出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 1.0f;
-    sprite.Height = 1.0f;
+    sprite.Width = 0.5f;
+    sprite.Height = 0.5f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pDepth_RT->get_DepthSRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
-    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
+    obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
 
     return true;
@@ -462,8 +462,8 @@ void SceneManager::Update(RendererManager& renderer)
     static VEC3 pLigPos{};
 
     auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
-    //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, (cos(a) * 1000.0f) * -1);
-    lig.lock()->get_Component<Transform>()->set_Pos(0,(sin(a) * 500),0);
+    //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
+    lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
 
 
@@ -563,10 +563,10 @@ void SceneManager::Draw(RendererManager& renderer)
     auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
     auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
     auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
-    //sprite->Draw(renderer);
-    //sprite2->Draw(renderer);
-    ////sprite3->Draw(renderer);
-    //sprite4->Draw(renderer);
+    sprite->Draw(renderer);
+    sprite2->Draw(renderer);
+    //sprite3->Draw(renderer);
+    sprite4->Draw(renderer);
     
 
     // ディファードスプライト

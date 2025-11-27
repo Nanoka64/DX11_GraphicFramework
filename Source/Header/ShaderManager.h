@@ -15,8 +15,8 @@ class InputLayout;
 enum class SHADER_TYPE
 {
     NONE,       // なし
-    SIMPLE,     // 単純な表示用
-    MODEL,      // モデルの表示用
+    SIMPLE,     // 単純な3Dオブジェクト表示用
+    MODEL,      // 3Dモデルの表示用
 
     SPRITE,     // スプライト
 
@@ -116,5 +116,11 @@ private:
     bool VertexShaderFactory(SHADER_TYPE type, ShaderInfo *out);
     bool InputLayoutFactory(SHADER_TYPE type, ShaderInfo *out, ID3DBlob *blob);
     bool PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out);
+
+    /// <summary>
+    /// .csoファイルの読み込み
+    /// </summary>
+    /// <returns></returns>
+    bool LoadCSOFile(TCHAR *csoName, ID3DBlob *pBlob);
 };
 

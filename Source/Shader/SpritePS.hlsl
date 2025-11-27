@@ -6,14 +6,14 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-SamplerState mySampler : register(s0);
-Texture2D g_Texture : register(t0); // ディフューズ
+SamplerState g_sSampler : register(s0);
+Texture2D g_tTexture : register(t0); // ディフューズ
 
 
 /* =========================================================================
 /* - @:入力構造体 - */
 /* =========================================================================*/
-struct PS_INPUT
+struct PS_IN
 {
     float4 Pos : SV_POSITION;
     float4 Color : COLOR;
@@ -24,9 +24,9 @@ struct PS_INPUT
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
-float4 PSMain(PS_INPUT input) : SV_TARGET
+float4 PSMain(PS_IN input) : SV_TARGET
 {
-    float4 texColor = g_Texture.Sample(mySampler, input.UV);
+    float4 texColor = g_tTexture.Sample(g_sSampler, input.UV);
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     finalColor = texColor * input.Color;
     return finalColor;

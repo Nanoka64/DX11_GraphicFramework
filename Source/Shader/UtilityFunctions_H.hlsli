@@ -3,12 +3,12 @@
 /* - @:汎用関数ヘッダー - */
 //
 //  【?】汎用関数をまとめたもの
+//       いろんなところで使えそうなものをまとめてるよ
 // 
 /* ◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇◇ */
 #ifndef UTILITYFUNCTIONS_HLSLI
 #define UTILITYFUNCTIONS_HLSLI
-
-#include "UtilityHeader.hlsli"
+#include "ConstantBuffers_H.hlsli"
 
 
 //*---------------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ float4 GetConvertPosFromDepthToWorld(float depth, float2 uv)
     float4 clipPos = ndcPos;
     
     // クリップ座標にビュープロジェクション行列の逆行列を乗算して、ワールド座標に戻す。
-    worldPos = mul(clipPos, viewProjInvMatrix);
+    worldPos = mul(clipPos, cb_ViewProjInvMatrix);
     
     // Wで除算し、3D空間に戻す
     worldPos.xyz /= worldPos.w;

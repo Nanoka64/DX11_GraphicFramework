@@ -378,3 +378,16 @@ HRESULT ShaderManager::CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LP
 
     return S_OK;
 }
+
+
+bool ShaderManager::LoadCSOFile(TCHAR *csoName, ID3DBlob *pBlob)
+{
+    HRESULT hr = S_OK;
+
+    FILE *fp;
+    errno_t err = fopen_s(&fp, csoName, "rb"); // バイナリ読み込み
+    if (err != 0) {
+        MessageBox(NULL, "CSOファイルが読み込めませんでした", "Error", MB_OK);
+        return false;
+    }
+}

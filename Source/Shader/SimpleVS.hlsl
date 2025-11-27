@@ -6,7 +6,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "UtilityHeader.hlsli"  // 共通ヘッダー
+#include "ConstantBuffers_H.hlsli"  // 共通ヘッダー
 
 
 /* =========================================================================
@@ -42,12 +42,13 @@ VS_SimpleOutput SimpleVSMain(VS_SimpleInput input)
     float3 norm  = input.Normal;
     float2 uv    = input.UV;
     float4 color = input.Color;
-    norm = normalize(mul(norm, (float3x3) Transform));
     
-    pos = mul(pos, Transform);  // ワールド変換（ワールド空間）
+    norm = normalize(mul(norm, (float3x3) cb_Transform));
+    
+    pos = mul(pos, cb_Transform);  // ワールド変換（ワールド空間）
     output.World = pos;
-    pos = mul(pos, View);       // ビュー変換（ビュー空間）
-    pos = mul(pos, Projection); // 投影変換（クリッピング空間）
+    pos = mul(pos, cb_View);       // ビュー変換（ビュー空間）
+    pos = mul(pos, cb_Projection); // 投影変換（クリッピング空間）
     
     output.Pos    = pos;        // 画面空間の頂点座標
     output.Normal = norm.xyz;   // 法線
