@@ -224,6 +224,7 @@ void InputManager::InitDefaultKeyConfig()
     //m_ConfigKeyMap[CONFIG_INPUT::slow] = DIK_LSHIFT;
     //m_ConfigKeyMap[CONFIG_INPUT::pause] = DIK_ESCAPE;
 
+    // TODO: キーの直す 
     m_ConfigKeyMap[CONFIG_INPUT::LEFT] = DIK_LEFT;
     m_ConfigKeyMap[CONFIG_INPUT::RIGHT]= DIK_RIGHT;
     m_ConfigKeyMap[CONFIG_INPUT::UP]   = DIK_UP;
@@ -233,6 +234,7 @@ void InputManager::InitDefaultKeyConfig()
     m_ConfigKeyMap[CONFIG_INPUT::MOVE_L] = DIK_A;
     m_ConfigKeyMap[CONFIG_INPUT::MOVE_R] = DIK_D;
     m_ConfigKeyMap[CONFIG_INPUT::JUMP] = DIK_SPACE;
+    m_ConfigKeyMap[CONFIG_INPUT::C] = DIK_C;
     m_ConfigKeyMap[CONFIG_INPUT::PAUSE] = DIK_ESCAPE;
 
     // キー状態初期化

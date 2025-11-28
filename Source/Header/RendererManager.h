@@ -68,6 +68,7 @@ public:
     void EndRender();
 	void Term();
     void Swap();    // 裏表切り替え
+    bool SetupProjectionTransform();            //透視投影変換計算
 private:
     bool InitDx11();                            // ＤＸ１１の初期化
     HRESULT InitDX11_SwapChain();               // ＤＸ１１ スワップチェイン初期化
@@ -78,7 +79,6 @@ private:
     //HRESULT InitDX11_BlendState();              // ＤＸ１１ ブレンドステート初期化
     void CleanupDX11();                         // ＤＸ１１ 開放
     void EnableDebugLayer();                    // デバッグレイヤーの有効化
-    bool SetupProjectionTransform();            //透視投影変換計算
 
 
 public:

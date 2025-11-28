@@ -22,7 +22,9 @@ enum class CONFIG_INPUT {
     MOVE_L,
     MOVE_R,
     JUMP,
+    C,
     PAUSE,
+
 
     MAX,
 };

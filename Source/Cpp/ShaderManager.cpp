@@ -93,14 +93,15 @@ bool ShaderManager::Init(std::shared_ptr<RendererManager> renderer)
 /* - @:ShaderManager Class - シェーダの作成 - * - */
 /* 【?】指定タイプのシェーダを作成
 /* 引数：1.シェーダタイプ
+/* 引数：2.作成の仕方
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::CreateShader(SHADER_TYPE type)
+bool ShaderManager::CreateShader(SHADER_TYPE type, SHADER_CREATE_TYPE createType)
 {
     ShaderInfo shaderInfo{};
 
     // 頂点・ピクセルシェーダ、入力レイアウトのセットアップ
-    if (!VertexShaderFactory(type, &shaderInfo))return false;
-    if (!PixelShaderFactory(type, &shaderInfo))return false;
+    if (!VertexShaderFactory(type, &shaderInfo, createType))return false;
+    if (!PixelShaderFactory(type, &shaderInfo, createType))return false;
     
     shaderInfo.Type = type;
 
@@ -190,8 +191,64 @@ bool ShaderManager::InputLayoutFactory(SHADER_TYPE type, ShaderInfo* out, ID3DBl
         return false;
     }
 
-    out->pInputLayout = std::make_shared<InputLayout>();   // 共有ポインタ作成
-    out->pInputLayout->set(std::move(pOutputLayout));  // レイアウトのセット
+    out->pInputLayout = std::make_shared<InputLayout>();    // 共有ポインタ作成
+    out->pInputLayout->set(std::move(pOutputLayout));       // レイアウトのセット
+
+    return true;
+}
+
+
+/* ---------------------------------------------------------------------------------------
+/* - @:ShaderManager Class - 入力レイアウトの作成 - * - */
+/* 【?】入力レイアウト作成 CSO対応
+/* ---------------------------------------------------------------------------------------*/
+bool ShaderManager::InputLayoutFactory_CSO(SHADER_TYPE type, ShaderInfo *out, std::vector<uint8_t> &byteCode)
+{
+    auto renderer = m_pRenderer.lock();
+    if (renderer == nullptr)return false;
+
+    auto pDevice = renderer.get()->get_Device();
+    auto pContext = renderer.get()->get_DeviceContext();
+    HRESULT hr = S_OK;
+
+
+    // 指定種別と合致する要素を取得
+    auto begin = m_InputLayoutSetupDataList.begin();
+    auto end = m_InputLayoutSetupDataList.end();
+    auto target = std::find_if(begin, end,
+        [type](const InputLayoutSetupData &val)
+        {
+            return (val.type == type);
+        }
+    );
+
+    if (target == end) {
+        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        return false;
+    }
+
+
+    UINT numElements = target->LayoutArraySize;   // 配列の要素数取得
+    const D3D11_INPUT_ELEMENT_DESC *pLayout = target->pLayout;
+
+    ComPtr<ID3D11InputLayout> pOutputLayout = nullptr; // 結果格納用
+
+    // 入力レイアウト作成
+    hr = pDevice->CreateInputLayout(
+        pLayout,                     // 入力データ型の配列設定    
+        numElements,                 // 配列の要素数
+        byteCode.data(),             // コンパイルされたシェーダへのポインタ
+        byteCode.size(),             // コンパイルされたシェーダのサイズ
+        pOutputLayout.GetAddressOf() // 生成した入力レイアウトの出力先
+    );
+
+    if (FAILED(hr)) {
+        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        return false;
+    }
+
+    out->pInputLayout = std::make_shared<InputLayout>();    // 共有ポインタ作成
+    out->pInputLayout->set(std::move(pOutputLayout));       // レイアウトのセット
 
     return true;
 }
@@ -201,69 +258,128 @@ bool ShaderManager::InputLayoutFactory(SHADER_TYPE type, ShaderInfo* out, ID3DBl
 /* - @:ShaderManager Class - 頂点シェーダの作成 - * - */
 /* 【?】頂点シェーダの作成
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out)
+bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER_CREATE_TYPE createType)
 {
     auto renderer = m_pRenderer.lock();
     if (renderer == nullptr)return false;
     auto pDevice = renderer.get()->get_Device();
     auto pContext = renderer.get()->get_DeviceContext();
 
-    ID3DBlob* pVSBlob = NULL;
     HRESULT hr = S_OK;
+    ID3DBlob* pVSBlob = NULL;                      // ランタイム用
+    std::vector<uint8_t> csoByteCode;              // cso読み込み用
     ComPtr<ID3D11VertexShader> pVertex = nullptr;  // 結果格納用
 
-    // 頂点シェーダのコンパイル
-    switch (type)
+
+    // ランタイム実行 ********************************************************************************************
+    if (createType == SHADER_CREATE_TYPE::RUNTIME)
     {
-    case SHADER_TYPE::NONE:
-        MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
-        break;
-    case SHADER_TYPE::SIMPLE:
-        hr = this->CompileShader(HLSL__SimpleVS_PATH.c_str(), "SimpleVSMain", "vs_5_0", &pVSBlob);
-        break;
-    case SHADER_TYPE::MODEL:
-        hr = this->CompileShader(HLSL__VS_PATH.c_str(), "VS", "vs_5_0", &pVSBlob);
-        break;
-    case SHADER_TYPE::SPRITE:
-        hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
-        break;
-    case SHADER_TYPE::DEFFERD:
-        hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
-        break;
-    default:
-        MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
-        break;
-    }
+        // 頂点シェーダのコンパイル
+        switch (type)
+        {
+        case SHADER_TYPE::NONE:
+            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            break;
+        case SHADER_TYPE::SIMPLE:
+            hr = this->CompileShader(HLSL__SimpleVS_PATH.c_str(), "SimpleVSMain", "vs_5_0", &pVSBlob);
+            break;
+        case SHADER_TYPE::MODEL:
+            hr = this->CompileShader(HLSL__VS_PATH.c_str(), "VS", "vs_5_0", &pVSBlob);
+            break;
+        case SHADER_TYPE::SPRITE:
+            hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;
+        case SHADER_TYPE::DEFFERD:
+            hr = this->CompileShader(HLSL__SpriteVS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;
+        default:
+            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            break;
+        }
 
-    // 失敗
-    if (FAILED(hr)){
-        MessageBox(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
-        return false;
-    }
+        // 失敗
+        if (FAILED(hr)) {
+            pVSBlob->Release();
+            MessageBox(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
+            return false;
+        }
+
+        // 頂点シェーダーの作成
+        hr = pDevice->CreateVertexShader(
+            pVSBlob->GetBufferPointer(),
+            pVSBlob->GetBufferSize(),
+            NULL,
+            pVertex.GetAddressOf()
+        );
+
+        if (FAILED(hr)) {
+            pVSBlob->Release();
+            MessageBoxA(NULL, "頂点シェーダーの作成に失敗しました。", "Error", MB_OK);
+            return false;
+        }
 
 
-    // 頂点シェーダーの作成
-    hr = pDevice->CreateVertexShader(
-        pVSBlob->GetBufferPointer(),
-        pVSBlob->GetBufferSize(),
-        NULL,
-        pVertex.GetAddressOf()
-    );
-
-    if (FAILED(hr)) {
+        // 頂点レイアウトの作成
+        bool res = InputLayoutFactory(type, out, pVSBlob);
         pVSBlob->Release();
-        MessageBoxA(NULL, "頂点シェーダーの作成に失敗しました。", "Error", MB_OK);
-        return false;
+
+        if (!res) {
+            assert(false);
+            return false;
+        }
+    }
+    // .cso読み込み ********************************************************************************************
+    else if (createType == SHADER_CREATE_TYPE::CSO)
+    {
+        // 頂点シェーダのコンパイル
+        switch (type)
+        {
+        case SHADER_TYPE::NONE:
+            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            break;
+        case SHADER_TYPE::SIMPLE:
+            this->LoadCSOFile(HLSL_CSO__SimpleVS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::MODEL:
+            this->LoadCSOFile(HLSL_CSO__VS_PATH.c_str(),&csoByteCode);
+            break;
+        case SHADER_TYPE::SPRITE:
+            this->LoadCSOFile(HLSL_CSO__SpriteVS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::DEFFERD:
+            this->LoadCSOFile(HLSL_CSO__SpriteVS_PATH.c_str(), &csoByteCode);
+            break;
+        default:
+            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            break;
+        }
+
+        // 頂点シェーダーの作成
+        hr = pDevice->CreateVertexShader(
+            csoByteCode.data(),
+            csoByteCode.size(),
+            NULL,
+            pVertex.GetAddressOf()
+        );
+
+        if (FAILED(hr)) {
+            csoByteCode.clear();
+            MessageBoxA(NULL, "頂点シェーダーの作成に失敗しました。", "Error", MB_OK);
+            return false;
+        }
+
+
+        // 頂点レイアウトの作成
+        bool res = InputLayoutFactory_CSO(type, out, csoByteCode);
+
+        if (!res) {
+            assert(false);
+            return false;
+        }
+
+        csoByteCode.clear();
     }
 
-    // 頂点レイアウトの作成
-    bool res = InputLayoutFactory(type, out, pVSBlob);
-    pVSBlob->Release();
-
-    if (!res) {
-        assert(false);
-        return false;
-    }
 
     out->pVShader = std::make_shared<VertexShader>();   // 共有ポインタ作成
     out->pVShader->set(std::move(pVertex));  // 頂点シェーダセット
@@ -276,53 +392,111 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out)
 /* - @:ShaderManager Class - ピクセルシェーダの作成 - * - */
 /* 【?】ピクセルシェーダの作成
 /* ---------------------------------------------------------------------------------------*/
-bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out)
+bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER_CREATE_TYPE createType)
 {
     auto renderer = m_pRenderer.lock();
     if (renderer == nullptr)return false;
     auto pDevice = renderer.get()->get_Device();
     auto pContext = renderer.get()->get_DeviceContext();
+
     HRESULT hr = S_OK;
-    ID3DBlob* pPSBlob = NULL;
+    ID3DBlob* pPSBlob = NULL;                      // ランタイム用
+    std::vector<uint8_t> csoByteCode;              // cso読み込み用 
     ComPtr<ID3D11PixelShader> pPixel = nullptr;    // 結果格納用
 
-    // ピクセルシェーダーのコンパイル
-    switch (type)
+
+    // ランタイム実行 ********************************************************************************************
+    if (createType == SHADER_CREATE_TYPE::RUNTIME)
     {
-    case SHADER_TYPE::NONE:
-        break;
-    case SHADER_TYPE::SIMPLE:
-        hr = CompileShader(HLSL__SimplePS_PATH.c_str(), "SimplePSMain", "ps_5_0", &pPSBlob);
-        break;
-    case SHADER_TYPE::MODEL:
-        hr = CompileShader(HLSL__PS_PATH.c_str(), "PS", "ps_5_0", &pPSBlob);
-        break;    
-    case SHADER_TYPE::SPRITE:
-        hr = this->CompileShader(HLSL__SpritePS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
-        break;
-    case SHADER_TYPE::DEFFERD:
-        hr = this->CompileShader(HLSL__DefferdPS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
-        break;
-    default:
-        break;
-    }
-    
-    // 失敗
-    if (FAILED(hr)){
-        MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
-        return false;
-    }
+        // ピクセルシェーダーのコンパイル
+        switch (type)
+        {
+        case SHADER_TYPE::NONE:
+            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            break;
+        case SHADER_TYPE::SIMPLE:
+            hr = CompileShader(HLSL__SimplePS_PATH.c_str(), "SimplePSMain", "ps_5_0", &pPSBlob);
+            break;
+        case SHADER_TYPE::MODEL:
+            hr = CompileShader(HLSL__PS_PATH.c_str(), "PS", "ps_5_0", &pPSBlob);
+            break;
+        case SHADER_TYPE::SPRITE:
+            hr = this->CompileShader(HLSL__SpritePS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
+        case SHADER_TYPE::DEFFERD:
+            hr = this->CompileShader(HLSL__DefferdPS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
+        default:
+            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            break;
+        }
 
-    // ピクセルシェーダーの作成
-    hr = pDevice->CreatePixelShader(
-        pPSBlob->GetBufferPointer(),
-        pPSBlob->GetBufferSize(),
-        NULL,
-        pPixel.GetAddressOf()
-    );
 
-    pPSBlob->Release();
-    if (FAILED(hr))return false;    // 失敗
+        // 失敗
+        if (FAILED(hr)) {
+            pPSBlob->Release();
+            MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
+            return false;
+        }
+
+        // ピクセルシェーダーの作成
+        hr = pDevice->CreatePixelShader(
+            pPSBlob->GetBufferPointer(),
+            pPSBlob->GetBufferSize(),
+            NULL,
+            pPixel.GetAddressOf()
+        );
+        pPSBlob->Release();
+        
+        if (FAILED(hr)) {
+            MessageBoxA(NULL, "ピクセルシェーダの作成に失敗しました。", "Error", MB_OK);
+            return false;
+        }
+
+    }
+    // .cso読み込み ********************************************************************************************
+    else if (createType == SHADER_CREATE_TYPE::CSO)
+    {
+        // 頂点シェーダのコンパイル
+        switch (type)
+        {
+        case SHADER_TYPE::NONE:
+            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            break;
+        case SHADER_TYPE::SIMPLE:
+            this->LoadCSOFile(HLSL_CSO__SimplePS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::MODEL:
+            this->LoadCSOFile(HLSL_CSO__PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::SPRITE:
+            this->LoadCSOFile(HLSL_CSO__SpritePS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::DEFFERD:
+            this->LoadCSOFile(HLSL_CSO__DefferdPS_PATH.c_str(), &csoByteCode);
+            break;
+        default:
+            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            break;
+        }
+
+        // 頂点シェーダーの作成
+        hr = pDevice->CreatePixelShader(
+            csoByteCode.data(),
+            csoByteCode.size(),
+            NULL,
+            pPixel.GetAddressOf()
+        );
+
+
+        if (FAILED(hr)) {
+            csoByteCode.clear();
+            MessageBoxA(NULL, "頂点シェーダーの作成に失敗しました。", "Error", MB_OK);
+            return false;
+        }
+
+        csoByteCode.clear();
+    }
 
     out->pPShader = std::make_shared<PixelShader>();   // 共有ポインタ作成
     out->pPShader.get()->set(std::move(pPixel));   // ピクセルシェーダのセット
@@ -380,14 +554,23 @@ HRESULT ShaderManager::CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LP
 }
 
 
-bool ShaderManager::LoadCSOFile(TCHAR *csoName, ID3DBlob *pBlob)
-{
-    HRESULT hr = S_OK;
 
-    FILE *fp;
-    errno_t err = fopen_s(&fp, csoName, "rb"); // バイナリ読み込み
-    if (err != 0) {
-        MessageBox(NULL, "CSOファイルが読み込めませんでした", "Error", MB_OK);
-        return false;
-    }
+//*---------------------------------------------------------------------------------------
+//*【?】CSOファイルの読み込み
+//*
+//* [引数]
+//* csoName : .csoファイル名
+//* pBlob : データの格納先
+//* 
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool ShaderManager::LoadCSOFile(const wchar_t *csoName, std::vector<uint8_t> *pByteCodeOUT)
+{
+    *pByteCodeOUT = DX::ReadData(csoName);  // 読み込み マイクロソフトのやつ
+
+    if (pByteCodeOUT->empty())return false;
+
+    return true;
 }

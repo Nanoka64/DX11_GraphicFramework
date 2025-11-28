@@ -17,12 +17,20 @@ enum class SHADER_TYPE
     NONE,       // なし
     SIMPLE,     // 単純な3Dオブジェクト表示用
     MODEL,      // 3Dモデルの表示用
-
     SPRITE,     // スプライト
-
     DEFFERD,    // ディファードシェーディング
     
     NUM,
+};
+
+
+//* =========================================================================
+//* - @:シェーダの作成方法列挙体 - */
+//* =========================================================================
+enum class SHADER_CREATE_TYPE
+{
+    RUNTIME,    // ランタイム実行
+    CSO,        // コンパイル済みシェーダ読み込み
 };
 
 /* =========================================================================
@@ -86,7 +94,7 @@ public:
     /// </summary>
     /// <param name="type">シェーダタイプ</param>
     /// <returns>作成出来たか</returns>
-    bool CreateShader(SHADER_TYPE type);
+    bool CreateShader(SHADER_TYPE type, SHADER_CREATE_TYPE createType);
 
     /// <summary>
     /// デバイスにシェーダをセット
@@ -113,14 +121,17 @@ private:
     /// <param name="ppBlobOut"></param>
     /// <returns>コンパイル出来たか</returns>
     HRESULT CompileShader(LPCWSTR szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob **ppBlobOut);
-    bool VertexShaderFactory(SHADER_TYPE type, ShaderInfo *out);
+    bool VertexShaderFactory(SHADER_TYPE type, ShaderInfo *out, SHADER_CREATE_TYPE createType);
     bool InputLayoutFactory(SHADER_TYPE type, ShaderInfo *out, ID3DBlob *blob);
-    bool PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out);
+    bool InputLayoutFactory_CSO(SHADER_TYPE type, ShaderInfo *out, std::vector<uint8_t> &byteCode);
+    bool PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER_CREATE_TYPE createType);
 
     /// <summary>
     /// .csoファイルの読み込み
     /// </summary>
     /// <returns></returns>
-    bool LoadCSOFile(TCHAR *csoName, ID3DBlob *pBlob);
+    bool LoadCSOFile(const wchar_t *csoName, std::vector<uint8_t> *pByteCodeOUT);
+
+
 };
 

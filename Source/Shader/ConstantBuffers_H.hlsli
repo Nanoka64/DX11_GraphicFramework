@@ -112,7 +112,7 @@ cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
 //* =========================================================================
 cbuffer CB_POINT_LIGHT : register(b6)        
 {
-    PointLight cb_PointLightData[POINTLIGHT_MAX_NUM];
+    PointLight cb_PointLightData[POINTLIGHT_MAX_NUM];   // 500ŒÂ
 };
 
 #endif

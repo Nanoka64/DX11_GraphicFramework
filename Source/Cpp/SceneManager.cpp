@@ -72,7 +72,7 @@ bool SceneManager::Init(RendererManager &renderer)
             pCam.lock()->Init(renderer);
             pCam.lock()->set_Tag("Camera");
             pCam.lock()->add_Component<Camera3D>();
-            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 700.0f, -3000.0f);
+            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -100.0f);
         }
 
         {
@@ -118,7 +118,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
-            mesh.IsActive = false;
+            mesh.IsActive = true;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
@@ -132,28 +132,28 @@ bool SceneManager::Init(RendererManager &renderer)
         }
 
 
-        //{
-        //    /* プレイヤー モデルの生成 */
-        //    MATERIAL mat[1];
-        //    mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-        //    mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-        //    mat[0].SpecularPower = 0.2f;
-        //    mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        {
+            /* プレイヤー モデルの生成 */
+            MATERIAL mat[1];
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+            mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
+            mat[0].SpecularPower = 0.2f;
+            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
-        //    CreateModelInfo model;
-        //    model.pRenderer = &renderer;
-        //    model.Path = "Resource/Model/Player2/AL_Standard.fbx";
-        //    model.ObjTag = "Player";
-        //    model.IsAnim = true;
-        //    model.MatNum = 1;
-        //    model.MaterialData = new InputMaterial();
-        //    model.MaterialData->MatIndex = 0;
-        //    model.MaterialData->pMat = mat;
-        //    auto obj = MeshFactory::CreateModel(model);
-        //    obj.lock()->get_Component<Transform>()->set_Scale(0.0f, 0.0f, 0.0f);
-        //    obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(false);
-        //    obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
-        //}
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Player2/AL_Standard.fbx";
+            model.ObjTag = "Player";
+            model.IsAnim = true;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            auto obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+        }
 
         {
             /* アリ モデルの生成 */
@@ -174,7 +174,8 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0,1.0,1.0);
+            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f,180,0.0);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -200,9 +201,9 @@ bool SceneManager::Init(RendererManager &renderer)
             model.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 500.0f, 0.0f);
             obj.lock()->set_LayerRank(0);
         }        
-     
 
         {
             /* QUADの生成 */
@@ -210,8 +211,8 @@ bool SceneManager::Init(RendererManager &renderer)
             for (int i = -1; i < 2; i++)
             {
                 MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Metal052B_2K-PNG_Color.png");
+                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
                 mat->SpecularPower = 1;
 
@@ -454,7 +455,7 @@ void SceneManager::Update(RendererManager& renderer)
 
 
     auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
-    //obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
+    obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
 
 
@@ -474,8 +475,6 @@ void SceneManager::Update(RendererManager& renderer)
     auto rad = dlig.lock()->get_Component<Transform>();
     rad->set_RotateToRad(m_LightDir);
     dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
-
-
 
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
     //rad = b_2Obj.lock()->get_Component<Transform>();
@@ -529,6 +528,7 @@ void SceneManager::Update(RendererManager& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererManager& renderer)
 {
+
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
 
@@ -557,6 +557,8 @@ void SceneManager::Draw(RendererManager& renderer)
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
+    renderer.SetupProjectionTransform();
+
     // ターゲット描画
     auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget1").lock();
     auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
@@ -570,7 +572,6 @@ void SceneManager::Draw(RendererManager& renderer)
     sprite2->Draw(renderer);
     sprite3->Draw(renderer);
     //sprite4->Draw(renderer);
-    
 
     // ディファードスプライト
     auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();

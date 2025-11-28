@@ -99,7 +99,7 @@ void Camera3D::Update(RendererManager& renderer)
 	// 前方向と右方向ベクトルを作る 
 	// 右方向ベクトルは上方向と前方向ベクトルの外積を取ることでできる
 	VEC3 forward = lookDir.Normalize();
-	VEC3 right = VEC3::Cross(VEC3(0.0f, 1.0f, 0.0f), forward);
+	VEC3 right = VEC3::Cross(m_UpVec, forward);
 	VEC3 moveDir{ 0.0f,0.0f,0.0f };
 
 	// 移動 
@@ -107,9 +107,11 @@ void Camera3D::Update(RendererManager& renderer)
 	if (GetInput(CONFIG_INPUT::MOVE_B)) moveDir = moveDir - forward;
 	if (GetInput(CONFIG_INPUT::MOVE_R)) moveDir = moveDir + right;
 	if (GetInput(CONFIG_INPUT::MOVE_L)) moveDir = moveDir - right;
+	if (GetInput(CONFIG_INPUT::JUMP))   moveDir = moveDir + m_UpVec;
+	if (GetInput(CONFIG_INPUT::C))   moveDir = moveDir - m_UpVec;
 
 	// 空中浮遊させないように
-	// moveDir.y = 0.0f;
+	//moveDir.y = 0.0f;
 
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 

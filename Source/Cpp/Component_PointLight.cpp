@@ -55,10 +55,10 @@ void PointLight::Update(RendererManager &renderer)
     auto pContext = renderer.get_DeviceContext();
 
     // バッファの更新
-    m_pCBLightSet->Data.Pos = m_pOwnerTransform.lock()->get_VEC3ToPos();
-    m_pCBLightSet->Data.DiffuseColor  = m_LightColor;
-    m_pCBLightSet->Data.SpecularColor = m_LightColor;
-	m_pCBLightSet->Data.Range	      = m_Range;
+    m_pCBLightSet->Data[0].Pos = m_pOwnerTransform.lock()->get_VEC3ToPos();
+    m_pCBLightSet->Data[0].DiffuseColor  = m_LightColor;
+    m_pCBLightSet->Data[0].SpecularColor = m_LightColor;
+	m_pCBLightSet->Data[0].Range	      = m_Range;
     pContext->UpdateSubresource(m_pCBLightSet->pBuff, 0, nullptr, &m_pCBLightSet->Data, 0, 0);
 
     // ピクセルシェーダにセット

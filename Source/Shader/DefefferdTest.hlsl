@@ -61,25 +61,21 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
     //normal = normalize(normal);
     
+    
     // スペキュラ強度・カラー
     float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
     // ディレクションライト計算
-    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, float3(1,1,1), spcPow, worldPos.xyz, normal);
     OUT_DiffAndSpec pointLig;
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
-    for (int i = 0; i < 1; i++)
+    
+    // ポイントライト計算
+    for (int i = 0; i < 100; i++)
     {
-        PointLight plig;
-        plig.DiffuseColor = float3(1,1,1);
-        plig.SpecularColor = float3(1,1,1);
-        plig.Range = cb_PointLightData[0].Range;
-        plig.Pos = float3(cb_PointLightData[0].Pos.x  + 800 * i, cb_PointLightData[0].Pos.y, cb_PointLightData[0].Pos.z);
-        
-        // ポイントライト計算
-        OUT_DiffAndSpec res = PointLightCalc(plig, cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+        OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[i], cb_EyePos, float3(1, 1, 1), spcPow, worldPos.xyz, normal);
         pointLig.Diffuse += res.Diffuse;
         pointLig.Specular += res.Specular;
     }
@@ -89,12 +85,13 @@ float4 PSMain(PS_IN input) : SV_TARGET
 
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-    float3 diffuse = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;
+    float3 diffuse  = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;
     float3 specular = dirLig.Specular + pointLig.Specular;
     
     
     // 最終色 アルベド * 光度 + スペキュラ
-    finalCol.xyz = albedoTex.rgb * diffuse + specular ;
+    finalCol.xyz = albedoTex.rgb * diffuse + specular;
     finalCol.a = 1.0f;
     return finalCol;
+
 }

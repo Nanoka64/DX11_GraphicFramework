@@ -18,18 +18,22 @@
 */ ////////////////////////////////////////////////////////////////////////////////////////////
   
 
+
 //*---------------------------------------------------------------------------------------
 //*【?】正規化 Lambert拡散反射光（ディフューズ）の計算
-//* 引数：1.ライトの向き
-//* 引数：2.ライトの色
-//* 引数：3.頂点法線
-//* 返値：float3
+//* [引数]
+//* _ligDir     : ライトの向き
+//* _ligCol     : ライトの色
+//* _norm       : 頂点法線
+//*
+//* [返値]
+//* float3 : ディフューズ色
 //*----------------------------------------------------------------------------------------
 float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = saturate(dot(_norm, _ligDir));
+    float diffuseFactor = max(0.0, (dot(-_ligDir, _norm)));
     
     // 拡散反射求める
     finalDfs = _ligCol * diffuseFactor;
@@ -43,14 +47,19 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
     return finalDfs;
 }
 
+
 //*---------------------------------------------------------------------------------------
 //*【?】Phong鏡面反射光（スペキュラ）の計算
-//* 引数：1.ライトの向き
-//* 引数：2.ライトの色
-//* 引数：3.反射の強さ
-//* 引数：4.頂点ワールド座標
-//* 引数：5.頂点法線
-//* 返値：float3
+//* [引数]
+//* _ligDir     : ライトの向き（ライトからサーフェイス）
+//* _eyePos     : カメラ座標（ワールド）
+//* _LigCol     : ライト色
+//* _spcPower   : スペキュラ強度
+//* _worldPos   : サーフェイス座標（ワールド）
+//* _norm       : サーフェイス法線（ワールド）
+//*
+//* [返値]
+//* float3 : スペキュラ色
 //*----------------------------------------------------------------------------------------
 float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, float _spcPower, float3 _worldPos, float3 _norm)
 {
@@ -74,60 +83,35 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
     // 魔導書などを見ても、0.0にするように書いてあったのでモヤモヤ...
     // まあ確かに0にしたら0だからカメラと反対側は消えるけども…
     //refFactor = max(0.0, refFactor);      // マイナスにならないよう
+    // ※11/28 追記
+    // 結論、y座標が床と同じだったから変な感じに見えてる説が濃厚
+    // もうそういうもんだと思うことにする。
+    // TBDRに行く！さらば(@^^)/~~~
     
-    refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
+    refFactor = pow(refFactor, 1.0); // 反射の強さを絞る
 
     // 鏡面反射求める
     finalSpc = _LigCol * refFactor;
     
-    return finalSpc;
+    return finalSpc * _spcPower;
 }
 
-
-//*---------------------------------------------------------------------------------------
-//*【?】Phong鏡面反射光（スペキュラ）の計算
-//*     ポイントライト用！！！！
-//* 引数：1.ライトの向き
-//* 引数：2.ライトの色
-//* 引数：3.反射の強さ
-//* 引数：4.頂点ワールド座標
-//* 引数：5.頂点法線
-//* 返値：float3
-//*----------------------------------------------------------------------------------------
-float3 PointLight_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, float _spcPower, float3 _worldPos, float3 _norm)
-{
-    float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
-
-    // 反射ベクトル
-    float3 refVec = reflect(_ligDir, _norm);
-    
-    // サーフェイスから視点に向かって伸びるベクトル
-    float3 toEye = _eyePos.xyz - _worldPos.xyz;
-    toEye = normalize(toEye); // 正規化
-    
-    
-    // 内積を求める（鏡面反射の強さ）
-    // 絶対値にする。
-    float refFactor = abs(dot(toEye, refVec));
-    
-    refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
-
-    // 鏡面反射求める
-    finalSpc = _LigCol * refFactor;
-    
-    return finalSpc;
-}
 
 //*---------------------------------------------------------------------------------------
 //*【?】Blinn_Phong鏡面反射光（スペキュラ）の計算
 //*     こっちはPhongの改良版みたいなやつらしい
 //*     ハーフベクトルを使って計算
-//* 引数：1.ライトの向き
-//* 引数：2.ライトの色
-//* 引数：3.反射の強さ
-//* 引数：4.頂点ワールド座標
-//* 引数：5.頂点法線
-//* 返値：float3
+//*
+//* [引数]
+//* _ligDir     : ライトの向き
+//* _eyePos     : カメラ座標（ワールド）
+//* _LigCol     : ライトの色
+//* _spcPower   : 反射の強さ
+//* _worldPos   : 頂点ワールド座標
+//* _norm       : 頂点法線
+//*
+//* [返値]
+//* float3 最終色
 //*----------------------------------------------------------------------------------------
 float3 Blinn_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, float _spcPower, float3 _worldPos, float3 _norm)
 {
@@ -138,7 +122,7 @@ float3 Blinn_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigC
     toEye = normalize(toEye);               // 正規化
 
     float3 halfVec = normalize(_ligDir + toEye);     // ライトの向きと視線でハーフベクトルを求める
-    float refFactor = saturate(dot(_norm, halfVec)); // 内積を求める（鏡面反射の強さ）
+    float refFactor = saturate(dot(halfVec,_norm )); // 内積を求める（鏡面反射の強さ）
     
     refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
 
@@ -157,13 +141,17 @@ struct OUT_DiffAndSpec
 
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライトの計算
-//* 引数：1.ライト情報
-//* 引数：2.カメラ座標
-//* 引数：3.スペキュラカラー
-//* 引数：4.スペキュラ強度
-//* 引数：5.サーフェイスのワールド座標
-//* 引数：6.サーフェイスのワールド法線
-//* 返値：float3
+//*
+//* [引数]
+//* _ligData    : ライト情報
+//* _eyePos     : カメラ座標
+//* _spcCol     : スペキュラカラー
+//* _spcPow     : スペキュラ強度
+//* _worldPos   : サーフェイスのワールド座標
+//* _norm       : サーフェイスのワールド法線
+//*
+//* [返値]
+//* OUT_DiffAndSpec ディフューズ＆スペキュラ
 //*----------------------------------------------------------------------------------------
 OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
 {
@@ -183,16 +171,20 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
     return outData;
 }
 
+
 //*---------------------------------------------------------------------------------------
-//*【?】ポイントライトの計算
-//* 引数：1.ライト座標
-//* 引数：2.カメラ座標
-//* 引数：3.ディフューズカラー
-//* 引数：4.スペキュラカラー
-//* 引数：5.影響範囲
-//* 引数：6.サーフェイスのワールド座標
-//* 引数：7.サーフェイスのワールド法線
-//* 返値：float3
+//*【?】ディレクションライトの計算
+//*
+//* [引数]
+//* _ligData    : ライト情報
+//* _eyePos     : カメラ座標
+//* _spcCol     : スペキュラカラー
+//* _spcPow     : スペキュラ強度
+//* _worldPos   : サーフェイスのワールド座標
+//* _norm       : サーフェイスのワールド法線
+//*
+//* [返値]
+//* OUT_DiffAndSpec ディフューズ＆スペキュラ
 //*----------------------------------------------------------------------------------------
 OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
 {
@@ -208,12 +200,16 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     // フォン反射
     float3 spcPoint = PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
+    // そのままだと薄すぎる場合があるので少し補正
+    diffPoint += 0.3f;  
+    spcPoint += 0.1f;
+    
     // 影響度計算
     float affect = 1.0f - min(1.0f, distance / _ligData.Range);
     
     // マイナスにならないように
     affect = max(0.0, affect);
-    affect = pow(affect, 3.0f);
+    affect = pow(affect, 1.0);
     
     // 影響度を拡散・鏡面に反映させる
     diffPoint *= affect;
@@ -225,10 +221,13 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     return outData;
 }
 
+
 //*---------------------------------------------------------------------------------------
 //*【?】半球ライト計算
-//* 引数：1.頂点法線
-//* 返値：float3
+//* [引数]
+//* _norm    : 頂点法線
+//* [返値]
+//* float3 半球色
 //*----------------------------------------------------------------------------------------
 float3 HemisphereLightCalc(float3 _norm)
 {
@@ -249,21 +248,23 @@ float3 HemisphereLightCalc(float3 _norm)
 }
 
 
-
 //*---------------------------------------------------------------------------------------
 //*【?】法線情報取得
 //*     ノーマルマップの凹凸情報は接空間（TBN空間）として入っているので、
 //*     ライティング計算時にはワールド空間に変換しなければならない。
 //*     まあテクスチャ情報だからワールド空間として入ってるわけないよねっていう
-//*     
+//*
 //*     ・接ベクトルがテクスチャの U 座標
 //*     ・従ベクトルがテクスチャの V 座標
 //*
-//* 引数：1.法線マップ
-//* 引数：2.接ベクトル
-//* 引数：3.従ベクトル
-//* 引数：4.サーフェイスのローカル法線
-//* 返値：float3
+//* [引数]
+//* _normMap    :  法線マップ
+//* _tan        :  接ベクトル
+//* _biNorm     :  従ベクトル
+//* _localNorm  :  サーフェイスのローカル法線
+//*
+//* [返値]
+//* float3 最終色
 //*----------------------------------------------------------------------------------------
 float3 GetNorm(float4 _normMap, float3 _tan, float3 _biNorm, float3 _localNorm)
 {

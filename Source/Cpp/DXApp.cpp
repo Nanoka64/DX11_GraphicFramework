@@ -101,11 +101,14 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
         assert(false);
         return false;
     }
+
+
     // シェーダ作成
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::CSO))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::CSO))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::CSO))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::CSO))return false;
+
 
     // *************************************************************************************************
     //** リソース管理の初期化 **/
@@ -116,6 +119,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
         assert(false);
         return false;
     }
+
 
     // *************************************************************************************************
     /**  directWrire 初期化 **/

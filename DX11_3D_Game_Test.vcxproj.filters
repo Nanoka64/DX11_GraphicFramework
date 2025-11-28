@@ -130,6 +130,9 @@
     <Filter Include="HLSL\DefefferdShader">
       <UniqueIdentifier>{5d9a4809-0be7-4c1b-a4d6-d0ef22b937aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Graphics\Light">
+      <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -622,6 +625,9 @@
     </Text>
     <Text Include="Schedule.txt">
       <Filter>memo</Filter>
+    </Text>
+    <Text Include="Source\CordingRules\CPP_CommentRule.txt">
+      <Filter>CordingRules</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
