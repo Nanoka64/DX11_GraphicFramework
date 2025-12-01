@@ -21,9 +21,9 @@ public:
 
 	bool CreateCBuffer(ID3D11Device *pDevice)override;
 
-	void Init(RendererManager &renderer) override;	// ‰Šú‰»
-	void Update(RendererManager &renderer) override;// XV
-	void Draw(RendererManager &renderer) override;	// •`‰æ
+	void Init(RendererEngine &renderer) override;	// ‰Šú‰»
+	void Update(RendererEngine &renderer) override;// XV
+	void Draw(RendererEngine &renderer) override;	// •`‰æ
 
 };
 

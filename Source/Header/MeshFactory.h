@@ -17,7 +17,7 @@ struct InputMaterial
 /// </summary>
 struct CreateModelInfo
 {
-    RendererManager *pRenderer;     // 描画
+    RendererEngine *pRenderer;     // 描画
     std::string Path;               // モデルパス
     std::string ObjTag;             // オブジェクトのタグ
     bool IsActive;                  // 生成時にオブジェクトをアクティブにするか
@@ -46,7 +46,7 @@ struct CreateModelInfo
 /// </summary>
 struct CreateUtilityMeshInfo
 {
-    RendererManager* pRenderer;  // 描画
+    RendererEngine* pRenderer;  // 描画
     
     UTILITY_MESH_TYPE Type;      // メッシュタイプ
     
@@ -72,7 +72,7 @@ struct CreateUtilityMeshInfo
 /// </summary>
 struct CreateSpriteInfo
 {
-    RendererManager *pRenderer;         // 描画
+    RendererEngine *pRenderer;         // 描画
     std::string ObjTag;                 // オブジェクトのタグ
     bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法

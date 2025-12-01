@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Texture.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include <wincodec.h>
 using namespace DirectX;
 
@@ -15,7 +15,7 @@ Texture::~Texture()
 	this->Release();
 }
 
-HRESULT Texture::Load(const std::wstring& path, RendererManager& renderer)
+HRESULT Texture::Load(const std::wstring& path, RendererEngine& renderer)
 {
 	HRESULT hr = S_OK;
 	TexMetadata metadata;	// ‰æ‘œ‚Ìî•ñ

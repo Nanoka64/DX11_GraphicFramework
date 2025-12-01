@@ -29,10 +29,10 @@ GameObjectManager::~GameObjectManager()
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool GameObjectManager::Init(RendererManager &renderer)
+bool GameObjectManager::Init(RendererEngine &renderer)
 {
     m_pObjectList.clear();
     return true;
@@ -42,10 +42,10 @@ bool GameObjectManager::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void GameObjectManager::ObjectUpdate(RendererManager &renderer)
+void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 {
     std::vector<std::shared_ptr<GameObject>> deleteList;       // 削除用
     std::vector<std::shared_ptr<GameObject>> collisionList;    // 衝突判定用
@@ -73,10 +73,10 @@ void GameObjectManager::ObjectUpdate(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void GameObjectManager::ObjectRender(RendererManager &renderer)
+void GameObjectManager::ObjectRender(RendererEngine &renderer)
 {
     // 描画
     for (auto& obj : m_pObjectList)
@@ -92,10 +92,10 @@ void GameObjectManager::ObjectRender(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
 //*【?】終了
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool GameObjectManager::Term(RendererManager &renderer)
+bool GameObjectManager::Term(RendererEngine &renderer)
 {
     return true;
 }
@@ -105,7 +105,7 @@ bool GameObjectManager::Term(RendererManager &renderer)
 //* @:GameObjectManager Class 
 //*【?】オブジェクトの生成
 //      この関数を通じてオブジェクトを生成する。
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：生成したオブジェクトの共有ポインタ
 //*----------------------------------------------------------------------------------------
 std::weak_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<Transform> parent)

@@ -44,10 +44,10 @@ Camera3D::~Camera3D()
 //*---------------------------------------------------------------------------------------
 //* @:Camera3D Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::Init(RendererManager& renderer)
+void Camera3D::Init(RendererEngine& renderer)
 {
 
 }
@@ -56,10 +56,10 @@ void Camera3D::Init(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:Camera3D Class 
 //*【?】更新処理
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::Update(RendererManager& renderer)
+void Camera3D::Update(RendererEngine& renderer)
 {
 	if (GetInput(CONFIG_INPUT::DOWN))	// 上
 	{
@@ -117,14 +117,14 @@ void Camera3D::Update(RendererManager& renderer)
 
 	// Imgui デバッグ
 	static float debugSpeed = 5.1f;
-	Debugger::Instance().BeginDebugWindow("CameraInfo");
-	Debugger::Instance().DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
-	Debugger::Instance().DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));
-	Debugger::Instance().DG_TextValue("Angle_H: %f.1", m_Angle_H);
-	Debugger::Instance().DG_TextValue("Angle_V: %f.1", m_Angle_V);
-	Debugger::Instance().DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
-	Debugger::Instance().DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);
-	Debugger::Instance().EndDebugWindow();
+	Master::m_pDebugger->BeginDebugWindow("CameraInfo");
+	Master::m_pDebugger->DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
+	Master::m_pDebugger->DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));
+	Master::m_pDebugger->DG_TextValue("Angle_H: %f.1", m_Angle_H);
+	Master::m_pDebugger->DG_TextValue("Angle_V: %f.1", m_Angle_V);
+	Master::m_pDebugger->DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
+	Master::m_pDebugger->DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);
+	Master::m_pDebugger->EndDebugWindow();
 
 	if (moveDir.Length() > 0.001) {
 		VEC3 crntPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
@@ -140,10 +140,10 @@ void Camera3D::Update(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:Camera3D Class 
 //*【?】描画処理
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::Draw(RendererManager& renderer)
+void Camera3D::Draw(RendererEngine& renderer)
 {
 
 }

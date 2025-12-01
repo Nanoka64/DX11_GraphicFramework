@@ -11,10 +11,10 @@
 //	Cubu();
 //	virtual ~Cubu();
 //
-//	bool Setup(RendererManager& renderer, MATERIAL* materials, UINT materialNum) override;	// 初期化
-//	bool Init(RendererManager &renderer) override;	// 初期化
-//	void Update(RendererManager &renderer) override;// 更新
-//	void Draw(RendererManager &renderer) override;	// 描画
-//	bool Term(RendererManager &renderer) override;	// 終了
+//	bool Setup(RendererEngine& renderer, MATERIAL* materials, UINT materialNum) override;	// 初期化
+//	bool Init(RendererEngine &renderer) override;	// 初期化
+//	void Update(RendererEngine &renderer) override;// 更新
+//	void Draw(RendererEngine &renderer) override;	// 描画
+//	bool Term(RendererEngine &renderer) override;	// 終了
 //};
 

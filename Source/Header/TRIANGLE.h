@@ -64,8 +64,8 @@ struct VERTEX3
         SAFE_RELEASE(vBuf)
     };
 
-    void Draw(RendererManager& render);                 // 表示
-    bool CreateVertexBuffer(RendererManager& render);   // 頂点バッファの作成
-    void SetupTransform(RendererManager& render);       // 定数バッファに変換行列を書き込む
+    void Draw(RendererEngine& render);                 // 表示
+    bool CreateVertexBuffer(RendererEngine& render);   // 頂点バッファの作成
+    void SetupTransform(RendererEngine& render);       // 定数バッファに変換行列を書き込む
     void UpdateTransform();
 };

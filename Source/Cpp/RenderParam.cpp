@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "RenderParam.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 //
 /* RenderParam Struct - 初期化 - */
 //
-bool RenderParam::Init(RendererManager& render)
+bool RenderParam::Init(RendererEngine& render)
 {
 	bool result = InitConstantBuffer(render);
 	if (result == false)return false;
@@ -17,7 +17,7 @@ bool RenderParam::Init(RendererManager& render)
 //
 /* RenderParam Struct - 終了 - */
 //
-void RenderParam::Term(RendererManager& render)
+void RenderParam::Term(RendererEngine& render)
 {
 	SAFE_RELEASE(cbTransformSet.pBuff);
 	SAFE_RELEASE(cbViewSet.pBuff);
@@ -27,7 +27,7 @@ void RenderParam::Term(RendererManager& render)
 //
 /* RenderParam Struct - 定数バッファの初期化 - */
 //
-bool RenderParam::InitConstantBuffer(RendererManager& render)
+bool RenderParam::InitConstantBuffer(RendererEngine& render)
 {
 	HRESULT hr = S_OK;
 

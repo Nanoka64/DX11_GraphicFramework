@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "TRIANGLE.h"
 
 //
 /* 頂点バッファの作成 */
 //
-bool VERTEX3::CreateVertexBuffer(RendererManager& render)
+bool VERTEX3::CreateVertexBuffer(RendererEngine& render)
 {
     SAFE_RELEASE(vBuf); // 二重に作成しないよう念のため開放
 
@@ -40,7 +40,7 @@ bool VERTEX3::CreateVertexBuffer(RendererManager& render)
 //
 /* ポリゴンの描画 */
 //
-void VERTEX3::Draw(RendererManager& render)
+void VERTEX3::Draw(RendererEngine& render)
 {
     auto pDeviceContext = render.get_DeviceContext();
 
@@ -100,7 +100,7 @@ void VERTEX3::UpdateTransform()
 //
 /* VERTEX3 Struct - 定数バッファに変換行列書き込む - */
 //
-void VERTEX3::SetupTransform(RendererManager& render)
+void VERTEX3::SetupTransform(RendererEngine& render)
 {
     auto pDeviceContext = render.get_DeviceContext();
     auto& cb = render.get_RenderParam().cbTransformSet;

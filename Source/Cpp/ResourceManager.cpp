@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------------------
 #include "pch.h"
 #include "ResourceManager.h"    // リソース
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "Texture.h"
 #include <DirectXTex.h>
 #include <locale>
@@ -15,7 +15,7 @@ using namespace DirectX;
 //      * ResourceManager - 初期化 - *
 // 引数：デバイスの共有ポインタ
 //--------------------------------------------------------------------------------------
-bool ResourceManager::Init(std::shared_ptr<RendererManager> renderer)
+bool ResourceManager::Init(std::shared_ptr<RendererEngine> renderer)
 {
     m_pRenderer = renderer;
 

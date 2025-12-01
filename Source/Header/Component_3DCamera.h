@@ -28,9 +28,9 @@ public:
 	Camera3D(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~Camera3D();
 
-	void Init(RendererManager& renderer) override;		// ‰Šú‰»
-	void Update(RendererManager& renderer) override;	// XVˆ—
-	void Draw(RendererManager& renderer)override;		// •`‰æˆ—
+	void Init(RendererEngine& renderer) override;		// ‰Šú‰»
+	void Update(RendererEngine& renderer) override;	// XVˆ—
+	void Draw(RendererEngine& renderer)override;		// •`‰æˆ—
 
 
 	/// <summary>

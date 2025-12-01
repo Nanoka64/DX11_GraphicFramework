@@ -3,7 +3,6 @@
 #include "Component_Transform.h"
 #include <algorithm>
 
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:GameObject3D Class --- */
@@ -34,10 +33,10 @@ public:
     GameObject();
     virtual ~GameObject();
 
-	virtual bool Init(RendererManager& renderer) { return true; };
-	virtual void Update(RendererManager& renderer) {};
-	virtual void Draw(RendererManager& renderer) {};
-	virtual bool Term(RendererManager& renderer) { return true; };
+	virtual bool Init(RendererEngine& renderer) { return true; };
+	virtual void Update(RendererEngine& renderer) {};
+	virtual void Draw(RendererEngine& renderer) {};
+	virtual bool Term(RendererEngine& renderer) { return true; };
 
 
 	// ****************************************************************************************************************************************
@@ -47,19 +46,19 @@ public:
 	/// <summary>
 	/// コンポーネントの更新
 	/// </summary>
-	void ComponentUpdate(RendererManager& renderer);
+	void ComponentUpdate(RendererEngine& renderer);
 
 	/// <summary>
 	/// コンポーネントの描画
 	/// </summary>
 	/// <param name="renderer"></param>
-	void ComponentRender(RendererManager& renderer);
+	void ComponentRender(RendererEngine& renderer);
 
 	/// <summary>
 	/// Transformの取得
 	/// </summary>
 	/// <returns></returns>
-	std::weak_ptr<Transform> get_Transform()const;
+	std::weak_ptr<class Transform> get_Transform()const;
 
 	/// <summary>
 	/// コンポーネントの取得

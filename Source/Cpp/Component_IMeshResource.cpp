@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Component_IMeshResource.h"
 #include "ResourceManager.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 using namespace BASE_VERTEX;
 
@@ -206,13 +206,13 @@ bool IMeshResource::CreateCBuffer(ID3D11Device* pDevice)
 //*---------------------------------------------------------------------------------------
 //* @:IMeshResource Class 
 //*【?】
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.メッシュの種類
 //* 引数：3.マテリアル数
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool IMeshResource::Setup(RendererManager& renderer, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum)
+bool IMeshResource::Setup(RendererEngine& renderer, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum)
 {
 	auto pDevice = renderer.get_Device();
 

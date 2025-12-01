@@ -28,7 +28,7 @@ GameObject::~GameObject()
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void GameObject::ComponentUpdate(RendererManager& renderer)
+void GameObject::ComponentUpdate(RendererEngine& renderer)
 {
 	for (auto& comp : m_pComponentList)
 	{
@@ -43,7 +43,7 @@ void GameObject::ComponentUpdate(RendererManager& renderer)
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void GameObject::ComponentRender(RendererManager& renderer)
+void GameObject::ComponentRender(RendererEngine& renderer)
 {
 	for (auto& comp : m_pComponentList)
 	{

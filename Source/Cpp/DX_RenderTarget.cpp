@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DX_RenderTarget.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 
 //*---------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ DX_RenderTarget::~DX_RenderTarget()
 //*---------------------------------------------------------------------------------------
 //* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成 
-//* 引数：1.RendererManager&
+//* 引数：1.RendererEngine&
 //* 引数：2.ターゲットの横幅
 //* 引数：3.ターゲットの縦幅
 //* 引数：4.ミップマップレベル。0を指定した場合はミップマップがサポートされているGPUでは1*1ピクセルまでのミップマップが作成される。
@@ -38,7 +38,7 @@ DX_RenderTarget::~DX_RenderTarget()
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool DX_RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
+bool DX_RenderTarget::Create(RendererEngine &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT colorFormat, DXGI_FORMAT depthStencilFormat, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
 
@@ -71,7 +71,7 @@ bool DX_RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipL
 //*---------------------------------------------------------------------------------------
 //* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成  内部公開
-//* 引数：1.RendererManager&
+//* 引数：1.RendererEngine&
 //* 引数：2.ターゲットの横幅
 //* 引数：3.ターゲットの縦幅
 //* 引数：4.ミップマップレベル。0を指定した場合はミップマップがサポートされているGPUでは1*1ピクセルまでのミップマップが作成される。
@@ -80,7 +80,7 @@ bool DX_RenderTarget::Create(RendererManager &renderer, UINT w, UINT h, int mipL
 //* 引数：7.深度ステンシルバッファのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool DX_RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
+bool DX_RenderTarget::CreateRenderTargetTexture(RendererEngine &renderer, UINT w, UINT h, int mipLevel, int arraySize, DXGI_FORMAT format, float clearColor[4])
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;
@@ -115,13 +115,13 @@ bool DX_RenderTarget::CreateRenderTargetTexture(RendererManager &renderer, UINT 
 //*---------------------------------------------------------------------------------------
 //* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットの作成  内部公開
-//* 引数：1.RendererManager&
+//* 引数：1.RendererEngine&
 //* 引数：2.ターゲットの横幅
 //* 引数：3.ターゲットの縦幅
 //* 引数：4.テクスチャのフォーマット
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool DX_RenderTarget::CreateDepthStencil(RendererManager &renderer, UINT w, UINT h, DXGI_FORMAT format)
+bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT h, DXGI_FORMAT format)
 {
     auto pDevice = renderer.get_Device();
     HRESULT hr = S_OK;

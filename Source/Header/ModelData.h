@@ -136,7 +136,7 @@ public:
 	ModelData();
 	~ModelData();
 
-	bool Setup(RendererManager &render, const char *filePath);	// モデルデータのセットアップ
+	bool Setup(RendererEngine &render, const char *filePath);	// モデルデータのセットアップ
 	bool SetupTextureMap(MATERIAL matData, int matIndex);	// テクスチャマップ設定 Setup後に呼ぶ
 	
 	// ****************************************************************************************************************************************
@@ -176,8 +176,8 @@ private:
 	void BoneExtraction(aiMesh *mesh);							// ボーン情報抽出
 	void MatrialExtraction(const aiScene *scene);				// マテリアル情報抽出 ※上のset_TextureMapで直接指定させているので要らないかも
 	
-	bool CreateBonesCBuffer(RendererManager &renderer);			// ボーン変換用定数バッファの作成
-	bool CreateMaterialCBuffer(RendererManager &renderer);		// マテリアル用定数バッファの作成
-	bool CreateTransformCBuffer(RendererManager &renderer);		// トランスフォーム用定数バッファの作成
+	bool CreateBonesCBuffer(RendererEngine &renderer);			// ボーン変換用定数バッファの作成
+	bool CreateMaterialCBuffer(RendererEngine &renderer);		// マテリアル用定数バッファの作成
+	bool CreateTransformCBuffer(RendererEngine &renderer);		// トランスフォーム用定数バッファの作成
 };
 

@@ -36,10 +36,10 @@ public:
 	SceneManager();
 	~SceneManager();
 
-	bool Init(RendererManager& renderer);
-	void Update(RendererManager& renderer);
-	void Draw(RendererManager& renderer);
-	void Term(RendererManager &renderer);
+	bool Init(RendererEngine& renderer);
+	void Update(RendererEngine& renderer);
+	void Draw(RendererEngine& renderer);
+	void Term(RendererEngine &renderer);
 };
 
 // シーンマネージャはタイトルシーンの中身を知る必要はない

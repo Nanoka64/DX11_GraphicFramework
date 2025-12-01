@@ -7,7 +7,7 @@
 //* 引数：1.RendererManager
 //* 返値：int 現在のシーン状態
 //*----------------------------------------------------------------------------------------
-int RootSceneState::Update(RendererManager &renderer)
+int RootSceneState::Update(RendererEngine &renderer)
 {
     // シーンの更新
     int newState = m_ChildSceneStateMap[m_CrntChildSceneState]->Update(renderer);
@@ -29,7 +29,7 @@ int RootSceneState::Update(RendererManager &renderer)
 //* 引数：1.RendererManager
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void RootSceneState::Draw(RendererManager &renderer)
+void RootSceneState::Draw(RendererEngine &renderer)
 {
     m_ChildSceneStateMap[m_CrntChildSceneState]->Draw(renderer);
 }
@@ -55,7 +55,7 @@ void RootSceneState::RegisterChildScene(const int id, std::shared_ptr<IChildScen
 //* 引数：2.RendererManager
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void RootSceneState::SetCurrentChildScene(const int id, RendererManager &renderer)
+void RootSceneState::SetCurrentChildScene(const int id, RendererEngine &renderer)
 {
     m_CrntChildSceneState = id;
     m_ChildSceneStateMap[m_CrntChildSceneState]->OnEnter(renderer);

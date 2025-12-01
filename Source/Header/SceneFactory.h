@@ -20,6 +20,6 @@ public:
 	/// シーンステートを作成して挿入する
 	/// </summary>
 	/// <param name="out"></param>
-	static void Create(StateMachine<SceneManager>& out, RendererManager& renderer);
+	static void Create(StateMachine<SceneManager>& out, RendererEngine& renderer);
 };
 

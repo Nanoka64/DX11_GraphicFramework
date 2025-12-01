@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GameManager.h"
 #include "SceneManager.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "DirectWriteManager.h"
 
 //*---------------------------------------------------------------------------------------
@@ -29,10 +29,10 @@ GameManager::~GameManager()
 //*---------------------------------------------------------------------------------------
 //* @:GameManager Class 
 //*y?z
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFbool
 //*----------------------------------------------------------------------------------------
-bool GameManager::Init(RendererManager& renderer)
+bool GameManager::Init(RendererEngine& renderer)
 {
 	m_pSceneManager = new SceneManager();
 
@@ -48,10 +48,10 @@ bool GameManager::Init(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameManager Class 
 //*y?zXV
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void GameManager::Update(RendererManager& renderer)
+void GameManager::Update(RendererEngine& renderer)
 {
 	m_pSceneManager->Update(renderer);
 }
@@ -60,10 +60,10 @@ void GameManager::Update(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameManager Class 
 //*y?z•`‰æ
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void GameManager::Draw(RendererManager& renderer)
+void GameManager::Draw(RendererEngine& renderer)
 {
 	m_pSceneManager->Draw(renderer);
 }
@@ -73,10 +73,10 @@ void GameManager::Draw(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:GameManager Class 
 //*y?zI—¹
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void GameManager::Term(RendererManager &renderer)
+void GameManager::Term(RendererEngine &renderer)
 {
 	m_pSceneManager->Term(renderer);
 	delete m_pSceneManager;

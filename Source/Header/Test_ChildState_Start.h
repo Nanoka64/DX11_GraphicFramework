@@ -6,9 +6,9 @@ public:
 	Test_ChildState_Start();
 	~Test_ChildState_Start();
 
-	void OnEnter(RendererManager &renderer) ;
-	void OnExit(RendererManager &renderer) ;
-	int Update(RendererManager &renderer) ;
-	void Draw(RendererManager &renderer) ;
+	void OnEnter(RendererEngine &renderer) ;
+	void OnExit(RendererEngine &renderer) ;
+	int Update(RendererEngine &renderer) ;
+	void Draw(RendererEngine &renderer) ;
 };
 

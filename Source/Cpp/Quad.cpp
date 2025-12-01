@@ -1,6 +1,6 @@
 #include "pch.h"
 //#include "Quad.h"
-//#include "RendererManager.h"
+//#include "RendererEngine.h"
 //#include "Texture.h"
 //
 //using namespace DirectX;
@@ -31,10 +31,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Quad Class 
 ////*【?】初期化
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//bool Quad::Init(RendererManager &renderer)
+//bool Quad::Init(RendererEngine &renderer)
 //{
 //    return true;
 //}
@@ -43,10 +43,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Quad Class 
 ////*【?】更新
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//void Quad::Update(RendererManager &renderer)
+//void Quad::Update(RendererEngine &renderer)
 //{
 //
 //}
@@ -55,10 +55,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Quad Class 
 ////*【?】描画
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//void Quad::Draw(RendererManager &renderer)
+//void Quad::Draw(RendererEngine &renderer)
 //{
 //    auto pContext = renderer.get_DeviceContext();
 //
@@ -139,10 +139,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Quad Class 
 ////*【?】終了
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//bool Quad::Term(RendererManager &renderer)
+//bool Quad::Term(RendererEngine &renderer)
 //{
 //    return true;
 //}
@@ -154,7 +154,7 @@
 ////      2.マテリアルのセット（生成済みのもの）
 //// 		3.マテリアル数
 //// ----------------------------------------------------------------------------------------------------------------------
-//bool Quad::Setup(RendererManager& renderer, MATERIAL* materials, UINT materialNum)
+//bool Quad::Setup(RendererEngine& renderer, MATERIAL* materials, UINT materialNum)
 //{
 //    auto pDevice  = renderer.get_Device();
 //    /*

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "IDX_BlendState.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 
 IDX_BlendState::IDX_BlendState():
@@ -15,13 +15,13 @@ IDX_BlendState::~IDX_BlendState()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ブレンドステートの作成
-//* 引数：1.RendererManager&
+//* 引数：1.RendererEngine&
 //* 引数：2.BlendSetupDataInfo&
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool IDX_BlendState::Create(RendererManager &renderer, const BlendSetupDataInfo &_InData)
+bool IDX_BlendState::Create(RendererEngine &renderer, const BlendSetupDataInfo &_InData)
 {
 	auto pDevice = renderer.get_Device();
 

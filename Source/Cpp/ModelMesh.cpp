@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ModelMesh.h"
 #include "Model.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include <assimp/mesh.h>
 
 using namespace BASE_VERTEX;
@@ -40,10 +40,10 @@ ModelMesh::~ModelMesh()
 //* @:ModelMesh Class 
 //*【?】描画
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMesh::Draw(RendererManager& render)
+void ModelMesh::Draw(RendererEngine& render)
 {
 	auto pDeviceContext = render.get_DeviceContext();
 	uint32_t stride[1] = { sizeof(MODEL_VERTEX) };
@@ -85,12 +85,12 @@ void ModelMesh::Term()
 //* @:ModelMesh Class 
 //*【?】メッシュのセットアップ
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.モデルクラスで抽出したメッシュ情報 
 //* 引数：3.モデルクラスのポインタ（今は使ってない）
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelMesh:: Setup(RendererManager& render, aiMesh* pMeshData)
+bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 {
 	aiVector3D zero3D(0.0f, 0.0f, 0.0f);
 	aiColor4D oneColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -262,10 +262,10 @@ VEC4& ModelMesh::get_Color(int vtxIdx)const
 //* @:ModelMesh Class 
 //*【?】頂点バッファの作成
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelMesh::CreateVertexBuffer(RendererManager& render)
+bool ModelMesh::CreateVertexBuffer(RendererEngine& render)
 {
 	// リソース設定
 	D3D11_BUFFER_DESC desc;
@@ -297,10 +297,10 @@ bool ModelMesh::CreateVertexBuffer(RendererManager& render)
 //* @:ModelMesh Class 
 //*【?】インデックスバッファ作成
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelMesh::CreateIndexBuffer(RendererManager& render)
+bool ModelMesh::CreateIndexBuffer(RendererEngine& render)
 {
 	// リソース設定
 	D3D11_BUFFER_DESC desc;

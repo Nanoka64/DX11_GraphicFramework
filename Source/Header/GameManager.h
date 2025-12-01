@@ -20,10 +20,10 @@ public:
 	GameManager();
 	~GameManager();
 
-	bool Init(RendererManager& renderer);
-	void Update(RendererManager& renderer);
-	void Draw(RendererManager& renderer);
-	void Term(RendererManager &renderer);
+	bool Init(RendererEngine& renderer);
+	void Update(RendererEngine& renderer);
+	void Draw(RendererEngine& renderer);
+	void Term(RendererEngine &renderer);
 
 };
 

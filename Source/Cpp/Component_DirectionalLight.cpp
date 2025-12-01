@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Component_Transform.h"
 #include "Component_DirectionalLight.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Component_3DCamera.h"
@@ -33,10 +33,10 @@ DirectionalLight::~DirectionalLight()
 //*---------------------------------------------------------------------------------------
 //* @:DirectionalLight Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-void DirectionalLight::Init(RendererManager &renderer)
+void DirectionalLight::Init(RendererEngine &renderer)
 {
     m_pOwnerTransform = m_pOwner.lock()->get_Transform();
 }
@@ -45,10 +45,10 @@ void DirectionalLight::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:DirectionalLight Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void DirectionalLight::Update(RendererManager &renderer)
+void DirectionalLight::Update(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
 
@@ -68,10 +68,10 @@ void DirectionalLight::Update(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:DirectionalLight Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void DirectionalLight::Draw(RendererManager &renderer)
+void DirectionalLight::Draw(RendererEngine &renderer)
 {
 
 }

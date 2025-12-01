@@ -32,7 +32,7 @@ enum class BLEND_MODE
 class BlendManager
 {
 private:
-    std::weak_ptr<class RendererManager> m_pRenderer;                                   // 描画クラスの弱参照を持つ
+    std::weak_ptr<class RendererEngine> m_pRenderer;                                   // 描画クラスの弱参照を持つ
     ID3D11DeviceContext *m_pContext;
     std::unique_ptr<IDX_BlendState> m_pBlendStateArray[(int)BLEND_MODE::NUM];           // ブレンドステートの本体配列
     std::unique_ptr<IDX_BlendState> m_pBlendStateIndependentArray[(int)BLEND_MODE::NUM];// 独立ブレンドステート（使うかわからん）
@@ -47,7 +47,7 @@ public:
     /// 初期化
     /// </summary>
     /// <returns>初期化出来たか</returns>
-    bool Init(std::shared_ptr<class RendererManager> renderer);
+    bool Init(std::shared_ptr<class RendererEngine> renderer);
 
     /// <summary>
     /// ブレンドステートを設定する

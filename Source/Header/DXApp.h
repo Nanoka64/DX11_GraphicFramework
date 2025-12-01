@@ -15,7 +15,7 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "imm32.lib")
 
-//#include "RendererManager.h"
+//#include "RendererEngine.h"
 //#include "GameManager.h"
 
 using Microsoft::WRL::ComPtr;
@@ -38,7 +38,7 @@ private:
     uint32_t    m_Height;   // ウインドウ縦幅
 
     class GameManager      *m_pGameManager; // ゲームマネージャー
-    std::shared_ptr<class RendererManager> m_pRenderer;// 描画管理
+    std::shared_ptr<class RendererEngine> m_pRenderer;// 描画管理
 
 public:
 

@@ -16,7 +16,7 @@ template<typename Owner>
 class IState
 {
 protected:
-	RendererManager *m_pRenderer;
+	RendererEngine *m_pRenderer;
 
 public:
 	IState() = default;
@@ -47,7 +47,7 @@ public:
 	/// •`‰æƒNƒ‰ƒX‚Ìİ’è
 	/// </summary>
 	/// <param name="pRenderer"></param>
-	void set_Renderer(RendererManager* renderer)
+	void set_Renderer(RendererEngine* renderer)
 	{
 		m_pRenderer = renderer;
 	};

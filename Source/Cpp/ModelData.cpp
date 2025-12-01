@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ModelData.h"
 #include "ResourceManager.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 
 using namespace VECTOR4;
@@ -48,11 +48,11 @@ ModelData::~ModelData()
 //*【?】モデルデータのセットアップ     ※ 必ず最初に呼ぶ
 //      ファイルパス名は日本語非対応
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.ファイルパス
 //* 返値：bool セットアップが完了したか
 //*----------------------------------------------------------------------------------------
-bool ModelData::Setup(RendererManager &renderer, const char *filePath)
+bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 {
     // aiProcess_FlipUVs ＵＶ値をdirect3Dに合うようにしてくれる (Ｖ軸の反転)
     // 他のフラグもあったほうがいいやつらしい https://qiita.com/dpals39/items/1681d9101e58b5aefa27
@@ -369,10 +369,10 @@ void ModelData::MatrialExtraction(const aiScene *scene)
 //* @:ModelData Class 
 //*【?】ボーン変換用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelData::CreateBonesCBuffer(RendererManager &renderer)
+bool ModelData::CreateBonesCBuffer(RendererEngine &renderer)
 {
     auto device = renderer.get_Device();	// デバイス取得
     m_pConstanrBufferBonesData = new CB_BONES_DATA_SET;
@@ -409,10 +409,10 @@ bool ModelData::CreateBonesCBuffer(RendererManager &renderer)
 //* @:ModelData Class 
 //*【?】マテリアル用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelData::CreateMaterialCBuffer(RendererManager &renderer)
+bool ModelData::CreateMaterialCBuffer(RendererEngine &renderer)
 {
     auto pDevice = renderer.get_Device();
 
@@ -445,10 +445,10 @@ bool ModelData::CreateMaterialCBuffer(RendererManager &renderer)
 //* @:ModelData Class 
 //*【?】ワールド変換用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelData::CreateTransformCBuffer(RendererManager &renderer)
+bool ModelData::CreateTransformCBuffer(RendererEngine &renderer)
 {
     auto pDevice = renderer.get_Device();
 

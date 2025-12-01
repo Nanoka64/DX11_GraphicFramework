@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 using namespace DirectX;
 using namespace BASE_VERTEX;
@@ -33,10 +33,10 @@ SkinnedMeshAnimator::~SkinnedMeshAnimator()
 //*---------------------------------------------------------------------------------------
 //* @:SkinnedMeshAnimator Class 
 //*【?】初期化
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::Init(RendererManager &renderer)
+void SkinnedMeshAnimator::Init(RendererEngine &renderer)
 {
     m_NodeList      = m_pMeshResource.lock()->get_ModelData().lock()->get_NodeList();
     m_BoneList      = m_pMeshResource.lock()->get_ModelData().lock()->get_BoneList();
@@ -49,18 +49,18 @@ void SkinnedMeshAnimator::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SkinnedMeshAnimator Class 
 //*【?】更新
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::Draw(RendererManager& renderer)
+void SkinnedMeshAnimator::Draw(RendererEngine& renderer)
 {
-    Debugger::Instance().BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
-    Debugger::Instance().DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
-    Debugger::Instance().DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
-    Debugger::Instance().DG_TextValue("AnimNum: %d", m_Animations.size());  // アニメーション数
-    Debugger::Instance().DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
-    Debugger::Instance().DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
-    Debugger::Instance().EndDebugWindow();
+    Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
+    Master::m_pDebugger->DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
+    Master::m_pDebugger->DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
+    Master::m_pDebugger->DG_TextValue("AnimNum: %d", m_Animations.size());  // アニメーション数
+    Master::m_pDebugger->DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
+    Master::m_pDebugger->DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
+    Master::m_pDebugger->EndDebugWindow();
     
     m_AnimProcTime += 0.023f;
     BoneTransformsUpdate(renderer, m_AnimProcTime);
@@ -83,11 +83,11 @@ void SkinnedMeshAnimator::set_MeshResource(std::weak_ptr<class ModelMeshResource
 //* @:SkinnedMeshAnimator Class 
 //*【?】ボーンの更新
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.秒単位の時間
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::BoneTransformsUpdate(RendererManager &renderer, float timeInSeconds)
+void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds)
 {
     float tickPerSecond = 0.0f;
     float timeInTicks = 0.0f;

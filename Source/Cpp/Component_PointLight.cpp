@@ -2,7 +2,7 @@
 #include "Component_PointLight.h"
 #include "Component_Transform.h"
 #include "Component_DirectionalLight.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Component_3DCamera.h"
@@ -35,10 +35,10 @@ PointLight::~PointLight()
 //*---------------------------------------------------------------------------------------
 //* @:PointLight Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-void PointLight::Init(RendererManager &renderer)
+void PointLight::Init(RendererEngine &renderer)
 {
     m_pOwnerTransform = m_pOwner.lock()->get_Transform();
 }
@@ -47,10 +47,10 @@ void PointLight::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:PointLight Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void PointLight::Update(RendererManager &renderer)
+void PointLight::Update(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
 
@@ -69,10 +69,10 @@ void PointLight::Update(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:PointLight Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void PointLight::Draw(RendererManager &renderer)
+void PointLight::Draw(RendererEngine &renderer)
 {
 
 }

@@ -11,12 +11,12 @@ using namespace DirectX;
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
-/* --- @:RendererManager Class --- */
+/* --- @:RendererEngine Class --- */
 //
 // y?z•`‰æŠÖ˜A(dirextX)‚Ìˆ—‚ğ‚Ü‚Æ‚ß‚½‚à‚Ì
 //
 // ***************************************************************************************
-class RendererManager
+class RendererEngine
 {
 private:
     D3D_DRIVER_TYPE                           m_driverType;
@@ -60,8 +60,8 @@ private:
 
 
 public:
-    RendererManager();
-    ~RendererManager();
+    RendererEngine();
+    ~RendererEngine();
 
     bool Init(HWND hWnd);
 	void BeginRender();

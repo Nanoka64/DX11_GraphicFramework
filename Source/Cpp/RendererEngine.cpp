@@ -2,7 +2,7 @@
 //      * Includes *
 //--------------------------------------------------------------------------------------
 #include "pch.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "MyStruct.h"
 #include "Path.h"
 #include "DX_RenderTarget.h"
@@ -10,11 +10,11 @@
 #include <string>
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】コンストラクタ
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
-RendererManager::RendererManager():
+RendererEngine::RendererEngine() :
     m_driverType(D3D_DRIVER_TYPE_UNKNOWN),
     m_featureLevel(D3D_FEATURE_LEVEL_11_0),
     m_pd3dDevice(nullptr),
@@ -36,29 +36,31 @@ RendererManager::RendererManager():
     m_StartTime(0ul),
     m_NearClipDist(0.1f),
     m_FarClipDist(1000.f),
-    m_Fov(XMConvertToRadians(30.0f))
+    m_Fov(XMConvertToRadians(30.0f)),
+    m_Proj(XMMatrixIdentity()),
+    m_View(XMMatrixIdentity())
 {
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】デストラクタ
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
-RendererManager::~RendererManager()
+RendererEngine::~RendererEngine()
 {
 
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】初期化
 //* 引数：1.ウインドウハンドル
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererManager::Init(HWND hWnd)
+bool RendererEngine::Init(HWND hWnd)
 {
     m_driverType            = D3D_DRIVER_TYPE_NULL;
     m_featureLevel          = D3D_FEATURE_LEVEL_11_0;    // DirectXのバージョン
@@ -108,12 +110,12 @@ bool RendererManager::Init(HWND hWnd)
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】描画の開始
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::BeginRender()
+void RendererEngine::BeginRender()
 {
     // フレームバッファのレンダリングターゲットとデプスステンシルのクリア
     FLOAT clearColor[] = { 1.0f,1.0f,1.0f,1.0f };
@@ -137,35 +139,35 @@ void RendererManager::BeginRender()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】描画の終了
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::EndRender()
+void RendererEngine::EndRender()
 {
     // なにかあれば
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】終了
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::Term()
+void RendererEngine::Term()
 {
     CleanupDX11();  // リソース解放
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】スワップ・裏表切り替え
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::Swap()
+void RendererEngine::Swap()
 {
     HRESULT hr;
     hr = m_pSwapChain->Present(0, 0);    // 引数１:垂直同期　２：特殊フラグ(0でいい)
@@ -181,22 +183,22 @@ void RendererManager::Swap()
 // 
 
 //--------------------------------------------------------------------------------------
-//      * RendererManager Class - デバッグレイヤーの有効化 - *
+//      * RendererEngine Class - デバッグレイヤーの有効化 - *
 //      https://zenn.dev/kd_gamegikenblg/articles/431326b7f0cb2b
 //--------------------------------------------------------------------------------------
-void RendererManager::EnableDebugLayer()
+void RendererEngine::EnableDebugLayer()
 {
     ID3D11Debug* debugLayer = nullptr;
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】DirectX11の初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererManager::InitDx11()
+bool RendererEngine::InitDx11()
 {
     // ＤｉｒｅｃｔＸ１１ 各初期化
     if (FAILED(InitDX11_SwapChain()))       return false;
@@ -212,12 +214,12 @@ bool RendererManager::InitDx11()
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】スワップチェインの初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_SwapChain()
+HRESULT RendererEngine::InitDX11_SwapChain()
 {
     HRESULT hr = S_OK;
 
@@ -301,12 +303,12 @@ HRESULT RendererManager::InitDX11_SwapChain()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】レンダーターゲットビューの作成
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_RenderTargetView()
+HRESULT RendererEngine::InitDX11_RenderTargetView()
 {
     HRESULT hr = S_OK;
 
@@ -348,12 +350,12 @@ HRESULT RendererManager::InitDX11_RenderTargetView()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】Z（デプス）バッファの初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_ZBuff()
+HRESULT RendererEngine::InitDX11_ZBuff()
 {
     HRESULT hr = S_OK;
 
@@ -419,12 +421,12 @@ HRESULT RendererManager::InitDX11_ZBuff()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ラスタライザの初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_Rasterizer()
+HRESULT RendererEngine::InitDX11_Rasterizer()
 {
     /* ラスタライザにどんな処理をしてもらうか */
 
@@ -455,12 +457,12 @@ HRESULT RendererManager::InitDX11_Rasterizer()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】サンプラーの初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-HRESULT RendererManager::InitDX11_Sampler()
+HRESULT RendererEngine::InitDX11_Sampler()
 {
     /* サンプラーの設定 */
 
@@ -498,12 +500,12 @@ HRESULT RendererManager::InitDX11_Sampler()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ブレンドステートの初期化
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-//HRESULT RendererManager::InitDX11_BlendState()
+//HRESULT RendererEngine::InitDX11_BlendState()
 //{
 //    /* ブレンドステート設定 */
 //
@@ -549,12 +551,12 @@ HRESULT RendererManager::InitDX11_Sampler()
 //
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】リソース解放
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::CleanupDX11()
+void RendererEngine::CleanupDX11()
 {
     if (m_pImmediateContext) m_pImmediateContext->ClearState();
     SAFE_RELEASE(m_pImmediateContext);
@@ -574,12 +576,12 @@ void RendererManager::CleanupDX11()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】透視投影変換計算
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererManager::SetupProjectionTransform()
+bool RendererEngine::SetupProjectionTransform()
 {
     auto pDeviceContext = get_DeviceContext();
 
@@ -628,12 +630,12 @@ bool RendererManager::SetupProjectionTransform()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ビュー変換更新
 //* 引数：ビュー行列
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
+bool RendererEngine::SetupViewTransform(const XMMATRIX& viewMat)
 {
     auto pDeviceContext = get_DeviceContext();
 
@@ -676,12 +678,12 @@ bool RendererManager::SetupViewTransform(const XMMATRIX& viewMat)
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ビュープロジェクション行列を取得
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-XMMATRIX RendererManager::get_ViewProjectionMatrix() const
+XMMATRIX RendererEngine::get_ViewProjectionMatrix() const
 {
     XMMATRIX view = m_View;
     XMMATRIX proj = m_Proj;
@@ -690,12 +692,12 @@ XMMATRIX RendererManager::get_ViewProjectionMatrix() const
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】ビュープロジェクション行列の逆行列取得
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-XMFLOAT4X4 RendererManager::get_ViewProjectionInvMatrix()
+XMFLOAT4X4 RendererEngine::get_ViewProjectionInvMatrix()
 {
     XMMATRIX vp = get_ViewProjectionMatrix();
     XMFLOAT4X4 res{};
@@ -708,36 +710,36 @@ XMFLOAT4X4 RendererManager::get_ViewProjectionInvMatrix()
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】レンダーターゲットをフレームバッファに変更
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::ChangeRenderTargetFrameBuffer()
+void RendererEngine::ChangeRenderTargetFrameBuffer()
 {
     m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 }
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】レンダーターゲットを解除しNULL設定
 //* 引数：なし
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::ReleaseRenderTargetSetNull()
+void RendererEngine::ReleaseRenderTargetSetNull()
 {
     m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】レンダーターゲットの登録
 //* 引数：1.ターゲットの数
 //* 引数：2.ターゲットの配列
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[])
+void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[])
 {
     ID3D11RenderTargetView *rtv[16]{};
 
@@ -759,13 +761,13 @@ void RendererManager::RegisterRenderTargets(UINT num, class DX_RenderTarget *ren
 
 
 //*---------------------------------------------------------------------------------------
-//* @:RendererManager Class 
+//* @:RendererEngine Class 
 //*【?】レンダーターゲットのクリア
 //* 引数：1.ターゲットの数
 //* 引数：2.ターゲットの配列
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererManager::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
+void RendererEngine::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
 {
     if (renderTargets[3]->HasDepthStencilBuffer()) {
         // デプスステンシルバッファがあるならクリア 

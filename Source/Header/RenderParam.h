@@ -10,10 +10,10 @@ struct RenderParam
 	CB_VIEW_SET       cbViewSet;		// ビュー変換用
 	CB_PROJECTION_SET cbProjectionSet;	// 投影変換用
 
-	bool Init(RendererManager& render);
-	void Term(RendererManager& render);
+	bool Init(RendererEngine& render);
+	void Term(RendererEngine& render);
 
 private:
-	bool InitConstantBuffer(RendererManager& render);
+	bool InitConstantBuffer(RendererEngine& render);
 };
 

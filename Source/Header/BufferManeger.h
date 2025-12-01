@@ -26,7 +26,7 @@ enum class BUFFER_TYPE
 class BufferManeger
 {
 private:
-    std::weak_ptr<class RendererManager> m_pRenderer;    // 描画クラスの弱参照を持つ
+    std::weak_ptr<class RendererEngine> m_pRenderer;    // 描画クラスの弱参照を持つ
 
 
 public:
@@ -41,7 +41,7 @@ public:
     /// 初期化
     /// </summary>
     /// <returns>初期化出来たか</returns>
-    bool Init(std::shared_ptr<class RendererManager> renderer);
+    bool Init(std::shared_ptr<class RendererEngine> renderer);
 
     /// <summary>
     /// シェーダの作成

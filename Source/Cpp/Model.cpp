@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Model.h"
 #include "ModelMesh.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "ResourceManager.h"
 #include "DirectWriteManager.h"
 #include "Path.h"
@@ -66,10 +66,10 @@ Model::~Model()
 //* @:Model Class 
 //*【?】初期化
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool Model::Init(RendererManager &renderer)
+bool Model::Init(RendererEngine &renderer)
 {
     return true;
 }
@@ -79,10 +79,10 @@ bool Model::Init(RendererManager &renderer)
 //* @:Model Class 
 //*【?】更新
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Model::Update(RendererManager &renderer)
+void Model::Update(RendererEngine &renderer)
 {
 
 }
@@ -92,10 +92,10 @@ void Model::Update(RendererManager &renderer)
 //* @:Model Class 
 //*【?】描画
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Model::Draw(RendererManager &renderer)
+void Model::Draw(RendererEngine &renderer)
 {
     auto pDeviceContext = renderer.get_DeviceContext();
 
@@ -233,7 +233,7 @@ void Model::Draw(RendererManager &renderer)
 //* 引数：なし
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool Model::Term(RendererManager &renderer)
+bool Model::Term(RendererEngine &renderer)
 {
 	for (u_int meshIdx = 0; meshIdx < m_MeshNum; ++meshIdx)
 	{
@@ -329,11 +329,11 @@ void Model::TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMA
 //* @:Model Class 
 //*【?】ボーンの更新
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.秒単位の時間
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Model::BoneTransformsUpdate(RendererManager& renderer, float timeInSeconds)
+void Model::BoneTransformsUpdate(RendererEngine& renderer, float timeInSeconds)
 {
     float tickPerSecond = 0.0f;
     float timeInTicks = 0.0f;
@@ -643,11 +643,11 @@ void Model::CalcInterpolatedScaling(DirectX::XMMATRIX& out, float animTimeTicks,
 //*【?】モデルデータのセットアップ     ※ 必ず最初に呼ぶ
 //      ファイルパス名は日本語非対応
 // 
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2.ファイルパス
 //* 返値：bool セットアップが完了したか
 //*----------------------------------------------------------------------------------------
-bool Model::Setup(RendererManager& render, const char* filePath)
+bool Model::Setup(RendererEngine& render, const char* filePath)
 {
     // aiProcess_FlipUVs ＵＶ値をdirect3Dに合うようにしてくれる (Ｖ軸の反転)
     // 他のフラグもあったほうがいいやつらしい https://qiita.com/dpals39/items/1681d9101e58b5aefa27
@@ -915,10 +915,10 @@ void Model::BoneExtraction(aiMesh* mesh)
 //* @:Model Class 
 //*【?】ボーン変換用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool Model::CreateBonesCBuffer(RendererManager& render)
+bool Model::CreateBonesCBuffer(RendererEngine& render)
 {
     auto device = render.get_Device();	// デバイス取得
     m_ConstanrBufferBonesData = new CB_BONES_DATA_SET;
@@ -975,10 +975,10 @@ bool Model::CreateBonesCBuffer(RendererManager& render)
 //* @:Model Class 
 //*【?】マテリアル用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool Model::CreateMaterialCBuffer(RendererManager& render)
+bool Model::CreateMaterialCBuffer(RendererEngine& render)
 {
     auto pDevice = render.get_Device();
 
@@ -1012,10 +1012,10 @@ bool Model::CreateMaterialCBuffer(RendererManager& render)
 //* @:Model Class 
 //*【?】ワールド変換用定数バッファの作成
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool Model::CreateTransformCBuffer(RendererManager& renderer)
+bool Model::CreateTransformCBuffer(RendererEngine& renderer)
 {
     auto pDevice = renderer.get_Device();
 
@@ -1142,10 +1142,10 @@ bool Model::set_TextureMap(TEXTURE_MAP mapType,int matIndex, const std::wstring 
 //* @:Model Class 
 //*【?】定数バッファにワールド変換行列を書き込む
 // 
-//* 引数：1.RendererManager 
+//* 引数：1.RendererEngine 
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-void Model::SetupTransform(RendererManager& render)
+void Model::SetupTransform(RendererEngine& render)
 {
     auto pDeviceContext = render.get_DeviceContext();   // コンテキスト
 

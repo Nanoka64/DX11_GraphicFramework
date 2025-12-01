@@ -46,7 +46,7 @@ public:
     IDX_BlendState();
     ~IDX_BlendState();
 
-    bool Create(RendererManager& renderer,const BlendSetupDataInfo& _InData);
+    bool Create(RendererEngine& renderer,const BlendSetupDataInfo& _InData);
     void Release() override;
 };
 

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "BlendManager.h"
 #include "IDX_BlendState.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 //*---------------------------------------------------------------------------------------
 //* @:BlendManager Class 
@@ -29,7 +29,7 @@ BlendManager::~BlendManager()
 //* 引数：1.デバイスの共有ポインタ
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool BlendManager::Init(std::shared_ptr<RendererManager> renderer)
+bool BlendManager::Init(std::shared_ptr<RendererEngine> renderer)
 {
     m_pRenderer = renderer;
 	m_pContext = renderer->get_DeviceContext();

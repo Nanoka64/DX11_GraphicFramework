@@ -55,19 +55,16 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // 深度値からワールド座標を求める
     worldPos = GetConvertPosFromDepthToWorld(depth, input.UV);
     
-    //worldPos = specularTex; スペキュラにワールド座標そのまま入れた場合
-    
     // 法線取り出す（0～1 を -1～1 に）
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
-    //normal = normalize(normal);
-    
+    //normal = normalize(normal); // 頂点シェーダですでに正規化済み
     
     // スペキュラ強度・カラー
     float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
     // ディレクションライト計算
-    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, float3(1,1,1), spcPow, worldPos.xyz, normal);
+    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
     OUT_DiffAndSpec pointLig;
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
@@ -75,14 +72,14 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ポイントライト計算
     for (int i = 0; i < 100; i++)
     {
-        OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[i], cb_EyePos, float3(1, 1, 1), spcPow, worldPos.xyz, normal);
+        OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[i], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
         pointLig.Diffuse += res.Diffuse;
         pointLig.Specular += res.Specular;
     }
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
-
+    
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
     float3 diffuse  = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;

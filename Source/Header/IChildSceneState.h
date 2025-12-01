@@ -25,9 +25,9 @@ public:
 	IChildSceneState() = default;
 	virtual ~IChildSceneState() = default;
 
-	virtual void OnEnter(RendererManager &renderer) = 0;
-	virtual void OnExit(RendererManager &renderer) = 0;
-	virtual int Update(RendererManager &renderer) = 0;
-	virtual void Draw(RendererManager &renderer) = 0;
+	virtual void OnEnter(RendererEngine &renderer) = 0;
+	virtual void OnExit(RendererEngine &renderer) = 0;
+	virtual int Update(RendererEngine &renderer) = 0;
+	virtual void Draw(RendererEngine &renderer) = 0;
 };
 

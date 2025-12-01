@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Component_SpriteRenderer.h"
 #include "GameObject.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "MeshInfoFactory.h"
 #include "Texture.h"
 #include "MeshFactory.h"
@@ -42,10 +42,10 @@ SpriteRenderer::~SpriteRenderer()
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::Init(RendererManager &renderer)
+void SpriteRenderer::Init(RendererEngine &renderer)
 {
 
 }
@@ -54,10 +54,10 @@ void SpriteRenderer::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::Update(RendererManager &renderer)
+void SpriteRenderer::Update(RendererEngine &renderer)
 {
 
 }
@@ -66,10 +66,10 @@ void SpriteRenderer::Update(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::Draw(RendererManager &renderer)
+void SpriteRenderer::Draw(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
 
@@ -102,13 +102,13 @@ void SpriteRenderer::Draw(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
 //*【?】スプライトのセットアップ
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 引数：2. std::weak_ptr<class Texture>
 //* 引数：3. 幅
 //* 引数：4. 高さ
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool SpriteRenderer::Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> &pTexMap, float w, float h)
+bool SpriteRenderer::Setup(RendererEngine &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> &pTexMap, float w, float h)
 {
 	auto pDevice = renderer.get_Device();
 
@@ -149,7 +149,7 @@ bool SpriteRenderer::Setup(RendererManager &renderer, SPRITE_USAGE_TYPE type, co
 //* 引数：なし
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::VertexUpdate(RendererManager& renderer)
+void SpriteRenderer::VertexUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 

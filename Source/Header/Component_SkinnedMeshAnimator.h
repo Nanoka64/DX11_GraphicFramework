@@ -44,11 +44,11 @@ public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SkinnedMeshAnimator();
 
-	void Init(RendererManager& renderer)override;
-	//void Update(RendererManager& renderer)override;
-	void Draw(RendererManager& renderer)override;
+	void Init(RendererEngine& renderer)override;
+	//void Update(RendererEngine& renderer)override;
+	void Draw(RendererEngine& renderer)override;
 
-	void BoneTransformsUpdate(RendererManager &renderer, float timeInSeconds);	// ボーンの更新
+	void BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds);	// ボーンの更新
 	void set_MeshResource(std::weak_ptr<class ModelMeshResource> meshResource);	// リソースの設定
 
 	void set_AnimTime(float t) { m_AnimationTime = t; };		// アニメーション再生時間の設定

@@ -22,11 +22,11 @@ public:
 	RootSceneState() = default;
 	virtual ~RootSceneState() = default;
 
-	int Update(RendererManager &renderer);
-	void Draw(RendererManager &renderer);
+	int Update(RendererEngine &renderer);
+	void Draw(RendererEngine &renderer);
 
 	void RegisterChildScene(const int id, std::shared_ptr<IChildSceneState> pScene) ;
-	void SetCurrentChildScene(const int id, RendererManager &renderer) ;
+	void SetCurrentChildScene(const int id, RendererEngine &renderer) ;
 };
 
 

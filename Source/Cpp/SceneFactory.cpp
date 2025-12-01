@@ -2,7 +2,7 @@
 #include "SceneFactory.h"
 #include "TitleSceneState.h"
 #include "SceneStateEnums.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 using namespace SceneStateEnums;
 
@@ -14,7 +14,7 @@ using namespace SceneStateEnums;
 //* 引数：1.StateMachine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SceneFactory::Create(StateMachine<SceneManager>& out, RendererManager& renderer)
+void SceneFactory::Create(StateMachine<SceneManager>& out, RendererEngine& renderer)
 {
 	// タイトル作成
 	std::unique_ptr<TitleSceneState> pTitleScene = std::make_unique<TitleSceneState>();

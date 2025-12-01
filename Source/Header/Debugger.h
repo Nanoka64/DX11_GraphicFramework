@@ -13,13 +13,10 @@
 class Debugger
 {
 private:
+
+public:
 	Debugger();
 	~Debugger();
-public:
-	static Debugger& Instance(){
-		static Debugger inst;
-		return inst;
-	}
 
 	// コピーコンストラクタと代入演算子を削除
 	Debugger(const Debugger&) = delete;;
@@ -27,7 +24,7 @@ public:
 
 
 	// 初期化
-	bool Init(HWND hWnd, std::shared_ptr<class RendererManager> renderer);
+	bool Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer);
 
 	// 描画開始前の処理
 	void BeginFrame();

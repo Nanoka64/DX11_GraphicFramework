@@ -24,10 +24,10 @@ public:
 	/// <returns></returns>
 	static GameObjectManager&Instance() { static GameObjectManager instance; return instance; }
 
-	bool Init(RendererManager &renderer);			// 初期化
-	void ObjectUpdate(RendererManager &renderer);	// 更新
-	void ObjectRender(RendererManager &renderer);	// 描画
-	bool Term(RendererManager &renderer);			// 終了処理
+	bool Init(RendererEngine &renderer);			// 初期化
+	void ObjectUpdate(RendererEngine &renderer);	// 更新
+	void ObjectRender(RendererEngine &renderer);	// 描画
+	bool Term(RendererEngine &renderer);			// 終了処理
 
 	
 	/// <summary>

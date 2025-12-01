@@ -25,7 +25,7 @@ public:
     /// <param name="path">ファイルパス</param>
     /// <param name="renderer"></param>
     /// <returns></returns>
-    HRESULT Load(const std::wstring& path, class RendererManager &renderer);
+    HRESULT Load(const std::wstring& path, class RendererEngine &renderer);
     
     /// <summary>
     /// 外からそのままSRVをセット

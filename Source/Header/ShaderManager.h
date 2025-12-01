@@ -73,7 +73,7 @@ class ShaderManager
 {
 private:
     std::vector<ShaderInfo> m_ShaderList;
-    std::weak_ptr<class RendererManager> m_pRenderer;    // 描画クラスの弱参照を持つ
+    std::weak_ptr<class RendererEngine> m_pRenderer;    // 描画クラスの弱参照を持つ
     std::vector<InputLayoutSetupData> m_InputLayoutSetupDataList;
 
 public:
@@ -87,7 +87,7 @@ public:
     /// 初期化
     /// </summary>
     /// <returns>初期化出来たか</returns>
-    bool Init(std::shared_ptr<class RendererManager> renderer);
+    bool Init(std::shared_ptr<class RendererEngine> renderer);
 
     /// <summary>
     /// シェーダの作成

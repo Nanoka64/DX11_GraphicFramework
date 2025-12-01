@@ -88,12 +88,17 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
     // もうそういうもんだと思うことにする。
     // TBDRに行く！さらば(@^^)/~~~
     
-    refFactor = pow(refFactor, 1.0); // 反射の強さを絞る
+    // ※12/1 追記
+    // https://shadered.org/app?fork=qtAFNPvHIE
+    // で値を変えて確認してみた感じ、スペキュラの強さに入れる値が
+    // 小さすぎたのが原因の可能性特大
+    // 試しに以下の_spcPower部分を0.1と100で入れて比べてみるとわかる。
+    refFactor = pow(refFactor, 30); // 反射の強さを絞る
 
     // 鏡面反射求める
     finalSpc = _LigCol * refFactor;
     
-    return finalSpc * _spcPower;
+    return finalSpc;
 }
 
 
@@ -167,7 +172,7 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * _ligData.Intensity;
-    outData.Specular = specularLig * _ligData.Intensity;
+    outData.Specular = specularLig;
     return outData;
 }
 
@@ -201,8 +206,8 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     float3 spcPoint = PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
     // そのままだと薄すぎる場合があるので少し補正
-    diffPoint += 0.3f;  
-    spcPoint += 0.1f;
+    diffPoint += 0.3f;
+    //spcPoint += 0.1f;
     
     // 影響度計算
     float affect = 1.0f - min(1.0f, distance / _ligData.Range);
@@ -216,7 +221,7 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     spcPoint  *= affect;
     
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffPoint;
+    outData.Diffuse = diffPoint * 5.0f;
     outData.Specular = spcPoint * _spcCol;
     return outData;
 }

@@ -8,7 +8,7 @@
 #include "FontConfig.h"
 #include "InputFactory.h"
 #include "GameManager.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "ResourceManager.h"
 
 #include <string>
@@ -16,6 +16,9 @@
 
 using namespace Input;
 using namespace BASE_VERTEX;
+
+
+Debugger *Master::m_pDebugger = nullptr;
 
 
 //*---------------------------------------------------------------------------------------
@@ -63,7 +66,9 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     /** ゲーム・描画の管理クラス **/
     /**     インスタンス化       **/
     m_pGameManager = new GameManager();
-    m_pRenderer = std::make_shared<RendererManager>();
+    m_pRenderer = std::make_shared<RendererEngine>();
+
+    Master::m_pDebugger = new Debugger();
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/
@@ -104,10 +109,10 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 
 
     // シェーダ作成
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::CSO))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::CSO))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::CSO))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::CSO))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::RUNTIME))return false;
 
 
     // *************************************************************************************************
@@ -142,7 +147,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // *************************************************************************************************
     /** デバッガー初期化 **/
     // *************************************************************************************************
-    if (!Debugger::Instance().Init(m_hWnd,m_pRenderer))
+    if (!Master::m_pDebugger->Init(m_hWnd,m_pRenderer))
     {
         assert(false);
         return false;
@@ -218,15 +223,15 @@ int DXApp::MainLoop()
                 // 前回時刻を更新
                 lastTime = crntTime;
 
-                Debugger::Instance().BeginFrame();
+                Master::m_pDebugger->BeginFrame();
 
 
                 // アプリケーション情報
-                Debugger::Instance().BeginDebugWindow("Application");
-                Debugger::Instance().DG_TextValue("CrntTime : %d", crntTime);
-                Debugger::Instance().DG_TextValue("LastTime : %d", lastTime);
-                Debugger::Instance().DG_TextValue("Difference : %f.3", difference);
-                Debugger::Instance().EndDebugWindow();
+                Master::m_pDebugger->BeginDebugWindow("Application");
+                Master::m_pDebugger->DG_TextValue("CrntTime : %d", crntTime);
+                Master::m_pDebugger->DG_TextValue("LastTime : %d", lastTime);
+                Master::m_pDebugger->DG_TextValue("Difference : %f.3", difference);
+                Master::m_pDebugger->EndDebugWindow();
 
 
                 // ゲーム更新
@@ -244,7 +249,7 @@ int DXApp::MainLoop()
                 // 描画の終了
                 m_pRenderer->EndRender();
 
-                Debugger::Instance().EndFrame();
+                Master::m_pDebugger->EndFrame();
 
                 // 画面更新
                 m_pRenderer->Swap();

@@ -31,7 +31,7 @@ private:
     // モデルリソース
     std::unordered_map<std::string, std::shared_ptr<ModelData>> m_ModelsMap;
 
-    std::weak_ptr<class RendererManager> m_pRenderer;    // 描画クラスの弱参照を持つ
+    std::weak_ptr<class RendererEngine> m_pRenderer;    // 描画クラスの弱参照を持つ
 
 public:
     static ResourceManager &Instance(){
@@ -39,7 +39,7 @@ public:
         return instance;
     }
 
-    bool Init(std::shared_ptr<class RendererManager> renderer);   // 初期化
+    bool Init(std::shared_ptr<class RendererEngine> renderer);   // 初期化
     void Term();                            // 終了
     void Release();                         // 全開放
 

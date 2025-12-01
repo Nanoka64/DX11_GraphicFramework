@@ -65,19 +65,20 @@
 
 
 /* 自作ヘッダ */
-#include "ShaderManager.h"	// シェーダ管理
 #include "VERTEX.h"			// 頂点情報
 #include "SHADER.h"			// シェーダ情報
 #include "Window.h"			// ウインドウ情報
 #include "Helper.h"			// ヘルパー
 #include "MyStruct.h"		// 定数バッファ用構造体
-#include "Debugger.h"	    // Imguiデバッグ用
-#include "BlendManager.h"   // ブレンドステート用
+#include "Master.h"   
+//#include "ShaderManager.h"	// シェーダ管理
+//#include "Debugger.h"	    // Imguiデバッグ用
+//#include "BlendManager.h"   // ブレンドステート用
 
 //#include "InputFactory.h"// 入力処理
 
 /* クラス前方宣言 */
-class RendererManager;
+class RendererEngine;
 class Camera;
 class SceneManager;
 class GameManager;

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Debugger.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 
 //**************************************************************************************
@@ -26,7 +26,7 @@ Debugger::~Debugger()
 // 引数 1.ウインドウハンドル
 //      2.描画管理クラスのポインタ
 //=======================================================================================
-bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererManager> renderer)
+bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

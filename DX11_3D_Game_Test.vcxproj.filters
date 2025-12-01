@@ -327,8 +327,11 @@
     <ClCompile Include="Source\Cpp\BlendManager.cpp">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\RendererManager.cpp">
+    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
       <Filter>ソース ファイル\DXLap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\LightManager.cpp">
+      <Filter>ソース ファイル\Graphics\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -554,8 +557,14 @@
     <ClInclude Include="Source\Header\BlendManager.h">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\RendererManager.h">
+    <ClInclude Include="Source\Header\RendererEngine.h">
       <Filter>ソース ファイル\DXLap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\LightManager.h">
+      <Filter>ソース ファイル\Graphics\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Master.h">
+      <Filter>ソース ファイル\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

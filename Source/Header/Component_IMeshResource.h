@@ -39,7 +39,7 @@ public:
 	IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual~IMeshResource();
 
-	bool Setup(RendererManager& renderer, UTILITY_MESH_TYPE type ,MATERIAL* materials, UINT materialNum);	// ‰Šú‰»
+	bool Setup(RendererEngine& renderer, UTILITY_MESH_TYPE type ,MATERIAL* materials, UINT materialNum);	// ‰Šú‰»
 
 
 	/// <summary>

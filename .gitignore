@@ -362,3 +362,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Resource/CSO
+/Resource/CSO/DefefferdTest.cso
+/Resource/CSO/PS.cso
+/Resource/CSO/SimpleLightingPS.cso
+/Resource/CSO/SimplePS.cso
+/Resource/CSO/SimpleVS.cso
+/Resource/CSO/SpritePS.cso
+/Resource/CSO/SpriteVS.cso
+/Resource/CSO/VS.cso
+/RCa15216

@@ -172,6 +172,8 @@
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
     <ClInclude Include="Source\Header\IChildSceneState.h" />
+    <ClInclude Include="Source\Header\LightManager.h" />
+    <ClInclude Include="Source\Header\Master.h" />
     <ClInclude Include="Source\Header\ModelData.h" />
     <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
@@ -208,7 +210,7 @@
     <ClInclude Include="Source\Header\pch.h" />
     <ClInclude Include="Source\Header\PixelShader.h" />
     <ClInclude Include="Source\Header\Quad.h" />
-    <ClInclude Include="Source\Header\RendererManager.h" />
+    <ClInclude Include="Source\Header\RendererEngine.h" />
     <ClInclude Include="Source\Header\RenderParam.h" />
     <ClInclude Include="Source\Header\ResourceManager.h" />
     <ClInclude Include="Source\Header\SceneFactory.h" />
@@ -255,6 +257,7 @@
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
     <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
+    <ClCompile Include="Source\Cpp\LightManager.cpp" />
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -372,7 +375,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\RendererManager.cpp">
+    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>

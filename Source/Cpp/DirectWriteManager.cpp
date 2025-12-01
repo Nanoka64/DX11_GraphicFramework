@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DirectWriteManager.h"
 #include "FontConfig.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 
 
 
@@ -35,7 +35,7 @@ DirectWriteManager::~DirectWriteManager()
 //--------------------------------------------------------------------------------------
 //      * DirectWriteManager Class - ‰Šú‰» - *
 //--------------------------------------------------------------------------------------
-HRESULT DirectWriteManager::Init(RendererManager &render)
+HRESULT DirectWriteManager::Init(RendererEngine &render)
 {
     HRESULT hr = S_OK;
 

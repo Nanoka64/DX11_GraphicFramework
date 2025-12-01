@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "Texture.h"
 #include "GameObject.h"
 #include "DirectWriteManager.h"
@@ -38,10 +38,10 @@ ModelMeshRenderer::~ModelMeshRenderer()
 //*---------------------------------------------------------------------------------------
 //* @:ModelMeshRenderer Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMeshRenderer::Init(RendererManager &renderer)
+void ModelMeshRenderer::Init(RendererEngine &renderer)
 {
     // 初期化時に自身にMeshResourceコンポーネントがあれば設定する
     this->set_MeshResource(m_pOwner.lock()->get_Component<ModelMeshResource>());
@@ -51,10 +51,10 @@ void ModelMeshRenderer::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:ModelMeshRenderer Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMeshRenderer::Update(RendererManager &renderer)
+void ModelMeshRenderer::Update(RendererEngine &renderer)
 {
 
 }
@@ -63,10 +63,10 @@ void ModelMeshRenderer::Update(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:ModelMeshRenderer Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMeshRenderer::Draw(RendererManager &renderer)
+void ModelMeshRenderer::Draw(RendererEngine &renderer)
 {
     if (m_pMeshResource.lock() == nullptr) return;
 
@@ -84,8 +84,8 @@ void ModelMeshRenderer::Draw(RendererManager &renderer)
     ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::MODEL);
 
 
-    Debugger::Instance().BeginDebugWindow(m_pOwner.lock()->get_Tag());
-    Debugger::Instance().DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
+    Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());
+    Master::m_pDebugger->DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
 
     for (size_t i = 0; i < std::min<size_t>(vertexNum, m_DebugDrawBoneNum); i++)
     {
@@ -93,14 +93,14 @@ void ModelMeshRenderer::Draw(RendererManager &renderer)
         {
             if (vertices[i].boneIDs[j] == 0)
             {
-                Debugger::Instance().DG_TextValue("Vertex%d============================", i);
+                Master::m_pDebugger->DG_TextValue("Vertex%d============================", i);
 
-                Debugger::Instance().DG_TextValue("BoneIds : %d", vertices[i].boneIDs[j]);
-                Debugger::Instance().DG_TextValue("Weight  : %f.2", vertices[i].boneWeights[j]);
+                Master::m_pDebugger->DG_TextValue("BoneIds : %d", vertices[i].boneIDs[j]);
+                Master::m_pDebugger->DG_TextValue("Weight  : %f.2", vertices[i].boneWeights[j]);
             }
         }
     }
-    Debugger::Instance().EndDebugWindow();
+    Master::m_pDebugger->EndDebugWindow();
 
 
     // トランスフォームのセット ==========================

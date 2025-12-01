@@ -30,7 +30,7 @@ public:
 
 
     bool Create(
-        RendererManager& renderer,
+        RendererEngine& renderer,
         UINT w,
         UINT h,
         int mipLevel,
@@ -93,7 +93,7 @@ private:
     /// <param name="clearColor">深度ステンシルバッファのフォーマット</param>
     /// <returns></returns>
     bool CreateRenderTargetTexture(
-        RendererManager &renderer,
+        RendererEngine &renderer,
         UINT w,
         UINT h,
         int mipLevel,
@@ -112,7 +112,7 @@ private:
     /// <param name="format">テクスチャのフォーマット</param>
     /// <returns></returns>
     bool CreateDepthStencil(
-        RendererManager &renderer,
+        RendererEngine &renderer,
         UINT w,
         UINT h,
         DXGI_FORMAT format

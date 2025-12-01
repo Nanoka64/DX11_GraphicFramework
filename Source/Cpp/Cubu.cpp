@@ -1,6 +1,6 @@
 #include "pch.h"
 //#include "Cubu.h"
-//#include "RendererManager.h"
+//#include "RendererEngine.h"
 //#include "Texture.h"
 //#include "GameObject.h"
 //
@@ -27,10 +27,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Cubu Class 
 ////*【?】初期化
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//bool Cubu::Init(RendererManager &renderer)
+//bool Cubu::Init(RendererEngine &renderer)
 //{
 //    return true;
 //}
@@ -39,10 +39,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Cubu Class 
 ////*【?】更新
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：void
 ////*----------------------------------------------------------------------------------------
-//void Cubu::Update(RendererManager &renderer)
+//void Cubu::Update(RendererEngine &renderer)
 //{
 //
 //}
@@ -51,10 +51,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Cubu Class 
 ////*【?】描画
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：void
 ////*----------------------------------------------------------------------------------------
-//void Cubu::Draw(RendererManager& renderer)
+//void Cubu::Draw(RendererEngine& renderer)
 //{
 //    auto pContext = renderer.get_DeviceContext();
 //
@@ -133,10 +133,10 @@
 ////*---------------------------------------------------------------------------------------
 ////* @:Cubu Class 
 ////*【?】終了
-////* 引数：1.RendererManager
+////* 引数：1.RendererEngine
 ////* 返値：bool
 ////*----------------------------------------------------------------------------------------
-//bool Cubu::Term(RendererManager &renderer)
+//bool Cubu::Term(RendererEngine &renderer)
 //{
 //    return true;
 //}
@@ -151,7 +151,7 @@
 //// 		3.頂点数
 //// 		4.インデックス数
 //// ----------------------------------------------------------------------------------------------------------------------
-//bool Cubu::Setup(RendererManager &renderer, MATERIAL *materials, UINT materialNum)
+//bool Cubu::Setup(RendererEngine &renderer, MATERIAL *materials, UINT materialNum)
 //{
 //    auto pDevice = renderer.get_Device();
 //    

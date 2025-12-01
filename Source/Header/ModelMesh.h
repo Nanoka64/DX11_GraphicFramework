@@ -29,18 +29,18 @@ public:
 	ModelMesh();
 	~ModelMesh();
 
-	void Draw(RendererManager& render);
+	void Draw(RendererEngine& render);
 	void Term();
 
-	bool Setup(RendererManager& render, aiMesh* pMeshData);
+	bool Setup(RendererEngine& render, aiMesh* pMeshData);
 	void set_Color(const VECTOR4::VEC4& color, int vtxIdx = -1);	// カラーの設定 頂点インデックスの指定
 	VECTOR4::VEC4& get_Color(int vtxIdx = -1)const;					// カラーの取得 頂点インデックスの指定
 	unsigned int get_VertexNum()const { return m_VertexNum; };		// メッシュに含まれる頂点数取得
 	BASE_VERTEX::MODEL_VERTEX* get_Vertices() const { return m_pVertex; };
 
 private:
-	bool CreateVertexBuffer(RendererManager& render);	// 頂点バッファの作成
-	bool CreateIndexBuffer(RendererManager& render);	// インデックスバッファの作成
+	bool CreateVertexBuffer(RendererEngine& render);	// 頂点バッファの作成
+	bool CreateIndexBuffer(RendererEngine& render);	// インデックスバッファの作成
 	void DestroyVertexBuffer();							// 頂点バッファの削除
 	void DestroyIndexBuffer();							// インデックスバッファの削除
 	void SetVertexBoneData(BASE_VERTEX::MODEL_VERTEX& vertex, int boneId, float weight);	// 頂点へボーン情報をセット

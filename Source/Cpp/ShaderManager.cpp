@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "ShaderManager.h"
 #include "PixelShader.h"
 #include "VertexShader.h"
@@ -46,7 +46,7 @@ ShaderManager::~ShaderManager()
 }
 
 
-bool ShaderManager::Init(std::shared_ptr<RendererManager> renderer)
+bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
 {
     m_pRenderer = renderer;
 

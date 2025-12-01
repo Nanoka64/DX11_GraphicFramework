@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GameObject.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "Component_IMeshResource.h"
 #include "Component_MeshRenderer.h"
 #include "Texture.h"
@@ -35,10 +35,10 @@ MeshRenderer::~MeshRenderer()
 //*---------------------------------------------------------------------------------------
 //* @:MeshRenderer Class 
 //*y?z‰Šú‰»
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void MeshRenderer::Init(RendererManager& renderer)
+void MeshRenderer::Init(RendererEngine& renderer)
 {
 
 }
@@ -47,10 +47,10 @@ void MeshRenderer::Init(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:MeshRenderer Class 
 //*y?zXV
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void MeshRenderer::Update(RendererManager& renderer)
+void MeshRenderer::Update(RendererEngine& renderer)
 {
 
 }
@@ -59,10 +59,10 @@ void MeshRenderer::Update(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:MeshRenderer Class 
 //*y?z•`‰æ
-//* ˆø”F1.RendererManager
+//* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void MeshRenderer::Draw(RendererManager& renderer)
+void MeshRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
     MeshInfo* meshInfo = m_pMeshResource.lock()->m_pMeshInfo;

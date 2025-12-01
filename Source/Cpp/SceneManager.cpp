@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SceneManager.h"
-#include "RendererManager.h"
+#include "RendererEngine.h"
 #include "DirectWriteManager.h"
 #include "ResourceManager.h"
 #include "GameObjectManager.h"
@@ -54,10 +54,10 @@ SceneManager::~SceneManager()
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】初期化
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool SceneManager::Init(RendererManager &renderer)
+bool SceneManager::Init(RendererEngine &renderer)
 {
     // ステートマシンの作成
     SceneFactory::Create(m_StateMachine, renderer);
@@ -122,7 +122,7 @@ bool SceneManager::Init(RendererManager &renderer)
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
-            obj.lock()->get_Transform().lock()->set_Scale(VEC3(100, 100, 100));
+            obj.lock()->get_Transform().lock()->set_Scale(VEC3(50, 50, 50));
             obj.lock()->set_Tag("PointLight");
             auto light = obj.lock()->add_Component<PointLight>();
             light->CreateCBuffer(renderer.get_Device());
@@ -161,7 +161,7 @@ bool SceneManager::Init(RendererManager &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 50.0f;
+            mat[0].SpecularPower = 0.3f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -211,10 +211,10 @@ bool SceneManager::Init(RendererManager &renderer)
             for (int i = -1; i < 2; i++)
             {
                 MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Metal052B_2K-PNG_Color.png");
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W050.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 1;
+                mat->SpecularPower = 100.0f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -433,10 +433,10 @@ bool SceneManager::Init(RendererManager &renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】更新
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SceneManager::Update(RendererManager& renderer)
+void SceneManager::Update(RendererEngine& renderer)
 {
     //// シーンの更新
     //int newState = m_SceneStateMap[m_CrntSceneState]->Update(renderer);
@@ -477,8 +477,8 @@ void SceneManager::Update(RendererManager& renderer)
     dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
     auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
-    //rad = b_2Obj.lock()->get_Component<Transform>();
-    //rad->set_RotateToRad(0.0, 0.0, sin(a) );
+    rad = b_2Obj.lock()->get_Component<class Transform>();
+    rad->set_RotateToRad(0.0, 0.0, sin(a) );
 
 
 
@@ -497,23 +497,23 @@ void SceneManager::Update(RendererManager& renderer)
     //tf->set_Pos(camPos);
 
 
-    Debugger::Instance().BeginDebugWindow("Light");
-    Debugger::Instance().DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
-    Debugger::Instance().DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
-    Debugger::Instance().DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
-    Debugger::Instance().DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
-    Debugger::Instance().EndDebugWindow();
+    Master::m_pDebugger->BeginDebugWindow("Light");
+    Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
+    Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
+    Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
+    Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
+    Master::m_pDebugger->EndDebugWindow();
 
     auto objList = GameObjectManager::Instance().get_ObjectList();
 
-    Debugger::Instance().BeginDebugWindow("GameObject");
-    Debugger::Instance().DG_TextValue("Num : %d", (int)objList.size());
+    Master::m_pDebugger->BeginDebugWindow("GameObject");
+    Master::m_pDebugger->DG_TextValue("Num : %d", (int)objList.size());
     for (auto& obj : objList)
     {
-        Debugger::Instance().DG_TextValue("name : %s", obj->get_Tag().c_str());
+        Master::m_pDebugger->DG_TextValue("name : %s", obj->get_Tag().c_str());
     }
 
-    Debugger::Instance().EndDebugWindow();
+    Master::m_pDebugger->EndDebugWindow();
 
     // オブジェクト更新
     GameObjectManager::Instance().ObjectUpdate(renderer);
@@ -523,10 +523,10 @@ void SceneManager::Update(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】描画
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SceneManager::Draw(RendererManager& renderer)
+void SceneManager::Draw(RendererEngine& renderer)
 {
 
     // カメラ更新
@@ -589,10 +589,10 @@ void SceneManager::Draw(RendererManager& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】終了
-//* 引数：1.RendererManager
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SceneManager::Term(RendererManager &renderer)
+void SceneManager::Term(RendererEngine &renderer)
 {
 }
 

@@ -47,7 +47,7 @@ public:
     // stringをwstringへ変換する
     std::wstring StringToWString(std::string oString);
 
-    HRESULT Init(RendererManager &render);  // 初期化
+    HRESULT Init(RendererEngine &render);  // 初期化
     void Term();    // 終了
 
     // フォントデータを設定

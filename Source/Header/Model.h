@@ -69,12 +69,12 @@ public:
 	Model();
 	~Model();
 
-	bool Init(RendererManager &renderer) override;	// 初期化
-	void Update(RendererManager &renderer) override;	// 更新
-	void Draw(RendererManager &renderer) override;	// 描画
-	bool Term(RendererManager &renderer) override;	// 終了
+	bool Init(RendererEngine&renderer) override;	// 初期化
+	void Update(RendererEngine&renderer) override;	// 更新
+	void Draw(RendererEngine&renderer) override;	// 描画
+	bool Term(RendererEngine&renderer) override;	// 終了
 
-	bool Setup(RendererManager &render, const char *filePath);	// モデルデータのセットアップ
+	bool Setup(RendererEngine&render, const char *filePath);	// モデルデータのセットアップ
 	bool set_TextureMap(TEXTURE_MAP mapType, int matIndex, const std::wstring &path);	// テクスチャマップ設定 Setup後に呼ぶ
 
 	void set_Pos(VECTOR3::VEC3 pos);		 // 座標設定
@@ -99,7 +99,7 @@ public:
 	unsigned int get_MeshNum()const { return m_MeshNum; }							// メッシュ数取得
 	unsigned int get_VertexNum(unsigned int meshIdx = 0)const;						// 頂点数取得 メッシュ指定
 
-	void BoneTransformsUpdate(RendererManager& renderer, float timeInSeconds);
+	void BoneTransformsUpdate(RendererEngine& renderer, float timeInSeconds);
 
 	int get_BoneIndex(const std::string& tag);	// ボーンインデックス取得
 
@@ -113,7 +113,7 @@ private:
 	void NodeExtraction(const aiNode* pNode, int parentIdx);	// ノード情報を再帰的に抽出
 	void BoneExtraction(aiMesh* mesh);							// ボーン情報抽出
 	void MatrialExtraction(const aiScene* scene);				// マテリアル情報抽出 ※下のset_TextureMapで直接指定させているので要らないかも
-	void SetupTransform(RendererManager &render);				// 行列変換
+	void SetupTransform(RendererEngine &render);				// 行列変換
 
 	void TransformBone(float animTimeTicks,UINT nodeIdx,const DirectX::XMMATRIX& parent);// ボーン変換行列の更新
 	const NodeAnimChannel* FindNodeAnim(const AnimationData*pAnim, const std::string& nodeName);	// アニメーションがあるか確認
@@ -124,9 +124,9 @@ private:
 	void CalcInterpolatedRotation(DirectX::XMMATRIX& out,float animTimeTicks, const NodeAnimChannel* pNodeAnimChannel);		// 補間
 	void CalcInterpolatedScaling(DirectX::XMMATRIX& out,float animTimeTicks,  const NodeAnimChannel* pNodeAnimChannel);		// 補間
 
-	bool CreateBonesCBuffer(RendererManager& render);						// ボーン変換用定数バッファの作成
-	bool CreateMaterialCBuffer(RendererManager& render);					// マテリアル用定数バッファの作成
-	bool CreateTransformCBuffer(RendererManager& render);					// トランスフォーム用定数バッファの作成
+	bool CreateBonesCBuffer(RendererEngine& render);						// ボーン変換用定数バッファの作成
+	bool CreateMaterialCBuffer(RendererEngine& render);					// マテリアル用定数バッファの作成
+	bool CreateTransformCBuffer(RendererEngine& render);					// トランスフォーム用定数バッファの作成
 
 
 };
