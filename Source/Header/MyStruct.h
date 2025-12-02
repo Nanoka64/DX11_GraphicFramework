@@ -1,9 +1,6 @@
 #pragma once
 
 
-static const int POINTLIGHT_MAX_NUM     = 500; // ポイントライトの最大数
-static const int DIRECTIONLIGHT_MAX_NUM = 4;   // ディレクションライトの最大数
-
 
 struct SimpleVertex     // 頂点フォーマット
 {
@@ -87,6 +84,8 @@ struct CB_DIRECTION_LIGHT
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
     float Intensity;                // 光強度
 
+
+    // TODO:ここに置くと色々ずれるので場所変える
     DirectX::XMFLOAT3 EyePos;       // 視点の位置
     float Padding4;
 };
@@ -114,7 +113,7 @@ struct CB_POINT_LIGHT
 /// </summary>
 struct CB_DIRECTION_LIGHT_SET
 {
-    CB_DIRECTION_LIGHT Data = {};
+    CB_DIRECTION_LIGHT Data[DIRECTIONLIGHT_MAX_NUM] {};
     ID3D11Buffer *pBuff = nullptr;
 };
 

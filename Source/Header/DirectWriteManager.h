@@ -29,17 +29,11 @@ private:
 
     struct FONT_DATA *m_pFontData; // フォントデータ
 
-    // プライベートコンストラクタ
-    DirectWriteManager();
-    // プライベートデストラクタ
-    ~DirectWriteManager();
 
 public:
-    // シングルトンインスタンス取得
-    static DirectWriteManager &Instance(){
-        static DirectWriteManager instance;
-        return instance;
-    }
+    DirectWriteManager();
+    ~DirectWriteManager();
+
     // コピーコンストラクタと代入演算子を削除
     DirectWriteManager(const DirectWriteManager &) = delete;;
     DirectWriteManager &operator = (const DirectWriteManager &) = delete;

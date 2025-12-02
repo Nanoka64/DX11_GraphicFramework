@@ -100,7 +100,7 @@ cbuffer CB_MATERIAL : register(b4)
 //* =========================================================================
 cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
 {
-    DirectionalLight cb_DirLightData;
+    DirectionalLight cb_DirLightData[DIRECTIONLIGHT_MAX_NUM];
     
     float3 cb_EyePos; // Ž‹“_ˆÊ’u
     float pad2;

@@ -81,7 +81,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     MODEL_VERTEX* vertices  = pMeshes->get_Vertices();
 
     // モデルシェーダに切り替え
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::MODEL);
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::MODEL);
 
 
     Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());

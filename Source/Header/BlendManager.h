@@ -37,11 +37,8 @@ private:
     std::unique_ptr<IDX_BlendState> m_pBlendStateArray[(int)BLEND_MODE::NUM];           // ブレンドステートの本体配列
     std::unique_ptr<IDX_BlendState> m_pBlendStateIndependentArray[(int)BLEND_MODE::NUM];// 独立ブレンドステート（使うかわからん）
 public:
-    /// <summary>
-    /// インスタンス取得
-    /// </summary>
-    /// <returns></returns>
-    static BlendManager &Instance(){ static BlendManager inst; return inst;};
+    BlendManager();
+    ~BlendManager();
 
     /// <summary>
     /// 初期化
@@ -65,9 +62,7 @@ public:
 
 
 private:
-    // プライベートコンストラクタ・デストラクタ
-    BlendManager();
-    ~BlendManager();
+    // コピー禁止
     BlendManager(const BlendManager &) = delete;
     BlendManager &operator=(const BlendManager &) = delete;
     // ------------------------------------------------------

@@ -290,6 +290,12 @@ void GameObjectManager::clear_NotIsDontDestroyObject()
     );
 }
 
-
+namespace GIGA_Engine
+{
+    std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<Transform> parent )
+    {
+        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, pos, rot, parent);
+    }
+};
 
 

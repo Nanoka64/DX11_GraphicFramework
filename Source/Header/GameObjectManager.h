@@ -18,11 +18,8 @@ private:
 
 
 public:
-	/// <summary>
-	/// シングルトンインスタンス取得
-	/// </summary>
-	/// <returns></returns>
-	static GameObjectManager&Instance() { static GameObjectManager instance; return instance; }
+	GameObjectManager();
+	~GameObjectManager();
 
 	bool Init(RendererEngine &renderer);			// 初期化
 	void ObjectUpdate(RendererEngine &renderer);	// 更新
@@ -123,9 +120,7 @@ public:
 
 
 private:
-	// プライベートコンストラクタ・デストラクタ
-	GameObjectManager();
-	~GameObjectManager();
+	// コピー禁止
 	GameObjectManager(const GameObjectManager&) = delete;
 	GameObjectManager&operator=(const GameObjectManager&) = delete;
 	// ------------------------------------------------------
@@ -138,7 +133,7 @@ private:
 	void add_Object(std::shared_ptr<GameObject> object);
 };
 
-namespace
+namespace GIGA_Engine
 {
 	//*---------------------------------------------------------------------------------------
 	//* @:ObjectManager Class 
@@ -149,8 +144,5 @@ namespace
 	//* 引数：4.親
 	//* 返値：void
 	//*----------------------------------------------------------------------------------------
-	std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<class Transform> parent = {})
-	{
-		return GameObjectManager::Instance().Internal_Instantiate(pObj, pos, rot, parent);
-	}
+	std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<Transform> parent = {});
 }

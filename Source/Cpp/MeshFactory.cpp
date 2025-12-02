@@ -11,6 +11,7 @@
 #include "ResourceManager.h"
 #include "Texture.h"
 
+using namespace GIGA_Engine;
 
 //*---------------------------------------------------------------------------------------
 //* @:MeshFactory Class 

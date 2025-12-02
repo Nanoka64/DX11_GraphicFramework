@@ -14,7 +14,6 @@
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 PointLight::PointLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
-m_pCBLightSet(nullptr),
 m_Range(0.0f)
 {
 
@@ -54,15 +53,16 @@ void PointLight::Update(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
 
-    // バッファの更新
-    m_pCBLightSet->Data[0].Pos = m_pOwnerTransform.lock()->get_VEC3ToPos();
-    m_pCBLightSet->Data[0].DiffuseColor  = m_LightColor;
-    m_pCBLightSet->Data[0].SpecularColor = m_LightColor;
-	m_pCBLightSet->Data[0].Range	      = m_Range;
-    pContext->UpdateSubresource(m_pCBLightSet->pBuff, 0, nullptr, &m_pCBLightSet->Data, 0, 0);
+    CB_POINT_LIGHT pointData{};
 
-    // ピクセルシェーダにセット
-    pContext->PSSetConstantBuffers(6, 1, &m_pCBLightSet->pBuff);
+    // バッファの更新
+    pointData.Pos           = m_pOwnerTransform.lock()->get_VEC3ToPos();
+    pointData.DiffuseColor  = m_LightColor;
+    pointData.SpecularColor = m_LightColor;
+	pointData.Range	        = m_Range;
+
+    // 情報を設定
+    Master::m_pLightManager->set_PointLightData(pointData);
 }
 
 
@@ -75,39 +75,5 @@ void PointLight::Update(RendererEngine &renderer)
 void PointLight::Draw(RendererEngine &renderer)
 {
 
-}
-
-
-//*---------------------------------------------------------------------------------------
-//* @:PointLight Class 
-//*【?】定数バッファの作成
-//* 引数：1.ID3D11Device*
-//* 返値：bool
-//*----------------------------------------------------------------------------------------
-bool PointLight::CreateCBuffer(ID3D11Device *pDevice)
-{
-	// ライト定数バッファの生成
-	m_pCBLightSet = new CB_POINT_LIGHT_SET;
-	if (m_pCBLightSet == nullptr) {
-		return false;
-	}
-
-	// 定数バッファの設定
-	D3D11_BUFFER_DESC bd{};
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = sizeof(CB_POINT_LIGHT);				// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
-
-	// 定数バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBLightSet->pBuff);
-	if (FAILED(hr)) {
-		return false;
-	}
-
-	return true;
 }
 

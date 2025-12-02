@@ -206,7 +206,7 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     float3 spcPoint = PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
     // そのままだと薄すぎる場合があるので少し補正
-    diffPoint += 0.3f;
+    //diffPoint += 0.3f;
     //spcPoint += 0.1f;
     
     // 影響度計算

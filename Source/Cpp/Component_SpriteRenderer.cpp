@@ -74,7 +74,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
     auto pContext = renderer.get_DeviceContext();
 
     // シェーダセット ==========================
-    ShaderManager::Instance().DeviceToSetShader(m_ShaderType);
+	Master::m_pShaderManager->DeviceToSetShader(m_ShaderType);
 	
 	// 頂点情報の更新
 	VertexUpdate(renderer);

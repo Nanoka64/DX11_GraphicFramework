@@ -77,12 +77,9 @@ private:
     std::vector<InputLayoutSetupData> m_InputLayoutSetupDataList;
 
 public:
-    /// <summary>
-    /// シングルトンインスタンス取得
-    /// </summary>
-    /// <returns></returns>
-    static ShaderManager &Instance() { static ShaderManager instance; return instance; }
-    
+    ShaderManager() = default;
+    ~ShaderManager();
+
     /// <summary>
     /// 初期化
     /// </summary>
@@ -103,9 +100,7 @@ public:
     void DeviceToSetShader(SHADER_TYPE type);
 
 private:
-    // プライベートコンストラクタ・デストラクタ
-    ShaderManager() = default;
-    ~ShaderManager();
+    // コピー禁止
     ShaderManager(const ShaderManager &) = delete;
     ShaderManager &operator=(const ShaderManager &) = delete;
     // ------------------------------------------------------

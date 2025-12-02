@@ -64,6 +64,12 @@
 #include <vector>   // 動的配列
 
 
+
+/* 定数 */
+constexpr int POINTLIGHT_MAX_NUM		= 500; // ポイントライトの最大数
+constexpr int DIRECTIONLIGHT_MAX_NUM	= 4;   // ディレクションライトの最大数
+
+
 /* 自作ヘッダ */
 #include "VERTEX.h"			// 頂点情報
 #include "SHADER.h"			// シェーダ情報
@@ -82,3 +88,5 @@ class RendererEngine;
 class Camera;
 class SceneManager;
 class GameManager;
+
+

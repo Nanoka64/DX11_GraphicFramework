@@ -74,7 +74,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     //renderer.ChangeTestRT();
 
     // シェーダセット ==========================
-    ShaderManager::Instance().DeviceToSetShader(SHADER_TYPE::SIMPLE);
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::SIMPLE);
 
 
     /* ========== 定数バッファの更新 ========== */

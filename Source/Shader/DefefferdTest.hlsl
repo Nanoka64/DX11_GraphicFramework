@@ -36,15 +36,15 @@ struct PS_IN
 // **************************************************************************
 float4 PSMain(PS_IN input) : SV_TARGET
 {
-    float4 albedoTex    = g_tAlbedoTexture.Sample(g_sSampler, input.UV);
-    float4 normalTex    = g_tNormalTexture.Sample(g_sSampler, input.UV);
-    float4 depthTex     = g_tDepthTexture.Sample(g_sSampler, input.UV);
-    float4 specularTex  = g_tSpecularTexture.Sample(g_sSampler, input.UV);
+    float4 albedoTex = g_tAlbedoTexture.Sample(g_sSampler, input.UV);
+    float4 normalTex = g_tNormalTexture.Sample(g_sSampler, input.UV);
+    float4 depthTex = g_tDepthTexture.Sample(g_sSampler, input.UV);
+    float4 specularTex = g_tSpecularTexture.Sample(g_sSampler, input.UV);
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     float depth = depthTex.r; // 深度値
-    float4 worldPos;          // 深度情報からワールド座標を計算する。
+    float4 worldPos; // 深度情報からワールド座標を計算する。
     
     // 遠すぎる物体にはライティングしない( ´Д｀)ﾉ~ﾊﾞｲﾊﾞｲ
     if (depth >= 1.0f)
@@ -63,16 +63,27 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
+    
+    OUT_DiffAndSpec dirLig;
+    dirLig.Diffuse = float3(0, 0, 0);
+    dirLig.Specular = float3(0, 0, 0);
+    
     // ディレクションライト計算
-    OUT_DiffAndSpec dirLig = DirectionLightCalc(cb_DirLightData, cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+    for (int dirIdx = 0; dirIdx < DIRECTIONLIGHT_MAX_NUM; dirIdx++)
+    { 
+        OUT_DiffAndSpec res = DirectionLightCalc(cb_DirLightData[dirIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+        dirLig.Diffuse += res.Diffuse;
+        dirLig.Specular += res.Specular;
+    }
+    
     OUT_DiffAndSpec pointLig;
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
     
     // ポイントライト計算
-    for (int i = 0; i < 100; i++)
+    for (int pointIdx = 0; pointIdx < 100; pointIdx++)
     {
-        OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[i], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+        OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[pointIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
         pointLig.Diffuse += res.Diffuse;
         pointLig.Specular += res.Specular;
     }
@@ -84,7 +95,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
     float3 diffuse  = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;
     float3 specular = dirLig.Specular + pointLig.Specular;
-    
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.rgb * diffuse + specular;

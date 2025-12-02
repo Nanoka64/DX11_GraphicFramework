@@ -60,7 +60,7 @@ void TitleSceneState::OnEnter(SceneManager* pOwner)
 //*----------------------------------------------------------------------------------------
 void TitleSceneState::OnExit(SceneManager* pOwner)
 {
-    GameObjectManager::Instance().clear_AllObject();
+    Master::m_pGameObjectManager->clear_AllObject();
 }
 
 

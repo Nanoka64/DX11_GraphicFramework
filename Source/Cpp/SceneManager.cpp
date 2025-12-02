@@ -27,6 +27,8 @@ using namespace VECTOR2;
 using namespace Tool::UV;
 using namespace Input;
 
+using namespace GIGA_Engine;
+
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】コンストラクタ
@@ -47,7 +49,6 @@ SceneManager::SceneManager():
 //*----------------------------------------------------------------------------------------
 SceneManager::~SceneManager()
 {
-
 }
 
 
@@ -75,6 +76,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -100.0f);
         }
 
+
         {
             /* ディレクションライトの生成(Cubuで分かりやすく) */
             MATERIAL *mat = new MATERIAL;
@@ -92,8 +94,6 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             auto light = obj.lock()->add_Component<DirectionalLight>();
-            light->CreateCBuffer(renderer.get_Device());
-            light->set_CameraTransform(GameObjectManager::Instance().get_ObjectByTag("Camera").lock()->get_Transform());
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
             light->set_Intensity(0.1f);
             light->Init(renderer);
@@ -105,7 +105,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
         {
             /* ポイントライトの生成 (Cubuで分かりやすく)*/
-            MATERIAL *mat = new MATERIAL;
+            MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -114,21 +114,22 @@ bool SceneManager::Init(RendererEngine &renderer)
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
             mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.ObjTag = "PointLight";
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
             mesh.IsActive = true;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
-            obj.lock()->get_Transform().lock()->set_Scale(VEC3(50, 50, 50));
-            obj.lock()->set_Tag("PointLight");
-            auto light = obj.lock()->add_Component<PointLight>();
-            light->CreateCBuffer(renderer.get_Device());
-            light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            light->set_Range(3000.0f);
-            light->Init(renderer);
+            for (int i = 0; i < 30; i++)
+            {
+                auto obj = MeshFactory::CreateUtilityMesh(mesh);
+                obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
+                obj.lock()->get_Transform().lock()->set_Scale(VEC3(50, 50, 50));
+                obj.lock()->set_Tag("PointLight" + std::to_string(i));
+                auto light = obj.lock()->add_Component<PointLight>();
+                light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+                light->set_Range(3000.0f);
+                light->Init(renderer);
+            }
         }
 
 
@@ -297,7 +298,11 @@ bool SceneManager::Init(RendererEngine &renderer)
     }
 
     // 参照を持たせる
-    m_pCamera = GameObjectManager::Instance().get_ObjectByTag("Camera");
+    m_pCamera = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
+
+    // ライトにカメラのTransformを持たせる
+    Master::m_pLightManager->set_CameraTransform(m_pCamera.lock()->get_Transform());
+
 
     bool result = true;
 
@@ -454,35 +459,45 @@ void SceneManager::Update(RendererEngine& renderer)
     static float intensity = 0.1f;
 
 
-    auto obj = GameObjectManager::Instance().get_ObjectByTag("Model");
+    auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Model");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
 
 
 
-    auto cam = GameObjectManager::Instance().get_ObjectByTag("Camera");
+    auto cam = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
     VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
 
 
     static VEC3 pLigPos{};
 
-    auto lig = GameObjectManager::Instance().get_ObjectByTag("PointLight");
+    auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight0");
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
     lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
 
+    for (int i = 1; i < 29; i++)
+    {
+        auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight" + std::to_string(i));
+        lig.lock()->get_Component<Transform>()->set_Pos(
+            ((cos(a + (i * 0.3)) * 1000.0f) * -1),
+            pLigPos.y,
+            ((sin(a + (i * 0.3)) * 1000.0f * -1))
+        );
+        lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+    }
 
-    auto dlig = GameObjectManager::Instance().get_ObjectByTag("DirLight");
+    auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
     rad->set_RotateToRad(m_LightDir);
     dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
-    auto b_2Obj = GameObjectManager::Instance().get_ObjectByTag("B-2");
+    auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<class Transform>();
     rad->set_RotateToRad(0.0, 0.0, sin(a) );
 
 
 
-    auto sphereObj = GameObjectManager::Instance().get_ObjectByTag("sphere");
+    auto sphereObj = Master::m_pGameObjectManager->get_ObjectByTag("sphere");
     //rad = sphereObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
@@ -504,7 +519,7 @@ void SceneManager::Update(RendererEngine& renderer)
     Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
     Master::m_pDebugger->EndDebugWindow();
 
-    auto objList = GameObjectManager::Instance().get_ObjectList();
+    auto objList = Master::m_pGameObjectManager->get_ObjectList();
 
     Master::m_pDebugger->BeginDebugWindow("GameObject");
     Master::m_pDebugger->DG_TextValue("Num : %d", (int)objList.size());
@@ -516,7 +531,7 @@ void SceneManager::Update(RendererEngine& renderer)
     Master::m_pDebugger->EndDebugWindow();
 
     // オブジェクト更新
-    GameObjectManager::Instance().ObjectUpdate(renderer);
+    Master::m_pGameObjectManager->ObjectUpdate(renderer);
 }
 
 
@@ -549,7 +564,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
 
     // オブジェクト描画
-    GameObjectManager::Instance().ObjectRender(renderer);
+    Master::m_pGameObjectManager->ObjectRender(renderer);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -560,10 +575,10 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.SetupProjectionTransform();
 
     // ターゲット描画
-    auto renderSpriteObj = GameObjectManager::Instance().get_ObjectByTag("RenderTarget1").lock();
-    auto renderSpriteObj2 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget2").lock();
-    auto renderSpriteObj3 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget3").lock();
-    auto renderSpriteObj4 = GameObjectManager::Instance().get_ObjectByTag("RenderTarget4").lock();
+    auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
+    auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
+    auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
+    auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
     auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
     auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
     auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
@@ -573,10 +588,13 @@ void SceneManager::Draw(RendererEngine& renderer)
     sprite3->Draw(renderer);
     //sprite4->Draw(renderer);
 
+    // ライトの更新
+    Master::m_pLightManager->Update();
+
     // ディファードスプライト
-    auto defferdRTSpriteObj = GameObjectManager::Instance().get_ObjectByTag("DefferdRenderTarget").lock();
+    auto defferdRTSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("DefferdRenderTarget").lock();
     auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
-    BlendManager::Instance().DeviceToSetBlendState(BLEND_MODE::NONE);
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
 
 

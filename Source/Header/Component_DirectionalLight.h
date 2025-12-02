@@ -13,13 +13,10 @@
 class DirectionalLight : public Light
 {
 private:
-	CB_DIRECTION_LIGHT_SET *m_pCBLightSet;
 
 public:
 	DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank);
 	~DirectionalLight();
-
-	bool CreateCBuffer(ID3D11Device *pDevice)override;
 
 	void Init(RendererEngine &renderer) override;	// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;// XV

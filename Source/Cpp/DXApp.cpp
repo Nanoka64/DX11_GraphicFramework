@@ -18,7 +18,12 @@ using namespace Input;
 using namespace BASE_VERTEX;
 
 
-Debugger *Master::m_pDebugger = nullptr;
+Debugger                *Master::m_pDebugger            = nullptr;  // ImGui機能ラップ
+ShaderManager           *Master::m_pShaderManager       = nullptr;  // シェーダ管理
+LightManager            *Master::m_pLightManager        = nullptr;  // ライト管理
+BlendManager            *Master::m_pBlendManager        = nullptr;  // ブレンド管理
+DirectWriteManager      *Master::m_pDirectWriteManager  = nullptr;  // 文字管理 
+GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // オブジェクト管理
 
 
 //*---------------------------------------------------------------------------------------
@@ -68,7 +73,12 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     m_pGameManager = new GameManager();
     m_pRenderer = std::make_shared<RendererEngine>();
 
-    Master::m_pDebugger = new Debugger();
+    Master::m_pDebugger             = new Debugger();              // ImGui機能ラップ 
+    Master::m_pShaderManager        = new ShaderManager();         // シェーダ管理
+    Master::m_pLightManager         = new LightManager();          // ライト管理
+    Master::m_pBlendManager         = new BlendManager();          // ブレンド管理
+    Master::m_pDirectWriteManager   = new DirectWriteManager();    // 文字管理 
+    Master::m_pGameObjectManager    = new GameObjectManager();     // オブジェクト管理
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/
@@ -91,7 +101,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // *************************************************************************************************
     //** ブレンドステートの初期化 **/
     // *************************************************************************************************
-    if (!BlendManager::Instance().Init(m_pRenderer))
+    if (!Master::m_pBlendManager->Init(m_pRenderer))
     {
         assert(false);
         return false;
@@ -101,7 +111,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     //** シェーダ管理の初期化 **/
     //** 描画クラスの弱参照を入れる   **/
     // *************************************************************************************************
-    if (!ShaderManager::Instance().Init(m_pRenderer))
+    if (!Master::m_pShaderManager->Init(m_pRenderer))
     {
         assert(false);
         return false;
@@ -109,10 +119,10 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 
 
     // シェーダ作成
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!ShaderManager::Instance().CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::RUNTIME))return false;
 
 
     // *************************************************************************************************
@@ -129,7 +139,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // *************************************************************************************************
     /**  directWrire 初期化 **/
     // *************************************************************************************************
-    //if (FAILED(DirectWriteManager::Instance().Init(*m_pRenderer)))
+    //if (FAILED(Master::m_pDirectWriteManager->Init(*m_pRenderer)))
     //{
     //    assert(false);
     //    return false;
@@ -139,6 +149,16 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     /**  ゲームマネージャー初期化 **/
     // *************************************************************************************************
     if (!m_pGameManager->Init(*m_pRenderer))
+    {
+        assert(false);
+        return false;
+    }
+
+
+    // *************************************************************************************************
+    /**  ライトマネージャー初期化 **/
+    // *************************************************************************************************
+    if (!Master::m_pLightManager->Init(m_pRenderer))
     {
         assert(false);
         return false;
@@ -169,7 +189,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     //pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
 
     //// フォントデータをDirectWriteManagerに設定
-    //DirectWriteManager::Instance().SetFontData(pFontData);
+    //Master::m_pDirectWriteManager->SetFontData(pFontData);
 
     // 正常終了
     return true;

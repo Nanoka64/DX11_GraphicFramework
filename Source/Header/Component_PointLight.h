@@ -14,15 +14,12 @@
 class PointLight : public Light
 {
 private:
-	CB_POINT_LIGHT_SET *m_pCBLightSet;
 	float m_Range;	// ‰e‹¿”ÍˆÍ
 
 public:
 	PointLight(std::weak_ptr<GameObject> pOwner, int updateRank);
 	~PointLight();
 
-
-	bool CreateCBuffer(ID3D11Device *pDevice)override;
 
 	void Init(RendererEngine &renderer) override;	// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;// XV
