@@ -44,7 +44,7 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
     */
     finalDfs /= 3.1415926f;
     
-    return finalDfs;
+    return saturate(finalDfs);
 }
 
 
@@ -61,7 +61,7 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
 //* [返値]
 //* float3 : スペキュラ色
 //*----------------------------------------------------------------------------------------
-float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, float _spcPower, float3 _worldPos, float3 _norm)
+float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _spcCol, float _spcPower, float3 _worldPos, float3 _norm)
 {
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
 
@@ -74,7 +74,6 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
     
     
     // 内積を求める（鏡面反射の強さ）
-    // 一旦、物理法則的アウトらしいけど、少しだけ補正（0.2）をかける
     float refFactor = max(0.0, dot(toEye, refVec));
     
     
@@ -93,10 +92,10 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
     // で値を変えて確認してみた感じ、スペキュラの強さに入れる値が
     // 小さすぎたのが原因の可能性特大
     // 試しに以下の_spcPower部分を0.1と100で入れて比べてみるとわかる。
-    refFactor = pow(refFactor, 30); // 反射の強さを絞る
+    refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
 
     // 鏡面反射求める
-    finalSpc = _LigCol * refFactor;
+    finalSpc = _spcCol * refFactor;
     
     return finalSpc;
 }
@@ -118,7 +117,7 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, fl
 //* [返値]
 //* float3 最終色
 //*----------------------------------------------------------------------------------------
-float3 Blinn_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigCol, float _spcPower, float3 _worldPos, float3 _norm)
+float3 Blinn_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _spcCol, float _spcPower, float3 _worldPos, float3 _norm)
 {
     float3 finalSpc = float3(0.0f, 0.0f, 0.0f);
     
@@ -132,7 +131,7 @@ float3 Blinn_PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _LigC
     refFactor = pow(refFactor, _spcPower); // 反射の強さを絞る
 
     // 鏡面反射求める
-    finalSpc = _LigCol * refFactor;
+    finalSpc = _spcCol * refFactor;
     
     return finalSpc;
 }
@@ -168,11 +167,11 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
     float3 diffuseLig = LambertDiffuseLightCalc(ligDir, _ligData.DiffuseColor, _norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
+    float3 specularLig = Blinn_PhongSpecularLightCalc(-ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffuseLig * _ligData.Intensity;
-    outData.Specular = specularLig;
+    outData.Diffuse = diffuseLig * _ligData.DiffuseIntensity;
+    outData.Specular = specularLig * _ligData.SpecularIntensity;
     return outData;
 }
 
@@ -221,8 +220,8 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     spcPoint  *= affect;
     
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffPoint * 5.0f;
-    outData.Specular = spcPoint * _spcCol;
+    outData.Diffuse = diffPoint * _ligData.DiffuseIntensity;
+    outData.Specular = spcPoint* _ligData.SpecularIntensity;
     return outData;
 }
 

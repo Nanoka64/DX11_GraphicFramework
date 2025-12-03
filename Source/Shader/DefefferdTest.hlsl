@@ -64,9 +64,15 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 spcColor = specularTex.rgb;
     
     
-    OUT_DiffAndSpec dirLig;
+    spcPow *= 255;
+    
+    OUT_DiffAndSpec dirLig;             // ディレクション用
     dirLig.Diffuse = float3(0, 0, 0);
     dirLig.Specular = float3(0, 0, 0);
+    OUT_DiffAndSpec pointLig;           // ポイント用
+    pointLig.Diffuse = float3(0, 0, 0);
+    pointLig.Specular = float3(0, 0, 0);
+    
     
     // ディレクションライト計算
     for (int dirIdx = 0; dirIdx < DIRECTIONLIGHT_MAX_NUM; dirIdx++)
@@ -76,12 +82,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
         dirLig.Specular += res.Specular;
     }
     
-    OUT_DiffAndSpec pointLig;
-    pointLig.Diffuse = float3(0, 0, 0);
-    pointLig.Specular = float3(0, 0, 0);
-    
     // ポイントライト計算
-    for (int pointIdx = 0; pointIdx < 100; pointIdx++)
+    for (int pointIdx = 0; pointIdx < POINTLIGHT_MAX_NUM; pointIdx++)
     {
         OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[pointIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
         pointLig.Diffuse += res.Diffuse;
@@ -99,6 +101,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.rgb * diffuse + specular;
     finalCol.a = 1.0f;
-    return finalCol;
+    return saturate(finalCol);
 
 }

@@ -62,7 +62,7 @@ PS_OUT PS(PS_IN input)
     output.Normal.w = 1.0f;
     output.Depth = float4(0, 0, 0, 0);
     output.Specular.xyz = cb_SpecularColor.xyz;
-    output.Specular.w = cb_SpecularPower; // w‚É”½ŽË‹­“x“ü‚ê‚é
+    output.Specular.w = (cb_SpecularPower) / (255.0f); // w‚É”½ŽË‹­“x“ü‚ê‚é
     //output.Specular = input.WPos;
     return output;
 }

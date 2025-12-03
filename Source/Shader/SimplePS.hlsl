@@ -74,11 +74,14 @@ PS_OUT SimplePSMain(PS_IN input)
     // テスト出力
     PS_OUT output;
     output.Albedo       = finalCol;
-    output.Normal.xyz   = (normal * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.xyz   = (input.Normal * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
-    output.Specular.w   = cb_SpecularPower;        // wに反射強度入れる
+    output.Specular.w   =  (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
     output.Depth;
+    
+   
+    
     //output.Specular = input.WPos;
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる

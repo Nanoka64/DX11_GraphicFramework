@@ -209,7 +209,7 @@ XMMATRIX Transform::get_WorldMtx()const{
 //*----------------------------------------------------------------------------------------
 const VEC3 Transform::get_Forward() const
 {
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, m_Rotation));
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, (m_Rotation)));
 }
 
 

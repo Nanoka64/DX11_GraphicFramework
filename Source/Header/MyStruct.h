@@ -79,10 +79,10 @@ struct CB_DIRECTION_LIGHT
     float Padding1;
     
     DirectX::XMFLOAT3 DiffuseColor; // ディフューズ色
-    float Padding2;
+    float DiffuseIntensity;         // ディフューズ光度
 
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-    float Intensity;                // 光強度
+    float SpecularIntensity;        // スペキュラ強度
 
 
     // TODO:ここに置くと色々ずれるので場所変える
@@ -97,13 +97,13 @@ struct CB_DIRECTION_LIGHT
 struct CB_POINT_LIGHT
 {
     DirectX::XMFLOAT3 Pos;          // 座標
-    float Padding1;
+    float Range;                    // 影響範囲
     
     DirectX::XMFLOAT3 DiffuseColor; // ディフューズ色
-    float Padding2;
+    float DiffuseIntensity;         // ディフューズ光度
     
     DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-    float Range;                    // 影響範囲
+    float SpecularIntensity;        // スペキュラ強度
 };
 
 

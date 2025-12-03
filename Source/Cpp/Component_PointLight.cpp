@@ -56,10 +56,12 @@ void PointLight::Update(RendererEngine &renderer)
     CB_POINT_LIGHT pointData{};
 
     // バッファの更新
-    pointData.Pos           = m_pOwnerTransform.lock()->get_VEC3ToPos();
-    pointData.DiffuseColor  = m_LightColor;
-    pointData.SpecularColor = m_LightColor;
-	pointData.Range	        = m_Range;
+    pointData.Pos               = m_pOwnerTransform.lock()->get_VEC3ToPos();
+	pointData.Range	            = m_Range;
+    pointData.SpecularColor     = m_LightColor;
+    pointData.SpecularIntensity = 1.0f;
+    pointData.DiffuseColor      = m_LightColor;
+	pointData.DiffuseIntensity  = m_Intensity;
 
     // 情報を設定
     Master::m_pLightManager->set_PointLightData(pointData);

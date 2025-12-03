@@ -76,13 +76,12 @@ bool SceneManager::Init(RendererEngine &renderer)
             pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -100.0f);
         }
 
-
         {
             /* ディレクションライトの生成(Cubuで分かりやすく) */
             MATERIAL *mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 0.1f;
+            mat->SpecularPower = 1.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -127,7 +126,8 @@ bool SceneManager::Init(RendererEngine &renderer)
                 obj.lock()->set_Tag("PointLight" + std::to_string(i));
                 auto light = obj.lock()->add_Component<PointLight>();
                 light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-                light->set_Range(3000.0f);
+                light->set_Range(0.0f);
+                light->set_Intensity(1.0f);
                 light->Init(renderer);
             }
         }
@@ -138,7 +138,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             MATERIAL mat[1];
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-            mat[0].SpecularPower = 0.2f;
+            mat[0].SpecularPower = 30.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -162,7 +162,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 0.3f;
+            mat[0].SpecularPower = 50.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -188,7 +188,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 2.0f;
+            mat[0].SpecularPower    = 200.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -209,13 +209,13 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* QUADの生成 */
 
-            for (int i = -1; i < 2; i++)
+/*            for (int i = -1; i < 2; i++)
             {
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W050.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 100.0f;
+                mat->SpecularPower = 30.0f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -229,29 +229,29 @@ bool SceneManager::Init(RendererEngine &renderer)
                 obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 1.0f, 1000.0f);
                 obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), 0.0f, 0.0f);
                 obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, (i * 90.0f));
+            }   */ 
+            
+            {
+                MATERIAL* mat = new MATERIAL;
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/big-photo0000-0169.jpg");
+                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+                mat->SpecularPower = 10.0f;
+
+                CreateUtilityMeshInfo mesh;
+                mesh.pRenderer = &renderer;
+                mesh.Type = UTILITY_MESH_TYPE::QUAD;
+                mesh.ObjTag = "Ground";
+                mesh.MatNum = 1;
+                mesh.MaterialData = new InputMaterial();
+                mesh.MaterialData->pMat = mat;
+
+                auto obj = MeshFactory::CreateUtilityMesh(mesh);
+                obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 1.0f, 10000.0f);
+                obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, 0.0f);
             }
         }
-
-        //{
-        //    // CUBE
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 0.5f;
-
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::CUBU;
-        //    mesh.ObjTag = "Cubu";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
-
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(1000, 1000, 1000);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, -1100, 0);
-        //}      
 
         //{
         //    // SPHERE
@@ -260,7 +260,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
         //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
         //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 0.5f;
+        //    mat->SpecularPower = 100.0f;
 
         //    CreateUtilityMeshInfo mesh;
         //    mesh.pRenderer = &renderer;
@@ -274,27 +274,27 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
         //    obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
         //}        
-        //{
-        //    // SkyDorm
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Tex_SkyDome_Day01.png");
-        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 0.1;
+        {
+            // SkyDorm
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+            mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+            mat->SpecularPower = 1.0f;
 
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-        //    mesh.ObjTag = "SkyDorm";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+            mesh.ObjTag = "SkyDorm";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
 
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
-        //}       
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(1, 1, 1);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
+        }       
     }
 
     // 参照を持たせる
@@ -474,17 +474,7 @@ void SceneManager::Update(RendererEngine& renderer)
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
     lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
     lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-
-    for (int i = 1; i < 29; i++)
-    {
-        auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight" + std::to_string(i));
-        lig.lock()->get_Component<Transform>()->set_Pos(
-            ((cos(a + (i * 0.3)) * 1000.0f) * -1),
-            pLigPos.y,
-            ((sin(a + (i * 0.3)) * 1000.0f * -1))
-        );
-        lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-    }
+    lig.lock()->get_Component<PointLight>()->set_Intensity(10.0);
 
     auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
@@ -497,7 +487,7 @@ void SceneManager::Update(RendererEngine& renderer)
 
 
 
-    auto sphereObj = Master::m_pGameObjectManager->get_ObjectByTag("sphere");
+    //auto sphereObj = Master::m_pGameObjectManager->get_ObjectByTag("sphere");
     //rad = sphereObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(0.0, 0.0, 0.0f);
 
@@ -507,14 +497,14 @@ void SceneManager::Update(RendererEngine& renderer)
     //rad = cubuObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(cos(a), sin(a), sin(a));
 
-    //auto skyObj = GameObjectManager::Instance().get_ObjectByTag("SkyDorm");
-    //auto tf = skyObj.lock()->get_Component<Transform>();
-    //tf->set_Pos(camPos);
+    auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
+    auto tf = skyObj.lock()->get_Component<Transform>();
+    tf->set_Pos(camPos);
 
 
     Master::m_pDebugger->BeginDebugWindow("Light");
     Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
-    Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 3.0f);
+    Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
     Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
     Master::m_pDebugger->EndDebugWindow();

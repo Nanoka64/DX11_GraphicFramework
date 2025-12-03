@@ -52,11 +52,14 @@ void DirectionalLight::Update(RendererEngine &renderer)
     auto pContext = renderer.get_DeviceContext();
 
 	CB_DIRECTION_LIGHT dirData{};
+	
+	VECTOR3::VEC3 myDir = m_pOwnerTransform.lock()->get_Forward();
 
-	dirData.Direction = m_pOwnerTransform.lock()->get_Forward();
-    dirData.DiffuseColor  = m_LightColor;
-    dirData.SpecularColor = m_LightColor;
-	dirData.Intensity     = m_Intensity;
+	dirData.Direction		  = myDir;
+    dirData.DiffuseColor	  = m_LightColor;
+	dirData.DiffuseIntensity  = m_Intensity;
+    dirData.SpecularColor	  = m_LightColor;
+    dirData.SpecularIntensity = 1.0f;
 
 	// î•ñ‚ðÝ’è
 	Master::m_pLightManager->set_DirectionLightData(dirData);

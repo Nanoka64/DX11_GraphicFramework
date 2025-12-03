@@ -12,32 +12,32 @@
 
 //* =========================================================================
 //* - @:ディレクションライト用構造体 - */
-//* =========================================================================
+///* =========================================================================
 struct DirectionalLight
 {
-    float3 Direction;       // 方向
+    float3 Direction;           // 方向
     float pad0;
     
-    float3 DiffuseColor;    // ディフューズ
-    float pad1;
+    float3 DiffuseColor;        // ディフューズ
+    float DiffuseIntensity;     // ディフューズ光度
     
-    float3 SpecularColor; // スペキュラ
-    float Intensity;        // 光強度
+    float3 SpecularColor;       // スペキュラ
+    float SpecularIntensity;    // スペキュラ強度
 };
 
-//* =========================================================================
+/* =========================================================================
 //* - @:ポイントライト用構造体 - */
 //* =========================================================================
 struct PointLight
 {
-    float3 Pos;             // 座標   
-    float pad0;
+    float3 Pos;                 // 座標   
+    float Range;                // 範囲
     
-    float3 DiffuseColor;    // ディフューズ
-    float pad1;
+    float3 DiffuseColor;        // ディフューズ
+    float DiffuseIntensity;     // ディフューズ光度
     
-    float3 SpecularColor;   // スペキュラ
-    float Range;            // 範囲
+    float3 SpecularColor;       // スペキュラ
+    float SpecularIntensity;    // スペキュラ強度
 };
 
 

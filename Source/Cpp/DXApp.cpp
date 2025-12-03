@@ -119,9 +119,9 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 
 
     // シェーダ作成
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SIMPLE, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::MODEL, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SIMPLE,  SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::MODEL,   SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::SPRITE,  SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD, SHADER_CREATE_TYPE::RUNTIME))return false;
 
 
