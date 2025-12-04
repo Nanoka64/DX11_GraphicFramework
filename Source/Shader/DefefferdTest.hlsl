@@ -41,6 +41,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 depthTex = g_tDepthTexture.Sample(g_sSampler, input.UV);
     float4 specularTex = g_tSpecularTexture.Sample(g_sSampler, input.UV);
     
+
+
+
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     float depth = depthTex.r; // 深度値
@@ -62,7 +65,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // スペキュラ強度・カラー
     float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
-    
     
     spcPow *= 255;
     
@@ -99,7 +101,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 specular = dirLig.Specular + pointLig.Specular;
     
     // 最終色 アルベド * 光度 + スペキュラ
-    finalCol.xyz = albedoTex.rgb * diffuse + specular;
+    finalCol.xyz = albedoTex.xyz * diffuse + specular;
     finalCol.a = 1.0f;
     return saturate(finalCol);
 

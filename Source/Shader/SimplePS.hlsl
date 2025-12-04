@@ -71,16 +71,15 @@ PS_OUT SimplePSMain(PS_IN input)
     // 閾値が 10 以下のピクセルはピクセルキルする
     //clip(dither - 50);
     
+
     // テスト出力
     PS_OUT output;
     output.Albedo       = finalCol;
     output.Normal.xyz   = (input.Normal * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
-    output.Specular.w   =  (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
+    output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
     output.Depth;
-    
-   
     
     //output.Specular = input.WPos;
     

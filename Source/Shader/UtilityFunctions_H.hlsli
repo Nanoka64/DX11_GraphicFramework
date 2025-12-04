@@ -10,6 +10,56 @@
 #define UTILITYFUNCTIONS_HLSLI
 #include "ConstantBuffers_H.hlsli"
 
+//*---------------------------------------------------------------------------------------
+//*【?】平均ブラーを求める
+//* 引数：1.ブラーの強さ
+//* 引数：2.ディスプレイ横幅
+//* 引数：3.ディスプレイ縦幅
+//* 引数：4.反映させるテクスチャー
+//* 引数：5.UV
+//* 引数：6.サンプラー
+//* 返値：ブラー後のカラー
+//*----------------------------------------------------------------------------------------
+float4 AverageBlur(float _blurPower, float _screenW, float _screenH, Texture2D _tex, float2 _uv, SamplerState _samp)
+{
+    // 基準テクセル＋近傍8テクセルの平均を計算する 
+    // 2.5テクセルずらすためのUV値を求める
+    float offsetU = _blurPower / _screenW;
+    float offsetV = _blurPower / _screenH;
+
+    float4 res = float4(0, 0, 0, 1);
+    
+    // 基準テクセルからずらす
+    res += _tex.Sample(_samp, _uv + float2( offsetU,  0.0f));    // 右
+    res += _tex.Sample(_samp, _uv + float2(-offsetU,  0.0f));    // 左
+    res += _tex.Sample(_samp, _uv + float2( 0.0f,     offsetV)); // 下
+    res += _tex.Sample(_samp, _uv + float2( 0.0f,    -offsetV)); // 上
+    res += _tex.Sample(_samp, _uv + float2( offsetU,  offsetV)); // 右下
+    res += _tex.Sample(_samp, _uv + float2( offsetU, -offsetV)); // 右上
+    res += _tex.Sample(_samp, _uv + float2(-offsetU,  offsetV)); // 左下
+    res += _tex.Sample(_samp, _uv + float2(-offsetU, -offsetV)); // 左上
+    res /= 9.0f; // 基準テクセルと近傍８テクセルの平均なので9で除算
+    
+    return res;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】モノクロ化
+//* 引数：1.反映させるアルベド色
+//* 返値：モノクロ後のカラー
+//*----------------------------------------------------------------------------------------
+float3 Monochrome(float3 albed)
+{
+    float3 res = albed;
+    
+    // モノクロ化
+    float Y = 0.299f * albed.r + 0.587f * albed.g + 0.114f * albed.b;
+    res.x = Y;
+    res.y = Y;
+    res.z = Y;
+    
+    return res;
+}
 
 //*---------------------------------------------------------------------------------------
 //*【?】深度値からワールド座標に変換

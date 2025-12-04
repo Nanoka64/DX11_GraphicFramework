@@ -120,14 +120,23 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             for (int i = 0; i < 30; i++)
             {
+                VEC3 pt;
+                pt.x = static_cast<float>(rand() % 10000) - 5000.0f;
+                pt.y = 700.0f;
+                pt.z = static_cast<float>(rand() % 10000) - 5000.0f;
+                VEC3 col;
+                col.x = static_cast<float>(rand() % 255) / 255.0f;
+                col.y = static_cast<float>(rand() % 255) / 255.0f;
+                col.z = static_cast<float>(rand() % 255) / 255.0f;
+
                 auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 0.0f, 0.0f));
-                obj.lock()->get_Transform().lock()->set_Scale(VEC3(50, 50, 50));
+                obj.lock()->get_Transform().lock()->set_Pos(pt);
+                obj.lock()->get_Transform().lock()->set_Scale(VEC3(25, 25, 25));
                 obj.lock()->set_Tag("PointLight" + std::to_string(i));
                 auto light = obj.lock()->add_Component<PointLight>();
-                light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-                light->set_Range(0.0f);
-                light->set_Intensity(1.0f);
+                light->set_LightColor(col);
+                light->set_Range(1000.0f);
+                light->set_Intensity(100.0f);
                 light->Init(renderer);
             }
         }
@@ -232,11 +241,12 @@ bool SceneManager::Init(RendererEngine &renderer)
             }   */ 
             
             {
+                // 地面
                 MATERIAL* mat = new MATERIAL;
                 mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/big-photo0000-0169.jpg");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 10.0f;
+                mat->SpecularPower = 100.0f;
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
@@ -292,10 +302,11 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MaterialData->pMat = mat;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(1, 1, 1);
+            obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }       
     }
+
 
     // 参照を持たせる
     m_pCamera = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
@@ -420,16 +431,40 @@ bool SceneManager::Init(RendererEngine &renderer)
     * 最終出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 0.5f;
-    sprite.Height = 0.5f;
+    sprite.Width = 1.0;
+    sprite.Height = 1.0f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
     sprite.ShaderType = SHADER_TYPE::DEFFERD;
     obj = MeshFactory::CreateSprite(sprite);
-    obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
+    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
+
+
+    {
+        // 地面
+        MATERIAL* mat = new MATERIAL;
+        mat->Diffuse.Texture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
+        mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+        mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        mat->DiffuseColor = VEC4(1, 0, 1, 1);
+        mat->SpecularPower = 100.0f;
+
+        CreateUtilityMeshInfo mesh;
+        mesh.pRenderer = &renderer;
+        mesh.Type = UTILITY_MESH_TYPE::CUBU;
+        mesh.ObjTag = "CubuRT";
+        mesh.MatNum = 1;
+        mesh.MaterialData = new InputMaterial();
+        mesh.MaterialData->pMat = mat;
+
+        auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 1000, 1000.0f);
+        obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+        obj.lock()->get_Transform().lock()->set_RotateToDeg(-90.0f, 0.0f, 0.0f);
+    }
 
     return true;
 }
@@ -573,9 +608,9 @@ void SceneManager::Draw(RendererEngine& renderer)
     auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
     auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
     auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
-    sprite->Draw(renderer);
-    sprite2->Draw(renderer);
-    sprite3->Draw(renderer);
+    //sprite->Draw(renderer);
+    //sprite2->Draw(renderer);
+    //sprite3->Draw(renderer);
     //sprite4->Draw(renderer);
 
     // ライトの更新
@@ -586,7 +621,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
-
 
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);

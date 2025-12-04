@@ -220,8 +220,8 @@ OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcC
     spcPoint  *= affect;
     
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffPoint * _ligData.DiffuseIntensity;
-    outData.Specular = spcPoint* _ligData.SpecularIntensity;
+    outData.Diffuse  = diffPoint * _ligData.DiffuseIntensity;
+    outData.Specular = spcPoint  * _ligData.SpecularIntensity;
     return outData;
 }
 
