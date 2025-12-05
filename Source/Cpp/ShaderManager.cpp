@@ -452,7 +452,6 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             MessageBoxA(NULL, "ピクセルシェーダの作成に失敗しました。", "Error", MB_OK);
             return false;
         }
-
     }
     // .cso読み込み ********************************************************************************************
     else if (createType == SHADER_CREATE_TYPE::CSO)

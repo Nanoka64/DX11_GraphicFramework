@@ -317,9 +317,18 @@ bool SceneManager::Init(RendererEngine &renderer)
 
     bool result = true;
 
+
+    //========================================================================================
+    //
+    //
+    /* レンダリングターゲット作成 */
+    //
+    //
+    //========================================================================================
+    // ****************************************************************
+    // アルベド
     // ****************************************************************
     m_pAlbedo_RT = new DX_RenderTarget();
-    // アルベド
     result = m_pAlbedo_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
@@ -332,8 +341,9 @@ bool SceneManager::Init(RendererEngine &renderer)
     if (result == false)return false;
 
     // ****************************************************************
-    m_pNormal_RT = new DX_RenderTarget();
     // 法線
+    // ****************************************************************
+    m_pNormal_RT = new DX_RenderTarget();
     result = m_pNormal_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
@@ -346,8 +356,9 @@ bool SceneManager::Init(RendererEngine &renderer)
     if (result == false)return false;
 
     // ****************************************************************
-    m_pSpecular_RT = new DX_RenderTarget();
     // スペキュラ
+    // ****************************************************************
+    m_pSpecular_RT = new DX_RenderTarget();
     result = m_pSpecular_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
@@ -359,10 +370,10 @@ bool SceneManager::Init(RendererEngine &renderer)
     );
     if (result == false)return false;
 
-
+    // ****************************************************************
+    // デプス
     // ****************************************************************
     m_pDepth_RT = new DX_RenderTarget();
-    // デプス
     result = m_pDepth_RT->Create(
         renderer,
         renderer.get_ScreenWidth(),
@@ -374,10 +385,41 @@ bool SceneManager::Init(RendererEngine &renderer)
     );
     if (result == false)return false;
 
+    // ****************************************************************
+    // 垂直ブラー
+    // ****************************************************************
+    m_pVerticalBlur = new DX_RenderTarget();
+    result = m_pVerticalBlur->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+    
+    // ****************************************************************
+    // 垂直ブラー
+    // ****************************************************************
+    m_pHorizontalBlur = new DX_RenderTarget();
+    result = m_pHorizontalBlur->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
     
     //========================================================================================
     //
+    //
     /* レンダリングターゲット用スプライト */
+    //
     //
     //========================================================================================
     /*************************************

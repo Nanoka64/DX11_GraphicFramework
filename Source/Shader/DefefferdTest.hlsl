@@ -75,7 +75,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
     
-    
     // ディレクションライト計算
     for (int dirIdx = 0; dirIdx < DIRECTIONLIGHT_MAX_NUM; dirIdx++)
     { 
@@ -84,8 +83,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
         dirLig.Specular += res.Specular;
     }
     
-    // ポイントライト計算
-    for (int pointIdx = 0; pointIdx < POINTLIGHT_MAX_NUM; pointIdx++)
+    // ポイントライト計算 
+    // TODO : 定数にする
+    for (int pointIdx = 0; pointIdx < 50; pointIdx++)
     {
         OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[pointIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
         pointLig.Diffuse += res.Diffuse;

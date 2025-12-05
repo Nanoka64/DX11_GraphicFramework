@@ -32,6 +32,10 @@ private:
 	class DX_RenderTarget *m_pDepth_RT;
 	class DX_RenderTarget *m_pSpecular_RT;
 
+	class DX_RenderTarget *m_pVerticalBlur;		// 垂直ブラー
+	class DX_RenderTarget *m_pHorizontalBlur;   // 水平ブラー
+
+
 public:
 	SceneManager();
 	~SceneManager();
