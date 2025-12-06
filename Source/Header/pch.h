@@ -76,7 +76,9 @@ constexpr int DIRECTIONLIGHT_MAX_NUM	= 1;   // ディレクションライトの最大数
 #include "Window.h"			// ウインドウ情報
 #include "Helper.h"			// ヘルパー
 #include "MyStruct.h"		// 定数バッファ用構造体
-#include "Master.h"   
+#include "Master.h"			// シングルトン
+#include "BitFlag.h"		// ビットフラグ関連
+
 //#include "ShaderManager.h"	// シェーダ管理
 //#include "Debugger.h"	    // Imguiデバッグ用
 //#include "BlendManager.h"   // ブレンドステート用

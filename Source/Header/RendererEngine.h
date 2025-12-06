@@ -136,5 +136,17 @@ public:
     /// </summary>
     /// <returns></returns>
     XMFLOAT4X4 get_ViewProjectionInvMatrix();
+
+    /// <summary>
+    /// ビュー行列の取得
+    /// </summary>
+    /// <returns></returns>
+    XMMATRIX get_ViewMatrix()const;
+
+    /// <summary>
+    /// ビュー逆行列の取得
+    /// </summary>
+    /// <returns></returns>
+    XMMATRIX get_ViewInvMatrix()const;
 };
 

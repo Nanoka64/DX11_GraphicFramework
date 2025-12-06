@@ -302,7 +302,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MaterialData->pMat = mat;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(20000, 20000, 20000);
+            obj.lock()->get_Transform().lock()->set_Scale(40000, 40000, 40000);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }       
     }
@@ -333,7 +333,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
-        1,
+        0,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
@@ -489,14 +489,14 @@ bool SceneManager::Init(RendererEngine &renderer)
         // 地面
         MATERIAL* mat = new MATERIAL;
         mat->Diffuse.Texture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
-        mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-        mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        mat->DiffuseColor = VEC4(1, 0, 1, 1);
-        mat->SpecularPower = 100.0f;
+        mat->Normal.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+        mat->SpecularColor   = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        mat->DiffuseColor    = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        mat->SpecularPower   = 100.0f;
 
         CreateUtilityMeshInfo mesh;
         mesh.pRenderer = &renderer;
-        mesh.Type = UTILITY_MESH_TYPE::CUBU;
+        mesh.Type = UTILITY_MESH_TYPE::QUAD;
         mesh.ObjTag = "CubuRT";
         mesh.MatNum = 1;
         mesh.MaterialData = new InputMaterial();
@@ -597,6 +597,15 @@ void SceneManager::Update(RendererEngine& renderer)
 
     Master::m_pDebugger->EndDebugWindow();
 
+
+    // カメラ更新
+    auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
+
+    // ビュー変換
+    if (!renderer.SetupViewTransform(viewMatrix)) {
+        return;
+    };
+
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
 }
@@ -611,13 +620,6 @@ void SceneManager::Update(RendererEngine& renderer)
 void SceneManager::Draw(RendererEngine& renderer)
 {
 
-    // カメラ更新
-    auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
-
-    // ビュー変換
-    if (!renderer.SetupViewTransform(viewMatrix)) {
-        return;
-    };
 
     DX_RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,

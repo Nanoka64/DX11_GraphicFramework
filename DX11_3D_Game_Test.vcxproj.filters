@@ -133,6 +133,9 @@
     <Filter Include="ソース ファイル\Graphics\Light">
       <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Tool\BIt">
+      <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -332,6 +335,12 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\LightManager.cpp">
       <Filter>ソース ファイル\Graphics\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_BillBoard.cpp">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\BitFlag.cpp">
+      <Filter>ソース ファイル\Tool\BIt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -565,6 +574,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Master.h">
       <Filter>ソース ファイル\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_BillBoard.h">
+      <Filter>ソース ファイル\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BitFlag.h">
+      <Filter>ソース ファイル\Tool\BIt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

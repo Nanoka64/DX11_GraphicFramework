@@ -80,7 +80,7 @@ bool RendererEngine::Init(HWND hWnd)
 
     // ガクつくときはここを大きくするとよい
     m_NearClipDist = 1.0f;
-    m_FarClipDist  = 30000.0f;
+    m_FarClipDist  = 50000.0f;
     m_Fov = XMConvertToRadians(30.0f);
 
 
@@ -472,8 +472,8 @@ HRESULT RendererEngine::InitDX11_Sampler()
     ZeroMemory(&sampDesc, sizeof(sampDesc));
 
     /* サンプリングするときに使用するフィルター方法 */
-    // D3D11_FILTER_MIN_MAm_MIP_POINT   そのまま
-    // D3D11_FILTER_MIN_MAm_MIP_LINEAR  色の平均値(ぼやける)
+    // D3D11_FILTER_MIN_MAG_MIP_POINT   そのまま
+    // D3D11_FILTER_MIN_MAG_MIP_LINEAR  色の平均値(ぼやける)
     // D3D11_FILTER_ANISOTROPIC         異方性フィルタ(3Dの時はこれ使う)
 
     sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;  // 異方性フィルタ
@@ -490,6 +490,7 @@ HRESULT RendererEngine::InitDX11_Sampler()
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
+    sampDesc.MipLODBias     = 0.0f;
     sampDesc.MaxAnisotropy  = 16;
     // 作成
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
@@ -639,10 +640,8 @@ bool RendererEngine::SetupViewTransform(const XMMATRIX& viewMat)
 {
     auto pDeviceContext = get_DeviceContext();
 
-
     // ビュー行列保持
     m_View = viewMat;
-
 
     auto& cb = m_RenderParam.cbViewSet;
     XMStoreFloat4x4(&cb.Data.View, XMMatrixTranspose(viewMat));
@@ -707,6 +706,29 @@ XMFLOAT4X4 RendererEngine::get_ViewProjectionInvMatrix()
     return res;
 }
 
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】ビュー行列の行列取得
+//* 引数：なし
+//* 戻値：行列
+//*----------------------------------------------------------------------------------------
+XMMATRIX RendererEngine::get_ViewMatrix()const
+{
+    return m_View;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】ビュー行列の逆行列取得
+//* 引数：なし
+//* 戻値：逆行列
+//*----------------------------------------------------------------------------------------
+XMMATRIX RendererEngine::get_ViewInvMatrix()const
+{
+    return XMMatrixInverse(NULL, m_View);
+}
 
 
 //*---------------------------------------------------------------------------------------

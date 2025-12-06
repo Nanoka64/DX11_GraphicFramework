@@ -21,7 +21,7 @@ public:
 	virtual ~IComponent();
 
 	virtual void Init(RendererEngine &renderer) {};		// 初期化
-	virtual void Update(RendererEngine& renderer) {};		// 更新処理
+	virtual void Update(RendererEngine& renderer) {};	// 更新処理
 	virtual void Draw(RendererEngine &renderer) {};		// 描画処理
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// 更新の順番取得
