@@ -116,6 +116,8 @@ private:
     UINT m_AnimNum;			// アニメーション数
     UINT m_MaterialNum;		// マテリアル数
 
+	SHADER_TYPE m_ShaderType; // 使用するシェーダタイプ
+
     Assimp::Importer m_Importer;			// インポーター
     const aiScene *m_pScene;				// シーン情報
 	ModelMesh *m_pMeshes;					// メッシュ
@@ -138,7 +140,9 @@ public:
 
 	bool Setup(RendererEngine &render, const char *filePath);	// モデルデータのセットアップ
 	bool SetupTextureMap(MATERIAL matData, int matIndex);	// テクスチャマップ設定 Setup後に呼ぶ
-	
+	void set_ShaderType(SHADER_TYPE type) { m_ShaderType = type; }	// シェーダタイプ設定
+
+
 	// ****************************************************************************************************************************************
 	/* アクセスメソッド */
 	// ****************************************************************************************************************************************
@@ -164,6 +168,9 @@ public:
 	const std::vector<NodeInfo *> &get_NodeList() const { return m_pNodeList; }
 	const std::unordered_map<std::string, int> &get_BoneIndexMap() const { return m_BoneIndexMap; }
 	const std::vector<AnimationData *> &get_Animations() const { return m_pAnimations; }
+
+	// シェーダタイプ取得
+	const SHADER_TYPE &get_ShaderType() const { return m_ShaderType; }	
 
 	/* 定数バッファ */
 	CB_BONES_DATA_SET *GetConstantBufferBonesData() const { return m_pConstanrBufferBonesData; }

@@ -82,15 +82,6 @@
     <Filter Include="ソース ファイル\Graphics\Mesh">
       <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSL\Sprite">
-      <UniqueIdentifier>{72503ec0-8e95-4c02-85f9-8e154a6bcbad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\Model">
-      <UniqueIdentifier>{495885f1-3d17-4f45-9b99-ecede906af08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\Other">
-      <UniqueIdentifier>{743b417f-19df-48d6-89e8-57c8239f34bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\DXLap">
       <UniqueIdentifier>{9d2bcabc-5b85-4ab0-b209-451caf531e8e}</UniqueIdentifier>
     </Filter>
@@ -121,20 +112,41 @@
     <Filter Include="ソース ファイル\Component\Light">
       <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\UI">
-      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\Simple">
-      <UniqueIdentifier>{c3033428-26cf-4f15-a180-d823df30a524}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HLSL\DefefferdShader">
-      <UniqueIdentifier>{5d9a4809-0be7-4c1b-a4d6-d0ef22b937aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Graphics\Light">
       <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Tool\BIt">
       <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\Model">
+      <UniqueIdentifier>{768b8687-7ced-438d-882f-5caf8a78b77d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\UtilityMesh">
+      <UniqueIdentifier>{56b764bb-d086-4f11-a45c-d49b2261655d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\BillBoard">
+      <UniqueIdentifier>{9b6c5c76-07f1-4a10-b99d-2d507ca258d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\UI">
+      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\VS">
+      <UniqueIdentifier>{d20d67e4-bcff-4977-b334-fce00d2d227b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\PS">
+      <UniqueIdentifier>{7cc07e99-48cc-41ba-bf6a-e72ce9fafb34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\PS\Defferd">
+      <UniqueIdentifier>{e75db754-c5ea-4c86-b4f3-6b7b9d9c0539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\PS\Defferd\GPath">
+      <UniqueIdentifier>{de74d267-4295-4da8-9648-1b838c090c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\PS\Defferd\LightingPath">
+      <UniqueIdentifier>{514041eb-096d-4df1-8e7c-9ee0dcecaded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\PS\Foward">
+      <UniqueIdentifier>{fb9ba330-0d8e-4dce-9581-e1729ec3b250}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -291,23 +303,8 @@
     <ClCompile Include="Source\Cpp\MeshFactory.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_IMeshResource.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_3DCamera.cpp">
       <Filter>ソース ファイル\Component\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Transform.cpp">
       <Filter>ソース ファイル\Component\Utility</Filter>
@@ -316,7 +313,7 @@
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp">
-      <Filter>ソース ファイル\Component\UI</Filter>
+      <Filter>ソース ファイル\Component\Mesh\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp">
       <Filter>ソース ファイル\DXLap\RT</Filter>
@@ -336,11 +333,29 @@
     <ClCompile Include="Source\Cpp\LightManager.cpp">
       <Filter>ソース ファイル\Graphics\Light</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_BillBoard.cpp">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\BitFlag.cpp">
       <Filter>ソース ファイル\Tool\BIt</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_IMeshResource.cpp">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_BillboardRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_BillboardResource.cpp">
+      <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,23 +542,8 @@
     <ClInclude Include="Source\Header\MeshFactory.h">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_IMeshResource.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_MeshRenderer.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_ModelMeshResource.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Component_3DCamera.h">
       <Filter>ソース ファイル\Component\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Transform.h">
       <Filter>ソース ファイル\Component\Utility</Filter>
@@ -552,7 +552,7 @@
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h">
-      <Filter>ソース ファイル\Component\UI</Filter>
+      <Filter>ソース ファイル\Component\Mesh\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\DX_RenderTarget.h">
       <Filter>ソース ファイル\DXLap\RT</Filter>
@@ -575,11 +575,29 @@
     <ClInclude Include="Source\Header\Master.h">
       <Filter>ソース ファイル\App</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_BillBoard.h">
-      <Filter>ソース ファイル\Component\Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\BitFlag.h">
       <Filter>ソース ファイル\Tool\BIt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ModelMeshResource.h">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_IMeshResource.h">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_MeshRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_BillboardRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_BillboardResource.h">
+      <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -607,29 +625,26 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Source\Shader\SimpleLightingPS.hlsl">
-      <Filter>HLSL\Other</Filter>
+    <FxCompile Include="Source\Shader\Skinned_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\PS.hlsl">
-      <Filter>HLSL\Model</Filter>
+    <FxCompile Include="Source\Shader\Simple_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\VS.hlsl">
-      <Filter>HLSL\Model</Filter>
+    <FxCompile Include="Source\Shader\Sprite_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SpritePS.hlsl">
-      <Filter>HLSL\Sprite</Filter>
+    <FxCompile Include="Source\Shader\GBuffer_Simple_PS.hlsl">
+      <Filter>HLSL\PS\Defferd\GPath</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SpriteVS.hlsl">
-      <Filter>HLSL\Sprite</Filter>
+    <FxCompile Include="Source\Shader\GBuffer_Standard_PS.hlsl">
+      <Filter>HLSL\PS\Defferd\GPath</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SimplePS.hlsl">
-      <Filter>HLSL\Simple</Filter>
+    <FxCompile Include="Source\Shader\LightingPath_Standard_PS.hlsl">
+      <Filter>HLSL\PS\Defferd\LightingPath</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\SimpleVS.hlsl">
-      <Filter>HLSL\Simple</Filter>
-    </FxCompile>
-    <FxCompile Include="Source\Shader\DefefferdTest.hlsl">
-      <Filter>HLSL\DefefferdShader</Filter>
+    <FxCompile Include="Source\Shader\Sprite_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

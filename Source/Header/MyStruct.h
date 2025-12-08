@@ -188,16 +188,18 @@ struct MATERIAL {
     VECTOR4::VEC4 DiffuseColor;   // ディフューズ反射光
     VECTOR4::VEC4 SpecularColor;  // スペキュラ反射光
     VECTOR4::VEC4 NormalColor;    // 法線
-    float SpecularPower;          // スペキュラの強さ
+    float SpecularPower;          // スペキュラの絞り強さ
 
 
     // テクスチャマップ==============================================
-    DIFFUSE_MAP_DATA Diffuse;     // ディフューズ
-    NORMAL_MAP_DATA Normal;       // ノーマル
-    SPECULAR_MAP_DATA Specular;   // スペキュラ
+    DIFFUSE_MAP_DATA Diffuse;     // ディフューズマップ
+    NORMAL_MAP_DATA Normal;       // ノーマルマップ
+    SPECULAR_MAP_DATA Specular;   // スペキュラマップ
 
     // UV=============================================================
     Tool::UV::SpriteUV UV;      // UV情報
+    
+    //BLEND_MODE BlendMode;       // ブレンドモード
 
     MATERIAL():
         DiffuseColor(VECTOR4::VEC4(1.f,1.f,1.f,1.f)),

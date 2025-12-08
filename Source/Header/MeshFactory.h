@@ -2,13 +2,14 @@
 #include "Object.h"
 #include "Component_IMeshResource.h"
 #include "Component_SpriteRenderer.h"
+#include "Component_BillboardResource.h"
 
 
 // 入力マテリアル情報
 struct InputMaterial
 {
     MATERIAL* pMat; // マテリアル（MatNum分）
-    int MatIndex;         // マテリアル番号
+    int MatIndex;   // マテリアル番号
 };
 
 
@@ -17,12 +18,13 @@ struct InputMaterial
 /// </summary>
 struct CreateModelInfo
 {
-    RendererEngine *pRenderer;     // 描画
+    RendererEngine *pRenderer;      // 描画
     std::string Path;               // モデルパス
     std::string ObjTag;             // オブジェクトのタグ
     bool IsActive;                  // 生成時にオブジェクトをアクティブにするか
     bool IsAnim;                    // アニメーションするかどうか
     int InitAnimIndex;              // 最初に再生するアニメーション
+    SHADER_TYPE ShaderType;         // 使用するシェーダの種類
 
     InputMaterial* MaterialData;    // マテリアル情報
     UINT MatNum;                    // マテリアル数
@@ -35,7 +37,8 @@ struct CreateModelInfo
         IsAnim(false),
         InitAnimIndex(0),
         MaterialData(nullptr),
-        MatNum(0)
+        MatNum(0),
+        ShaderType(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE)
     {
     }
 };
@@ -49,7 +52,8 @@ struct CreateUtilityMeshInfo
     RendererEngine* pRenderer;  // 描画
     
     UTILITY_MESH_TYPE Type;      // メッシュタイプ
-    
+    SHADER_TYPE ShaderType;      // 使用するシェーダの種類
+
     std::string ObjTag;          // オブジェクトのタグ
     bool IsActive;               // 生成時にオブジェクトをアクティブにするか
 
@@ -62,7 +66,8 @@ struct CreateUtilityMeshInfo
         IsActive(true),
         MaterialData(nullptr),
         MatNum(0),
-        Type(UTILITY_MESH_TYPE::NONE)
+        Type(UTILITY_MESH_TYPE::NONE),
+        ShaderType(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE)
     {};
 };
 
@@ -72,7 +77,7 @@ struct CreateUtilityMeshInfo
 /// </summary>
 struct CreateSpriteInfo
 {
-    RendererEngine *pRenderer;         // 描画
+    RendererEngine *pRenderer;          // 描画
     std::string ObjTag;                 // オブジェクトのタグ
     bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
@@ -90,7 +95,35 @@ struct CreateSpriteInfo
         Width(0.0f),
         Height(0.0f),
         Type(SPRITE_USAGE_TYPE::NORMAL),
-        ShaderType(SHADER_TYPE::SPRITE)
+        ShaderType(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE)
+    {};
+};
+
+
+/// <summary>
+/// ビルボード生成情報
+/// </summary>
+struct CreateBillboradInfo
+{
+    RendererEngine* pRenderer;   // 描画
+
+    BILLBOARD_USAGE_TYPE Type;    // 使用方法
+    FIXED_AXIS_BITFLAG FixedAxis; // 固定軸ビットフラグ（指定しない場合は固定軸なし）
+
+    std::string ObjTag;          // オブジェクトのタグ
+    bool IsActive;               // 生成時にオブジェクトをアクティブにするか
+
+    InputMaterial* MaterialData; // マテリアル情報
+    UINT MatNum;                 // マテリアル数
+
+    // コンストラクタ
+    CreateBillboradInfo() :
+        pRenderer(nullptr),
+        IsActive(true),
+        MaterialData(nullptr),
+        MatNum(0),
+        Type(BILLBOARD_USAGE_TYPE::SIMPLE),
+        FixedAxis()
     {};
 };
 
@@ -104,5 +137,6 @@ public:
     static std::weak_ptr<class GameObject> CreateModel(const CreateModelInfo& info);
     static std::weak_ptr<class GameObject> CreateUtilityMesh(const CreateUtilityMeshInfo& info);
     static std::weak_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
-};
+    static std::weak_ptr<class GameObject> CreateBillboard(const CreateBillboradInfo& info);
+}; 
 

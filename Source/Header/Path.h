@@ -15,24 +15,30 @@ namespace Path
     constexpr const wchar_t* CSO    = L"Resource//CSO//";               // CSOファイル
 
     // パス取得 
-    //     ファイル種別↓    ↓ファイル名  
+    //        ファイル種別↓    ↓ファイル名  
     //const std::wstring HLSL__VS_PATH = std::wstring(Shader) + L"VS.hlsl"; 
 
-    // ランタイムコンパイル
-    const std::wstring HLSL__VS_PATH = std::wstring(Shader) + L"VS.hlsl"; 
-    const std::wstring HLSL__PS_PATH = std::wstring(Shader) + L"PS.hlsl"; 
-    const std::wstring HLSL__SimplePS_PATH = std::wstring(Shader) + L"SimplePS.hlsl";
-    const std::wstring HLSL__SimpleVS_PATH = std::wstring(Shader) + L"SimpleVS.hlsl";
-    const std::wstring HLSL__SpriteVS_PATH = std::wstring(Shader) + L"SpriteVS.hlsl";
-    const std::wstring HLSL__SpritePS_PATH = std::wstring(Shader) + L"SpritePS.hlsl";
-    const std::wstring HLSL__DefferdPS_PATH = std::wstring(Shader) + L"DefefferdTest.hlsl";
+    // ランタイムコンパイル *****************************************************************************************
+    // PS
+    const std::wstring HLSL__GBuffer_Standard_PS_PATH = std::wstring(Shader)        + L"GBuffer_Standard_PS.hlsl";
+    const std::wstring HLSL__GBuffer_Simple_PS_PATH = std::wstring(Shader)          + L"GBuffer_Simple_PS.hlsl";
+    const std::wstring HLSL__LightingPath_Standard_PS_PATH = std::wstring(Shader)   + L"LightingPath_Standard_PS.hlsl";
+    const std::wstring HLSL__Sprite_PS_PATH = std::wstring(Shader)                  + L"Sprite_PS.hlsl";
 
-    // csoファイル(コンパイル済みシェーダ)
-    const std::wstring HLSL_CSO__VS_PATH = std::wstring(CSO) + L"VS.cso";
-    const std::wstring HLSL_CSO__PS_PATH = std::wstring(CSO) + L"PS.cso";
-    const std::wstring HLSL_CSO__SimplePS_PATH = std::wstring(CSO) + L"SimplePS.cso";
-    const std::wstring HLSL_CSO__SimpleVS_PATH = std::wstring(CSO) + L"SimpleVS.cso";
-    const std::wstring HLSL_CSO__SpriteVS_PATH = std::wstring(CSO) + L"SpriteVS.cso";
-    const std::wstring HLSL_CSO__SpritePS_PATH = std::wstring(CSO) + L"SpritePS.cso";
-    const std::wstring HLSL_CSO__DefferdPS_PATH = std::wstring(CSO) + L"DefefferdTest.cso";
+    // VS
+    const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
+    const std::wstring HLSL__Simple_VS_PATH = std::wstring(Shader)                  + L"Simple_VS.hlsl";
+    const std::wstring HLSL__Sprite_VS_PATH = std::wstring(Shader)                  + L"Sprite_VS.hlsl";
+
+    // csoファイル(コンパイル済みシェーダ) ***************************************************************************
+    // PS
+    const std::wstring HLSL_CSO__GBuffer_Standard_PS_PATH = std::wstring(CSO)       + L"GBuffer_Standard_PS.cso";
+    const std::wstring HLSL_CSO__GBuffer_Simple_PS_PATH = std::wstring(CSO)         + L"GBuffer_Simple_PS.cso";
+    const std::wstring HLSL_CSO__LightingPath_Standard_PS_PATH = std::wstring(CSO)  + L"LightingPath_Standard_PS.cso";
+    const std::wstring HLSL_CSO__Sprite_PS_PATH = std::wstring(CSO)                 + L"Sprite_PS.cso";
+
+    // VS
+    const std::wstring HLSL_CSO__Skinned_VS_PATH = std::wstring(CSO)                + L"Skinned_VS.cso";
+    const std::wstring HLSL_CSO__Simple_VS_PATH = std::wstring(CSO)                 + L"Simple_VS.cso";
+    const std::wstring HLSL_CSO__Sprite_VS_PATH = std::wstring(CSO)                 + L"Sprite_VS.cso";
 }

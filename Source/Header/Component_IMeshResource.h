@@ -29,9 +29,9 @@ class IMeshResource : public IComponent
 private:
 	friend class MeshRenderer;
 
-	MeshInfo *m_pMeshInfo;			// メッシュ情報
-	ID3D11Buffer *m_pVertexBuffer;	// 頂点バッファ
-	ID3D11Buffer *m_pIndexBuffer;	// インデックスバッファ
+	MeshInfo *m_pMeshInfo;						// メッシュ情報
+	ID3D11Buffer *m_pVertexBuffer;				// 頂点バッファ
+	ID3D11Buffer *m_pIndexBuffer;				// インデックスバッファ
 	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
 	CB_MATERIAL_SET *m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
 

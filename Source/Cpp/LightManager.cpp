@@ -146,6 +146,7 @@ void LightManager::PointLight_SetCBuffer()
 	m_pContext->PSSetConstantBuffers(6, 1, &m_pCBPointLightSet->pBuff);
 
 
+	// 一時データクリア
 	m_TemporaryPointLightData.clear();
 }
 

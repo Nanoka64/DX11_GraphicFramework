@@ -125,7 +125,7 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
 
 
     // モデルシェーダに切り替え
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::MODEL);
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::DEFFERD_STANDARD_SKINNED);
 
 
     // 定数バッファ更新

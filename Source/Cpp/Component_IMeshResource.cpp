@@ -238,9 +238,14 @@ bool IMeshResource::Setup(RendererEngine& renderer, UTILITY_MESH_TYPE type, MATE
 		break;
 	}
 
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex))return false;   // 頂点バッファの作成
-	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) return false;       // インデックスバッファの作成
-	if (!CreateCBuffer(pDevice))	return false;							        // 定数バッファの作成
+	// 頂点バッファの作成
+	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex))return false; 
+	
+	// インデックスバッファの作成
+	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) return false;       
+	
+	// 定数バッファの作成
+	if (!CreateCBuffer(pDevice))	return false;	
 
 	return true;
 }

@@ -71,10 +71,8 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     ID3D11Buffer* vtxBuff = m_pMeshResource.lock()->m_pVertexBuffer;
     ID3D11Buffer* idxBuff = m_pMeshResource.lock()->m_pIndexBuffer;
 
-    //renderer.ChangeTestRT();
-
     // シェーダセット ==========================
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::SIMPLE);
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE);
 
 
     /* ========== 定数バッファの更新 ========== */

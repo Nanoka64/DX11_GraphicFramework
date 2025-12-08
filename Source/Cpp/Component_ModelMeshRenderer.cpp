@@ -79,10 +79,10 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     CB_TRANSFORM_SET *CB_TransSet   = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferTransformSet();
     UINT vertexNum          = pMeshes->get_VertexNum();
     MODEL_VERTEX* vertices  = pMeshes->get_Vertices();
+    SHADER_TYPE shaderType  = m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType();
 
     // モデルシェーダに切り替え
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::MODEL);
-
+    Master::m_pShaderManager->DeviceToSetShader(shaderType);
 
     Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());
     Master::m_pDebugger->DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);

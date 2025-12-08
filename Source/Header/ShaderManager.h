@@ -15,11 +15,42 @@ class InputLayout;
 enum class SHADER_TYPE
 {
     NONE,       // なし
-    SIMPLE,     // 単純な3Dオブジェクト表示用
-    MODEL,      // 3Dモデルの表示用
-    SPRITE,     // スプライト
-    DEFFERD,    // ディファードシェーディング
+
+    // ディファードシェーディング **************************************
+    // 不透明オブジェクト用
+    DEFFERD_STANDARD_RT_SPRITE, // RT用スプライト     標準ライティング
+    DEFFERD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
+    DEFFERD_STANDARD_SKINNED,   // スキニング3Dモデル 標準ライティング
+    DEFFERD_STANDARD_BILLBOARD, // ビルボード         標準ライティング 
+
+
+    // フォワードシェーディング ****************************************
+    // UIやαブレンドがあるオブジェクト用
+    FOWARD_STANDARD_UI_SPRITE, // スプライト 標準 UI用 
+    FOWARD_STANDARD_BILLBOARD, // ビルボード 標準ライティング
+
+
+    /* AIにそれっぽいもの出してもらった
+    FOWARD_UI_TEXT,   // テキスト UI用
+    FOWARD_UI_IMAGE,  // イメージ UI用
+    FOWARD_UI_SLIDER, // スライダー UI用
+    FOWARD_UI_BUTTON, // ボタン UI用
+    FOWARD_UI_CHECKBOX, // チェックボックス UI用
+    FOWARD_UI_RADIOBUTTON, // ラジオボタン UI用
+    FOWARD_UI_PANEL, // パネル UI用
+    FOWARD_UI_SCROLLBAR, // スクロールバー UI用
+    FOWARD_UI_INPUTFIELD, // インプットフィールド UI用
+    FOWARD_UI_DROPDOWN, // ドロップダウン UI用
+    FOWARD_UI_TOGGLE, // トグル UI用
+    */
     
+    /* 旧仕様 */
+    //SIMPLE,     // 単純な3Dオブジェクト表示用
+    //MODEL,      // 3Dモデルの表示用
+    //SPRITE,     // スプライト
+    //DEFFERD,    // ディファードシェーディング
+    //BILLBOARD,  // ビルボード
+
     NUM,
 };
 

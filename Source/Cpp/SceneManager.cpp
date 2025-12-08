@@ -159,6 +159,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
@@ -183,6 +184,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(1.0,1.0,1.0);
             obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f,180,0.0);
@@ -209,9 +211,36 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 500.0f, 0.0f);
+            obj.lock()->set_LayerRank(0);
+        }
+
+        {
+            /* クレイモア モデルの生成 */
+            MATERIAL mat[1];
+            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Base_Color.png");
+            mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Roughness.png");
+            mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
+            mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower    = 100.0f;
+            mat[0].SpecularColor    = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Claymore/Claymore.fbx";
+            model.ObjTag = "Claymore";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SIMPLE;
+            auto obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 1000.0f);
             obj.lock()->set_LayerRank(0);
         }        
 
@@ -243,7 +272,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             {
                 // 地面
                 MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/big-photo0000-0169.jpg");
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/WoodFloor051_2K-PNG_Color.png");
                 mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
                 mat->SpecularPower = 100.0f;
@@ -262,28 +291,7 @@ bool SceneManager::Init(RendererEngine &renderer)
                 obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, 0.0f);
             }
         }
-
-        //{
-        //    // SPHERE
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040.jpg");
-        //    mat->DiffuseColor = VEC4(0.0f, 5.0f, 0.0f, 1.0f);
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W040_n.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 100.0f;
-
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-        //    mesh.ObjTag = "sphere";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
-
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(50, 50, 50);
-        //    obj.lock()->get_Transform().lock()->set_Pos(700.0, 50.0, 0.0);
-        //}        
+   
         {
             // SkyDorm
             MATERIAL* mat = new MATERIAL;
@@ -305,7 +313,28 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->get_Transform().lock()->set_Scale(40000, 40000, 40000);
             obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         }       
+
+        {
+            // ビルボード
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 100.0f;
+            CreateBillboradInfo billboard;
+            billboard.pRenderer = &renderer;
+            billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
+            billboard.ObjTag = "Billboard";
+            billboard.MatNum = 1;
+            billboard.MaterialData = new InputMaterial();
+            billboard.MaterialData->pMat = mat;
+            auto obj = MeshFactory::CreateBillboard(billboard);
+            obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 500.0f, 500.0f);
+            obj.lock()->get_Transform().lock()->set_RotateToDeg(-90,0,0);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
+        }
     }
+
 
 
     // 参照を持たせる
@@ -385,36 +414,36 @@ bool SceneManager::Init(RendererEngine &renderer)
     );
     if (result == false)return false;
 
-    // ****************************************************************
-    // 垂直ブラー
-    // ****************************************************************
-    m_pVerticalBlur = new DX_RenderTarget();
-    result = m_pVerticalBlur->Create(
-        renderer,
-        renderer.get_ScreenWidth(),
-        renderer.get_ScreenHeight(),
-        1,
-        1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_UNKNOWN
-    );
-    if (result == false)return false;
-    
-    // ****************************************************************
-    // 垂直ブラー
-    // ****************************************************************
-    m_pHorizontalBlur = new DX_RenderTarget();
-    result = m_pHorizontalBlur->Create(
-        renderer,
-        renderer.get_ScreenWidth(),
-        renderer.get_ScreenHeight(),
-        1,
-        1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_D32_FLOAT
-    );
-    if (result == false)return false;
-    
+    //// ****************************************************************
+    //// 垂直ブラー
+    //// ****************************************************************
+    //m_pVerticalBlur = new DX_RenderTarget();
+    //result = m_pVerticalBlur->Create(
+    //    renderer,
+    //    renderer.get_ScreenWidth(),
+    //    renderer.get_ScreenHeight(),
+    //    1,
+    //    1,
+    //    DXGI_FORMAT_R8G8B8A8_UNORM,
+    //    DXGI_FORMAT_UNKNOWN
+    //);
+    //if (result == false)return false;
+    //
+    //// ****************************************************************
+    //// 垂直ブラー
+    //// ****************************************************************
+    //m_pHorizontalBlur = new DX_RenderTarget();
+    //result = m_pHorizontalBlur->Create(
+    //    renderer,
+    //    renderer.get_ScreenWidth(),
+    //    renderer.get_ScreenHeight(),
+    //    1,
+    //    1,
+    //    DXGI_FORMAT_R8G8B8A8_UNORM,
+    //    DXGI_FORMAT_D32_FLOAT
+    //);
+    //if (result == false)return false;
+    //
     //========================================================================================
     //
     //
@@ -428,7 +457,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     CreateSpriteInfo sprite;
     sprite.pRenderer = &renderer;
     sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    sprite.ShaderType = SHADER_TYPE::SPRITE;
+    sprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
     sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
 
 
@@ -479,34 +508,10 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
-    sprite.ShaderType = SHADER_TYPE::DEFFERD;
+    sprite.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE;
     obj = MeshFactory::CreateSprite(sprite);
     //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
-
-
-    {
-        // 地面
-        MATERIAL* mat = new MATERIAL;
-        mat->Diffuse.Texture = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
-        mat->Normal.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-        mat->SpecularColor   = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        mat->DiffuseColor    = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        mat->SpecularPower   = 100.0f;
-
-        CreateUtilityMeshInfo mesh;
-        mesh.pRenderer = &renderer;
-        mesh.Type = UTILITY_MESH_TYPE::QUAD;
-        mesh.ObjTag = "CubuRT";
-        mesh.MatNum = 1;
-        mesh.MaterialData = new InputMaterial();
-        mesh.MaterialData->pMat = mat;
-
-        auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 1000, 1000.0f);
-        obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
-        obj.lock()->get_Transform().lock()->set_RotateToDeg(-90.0f, 0.0f, 0.0f);
-    }
 
     return true;
 }
@@ -560,7 +565,7 @@ void SceneManager::Update(RendererEngine& renderer)
 
     auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<class Transform>();
-    rad->set_RotateToRad(0.0, 0.0, sin(a) );
+    rad->set_RotateToRad(0.0, 0.0, sin(a));
 
 
 
