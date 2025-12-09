@@ -1,16 +1,17 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-/* - @:ピクセルシェーダ -*/
+/* - @:Gパス -*/
 //
-//  【?】モデル用
+//  【?】標準GBuffer
+//       Simpleとの違いは接ベクトルの、従ベクトルがあるかどうか
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "LightFunctions_H.hlsli"    // ライトヘッダー
+#include "LightFunctions_H.hlsli"           // ライトヘッダー
 SamplerState g_sSampler : register(s0);
-Texture2D g_tDiffuseTex : register(t0); // ディフューズ
-Texture2D g_tNormalTex : register(t1); // ノーマル
-Texture2D g_tSpecularTex : register(t2); // スペキュラ
+Texture2D g_tDiffuseTex : register(t0);     // ディフューズ
+Texture2D g_tNormalTex : register(t1);      // ノーマル
+Texture2D g_tSpecularTex : register(t2);    // スペキュラ
 
 /* =========================================================================
 /* - @:PS_INPUT構造体 - */

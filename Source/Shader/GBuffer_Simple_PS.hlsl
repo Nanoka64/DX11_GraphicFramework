@@ -1,18 +1,17 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-/* - @:ピクセルシェーダ -*/
+/* - @:Gパス -*/
 //
-//  【?】特に凝った処理を行わないシンプルなピクセルシェーダ
-//		 頂点カラーをそのまま出力
+//  【?】簡易GBuffer
+//      接ベクトル、従ベクトルを使わないシンプルな実装
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "LightFunctions_H.hlsli"    // ライトヘッダー
-
+#include "LightFunctions_H.hlsli"           // ライトヘッダー
 SamplerState g_sSampler : register(s0);
-Texture2D g_tDiffuseTex : register(t0);  // ディフューズ
-Texture2D g_tNormalTex : register(t1);   // ノーマル
-Texture2D g_tSpecularTex : register(t2); // スペキュラ
+Texture2D g_tDiffuseTex : register(t0);     // ディフューズ
+Texture2D g_tNormalTex : register(t1);      // ノーマル
+Texture2D g_tSpecularTex : register(t2);    // スペキュラ
 
 
 
@@ -80,8 +79,6 @@ PS_OUT PSMain(PS_IN input)
     output.Specular.xyz = cb_SpecularColor.xyz;
     output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
     output.Depth;
-    
-    //output.Specular = input.WPos;
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
     

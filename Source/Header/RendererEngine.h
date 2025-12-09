@@ -96,6 +96,14 @@ public:
     /// レンダーターゲットをフレームバッファに変更
     /// </summary>
     void ChangeRenderTargetFrameBuffer();
+    
+
+    /// <summary>
+    /// レンダーターゲットをフレームバッファに変更
+    /// デプスステンシルびゅーを指定可能
+    /// </summary>
+    /// <param name="pDsv"></param>
+    void ChangeRenderTargetFrameBuffer(ID3D11DepthStencilView* pDsv);
 
 
     /// <summary>
@@ -104,11 +112,19 @@ public:
     void ReleaseRenderTargetSetNull();
 
     /// <summary>
-    /// レンダーターゲットを登録
+    /// MRTレンダーターゲットを登録
     /// </summary>
     /// <param name="num"></param>
     /// <param name="renderTargets"></param>
     void RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[]);
+
+    
+    /// <summary>
+    /// 単一のレンダーターゲットを登録
+    /// </summary>
+    /// <param name="pRtv"></param>
+    /// <param name="pDsv"></param>
+    void RegisterRenderTarget(ID3D11RenderTargetView* pRtv, ID3D11DepthStencilView* pDsv);
 
     /// <summary>
     /// レンダーターゲットのクリア

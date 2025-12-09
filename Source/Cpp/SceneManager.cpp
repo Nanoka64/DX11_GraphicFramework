@@ -18,6 +18,7 @@
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
 #include "Component_SpriteRenderer.h"
+#include "Component_BillboardRenderer.h"
 #include "DX_RenderTarget.h"
 
 
@@ -136,7 +137,7 @@ bool SceneManager::Init(RendererEngine &renderer)
                 auto light = obj.lock()->add_Component<PointLight>();
                 light->set_LightColor(col);
                 light->set_Range(1000.0f);
-                light->set_Intensity(100.0f);
+                light->set_Intensity(10.0f);
                 light->Init(renderer);
             }
         }
@@ -279,62 +280,63 @@ bool SceneManager::Init(RendererEngine &renderer)
 
                 CreateUtilityMeshInfo mesh;
                 mesh.pRenderer = &renderer;
-                mesh.Type = UTILITY_MESH_TYPE::QUAD;
+                mesh.Type = UTILITY_MESH_TYPE::PLANE;
                 mesh.ObjTag = "Ground";
                 mesh.MatNum = 1;
                 mesh.MaterialData = new InputMaterial();
                 mesh.MaterialData->pMat = mat;
 
                 auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 1.0f, 10000.0f);
+                obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 10000.0f, 10000.0f);
                 obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
                 obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, 0.0f);
             }
         }
    
-        {
-            // SkyDorm
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
-            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-            mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
-            mat->SpecularPower = 1.0f;
+        //{
+        //    // SkyDorm
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
+        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+        //    mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+        //    mat->SpecularPower = 1.0f;
 
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.ObjTag = "SkyDorm";
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
+        //    CreateUtilityMeshInfo mesh;
+        //    mesh.pRenderer = &renderer;
+        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+        //    mesh.ObjTag = "SkyDorm";
+        //    mesh.MatNum = 1;
+        //    mesh.MaterialData = new InputMaterial();
+        //    mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(40000, 40000, 40000);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
-        }       
+        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        //    obj.lock()->get_Transform().lock()->set_Scale(40000, 40000, 40000);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
+        //}       
 
         {
             // ビルボード
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/0191.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 100.0f;
+            mat->BlendMode = BLEND_MODE::ALPHA;
             CreateBillboradInfo billboard;
             billboard.pRenderer = &renderer;
             billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
+            billboard.ShaderType = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
             billboard.ObjTag = "Billboard";
+            billboard.IsActive = false;
             billboard.MatNum = 1;
             billboard.MaterialData = new InputMaterial();
             billboard.MaterialData->pMat = mat;
             auto obj = MeshFactory::CreateBillboard(billboard);
             obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 500.0f, 500.0f);
-            obj.lock()->get_Transform().lock()->set_RotateToDeg(-90,0,0);
             obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
         }
     }
-
 
 
     // 参照を持たせる
@@ -579,9 +581,9 @@ void SceneManager::Update(RendererEngine& renderer)
     //rad = cubuObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(cos(a), sin(a), sin(a));
 
-    auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
-    auto tf = skyObj.lock()->get_Component<Transform>();
-    tf->set_Pos(camPos);
+    //auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
+    //auto tf = skyObj.lock()->get_Component<Transform>();
+    //tf->set_Pos(camPos);
 
 
     Master::m_pDebugger->BeginDebugWindow("Light");
@@ -624,8 +626,6 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
-
-
     DX_RenderTarget *gbuffer[] ={
         m_pAlbedo_RT ,
         m_pNormal_RT,
@@ -649,14 +649,14 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.SetupProjectionTransform();
 
     // ターゲット描画
-    auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
-    auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
-    auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
-    auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
-    auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
-    auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
-    auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
-    auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
+    //auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
+    //auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
+    //auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
+    //auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
+    //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
+    //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
+    //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
+    //auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
     //sprite->Draw(renderer);
     //sprite2->Draw(renderer);
     //sprite3->Draw(renderer);
@@ -671,9 +671,18 @@ void SceneManager::Draw(RendererEngine& renderer)
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
 
+    // Gbuffer作成時の深度バッファを設定
+    // フォワードの場合はこの下に記述
+    renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
+
+    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
+    billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+
+
+
+
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
-
 }
 
 

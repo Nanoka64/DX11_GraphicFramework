@@ -233,10 +233,16 @@ bool IMeshResource::Setup(RendererEngine& renderer, UTILITY_MESH_TYPE type, MATE
 		break;
 	case UTILITY_MESH_TYPE::SPHERE:
 		m_pMeshInfo = MeshInfoFactory::CreateSphereInfo(materials, materialNum);
+		break;	
+	case UTILITY_MESH_TYPE::PLANE:
+		m_pMeshInfo = MeshInfoFactory::CreatePlaneInfo(materials, materialNum);
 		break;
 	default:
+		return false;
 		break;
 	}
+
+	if(m_pMeshInfo==nullptr)return false;
 
 	// 頂点バッファの作成
 	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex))return false; 

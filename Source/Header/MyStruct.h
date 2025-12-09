@@ -1,7 +1,6 @@
 #pragma once
 
 
-
 struct SimpleVertex     // 頂点フォーマット
 {
     DirectX::XMFLOAT3 Pos;       // x, y, z 座標
@@ -182,6 +181,22 @@ struct NORMAL_MAP_DATA
     int index = -1;
 };
 
+
+//* =========================================================================
+//* - @:BLEND_MODE列挙体 - */
+//* 【?】ブレンドモード
+//* =========================================================================
+enum class BLEND_MODE
+{
+    NONE,   // 何もしない
+    ALPHA,  // アルファ
+    ADD,    // 加算
+    SUB,    // 減算
+
+    NUM,
+};
+
+
 // マテリアル情報 テクスチャの弱参照をそれぞれ持つ リソース管理から受け取る
 struct MATERIAL {
     // 基本パラメータ================================================
@@ -199,14 +214,15 @@ struct MATERIAL {
     // UV=============================================================
     Tool::UV::SpriteUV UV;      // UV情報
     
-    //BLEND_MODE BlendMode;       // ブレンドモード
+    BLEND_MODE BlendMode;       // ブレンドモード
 
     MATERIAL():
         DiffuseColor(VECTOR4::VEC4(1.f,1.f,1.f,1.f)),
         SpecularColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
         NormalColor(),
         SpecularPower(0.0f),
-        UV()
+        UV(),
+        BlendMode(BLEND_MODE::NONE)
     {
 
     };

@@ -25,13 +25,22 @@ MeshInfo * MeshInfoFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
 	// 頂点数
 	meshInfo->NumVertex = 4;
 
-	// 頂点情報
+	//// 頂点情報 （上向き）
+	//meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	//	// 座標                       // 法線                  // カラー                      // uv
+	//	{ VEC3(-1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
+	//	{ VEC3( 1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
+	//	{ VEC3(-1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下
+	//	{ VEC3( 1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 1.0f)}, // 11右下
+	//};	
+	
+	// 頂点情報 （前向き）
 	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
 		// 座標                       // 法線                  // カラー                      // uv
-		{ VEC3(-1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
-		{ VEC3( 1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
-		{ VEC3(-1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下
-		{ VEC3( 1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 1.0f)}, // 11右下
+		{ VEC3(-1.0f,  1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
+		{ VEC3( 1.0f,  1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
+		{ VEC3(-1.0f, -1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下
+		{ VEC3( 1.0f, -1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 1.0f)}, // 11右下
 	};
 
 	// インデックス数
@@ -219,6 +228,42 @@ MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
 	return meshInfo;
 }
 
+// ----------------------------------------------------------------------------------------------------------------------
+//       * MeshFactory Class - 平面の作成- *
+// 引数 1.マテリアル
+// 		2.マテリアル数
+// ----------------------------------------------------------------------------------------------------------------------
+MeshInfo* MeshInfoFactory::CreatePlaneInfo(MATERIAL* materials, UINT matNum)
+{
+	MeshInfo* meshInfo = new MeshInfo();
+
+	// 頂点数
+	meshInfo->NumVertex = 4;
+
+	// 頂点情報 （上向き）
+	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+		// 座標                       // 法線                  // カラー                      // uv
+		{ VEC3(-1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
+		{ VEC3( 1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
+		{ VEC3(-1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 1.0f)}, // 10左下
+		{ VEC3( 1.0f, 0.0f, -1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 1.0f)}, // 11右下
+	};	
+
+	// インデックス数
+	meshInfo->NumIndex = 6;
+
+	// インデックス情報
+	meshInfo->pIndices = new WORD[meshInfo->NumIndex]{
+		0,1,2,
+		1,3,2
+	};
+
+	// マテリアル情報設定
+	meshInfo->pMaterials = materials;
+	meshInfo->NumMaterial = matNum;
+
+	return meshInfo;
+}
 
 // ----------------------------------------------------------------------------------------------------------------------
 //       * MeshFactory Class - スプライト用クアッドの作成- *

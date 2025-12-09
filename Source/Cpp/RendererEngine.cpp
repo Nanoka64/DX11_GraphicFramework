@@ -439,7 +439,7 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
     // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
     // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回り)
-    rd.CullMode              = D3D11_CULL_BACK;
+    rd.CullMode              = D3D11_CULL_NONE;
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面
@@ -592,8 +592,7 @@ bool RendererEngine::SetupProjectionTransform()
         static_cast<float>(m_ScreenWidht) / static_cast<float>(m_Screenheight), // アスペクト比
         m_NearClipDist,
         m_FarClipDist
-    );
-
+    );    
 
     // 保持
     m_Proj = mat;
@@ -742,6 +741,18 @@ void RendererEngine::ChangeRenderTargetFrameBuffer()
     m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】レンダーターゲットをフレームバッファに変更
+//      デプスステンシルびゅーを指定可能
+//* 引数：なし
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::ChangeRenderTargetFrameBuffer(ID3D11DepthStencilView* pDsv)
+{
+    m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, pDsv);
+}
+
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
@@ -756,7 +767,7 @@ void RendererEngine::ReleaseRenderTargetSetNull()
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
-//*【?】レンダーターゲットの登録
+//*【?】MRTレンダーターゲットの登録
 //* 引数：1.ターゲットの数
 //* 引数：2.ターゲットの配列
 //* 戻値：void
@@ -779,6 +790,18 @@ void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *rend
         //深度バッファがない。
         m_pImmediateContext->OMSetRenderTargets(num, rtv, nullptr);
     }
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】単一レンダーターゲットの登録
+//* 引数：1.レンダーターゲットビュー
+//* 引数：2.デプスステンシルビュー
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::RegisterRenderTarget(ID3D11RenderTargetView* pRtv, ID3D11DepthStencilView* pDsv)
+{
+    m_pImmediateContext->OMSetRenderTargets(1, &pRtv, pDsv);
 }
 
 

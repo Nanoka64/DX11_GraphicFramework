@@ -201,6 +201,26 @@ XMMATRIX Transform::get_WorldMtx()const{
         return localMtx;
 }
 
+// -----------------------------------------------------------------------------
+/// <summary>
+/// 回転を含めないワールド行列
+/// </summary>
+/// <returns></returns>
+// -----------------------------------------------------------------------------
+XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
+    XMMATRIX mtxS   = XMMatrixScalingFromVector(m_Scale);
+    XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(m_Rotation);
+    XMMATRIX mtxT   = XMMatrixTranslationFromVector(m_Position);
+
+    XMMATRIX localMtx = mtxS * mtxRot * mtxT;
+
+    // 親がいるなら自分と親を掛けたものを返す
+    if (m_pParent.lock())
+        return localMtx * m_pParent.lock()->get_WorldMtx();
+    else
+        return localMtx;
+}
+
 //*---------------------------------------------------------------------------------------
 //* @:Transform Class 
 //*【?】「前」方向取得

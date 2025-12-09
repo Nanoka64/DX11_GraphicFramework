@@ -123,6 +123,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_SKINNED,   SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE,  SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE,  SHADER_CREATE_TYPE::RUNTIME))return false;
 
 
     // *************************************************************************************************

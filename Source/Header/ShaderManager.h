@@ -28,7 +28,8 @@ enum class SHADER_TYPE
     // UIやαブレンドがあるオブジェクト用
     FOWARD_STANDARD_UI_SPRITE, // スプライト 標準 UI用 
     FOWARD_STANDARD_BILLBOARD, // ビルボード 標準ライティング
-
+    FOWARD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
+    FOWARD_NO_LIGHTING_SIMPLE, // 簡易3Dオブジェクト ライティング無し
 
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用

@@ -109,12 +109,13 @@ struct CreateBillboradInfo
 
     BILLBOARD_USAGE_TYPE Type;    // 使用方法
     FIXED_AXIS_BITFLAG FixedAxis; // 固定軸ビットフラグ（指定しない場合は固定軸なし）
-
-    std::string ObjTag;          // オブジェクトのタグ
-    bool IsActive;               // 生成時にオブジェクトをアクティブにするか
-
-    InputMaterial* MaterialData; // マテリアル情報
-    UINT MatNum;                 // マテリアル数
+    SHADER_TYPE ShaderType;       // 使用するシェーダの種類
+    
+    std::string ObjTag;           // オブジェクトのタグ
+    bool IsActive;                // 生成時にオブジェクトをアクティブにするか
+    
+    InputMaterial* MaterialData;  // マテリアル情報
+    UINT MatNum;                  // マテリアル数
 
     // コンストラクタ
     CreateBillboradInfo() :

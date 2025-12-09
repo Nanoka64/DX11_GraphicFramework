@@ -19,10 +19,11 @@ public:
 	MeshInfoFactory();
 	~MeshInfoFactory();
 
-	static MeshInfo *CreateTriangleInfo();
 	static MeshInfo *CreateQuadInfo(MATERIAL *materials, UINT matNum);
 	static MeshInfo *CreateCubeInfo(MATERIAL* materials, UINT matNum);
 	static MeshInfo *CreateSphereInfo(MATERIAL* materials, UINT matNum);
+	static MeshInfo *CreatePlaneInfo(MATERIAL* materials, UINT matNum);
+	static MeshInfo *CreateTriangleInfo();
 	static MeshInfo *CreateCylinderInfo();
 	static MeshInfo *CreateTorusInfo();
 

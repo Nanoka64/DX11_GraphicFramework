@@ -64,6 +64,7 @@ public:
     DirectX::XMMATRIX get_MtxScale()const;  // 拡大行列取得
 
     DirectX::XMMATRIX get_WorldMtx()const;  // ワールド行列取得
+    DirectX::XMMATRIX get_ExcludingRotWorldMtx()const; // 回転を除くワールド行列取得
 
     const VECTOR3::VEC3 get_Forward()const;
     VECTOR3::VEC3 get_Up()const;

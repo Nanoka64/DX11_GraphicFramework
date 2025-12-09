@@ -70,6 +70,12 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE,
             ARRAYSIZE(SimpleLayout),
             SimpleLayout,
+        },       
+        {
+            /* 簡易3Dオブジェクト ライティング無し  */
+            SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE,
+            ARRAYSIZE(SimpleLayout),
+            SimpleLayout,
         }, 
         {
             /* RT用スプライト */
@@ -291,8 +297,10 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;
         case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;       
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+            hr = this->CompileShader(HLSL__Simple_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -350,7 +358,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
-
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+            this->LoadCSOFile(HLSL_CSO__Simple_VS_PATH.c_str(), &csoByteCode);
+            break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -427,6 +437,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;
         case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
             hr = this->CompileShader(HLSL__Sprite_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;      
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+            hr = this->CompileShader(HLSL__Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
 
         default:
@@ -476,6 +489,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;
         case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
             this->LoadCSOFile(HLSL_CSO__Sprite_PS_PATH.c_str(), &csoByteCode);
+            break;   
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+            this->LoadCSOFile(HLSL_CSO__Simple_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);

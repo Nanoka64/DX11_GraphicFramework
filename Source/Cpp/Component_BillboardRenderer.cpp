@@ -77,16 +77,18 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     ID3D11Buffer* idxBuff = m_pResource.lock()->m_pIndexBuffer;
 
     // シェーダセット ==========================
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE);
-
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE);
 
     /* ========== 定数バッファの更新 ========== */
+    XMMATRIX viewInvMtx = renderer.get_ViewInvMatrix();
+    viewInvMtx.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);// 平行移動成分をゼロにする
 
     // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
+    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_ExcludingRotWorldMtx();
+    worldMtx = XMMatrixMultiply(worldMtx, viewInvMtx); // ビルボード用にビューの逆行列を掛ける
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
     XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
-
+    
     // 定数バッファに転送
     pContext->UpdateSubresource(
         cbTransSet->pBuff,
@@ -146,6 +148,9 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     pContext->IASetVertexBuffers(0, 1, &vtxBuff, &stride, &offset); // 頂点バッファをセット
     pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
+
+    //ブレンドステート設定 ==========================
+    Master::m_pBlendManager->DeviceToSetBlendState(meshInfo->pMaterials[0].BlendMode);
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
