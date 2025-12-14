@@ -52,7 +52,13 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
 
     // 入力レイアウト定義
     InputLayoutSetupData layout[] =
-    {
+    {        
+        {
+            /* RT用スプライト */
+            SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE,
+            ARRAYSIZE(SimpleLayout),
+            SimpleLayout,
+        },
         {
             /* 簡易3Dオブジェクト */
             SHADER_TYPE::DEFFERD_STANDARD_SIMPLE,
@@ -65,12 +71,15 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             ARRAYSIZE(ModelLayout),
             ModelLayout,
         },      
+        //DEFFERD_STANDARD_BILLBOARD
         {
             /* スプライト 標準 UI用  */
             SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE,
             ARRAYSIZE(SimpleLayout),
             SimpleLayout,
         },       
+        //FOWARD_STANDARD_BILLBOARD
+        //FOWARD_STANDARD_SIMPLE
         {
             /* 簡易3Dオブジェクト ライティング無し  */
             SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE,
@@ -78,11 +87,17 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             SimpleLayout,
         }, 
         {
-            /* RT用スプライト */
-            SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE,
+            /* 水平ガウシアンブラー用  */
+            SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL,
             ARRAYSIZE(SimpleLayout),
             SimpleLayout,
         },
+        {
+            /* 垂直ガウシアンブラー用  */
+            SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL,
+            ARRAYSIZE(SimpleLayout),
+            SimpleLayout,
+        },        
     };
 
     // 格納
@@ -286,20 +301,26 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:
+        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:
+        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
             hr = this->CompileShader(HLSL__Simple_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:
+        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
             hr = this->CompileShader(HLSL__Skinned_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
+        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;       
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Simple_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;      
+        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+            hr = this->CompileShader(HLSL__XBlur_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;
+        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+            hr = this->CompileShader(HLSL__YBlur_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -346,20 +367,26 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:
+        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:
+        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
             this->LoadCSOFile(HLSL_CSO__Simple_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:
+        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
             this->LoadCSOFile(HLSL_CSO__Skinned_VS_PATH.c_str(),&csoByteCode);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
+        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
             this->LoadCSOFile(HLSL_CSO__Simple_VS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+            this->LoadCSOFile(HLSL_CSO__XBlur_VS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+            this->LoadCSOFile(HLSL_CSO__YBlur_VS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -426,22 +453,27 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:
+        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
             hr = this->CompileShader(HLSL__LightingPath_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:
+        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
             hr = CompileShader(HLSL__GBuffer_Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:
+        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
             hr = CompileShader(HLSL__GBuffer_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
+        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
             hr = this->CompileShader(HLSL__Sprite_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;      
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;        
+        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+            hr = this->CompileShader(HLSL__GaussianBlur_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-
+        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+            hr = this->CompileShader(HLSL__GaussianBlur_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
@@ -492,6 +524,12 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;   
         case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
             this->LoadCSOFile(HLSL_CSO__Simple_PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:
+            this->LoadCSOFile(HLSL_CSO__GaussianBlur_PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:
+            this->LoadCSOFile(HLSL_CSO__GaussianBlur_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);

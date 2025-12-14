@@ -44,6 +44,7 @@ public:
     void Release();                         // 全開放
 
     std::shared_ptr<Texture> LoadTexture(const std::wstring &path);    // テクスチャのロード
+    std::shared_ptr<Texture> LoadDDSTexture(const std::wstring &path);    // テクスチャのロード
     std::shared_ptr<ModelData> LoadModel(const char* path);    // テクスチャのロード
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）

@@ -119,11 +119,13 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 
 
     // シェーダ作成
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE,    SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_SKINNED,   SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE,  SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE, SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE,  SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE,   SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_SKINNED,  SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE, SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE,SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE, SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL,  SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL,    SHADER_CREATE_TYPE::CSO))return false;
 
 
     // *************************************************************************************************

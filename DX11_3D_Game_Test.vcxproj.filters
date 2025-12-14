@@ -148,6 +148,9 @@
     <Filter Include="HLSL\PS\Foward">
       <UniqueIdentifier>{fb9ba330-0d8e-4dce-9581-e1729ec3b250}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Game">
+      <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -623,6 +626,9 @@
     <None Include="Source\Shader\UtilityFunctions_H.hlsli">
       <Filter>HLSL\HEAD</Filter>
     </None>
+    <None Include="Source\Shader\IO_VS_Struct_H.hlsli">
+      <Filter>HLSL\HEAD</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\Skinned_VS.hlsl">
@@ -647,6 +653,18 @@
       <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\Simple_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Skybox_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\XBlur_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\YBlur_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlur_PS.hlsl">
       <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
   </ItemGroup>

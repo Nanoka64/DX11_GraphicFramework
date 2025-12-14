@@ -38,14 +38,19 @@ private:
 
 	SHADER_TYPE m_ShaderType;	// 使用するシェーダの種類
 
+	CB_USER_EXPAND_SET *m_pVSUserExpandCBuffers;	// VSユーザー拡張用定数バッファ
+	int m_VSUserExpandCBNum;						// VSユーザー拡張用定数バッファ数
+	CB_USER_EXPAND_SET * m_pPSUserExpandCBuffers;	// PSユーザー拡張用定数バッファ
+	int m_PSUserExpandCBNum;						// PSユーザー拡張用定数バッファ数
+
 public:
 	SpriteRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SpriteRenderer();
 
-	bool Setup(RendererEngine &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> & pTexList, float w, float h);
+	bool Setup(const struct CreateSpriteInfo& info);
 
 	void Init(RendererEngine &renderer) override;		// 初期化
-	void Update(RendererEngine &renderer) override;	// 更新処理
+	void Update(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer) override;		// 描画処理
 
 
@@ -54,7 +59,22 @@ public:
 	float get_Width()const;
 	float get_Height()const;
 
-	void set_ShaderType(SHADER_TYPE type);
+	/// <summary>
+	/// 初期化時に設定したユーザー拡張用頂点定数バッファをGPUにセットする
+	/// あくまで臨時の初期化時のデータ更新用なので全く違うものを入れないでね
+	/// </summary>
+	/// <param name="arrayNumber">初期化時にセットした配列番号</param>
+	/// <param name="_pSrn">データ</param>
+	void setToGPU_ExtendUserVS_CBuffer(RendererEngine& renderer,int arrayNumber,void* _pSrn);
+
+
+	/// <summary>
+	/// 初期化時に設定したユーザー拡張用ピクセル定数バッファをGPUにセットする
+	/// あくまで臨時の初期化時のデータ更新用なので全く違うものを入れないでね
+	/// </summary>
+	/// <param name="arrayNumber">初期化時にセットした配列番号</param>
+	/// <param name="_pSrn">データ</param>
+	void setToGPU_ExtendUserPS_CBuffer(RendererEngine& renderer, int arrayNumber,void* _pSrn);
 
 private:
 
@@ -92,5 +112,13 @@ private:
 	/// <param name="pDevice">デバイス</param>
 	/// <returns></returns>
 	bool CreateCBuffer(ID3D11Device *pDevice);
+
+	/// <summary>
+	/// ユーザー定義拡張用定数バッファの作成
+	/// </summary>
+	/// <param name="pDevice"></param>
+	/// <param name="info"></param>
+	/// <returns></returns>
+	bool CreateUserExpandCBuffer(RendererEngine& renderer, UINT byteWidth, void* pSrc);
 };
 

@@ -11,15 +11,16 @@
 #include "UtilityFunctions_H.hlsli"
 #include "DebugFunctions_H.hlsli"
 
+
 // ↓これがあるとRenderDocでソース単位のデバッグができるらしいがはてさて
 //#pragma enable_d3d11_debug_symbols
-
+// 追記：CSOファイル読み込みにすればデバッグ可能
 
 SamplerState g_sSampler : register(s0);
-Texture2D<float4> g_tAlbedoTexture : register(t0);
-Texture2D<float4> g_tNormalTexture : register(t1);   
-Texture2D<float4> g_tSpecularTexture : register(t2); // wにスペキュラ強度
-Texture2D<float4> g_tDepthTexture : register(t3);
+Texture2D<float4> g_tAlbedoTexture : register(t0);   // xyzにアルベド
+Texture2D<float4> g_tNormalTexture : register(t1);   // xyzに法線
+Texture2D<float4> g_tSpecularTexture : register(t2); // xyzにスペキュラ色  wにスペキュラ強度
+Texture2D<float4> g_tDepthTexture : register(t3);    // xに深度値
 
 /* =========================================================================
 /* - @:出力構造体 - */

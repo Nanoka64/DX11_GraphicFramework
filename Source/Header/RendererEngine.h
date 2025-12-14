@@ -33,13 +33,10 @@ private:
     //ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
     //ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用
     //ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
-	
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pFrameBufferSRV; // フレームバッファのSRV
 
     DirectX::XMMATRIX m_Proj;
     DirectX::XMMATRIX m_View;
-
-    // レンダーターゲット用
-    std::shared_ptr<class RenderTarget> m_pRenderTarget;
 
 
     ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
@@ -68,7 +65,7 @@ public:
     void EndRender();
 	void Term();
     void Swap();    // 裏表切り替え
-    bool SetupProjectionTransform();            //透視投影変換計算
+    bool SetupProjectionTransform(float _w, float _h);            //透視投影変換計算
 private:
     bool InitDx11();                            // ＤＸ１１の初期化
     HRESULT InitDX11_SwapChain();               // ＤＸ１１ スワップチェイン初期化
@@ -90,7 +87,9 @@ public:
     HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
     UINT get_ScreenWidth()const { return m_ScreenWidht; };
     UINT get_ScreenHeight()const { return m_Screenheight; };
-
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
+    
+    void set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height); // ビューポート設定
 
     /// <summary>
     /// レンダーターゲットをフレームバッファに変更
@@ -130,6 +129,11 @@ public:
     /// レンダーターゲットのクリア
     /// </summary>
     void ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[]);
+
+    /// <summary>
+    /// 単一のレンダーターゲットのクリア
+    /// </summary>
+    void ClearRenderTargetView(class DX_RenderTarget *renderTargets);
 
 
     /// <summary>

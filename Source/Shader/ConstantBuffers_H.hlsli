@@ -115,4 +115,12 @@ cbuffer CB_POINT_LIGHT : register(b6)
     PointLight cb_PointLightData[POINTLIGHT_MAX_NUM];   // 500å¬
 };
 
+//* =========================================================================
+//*- @:ÉuÉâÅ[óp -                           >>>>>>>ÅyÇVÅz
+//* =========================================================================
+cbuffer CB_BLUR_WEIGHTS : register(b7)
+{
+    float4 cb_BlurWeights[2];
+};
+
 #endif

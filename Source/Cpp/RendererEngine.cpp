@@ -103,7 +103,7 @@ bool RendererEngine::Init(HWND hWnd)
 
     m_StartTime = timeGetTime();    // 開始時間取得
 
-    SetupProjectionTransform();
+    SetupProjectionTransform(m_ScreenWidht, m_Screenheight);
 
     return true;
 }
@@ -118,7 +118,7 @@ bool RendererEngine::Init(HWND hWnd)
 void RendererEngine::BeginRender()
 {
     // フレームバッファのレンダリングターゲットとデプスステンシルのクリア
-    FLOAT clearColor[] = { 1.0f,1.0f,1.0f,1.0f };
+    FLOAT clearColor[] = { 1.0f,0.0f,1.0f,1.0f };
     m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
     m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
@@ -480,13 +480,13 @@ HRESULT RendererEngine::InitDX11_Sampler()
 
     /* 0～1の範囲外のu v w テクスチャ座標の解決方法 */
     // D3D11_TEXTURE_ADDRESS_WRAP = 1,       繰り返し
-    // D3D11_TEXTURE_ADDRESS_MIRROR = 2,     反転 ( ここではこれ )
+    // D3D11_TEXTURE_ADDRESS_MIRROR = 2,     反転
     // D3D11_TEXTURE_ADDRESS_CLAMP = 3,      最後のピクセルを繰り返す
     // D3D11_TEXTURE_ADDRESS_BORDER = 4,     自分で色を設定する
     // D3D11_TEXTURE_ADDRESS_MIRROR_ONCE = 5 一回だけ反転させる
-    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_CLAMP;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
@@ -575,6 +575,28 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pd3dDevice)
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】ビューポートの設定
+//* 引数：1.描画範囲の左上Ｘ座標、
+//* 引数：2.描画範囲の左上Ｙ座標
+//* 引数：3.描画範囲の横幅
+//* 引数：4.描画範囲の縦幅
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height)
+{
+    D3D11_VIEWPORT vp;
+    ZeroMemory(&vp, sizeof(vp));
+    vp.Width = (FLOAT)_width;   // 描画範囲の横幅       
+    vp.Height = (FLOAT)_height; // 描画範囲の縦幅
+    vp.MinDepth = 0.0f;                // Ｚバッファの最小値
+    vp.MaxDepth = 1.0f;                // Ｚバッファの最大値
+    vp.TopLeftX = _topLeftX;                // 描画範囲の左側Ｘ座標
+    vp.TopLeftY = _topLeftY;                // 描画範囲の上部Ｙ座標
+    m_pImmediateContext->RSSetViewports(1, &vp);
+}
+
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
@@ -582,14 +604,14 @@ void RendererEngine::CleanupDX11()
 //* 引数：なし
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererEngine::SetupProjectionTransform()
+bool RendererEngine::SetupProjectionTransform(float _w, float _h)
 {
     auto pDeviceContext = get_DeviceContext();
 
     // 遠近投影マトリクス作成 https://learn.microsoft.com/ja-jp/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh
     XMMATRIX mat = XMMatrixPerspectiveFovLH(
         m_Fov,
-        static_cast<float>(m_ScreenWidht) / static_cast<float>(m_Screenheight), // アスペクト比
+        static_cast<float>(_w) / static_cast<float>(_h), // アスペクト比
         m_NearClipDist,
         m_FarClipDist
     );    
@@ -717,7 +739,6 @@ XMMATRIX RendererEngine::get_ViewMatrix()const
     return m_View;
 }
 
-
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】ビュー行列の逆行列取得
@@ -824,6 +845,26 @@ void RendererEngine::ClearRenderTargetViews(UINT num, class DX_RenderTarget *ren
             // ターゲットのクリア
             m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
         }
+    }
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】単一のレンダーターゲットのクリア
+//* 引数：1.ターゲット
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::ClearRenderTargetView(class DX_RenderTarget* pRT)
+{
+    if (pRT->HasDepthStencilBuffer()){
+        // デプスステンシルバッファがあるならクリア
+        m_pImmediateContext->ClearDepthStencilView(pRT->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
+    }
+
+    if (pRT->get_RTV() != nullptr) {
+        // ターゲットのクリア
+        m_pImmediateContext->ClearRenderTargetView(pRT->get_RTV(), pRT->get_ClearColor());
     }
 }
 

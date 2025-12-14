@@ -31,6 +31,11 @@ enum class SHADER_TYPE
     FOWARD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
     FOWARD_NO_LIGHTING_SIMPLE, // 簡易3Dオブジェクト ライティング無し
 
+    GAUSSIAN_BLUR_HORIZONTAL,    // ガウシアン水平ブラー 
+    GAUSSIAN_BLUR_VERTICAL,      // ガウシアン垂直ブラー 
+
+    POST_EFFECT, // ポストエフェクト用
+
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用
     FOWARD_UI_IMAGE,  // イメージ UI用

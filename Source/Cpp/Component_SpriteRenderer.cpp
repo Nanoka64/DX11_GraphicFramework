@@ -2,7 +2,6 @@
 #include "Component_SpriteRenderer.h"
 #include "GameObject.h"
 #include "RendererEngine.h"
-#include "MeshInfoFactory.h"
 #include "Texture.h"
 #include "MeshFactory.h"
 
@@ -23,7 +22,11 @@ m_pVertexBuffer(nullptr),
 m_pIndexBuffer(nullptr),
 m_pCBTransformSet(nullptr),
 m_pMeshInfo(nullptr),
-m_ShaderType(SHADER_TYPE::NONE)
+m_ShaderType(SHADER_TYPE::NONE),
+m_pVSUserExpandCBuffers(nullptr),
+m_pPSUserExpandCBuffers(nullptr),
+m_VSUserExpandCBNum(0),
+m_PSUserExpandCBNum(0)
 {
     this->set_Tag("SpriteRenderer");
 }
@@ -85,6 +88,30 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 		int slot = it->first;
 		ID3D11ShaderResourceView *srv = it->second.lock()->get_SRV();
 		pContext->PSSetShaderResources(slot, 1, &srv);
+		pContext->VSSetShaderResources(slot, 1, &srv);
+	}
+
+
+	// 定数バッファセット ==========================
+
+	// 頂点シェーダ
+	if (m_VSUserExpandCBNum > 0)
+	{
+		for (int i = 0; i < m_VSUserExpandCBNum; i++)
+		{
+			int slot = m_pVSUserExpandCBuffers[i].Slot;
+			pContext->VSSetConstantBuffers(slot, 1, &m_pVSUserExpandCBuffers[i].pBuff);
+		}
+	}
+
+	// ピクセルシェーダ
+	if (m_PSUserExpandCBNum > 0)
+	{
+		for (int i = 0; i < m_PSUserExpandCBNum; i++)
+		{
+			int slot = m_pPSUserExpandCBuffers[i].Slot;
+			pContext->PSSetConstantBuffers(slot, 1, &m_pPSUserExpandCBuffers[i].pBuff);
+		}
 	}
 
     // 頂点＆インデックスバッファ設定 ==========================
@@ -108,22 +135,55 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 //* 引数：4. 高さ
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool SpriteRenderer::Setup(RendererEngine &renderer, SPRITE_USAGE_TYPE type, const std::map<int, std::weak_ptr<class Texture>> &pTexMap, float w, float h)
+bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 {
-	auto pDevice = renderer.get_Device();
+	auto pDevice = info.pRenderer->get_Device();
 
-	m_Width = w;
-	m_Height = h;
-	m_pTextureMap = pTexMap;
+	m_Width = info.Width;
+	m_Height = info.Height;
+	m_pTextureMap = info.pTextureMap;
+	m_ShaderType = info.ShaderType;
+
+	// ユーザー拡張用定数バッファ数の取得
+	m_VSUserExpandCBNum = info.VSConstBufferNum;
+	m_PSUserExpandCBNum = info.PSConstBufferNum;
+	
+	// 頂点シェーダー用ユーザー拡張用定数バッファ情報のセットアップ
+	if (m_VSUserExpandCBNum > 0)
+	{
+		m_pVSUserExpandCBuffers = new CB_USER_EXPAND_SET[m_VSUserExpandCBNum];
+
+		// ユーザー拡張用定数バッファ情報のセットアップ
+		for (int i = 0; i < m_VSUserExpandCBNum; i++)
+		{
+			m_pVSUserExpandCBuffers[i].pData = info.pVSConstantBuffers[i].pUserExpandConstantBuffer;
+			m_pVSUserExpandCBuffers[i].Size = info.pVSConstantBuffers[i].UserExpandConstantBufferSize;
+			m_pVSUserExpandCBuffers[i].Slot = info.pVSConstantBuffers[i].SetSlot;
+		}
+	}
+
+	// ピクセルシェーダー用ユーザー拡張用定数バッファ情報のセットアップ
+	if (m_PSUserExpandCBNum > 0)
+	{
+		m_pPSUserExpandCBuffers = new CB_USER_EXPAND_SET[m_PSUserExpandCBNum];
+	
+		// ユーザー拡張用定数バッファ情報のセットアップ
+		for (int i = 0; i < m_PSUserExpandCBNum; i++)
+		{
+			m_pPSUserExpandCBuffers[i].pData = info.pPSConstantBuffers[i].pUserExpandConstantBuffer;
+			m_pPSUserExpandCBuffers[i].Size = info.pPSConstantBuffers[i].UserExpandConstantBufferSize;
+			m_pPSUserExpandCBuffers[i].Slot = info.pPSConstantBuffers[i].SetSlot;
+		}
+	}
 
 	// クアッド生成
-	switch (type)
+	switch (info.Type)
 	{
 	case SPRITE_USAGE_TYPE::NORMAL:
-		m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(w, h);
+		m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(m_Width, m_Height);
 		break;
 	case SPRITE_USAGE_TYPE::RENDER_TARGET:
-		m_pMeshInfo = MeshInfoFactory::CreateRTSpriteInfo(w, h);
+		m_pMeshInfo = MeshInfoFactory::CreateRTSpriteInfo(m_Width, m_Height);
 		break;
 	default:
 		break;
@@ -135,9 +195,24 @@ bool SpriteRenderer::Setup(RendererEngine &renderer, SPRITE_USAGE_TYPE type, con
 	}
 
 	// 各バッファの生成
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex))return false;   // 頂点バッファの作成
-	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) return false;       // インデックスバッファの作成
-	if (!CreateCBuffer(pDevice))	return false;																	 // 定数バッファの作成
+	// 頂点バッファの作成
+	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex)) {
+		return false;
+	}
+	// インデックスバッファの作成
+	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) {
+		return false;
+	}
+	// 定数バッファの作成
+	if (!CreateCBuffer(pDevice)) {
+		return false;
+	}
+	// ユーザー拡張用定数バッファの作成 
+	if (m_PSUserExpandCBNum != 0 || m_VSUserExpandCBNum != 0) {
+		if (!CreateUserExpandCBuffer(*info.pRenderer, m_pPSUserExpandCBuffers->Size, NULL)) {
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -245,6 +320,53 @@ bool SpriteRenderer::CreateCBuffer(ID3D11Device *pDevice)
 	return true;
 }
 
+
+//*---------------------------------------------------------------------------------------
+//*【?】ユーザー定義拡張用定数バッファの作成
+//*
+//* [引数]
+//* ID3D11Device* : 生成時に使用するデバイス
+//* const CreateSpriteInfo& : スプライト生成情報
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool SpriteRenderer::CreateUserExpandCBuffer(RendererEngine& renderer, UINT byteWidth, void* pSrc)
+{
+	auto pDevice = renderer.get_Device();
+	auto pContext = renderer.get_DeviceContext();
+
+	// 定数バッファの設定
+	D3D11_BUFFER_DESC bd{};
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的に更新
+	bd.ByteWidth = byteWidth;							// バッファのサイズ
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPU書き込み
+	bd.MiscFlags = 0;
+	bd.StructureByteStride = 0;
+
+	// 定数バッファの生成
+	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pPSUserExpandCBuffers->pBuff);
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	// GPUメモリにアクセス
+	pContext->Map(m_pPSUserExpandCBuffers->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	// データのコピー 
+	memcpy(mappedResource.pData, m_pPSUserExpandCBuffers->pData, m_pPSUserExpandCBuffers->Size);
+
+	// アクセス終了
+	pContext->Unmap(m_pPSUserExpandCBuffers->pBuff, 0);
+
+	return true;
+}
+
+
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
 //*【?】スプライトの横幅セット
@@ -291,15 +413,60 @@ float SpriteRenderer::get_Height()const
 	return m_Height;
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:SpriteRenderer Class 
+//*【?】初期化時に設定したユーザー拡張用頂点定数バッファをGPUにセットする
+//*		あくまで臨時の初期化時のデータ更新用なので全く違うものを入れないでね
+//* 引数：1.描画エンジン
+//* 引数：2.初期化時にセットした配列番号
+//* 引数：3.更新データ
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void SpriteRenderer::setToGPU_ExtendUserVS_CBuffer(RendererEngine& renderer, int arrayNumber, void* _pSrn)
+{
+	if (m_pVSUserExpandCBuffers == nullptr) {
+		return;
+	}
+
+	auto pContext = renderer.get_DeviceContext();
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	// GPUメモリにアクセス
+	pContext->Map(m_pVSUserExpandCBuffers[arrayNumber].pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	// データのコピー 
+	memcpy(mappedResource.pData, _pSrn, m_pVSUserExpandCBuffers[arrayNumber].Size);
+
+	// アクセス終了
+	pContext->Unmap(m_pVSUserExpandCBuffers[arrayNumber].pBuff, 0);
+}
 
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 
-//*【?】スプライトの縦幅ゲット
-//* 引数：なし
-//* 返値：縦幅
+//*【?】初期化時に設定したユーザー拡張用ピクセル定数バッファをGPUにセットする
+//*		あくまで臨時の初期化時のデータ更新用なので全く違うものを入れないでね
+//* 引数：1.描画エンジン
+//* 引数：2.初期化時にセットした配列番号
+//* 引数：3.更新データ
+//* 返値：void
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::set_ShaderType(SHADER_TYPE type)
+void SpriteRenderer::setToGPU_ExtendUserPS_CBuffer(RendererEngine& renderer, int arrayNumber, void* _pSrn)
 {
-	m_ShaderType = type;
-}
+	if (m_pPSUserExpandCBuffers == nullptr) {
+		return;
+	}
 
+	auto pContext = renderer.get_DeviceContext();
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	// GPUメモリにアクセス
+	pContext->Map(m_pPSUserExpandCBuffers[arrayNumber].pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	// データのコピー 
+	memcpy(mappedResource.pData, _pSrn, m_pPSUserExpandCBuffers[arrayNumber].Size);
+
+	// アクセス終了
+	pContext->Unmap(m_pPSUserExpandCBuffers[arrayNumber].pBuff, 0);
+}

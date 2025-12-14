@@ -30,6 +30,36 @@ using namespace Input;
 
 using namespace GIGA_Engine;
 
+
+/// <summary>
+/// ※ 魔導書にあった関数
+/// ガウシアン関数を利用して重みテーブルを計算する
+/// </summary>
+/// <param name="weightsTbl">重みテーブルの記録先</param>
+/// <param name="sizeOfWeightsTbl">重みテーブルのサイズ</param>
+/// <param name="sigma">分散具合。この数値が大きくなると分散具合が強くなる</param>
+void CalcWeightsTableFromGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma)
+{
+    // 重みの合計を記録する変数を定義する
+    float total = 0;
+
+    // ここからガウス関数を用いて重みを計算している
+    // ループ変数のxが基準テクセルからの距離
+    for (int x = 0; x < sizeOfWeightsTbl; x++)
+    {
+        weightsTbl[x] = expf(-0.5f * (float)(x * x) / sigma);
+        total += 2.0f * weightsTbl[x];
+    }
+
+    // 重みの合計で除算することで、重みの合計を1にしている
+    for (int i = 0; i < sizeOfWeightsTbl; i++)
+    {
+        weightsTbl[i] /= total;
+    }
+}
+
+
+
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
 //*【?】コンストラクタ
@@ -74,7 +104,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             pCam.lock()->Init(renderer);
             pCam.lock()->set_Tag("Camera");
             pCam.lock()->add_Component<Camera3D>();
-            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -100.0f);
+            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
         }
 
         {
@@ -315,27 +345,27 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
         //}       
 
-        {
-            // ビルボード
-            MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/0191.png");
-            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 100.0f;
-            mat->BlendMode = BLEND_MODE::ALPHA;
-            CreateBillboradInfo billboard;
-            billboard.pRenderer = &renderer;
-            billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
-            billboard.ShaderType = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
-            billboard.ObjTag = "Billboard";
-            billboard.IsActive = false;
-            billboard.MatNum = 1;
-            billboard.MaterialData = new InputMaterial();
-            billboard.MaterialData->pMat = mat;
-            auto obj = MeshFactory::CreateBillboard(billboard);
-            obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 500.0f, 500.0f);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
-        }
+        //{
+        //    // ビルボード
+        //    MATERIAL* mat = new MATERIAL;
+        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/0191.png");
+        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //    mat->SpecularPower = 100.0f;
+        //    mat->BlendMode = BLEND_MODE::ALPHA;
+        //    CreateBillboradInfo billboard;
+        //    billboard.pRenderer     = &renderer;
+        //    billboard.Type          = BILLBOARD_USAGE_TYPE::SIMPLE;
+        //    billboard.ShaderType    = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
+        //    billboard.ObjTag        = "Billboard";
+        //    billboard.IsActive      = false;
+        //    billboard.MatNum        = 1;
+        //    billboard.MaterialData  = new InputMaterial();
+        //    billboard.MaterialData->pMat = mat;
+        //    auto obj = MeshFactory::CreateBillboard(billboard);
+        //    obj.lock()->get_Transform().lock()->set_Scale(1280.0f, 720.0f, 500.0f);
+        //    obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
+        //}
     }
 
 
@@ -416,36 +446,56 @@ bool SceneManager::Init(RendererEngine &renderer)
     );
     if (result == false)return false;
 
-    //// ****************************************************************
-    //// 垂直ブラー
-    //// ****************************************************************
-    //m_pVerticalBlur = new DX_RenderTarget();
-    //result = m_pVerticalBlur->Create(
-    //    renderer,
-    //    renderer.get_ScreenWidth(),
-    //    renderer.get_ScreenHeight(),
-    //    1,
-    //    1,
-    //    DXGI_FORMAT_R8G8B8A8_UNORM,
-    //    DXGI_FORMAT_UNKNOWN
-    //);
-    //if (result == false)return false;
-    //
-    //// ****************************************************************
-    //// 垂直ブラー
-    //// ****************************************************************
-    //m_pHorizontalBlur = new DX_RenderTarget();
-    //result = m_pHorizontalBlur->Create(
-    //    renderer,
-    //    renderer.get_ScreenWidth(),
-    //    renderer.get_ScreenHeight(),
-    //    1,
-    //    1,
-    //    DXGI_FORMAT_R8G8B8A8_UNORM,
-    //    DXGI_FORMAT_D32_FLOAT
-    //);
-    //if (result == false)return false;
-    //
+    // ****************************************************************
+    // シーン最終合成用
+    // ****************************************************************
+    m_pSceneFinal_RT = new DX_RenderTarget();
+    result = m_pSceneFinal_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // 水平ブラー
+    // ****************************************************************
+    m_pHorizontalBlur = new DX_RenderTarget();
+    result = m_pHorizontalBlur->Create(
+        renderer,
+        renderer.get_ScreenWidth() / 2.0f,
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+    
+
+
+    // ****************************************************************
+    // 垂直ブラー
+    // ****************************************************************
+    m_pVerticalBlur = new DX_RenderTarget();
+    result = m_pVerticalBlur->Create(
+        renderer,        
+        renderer.get_ScreenWidth() / 2.0f,
+        renderer.get_ScreenHeight() / 2.0f,
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+    
+    // ガウシアンブラー用の重みテーブルを計算する
+    CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, 4.0f);
+    
     //========================================================================================
     //
     //
@@ -499,12 +549,65 @@ bool SceneManager::Init(RendererEngine &renderer)
     obj = MeshFactory::CreateSprite(sprite);  
     sprite.pTextureMap.clear();
 
+                   
+    /*************************************
+    * 水平ブラー用スプライト
+    *************************************/
+    CreateSpriteInfo horizontalBlurSprite;
+    horizontalBlurSprite.pRenderer = &renderer;
+    horizontalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
+    horizontalBlurSprite.pPSConstantBuffers->SetSlot = 7;               // スロット7にセット
+    horizontalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
+    horizontalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
+    horizontalBlurSprite.PSConstBufferNum = 1;
+    horizontalBlurSprite.IsActive = false;
+    horizontalBlurSprite.ObjTag = "HorizontalBlurSprite";
+    horizontalBlurSprite.Width = 1.0f;      // サイズの変更はRTだけでいい
+    horizontalBlurSprite.Height = 1.0f;                                                    
+    horizontalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_SceneFinal", m_pSceneFinal_RT->get_SRV_ComPtr());
+    horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    horizontalBlurSprite.ShaderType = SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL;
+    obj = MeshFactory::CreateSprite(horizontalBlurSprite);
+
 
     /*************************************
-    * 最終出力用
+    * 垂直ブラー用スプライト
+    *************************************/
+    CreateSpriteInfo verticalBlurSprite;
+    verticalBlurSprite.pRenderer = &renderer;
+    verticalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
+    verticalBlurSprite.pPSConstantBuffers->SetSlot = 7;                 // スロット7にセット
+    verticalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
+    verticalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
+    verticalBlurSprite.PSConstBufferNum = 1;
+    verticalBlurSprite.IsActive = false;
+    verticalBlurSprite.ObjTag = "VerticalBlurSprite";
+    verticalBlurSprite.Width = 1.0f;
+    verticalBlurSprite.Height = 1.0f;
+    verticalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_HorizontalBlur", m_pHorizontalBlur->get_SRV_ComPtr());
+    verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    verticalBlurSprite.ShaderType = SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL;
+    obj = MeshFactory::CreateSprite(verticalBlurSprite);
+
+    /*************************************
+    * 最終的に合成してフレームバッファにコピーする用のスプライト
+    *************************************/
+    CreateSpriteInfo copyToFrameBufferSprite;
+    copyToFrameBufferSprite.pRenderer = &renderer;
+    copyToFrameBufferSprite.IsActive = false;
+    copyToFrameBufferSprite.ObjTag = "CopyToFrameBufferSprite";
+    copyToFrameBufferSprite.Width = 1.0f;
+    copyToFrameBufferSprite.Height = 1.0f;
+    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_VerticalBlur", m_pVerticalBlur->get_SRV_ComPtr());
+    copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
+    obj = MeshFactory::CreateSprite(copyToFrameBufferSprite);
+
+    /*************************************
+    * ライティングパス出力用
     *************************************/
     sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 1.0;
+    sprite.Width = 1.0f;
     sprite.Height = 1.0f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
@@ -585,7 +688,7 @@ void SceneManager::Update(RendererEngine& renderer)
     //auto tf = skyObj.lock()->get_Component<Transform>();
     //tf->set_Pos(camPos);
 
-
+    // ライトのデバッグ
     Master::m_pDebugger->BeginDebugWindow("Light");
     Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
     Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
@@ -595,15 +698,17 @@ void SceneManager::Update(RendererEngine& renderer)
 
     auto objList = Master::m_pGameObjectManager->get_ObjectList();
 
+    // オブジェクトデバッグ
     Master::m_pDebugger->BeginDebugWindow("GameObject");
     Master::m_pDebugger->DG_TextValue("Num : %d", (int)objList.size());
     for (auto& obj : objList)
     {
         Master::m_pDebugger->DG_TextValue("name : %s", obj->get_Tag().c_str());
     }
-
     Master::m_pDebugger->EndDebugWindow();
 
+    // オブジェクト更新
+    Master::m_pGameObjectManager->ObjectUpdate(renderer);
 
     // カメラ更新
     auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
@@ -613,8 +718,6 @@ void SceneManager::Update(RendererEngine& renderer)
         return;
     };
 
-    // オブジェクト更新
-    Master::m_pGameObjectManager->ObjectUpdate(renderer);
 }
 
 
@@ -626,12 +729,40 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
-    DX_RenderTarget *gbuffer[] ={
+    // ポストエフェクトデバッグ
+    {
+        static float blurIntensity = 1.0f;
+        // ブラー強度
+        Master::m_pDebugger->BeginDebugWindow("PostEffect");
+        Master::m_pDebugger->DG_SliderFloat("BlurIntencity", 1, &blurIntensity, 0.01f, 100.0f);
+        Master::m_pDebugger->DG_TextValue("weight0:%f.2", m_weights[0]);
+        Master::m_pDebugger->DG_TextValue("weight1:%f.2", m_weights[1]);
+        Master::m_pDebugger->DG_TextValue("weight2:%f.2", m_weights[2]);
+        Master::m_pDebugger->DG_TextValue("weight3:%f.2", m_weights[3]);
+        Master::m_pDebugger->DG_TextValue("weight4:%f.2", m_weights[4]);
+        Master::m_pDebugger->DG_TextValue("weight5:%f.2", m_weights[5]);
+        Master::m_pDebugger->DG_TextValue("weight6:%f.2", m_weights[6]);
+        Master::m_pDebugger->DG_TextValue("weight7:%f.2", m_weights[7]);
+        Master::m_pDebugger->EndDebugWindow();
+
+        // ガウシアンブラー用の重みテーブルを計算する
+        CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, blurIntensity);
+    }
+    static float t = 0.f;
+    t += 0.1f;
+
+    DX_RenderTarget* gbuffer[] = {
         m_pAlbedo_RT ,
         m_pNormal_RT,
         m_pSpecular_RT,
         m_pDepth_RT
     };
+
+    // プロジェクション変換行列の設定
+    renderer.SetupProjectionTransform(1920,1080);
+
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
@@ -643,24 +774,25 @@ void SceneManager::Draw(RendererEngine& renderer)
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
-    // レンダリングターゲットをフレームバッファに変更
-    renderer.ChangeRenderTargetFrameBuffer();
+    // 最終合成用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
+    renderer.ClearRenderTargetView(m_pSceneFinal_RT);
 
-    renderer.SetupProjectionTransform();
-
-    // ターゲット描画
-    //auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
-    //auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
-    //auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
-    //auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
-    //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
-    //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
-    //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
-    //auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
-    //sprite->Draw(renderer);
-    //sprite2->Draw(renderer);
-    //sprite3->Draw(renderer);
-    //sprite4->Draw(renderer);
+    {
+        // ターゲット描画
+        //auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
+        //auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
+        //auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
+        //auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
+        //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
+        //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
+        //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
+        //auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
+        //sprite->Draw(renderer);
+        //sprite2->Draw(renderer);
+        //sprite3->Draw(renderer);
+        //sprite4->Draw(renderer);
+    }
 
     // ライトの更新
     Master::m_pLightManager->Update();
@@ -671,14 +803,54 @@ void SceneManager::Draw(RendererEngine& renderer)
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
 
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+
     // Gbuffer作成時の深度バッファを設定
     // フォワードの場合はこの下に記述
-    renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
+    //renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
+    //auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
+    //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
 
-    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
-    billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth() / 2.0f, renderer.get_ScreenHeight());
 
+    // 水平ブラー用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pHorizontalBlur->get_RTV(), nullptr);
+    renderer.ClearRenderTargetView(m_pHorizontalBlur);
+    // 水平ブラー
+    auto horizontalBlurSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("HorizontalBlurSprite").lock();
+    auto horizontalBlurSprite = horizontalBlurSpriteObj->get_Component<SpriteRenderer>();
+    horizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    horizontalBlurSprite->Draw(renderer);
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
 
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth() / 2.0f, renderer.get_ScreenHeight() / 2.0f);
+
+    // 垂直ブラー用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pVerticalBlur->get_RTV(), nullptr);
+    renderer.ClearRenderTargetView(m_pVerticalBlur);
+
+    // 垂直ブラー
+    auto verticalBlurSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("VerticalBlurSprite").lock();
+    auto verticalBlurSprite = verticalBlurSpriteObj->get_Component<SpriteRenderer>();
+    verticalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    verticalBlurSprite->Draw(renderer);
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+    // レンダリングターゲットをフレームバッファに変更
+    renderer.ChangeRenderTargetFrameBuffer();
+
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
+    auto copyToFrameBufferSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("CopyToFrameBufferSprite").lock();
+    auto copyToFrameBufferSprite = copyToFrameBufferSpriteObj->get_Component<SpriteRenderer>();
+    copyToFrameBufferSprite->Draw(renderer);
 
 
     //// シーンの描画

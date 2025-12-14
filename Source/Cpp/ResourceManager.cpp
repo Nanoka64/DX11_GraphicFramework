@@ -80,9 +80,21 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const std::wstring &path)
 
 //*---------------------------------------------------------------------------------------
 //* @:ResourceManager Class 
-//*【?】モデルのロード
+//*【?】DDSフォーマットテクスチャのロード
 //* 引数：1.ファイルパス
 //* 返値：ロードしたTexture
+//*----------------------------------------------------------------------------------------
+std::shared_ptr<Texture> ResourceManager::LoadDDSTexture(const std::wstring& path)
+{
+    return {};
+};
+
+
+//*---------------------------------------------------------------------------------------
+//* @:ResourceManager Class 
+//*【?】モデルのロード
+//* 引数：1.ファイルパス
+//* 返値：ロードしたモデル情報
 //*----------------------------------------------------------------------------------------
 std::shared_ptr<ModelData> ResourceManager::LoadModel(const char *path)
 {

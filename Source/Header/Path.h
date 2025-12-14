@@ -25,11 +25,14 @@ namespace Path
     const std::wstring HLSL__LightingPath_Standard_PS_PATH = std::wstring(Shader)   + L"LightingPath_Standard_PS.hlsl";
     const std::wstring HLSL__Sprite_PS_PATH = std::wstring(Shader)                  + L"Sprite_PS.hlsl";
     const std::wstring HLSL__Simple_PS_PATH = std::wstring(Shader)                  + L"Simple_PS.hlsl";
+    const std::wstring HLSL__GaussianBlur_PS_PATH = std::wstring(Shader)            + L"GaussianBlur_PS.hlsl";
 
     // VS
     const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
     const std::wstring HLSL__Simple_VS_PATH = std::wstring(Shader)                  + L"Simple_VS.hlsl";
     const std::wstring HLSL__Sprite_VS_PATH = std::wstring(Shader)                  + L"Sprite_VS.hlsl";
+    const std::wstring HLSL__XBlur_VS_PATH = std::wstring(Shader)                   + L"XBlur_VS.hlsl";
+    const std::wstring HLSL__YBlur_VS_PATH = std::wstring(Shader)                   + L"YBlur_VS.hlsl";
 
     // csoファイル(コンパイル済みシェーダ) ***************************************************************************
     // PS
@@ -38,9 +41,13 @@ namespace Path
     const std::wstring HLSL_CSO__LightingPath_Standard_PS_PATH = std::wstring(CSO)  + L"LightingPath_Standard_PS.cso";
     const std::wstring HLSL_CSO__Sprite_PS_PATH = std::wstring(CSO)                 + L"Sprite_PS.cso";
     const std::wstring HLSL_CSO__Simple_PS_PATH = std::wstring(CSO)                 + L"Simple_PS.cso";
+    const std::wstring HLSL_CSO__GaussianBlur_PS_PATH = std::wstring(CSO)           + L"GaussianBlur_PS.cso";
+
 
     // VS
     const std::wstring HLSL_CSO__Skinned_VS_PATH = std::wstring(CSO)                + L"Skinned_VS.cso";
     const std::wstring HLSL_CSO__Simple_VS_PATH = std::wstring(CSO)                 + L"Simple_VS.cso";
     const std::wstring HLSL_CSO__Sprite_VS_PATH = std::wstring(CSO)                 + L"Sprite_VS.cso";
+    const std::wstring HLSL_CSO__XBlur_VS_PATH = std::wstring(CSO)                  + L"XBlur_VS.cso";
+    const std::wstring HLSL_CSO__YBlur_VS_PATH = std::wstring(CSO)                  + L"YBlur_VS.cso";
 }

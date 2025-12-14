@@ -12,6 +12,16 @@ struct InputMaterial
     int MatIndex;   // マテリアル番号
 };
 
+/// <summary>
+/// 定数バッファ情報
+/// </summary>
+struct ConstantBufferInfo
+{
+    int SetSlot = -1; 						    // 定数バッファ番号
+    void* pUserExpandConstantBuffer = nullptr;  // VSユーザー拡張用定数バッファ
+    int UserExpandConstantBufferSize = 0;       // VSユーザー拡張用定数バッファサイズ
+};
+
 
 /// <summary>
 /// モデルの生成情報
@@ -83,6 +93,11 @@ struct CreateSpriteInfo
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
     SHADER_TYPE ShaderType;             // 使用するシェーダの種類
 
+    ConstantBufferInfo *pPSConstantBuffers;  // ピクセルシェーダ用定数バッファ
+    ConstantBufferInfo *pVSConstantBuffers;  // 頂点シェーダ用定数バッファ
+    int PSConstBufferNum;               // ピクセルシェーダ用定数バッファ数
+    int VSConstBufferNum;               // 頂点シェーダ用定数バッファ数
+
     std::map<int, std::weak_ptr<class Texture>> pTextureMap;    // テクスチャマップ
 
     // 幅
@@ -95,7 +110,11 @@ struct CreateSpriteInfo
         Width(0.0f),
         Height(0.0f),
         Type(SPRITE_USAGE_TYPE::NORMAL),
-        ShaderType(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE)
+        ShaderType(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE),
+        pPSConstantBuffers(nullptr),
+        pVSConstantBuffers(nullptr),
+        PSConstBufferNum(0),
+        VSConstBufferNum(0)
     {};
 };
 
@@ -129,7 +148,7 @@ struct CreateBillboradInfo
 };
 
 
-class MeshFactory : public Object
+class MeshFactory
 {
 private:
 
