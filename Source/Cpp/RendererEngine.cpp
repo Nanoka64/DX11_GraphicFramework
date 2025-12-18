@@ -404,17 +404,24 @@ HRESULT RendererEngine::InitDX11_ZBuff()
     /* Ｚテストの設定 */
     //
     D3D11_DEPTH_STENCIL_DESC depthSD;
-    ZeroMemory(&depthSD, sizeof(depthSD));
+    ZeroMemory(&depthSD, sizeof(D3D11_DEPTH_STENCIL_DESC));
     depthSD.DepthEnable = TRUE;     // 深度テスト有効化
 
     // D3D11_DEPTH_WRITE_MASK_ZERO  = 0, Z(depth)Test OFF
     // D3D11_DEPTH_WRITE_MASK_ALL   = 1  Z(depth)Test ON
+    depthSD.StencilEnable   = false;                       // ステンシルテスト無効
     depthSD.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ALL;  // Zテストオン
     depthSD.DepthFunc       = D3D11_COMPARISON_LESS;       // ＜ 小なり(描画対象のＺ値が既存ピクセルより手前なら描画)
-    depthSD.StencilEnable   = TRUE;                        // 今回はステンシルテスト有効化
-
-    m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthStencilState); // ステート作成
+    
+    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthStencilState); // ステート作成
+    if (FAILED(hr))return hr;
+    
     m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);   // ステート設定
+    
+    depthSD.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // Zテストオン
+    depthSD.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pTest_DepthStencilState); // ステート作成
+     if (FAILED(hr))return hr;
 
     return hr;
 }
@@ -842,8 +849,10 @@ void RendererEngine::ClearRenderTargetViews(UINT num, class DX_RenderTarget *ren
 
     for (UINT i = 0; i < num; i++) {
         if (renderTargets[i]->get_RTV() != nullptr) {
+            float col[4] = { 1.0,1.0,1.0,1.0 };
+
             // ターゲットのクリア
-            m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), renderTargets[i]->get_ClearColor());
+            m_pImmediateContext->ClearRenderTargetView(renderTargets[i]->get_RTV(), col);
         }
     }
 }
@@ -863,8 +872,9 @@ void RendererEngine::ClearRenderTargetView(class DX_RenderTarget* pRT)
     }
 
     if (pRT->get_RTV() != nullptr) {
+        float col[4] = {1.0,1.0,1.0,1.0};
         // ターゲットのクリア
-        m_pImmediateContext->ClearRenderTargetView(pRT->get_RTV(), pRT->get_ClearColor());
+        m_pImmediateContext->ClearRenderTargetView(pRT->get_RTV(), col);
     }
 }
 

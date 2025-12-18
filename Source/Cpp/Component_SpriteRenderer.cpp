@@ -208,8 +208,13 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 		return false;
 	}
 	// ユーザー拡張用定数バッファの作成 
-	if (m_PSUserExpandCBNum != 0 || m_VSUserExpandCBNum != 0) {
-		if (!CreateUserExpandCBuffer(*info.pRenderer, m_pPSUserExpandCBuffers->Size, NULL)) {
+	if (m_PSUserExpandCBNum != 0) {
+		if (!CreateUserExpandCBuffer(*info.pRenderer, m_pPSUserExpandCBuffers)) {
+			return false;
+		}
+	}	
+	if (m_VSUserExpandCBNum != 0) {
+		if (!CreateUserExpandCBuffer(*info.pRenderer, m_pVSUserExpandCBuffers)) {
 			return false;
 		}
 	}
@@ -331,7 +336,7 @@ bool SpriteRenderer::CreateCBuffer(ID3D11Device *pDevice)
 //* true : 成功
 //* false : 失敗
 //*----------------------------------------------------------------------------------------
-bool SpriteRenderer::CreateUserExpandCBuffer(RendererEngine& renderer, UINT byteWidth, void* pSrc)
+bool SpriteRenderer::CreateUserExpandCBuffer(RendererEngine& renderer, CB_USER_EXPAND_SET* cbData)
 {
 	auto pDevice = renderer.get_Device();
 	auto pContext = renderer.get_DeviceContext();
@@ -340,14 +345,14 @@ bool SpriteRenderer::CreateUserExpandCBuffer(RendererEngine& renderer, UINT byte
 	D3D11_BUFFER_DESC bd{};
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的に更新
-	bd.ByteWidth = byteWidth;							// バッファのサイズ
+	bd.ByteWidth = cbData->Size;							// バッファのサイズ
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPU書き込み
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 
 	// 定数バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pPSUserExpandCBuffers->pBuff);
+	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &cbData->pBuff);
 	if (FAILED(hr)) {
 		return false;
 	}
@@ -355,13 +360,13 @@ bool SpriteRenderer::CreateUserExpandCBuffer(RendererEngine& renderer, UINT byte
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	// GPUメモリにアクセス
-	pContext->Map(m_pPSUserExpandCBuffers->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	pContext->Map(cbData->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	// データのコピー 
-	memcpy(mappedResource.pData, m_pPSUserExpandCBuffers->pData, m_pPSUserExpandCBuffers->Size);
+	memcpy(mappedResource.pData, cbData->pData, cbData->Size);
 
 	// アクセス終了
-	pContext->Unmap(m_pPSUserExpandCBuffers->pBuff, 0);
+	pContext->Unmap(cbData->pBuff, 0);
 
 	return true;
 }

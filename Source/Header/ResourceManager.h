@@ -38,13 +38,12 @@ public:
         static ResourceManager instance;
         return instance;
     }
-
     bool Init(std::shared_ptr<class RendererEngine> renderer);   // 初期化
     void Term();                            // 終了
     void Release();                         // 全開放
 
-    std::shared_ptr<Texture> LoadTexture(const std::wstring &path);    // テクスチャのロード
-    std::shared_ptr<Texture> LoadDDSTexture(const std::wstring &path);    // テクスチャのロード
+    std::shared_ptr<Texture> LoadWIC_Texture(const std::wstring &path);    // テクスチャのロード
+    std::shared_ptr<Texture> LoadDDS_CubeMap_Texture(const std::wstring &path);    // テクスチャのロード
     std::shared_ptr<ModelData> LoadModel(const char* path);    // テクスチャのロード
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）

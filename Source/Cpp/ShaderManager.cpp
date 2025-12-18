@@ -97,6 +97,12 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL,
             ARRAYSIZE(SimpleLayout),
             SimpleLayout,
+        },          
+        {
+             /* スカイボックス用  */
+             SHADER_TYPE::SKYBOX,
+             ARRAYSIZE(SimpleLayout),
+             SimpleLayout,
         },        
     };
 
@@ -321,6 +327,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;
         case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             hr = this->CompileShader(HLSL__YBlur_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;       
+        case SHADER_TYPE::SKYBOX:                      // スカイボックス
+            hr = this->CompileShader(HLSL__Skybox_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -387,6 +396,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;
         case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             this->LoadCSOFile(HLSL_CSO__YBlur_VS_PATH.c_str(), &csoByteCode);
+            break;        
+        case SHADER_TYPE::SKYBOX:                       // スカイボックス
+            this->LoadCSOFile(HLSL_CSO__Skybox_VS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -473,6 +485,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;
         case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             hr = this->CompileShader(HLSL__GaussianBlur_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;       
+        case SHADER_TYPE::SKYBOX:                       // スカイボックス
+            hr = this->CompileShader(HLSL__Skybox_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
@@ -530,6 +545,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;
         case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:
             this->LoadCSOFile(HLSL_CSO__GaussianBlur_PS_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::SKYBOX:
+            this->LoadCSOFile(HLSL_CSO__Skybox_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);

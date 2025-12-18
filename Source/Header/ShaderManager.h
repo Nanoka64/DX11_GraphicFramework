@@ -21,14 +21,14 @@ enum class SHADER_TYPE
     DEFFERD_STANDARD_RT_SPRITE, // RT用スプライト     標準ライティング
     DEFFERD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
     DEFFERD_STANDARD_SKINNED,   // スキニング3Dモデル 標準ライティング
-    DEFFERD_STANDARD_BILLBOARD, // ビルボード         標準ライティング 
+    DEFFERD_STANDARD_BILLBOARD, // 未実装 ビルボード         標準ライティング 
 
 
     // フォワードシェーディング ****************************************
     // UIやαブレンドがあるオブジェクト用
     FOWARD_STANDARD_UI_SPRITE, // スプライト 標準 UI用 
-    FOWARD_STANDARD_BILLBOARD, // ビルボード 標準ライティング
-    FOWARD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
+    FOWARD_STANDARD_BILLBOARD, // 未実装 ビルボード 標準ライティング
+    FOWARD_STANDARD_SIMPLE,    // 未実装 簡易3Dオブジェクト 標準ライティング
     FOWARD_NO_LIGHTING_SIMPLE, // 簡易3Dオブジェクト ライティング無し
 
     GAUSSIAN_BLUR_HORIZONTAL,    // ガウシアン水平ブラー 
@@ -36,6 +36,8 @@ enum class SHADER_TYPE
 
     POST_EFFECT, // ポストエフェクト用
 
+    SKYBOX,                    // スカイボックス用
+    
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用
     FOWARD_UI_IMAGE,  // イメージ UI用

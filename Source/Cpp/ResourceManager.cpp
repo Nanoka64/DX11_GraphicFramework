@@ -47,7 +47,7 @@ void ResourceManager::Release()
 //* 引数：1.ファイルパス
 //* 返値：ロードしたTexture
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<Texture> ResourceManager::LoadTexture(const std::wstring &path)
+std::shared_ptr<Texture> ResourceManager::LoadWIC_Texture(const std::wstring &path)
 {
     auto it = m_TexturesMap.find(path);
 
@@ -67,7 +67,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const std::wstring &path)
         auto texture = std::make_shared<Texture>();
 
         // 読み込み
-        if(FAILED(texture->Load(path, *render))) return nullptr;
+        if(FAILED(texture->Load_WIC(path, *render))) return nullptr;
 
         // 配列に登録
         m_TexturesMap[path] = std::move(texture);
@@ -80,13 +80,38 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const std::wstring &path)
 
 //*---------------------------------------------------------------------------------------
 //* @:ResourceManager Class 
-//*【?】DDSフォーマットテクスチャのロード
+//*【?】キューブマップ用 DDSフォーマットテクスチャのロード
 //* 引数：1.ファイルパス
 //* 返値：ロードしたTexture
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<Texture> ResourceManager::LoadDDSTexture(const std::wstring& path)
+std::shared_ptr<Texture> ResourceManager::LoadDDS_CubeMap_Texture(const std::wstring& path)
 {
-    return {};
+    auto it = m_TexturesMap.find(path);
+
+    // 既に登録済みならそれを返す
+    if (it != m_TexturesMap.end())
+    {
+        return it->second;
+    }
+
+    // shared_ptrを受け取る
+    auto render = m_pRenderer.lock();
+
+    // 参照が切れていないなら
+    if (render)
+    {
+        // 登録されていないなら、作成して登録
+        auto texture = std::make_shared<Texture>();
+
+        // 読み込み
+        if (FAILED(texture->Load_DDS_CubeMap(path, *render))) return nullptr;
+
+        // 配列に登録
+        m_TexturesMap[path] = std::move(texture);
+
+        return m_TexturesMap[path];
+    }
+    return nullptr;
 };
 
 

@@ -119,6 +119,6 @@ private:
 	/// <param name="pDevice"></param>
 	/// <param name="info"></param>
 	/// <returns></returns>
-	bool CreateUserExpandCBuffer(RendererEngine& renderer, UINT byteWidth, void* pSrc);
+	bool CreateUserExpandCBuffer(RendererEngine& renderer,CB_USER_EXPAND_SET* cbData);
 };
 

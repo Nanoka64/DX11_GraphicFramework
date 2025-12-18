@@ -6,10 +6,44 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-SamplerState g_sSampler : register(s0);
-TextureCube g_tSkyboxTexture : register(t0);
+#include "ConstantBuffers_H.hlsli"
 
-float4 VSMain( float4 pos : POSITION ) : SV_POSITION
+/* =========================================================================
+/* - @:入力構造体 - */
+/*  Pos以外使わない
+/* =========================================================================*/
+struct VS_IN
 {
-	return pos;
+    float3 Pos : POSITION;
+    float3 Normal : NORMAL;
+    float4 Color : COLOR;
+    float2 UV : TEXCOORD;
+};
+
+/* =========================================================================
+/* - @:入力構造体 - */
+/* =========================================================================*/
+struct VS_OUT
+{
+    float4 Pos : SV_POSITION;
+    float3 TexCoord : TEXCOORD;
+};
+
+
+// **************************************************************************
+/* - @:エントリーポイント - */
+// **************************************************************************
+VS_OUT VSMain(VS_IN input)
+{
+    float4 pos = float4(input.Pos, 1.0f);
+    VS_OUT output;
+    
+    pos = mul(pos,cb_Transform).xyww;
+    pos = mul(pos, cb_View).xyww;
+    pos = mul(pos, cb_Projection).xyww;
+    
+    output.Pos = pos;               // 画面空間（多分使わない）
+    output.TexCoord = input.Pos;    // これをテクスチャのサンプリングに使う（頂点位置そのまま）
+    
+    return output;
 }

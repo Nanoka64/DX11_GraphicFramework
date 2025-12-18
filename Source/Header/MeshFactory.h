@@ -18,8 +18,8 @@ struct InputMaterial
 struct ConstantBufferInfo
 {
     int SetSlot = -1; 						    // 定数バッファ番号
-    void* pUserExpandConstantBuffer = nullptr;  // VSユーザー拡張用定数バッファ
-    int UserExpandConstantBufferSize = 0;       // VSユーザー拡張用定数バッファサイズ
+    void* pUserExpandConstantBuffer = nullptr;  // ユーザー拡張用定数バッファ
+    int UserExpandConstantBufferSize = 0;       // ユーザー拡張用定数バッファサイズ
 };
 
 

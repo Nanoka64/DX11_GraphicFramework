@@ -151,6 +151,9 @@
     <Filter Include="ソース ファイル\Component\Game">
       <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\Sky">
+      <UniqueIdentifier>{a002f88e-90e5-42e9-90ec-d0d7e75b918c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -359,6 +362,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_BillboardResource.cpp">
       <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\Sky</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -602,6 +608,9 @@
     <ClInclude Include="Source\Header\Component_BillboardResource.h">
       <Filter>ソース ファイル\Component\Mesh\BillBoard</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_SkyRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\Sky</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -665,6 +674,9 @@
       <Filter>HLSL\VS</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\GaussianBlur_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBox_PS.hlsl">
       <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
   </ItemGroup>

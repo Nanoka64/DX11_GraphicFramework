@@ -103,7 +103,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUtili
     auto meshRenderer = pObj.lock()->add_Component<MeshRenderer>();
 
     // リソースのセットアップ
-    if (!meshResource->Setup(*info.pRenderer, info.Type, info.MaterialData->pMat, info.MatNum))return {};
+    if (!meshResource->Setup(*info.pRenderer,info.ShaderType, info.Type, info.MaterialData->pMat, info.MatNum))return {};
     
     // Rendererにリソースを設定
     meshRenderer->set_MeshResource(meshResource);

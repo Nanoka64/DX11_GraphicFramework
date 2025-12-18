@@ -130,7 +130,7 @@ bool BillboardResource::CreateIndexBuffer(ID3D11Device* pDevice, const void* pIn
 bool BillboardResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std::wstring& path)
 {
 	// テクスチャ読み込み
-	auto texture = ResourceManager::Instance().LoadTexture(path);
+	auto texture = ResourceManager::Instance().LoadWIC_Texture(path);
 	if (texture == nullptr) {
 		return false;
 	}

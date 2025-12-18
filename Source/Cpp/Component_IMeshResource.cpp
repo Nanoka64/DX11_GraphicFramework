@@ -121,7 +121,7 @@ bool IMeshResource::CreateIndexBuffer(ID3D11Device* pDevice, const void* pIndice
 bool IMeshResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std::wstring& path)
 {
 	// テクスチャ読み込み
-	auto texture = ResourceManager::Instance().LoadTexture(path);
+	auto texture = ResourceManager::Instance().LoadWIC_Texture(path);
 	if (texture == nullptr) {
 		return false;
 	}
@@ -212,9 +212,11 @@ bool IMeshResource::CreateCBuffer(ID3D11Device* pDevice)
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool IMeshResource::Setup(RendererEngine& renderer, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum)
+bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum)
 {
 	auto pDevice = renderer.get_Device();
+
+	m_ShaderType = shaderType;
 
 	/*
 	*  メッシュ情報の作成

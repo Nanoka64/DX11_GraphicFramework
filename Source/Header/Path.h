@@ -26,6 +26,7 @@ namespace Path
     const std::wstring HLSL__Sprite_PS_PATH = std::wstring(Shader)                  + L"Sprite_PS.hlsl";
     const std::wstring HLSL__Simple_PS_PATH = std::wstring(Shader)                  + L"Simple_PS.hlsl";
     const std::wstring HLSL__GaussianBlur_PS_PATH = std::wstring(Shader)            + L"GaussianBlur_PS.hlsl";
+    const std::wstring HLSL__Skybox_PS_PATH = std::wstring(Shader)                  + L"Skybox_PS.hlsl";
 
     // VS
     const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
@@ -33,6 +34,7 @@ namespace Path
     const std::wstring HLSL__Sprite_VS_PATH = std::wstring(Shader)                  + L"Sprite_VS.hlsl";
     const std::wstring HLSL__XBlur_VS_PATH = std::wstring(Shader)                   + L"XBlur_VS.hlsl";
     const std::wstring HLSL__YBlur_VS_PATH = std::wstring(Shader)                   + L"YBlur_VS.hlsl";
+    const std::wstring HLSL__Skybox_VS_PATH = std::wstring(Shader)                  + L"Skybox_VS.hlsl";
 
     // csoファイル(コンパイル済みシェーダ) ***************************************************************************
     // PS
@@ -42,6 +44,7 @@ namespace Path
     const std::wstring HLSL_CSO__Sprite_PS_PATH = std::wstring(CSO)                 + L"Sprite_PS.cso";
     const std::wstring HLSL_CSO__Simple_PS_PATH = std::wstring(CSO)                 + L"Simple_PS.cso";
     const std::wstring HLSL_CSO__GaussianBlur_PS_PATH = std::wstring(CSO)           + L"GaussianBlur_PS.cso";
+    const std::wstring HLSL_CSO__Skybox_PS_PATH = std::wstring(CSO)                 + L"Skybox_PS.cso";
 
 
     // VS
@@ -50,4 +53,5 @@ namespace Path
     const std::wstring HLSL_CSO__Sprite_VS_PATH = std::wstring(CSO)                 + L"Sprite_VS.cso";
     const std::wstring HLSL_CSO__XBlur_VS_PATH = std::wstring(CSO)                  + L"XBlur_VS.cso";
     const std::wstring HLSL_CSO__YBlur_VS_PATH = std::wstring(CSO)                  + L"YBlur_VS.cso";
+    const std::wstring HLSL_CSO__Skybox_VS_PATH = std::wstring(CSO)                 + L"Skybox_VS.cso";
 }

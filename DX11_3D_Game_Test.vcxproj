@@ -171,6 +171,7 @@
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h" />
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h" />
+    <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp" />
     <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp" />
+    <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
@@ -501,6 +503,15 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="Source\Shader\SkyBox_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="Source\Shader\XBlur_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -574,6 +585,8 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Source\Shader\Sprite_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

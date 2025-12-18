@@ -245,27 +245,68 @@ namespace Tool
         }
     }
 
-
+    //************************************************************************
+    //
+    /* 文字変換関連の参考サイト */
+    // https://iifx.dev/ja/articles/1421553/std-string%E3%81%A8std-wstring-c-%E6%96%87%E5%AD%97%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9%E3%81%A8%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E8%A7%A3%E6%B1%BA
+    //
+    //************************************************************************
+    
     // stringからwstringへの変換
     inline std::wstring StringToWstring(const std::string& str)
     {
         std::wstring ret;
         //一度目の呼び出しは文字列数を知るため
-        auto result = MultiByteToWideChar(CP_UTF8,
+        int len = MultiByteToWideChar(CP_UTF8,
             0,
             str.c_str(),//入力文字列
             static_cast<int>(str.length()),
             nullptr,
-            0);
-        assert(result >= 0);
-        ret.resize(result);//確保する
+            0
+        );
+        assert(len >= 0);
+        ret.resize(len);    //文字数分確保する
+
         //二度目の呼び出しは変換
-        result = MultiByteToWideChar(CP_UTF8,
+        MultiByteToWideChar(CP_UTF8,
             0,
             str.c_str(),//入力文字列
             static_cast<int>(str.length()),
             ret.data(),
-            static_cast<int>(ret.size()));
+            static_cast<int>(ret.size())
+        );
+        return ret;
+    }
+
+    // wstringからstringへの変換
+    inline std::string WStringToString(const std::wstring& wstr)
+    {
+        std::string ret;
+        //一度目の呼び出しは文字列数を知るため
+        int len = WideCharToMultiByte(
+            CP_UTF8,
+            0,
+            wstr.c_str(),//入力文字列
+            static_cast<int>(wstr.length()),
+            nullptr,
+            0, 
+            nullptr, 
+            nullptr
+        );
+        assert(len >= 0);
+        ret.resize(len);    //文字数分確保する
+        
+        //二度目の呼び出しは変換
+        WideCharToMultiByte(
+            CP_UTF8,
+            0,
+            wstr.c_str(),//入力文字列
+            static_cast<int>(wstr.length()),
+            ret.data(),
+            static_cast<int>(ret.size()),
+            nullptr,
+            nullptr
+        );
         return ret;
     }
 }

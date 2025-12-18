@@ -13,6 +13,7 @@ class Texture
 {
 private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV;   // テクスチャをシェーダに渡すためのもの
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pTexture2D;   
     std::wstring m_FilePath;
 
 public:
@@ -20,13 +21,22 @@ public:
     ~Texture();
 
     /// <summary>
-    /// テクスチャのロード
+    /// WIC対応ファイルの読み込み
     /// </summary>
     /// <param name="path">ファイルパス</param>
     /// <param name="renderer"></param>
     /// <returns></returns>
-    HRESULT Load(const std::wstring& path, class RendererEngine &renderer);
+    HRESULT Load_WIC(const std::wstring& path, class RendererEngine &renderer);
     
+    /// <summary>
+    /// キューブマップ用 DDS対応ファイルの読み込み
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="renderer"></param>
+    /// <returns></returns>
+    HRESULT Load_DDS_CubeMap(const std::wstring& path, class RendererEngine& renderer);
+
+
     /// <summary>
     /// 外からそのままSRVをセット
     /// Comポインタで渡す

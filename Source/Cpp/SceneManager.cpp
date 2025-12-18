@@ -40,6 +40,11 @@ using namespace GIGA_Engine;
 /// <param name="sigma">分散具合。この数値が大きくなると分散具合が強くなる</param>
 void CalcWeightsTableFromGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma)
 {
+    if (sigma <= 0.0f)
+    {
+        return;
+    }
+
     // 重みの合計を記録する変数を定義する
     float total = 0;
 
@@ -110,7 +115,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* ディレクションライトの生成(Cubuで分かりやすく) */
             MATERIAL *mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 1.0f;
 
@@ -136,7 +141,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* ポイントライトの生成 (Cubuで分かりやすく)*/
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 1.0f;
@@ -172,11 +177,10 @@ bool SceneManager::Init(RendererEngine &renderer)
             }
         }
 
-
         {
             /* プレイヤー モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
             mat[0].SpecularPower = 30.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -200,8 +204,8 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* アリ モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
-            mat[0].Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
+            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].SpecularPower = 50.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -226,9 +230,9 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* B-2 モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
-            mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
-            mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
+            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
+            mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
+            mat[0].Normal.Texture   = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].SpecularPower    = 200.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -252,9 +256,9 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* クレイモア モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Base_Color.png");
-            mat[0].Specular.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Roughness.png");
-            mat[0].Normal.Texture   = ResourceManager::Instance().LoadTexture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
+            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
+            mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Roughness.png");
+            mat[0].Normal.Texture   = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
             mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].SpecularPower    = 100.0f;
             mat[0].SpecularColor    = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -281,8 +285,8 @@ bool SceneManager::Init(RendererEngine &renderer)
 /*            for (int i = -1; i < 2; i++)
             {
                 MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/外壁W050.jpg");
-                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W050.jpg");
+                mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
                 mat->SpecularPower = 30.0f;
 
@@ -303,8 +307,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             {
                 // 地面
                 MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/WoodFloor051_2K-PNG_Color.png");
-                mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
+                mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/WoodFloor051_2K-PNG_Color.png");
+                mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
                 mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
                 mat->SpecularPower = 100.0f;
 
@@ -323,49 +327,50 @@ bool SceneManager::Init(RendererEngine &renderer)
             }
         }
    
-        //{
-        //    // SkyDorm
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/tex_青空1.jpg");
-        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->Normal.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/DefaultN_Map.png");
-        //    mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
-        //    mat->SpecularPower = 1.0f;
+        {
+            // SkyDorm
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
+            mat->DiffuseColor = VEC4(3.0f, 3.0f, 3.0f, 1.0f);
+            mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
+            mat->SpecularPower = 1.0f;
 
-        //    CreateUtilityMeshInfo mesh;
-        //    mesh.pRenderer = &renderer;
-        //    mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-        //    mesh.ObjTag = "SkyDorm";
-        //    mesh.MatNum = 1;
-        //    mesh.MaterialData = new InputMaterial();
-        //    mesh.MaterialData->pMat = mat;
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.ObjTag = "SkyDorm";
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+            mesh.ShaderType = SHADER_TYPE::SKYBOX;
+            mesh.IsActive = false;
 
-        //    auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //    obj.lock()->get_Transform().lock()->set_Scale(40000, 40000, 40000);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
-        //}       
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(1, 1, 1);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
+        } 
 
-        //{
-        //    // ビルボード
-        //    MATERIAL* mat = new MATERIAL;
-        //    mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/0191.png");
-        //    mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        //    mat->SpecularPower = 100.0f;
-        //    mat->BlendMode = BLEND_MODE::ALPHA;
-        //    CreateBillboradInfo billboard;
-        //    billboard.pRenderer     = &renderer;
-        //    billboard.Type          = BILLBOARD_USAGE_TYPE::SIMPLE;
-        //    billboard.ShaderType    = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
-        //    billboard.ObjTag        = "Billboard";
-        //    billboard.IsActive      = false;
-        //    billboard.MatNum        = 1;
-        //    billboard.MaterialData  = new InputMaterial();
-        //    billboard.MaterialData->pMat = mat;
-        //    auto obj = MeshFactory::CreateBillboard(billboard);
-        //    obj.lock()->get_Transform().lock()->set_Scale(1280.0f, 720.0f, 500.0f);
-        //    obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
-        //}
+        {
+            // ビルボード
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/0191.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 100.0f;
+            mat->BlendMode = BLEND_MODE::ALPHA;
+            CreateBillboradInfo billboard;
+            billboard.pRenderer     = &renderer;
+            billboard.Type          = BILLBOARD_USAGE_TYPE::SIMPLE;
+            billboard.ShaderType    = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
+            billboard.ObjTag        = "Billboard";
+            billboard.IsActive      = false;
+            billboard.MatNum        = 1;
+            billboard.MaterialData  = new InputMaterial();
+            billboard.MaterialData->pMat = mat;
+            auto obj = MeshFactory::CreateBillboard(billboard);
+            obj.lock()->get_Transform().lock()->set_Scale(1280.0f, 720.0f, 500.0f);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
+        }
     }
 
 
@@ -456,11 +461,11 @@ bool SceneManager::Init(RendererEngine &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
-
+    
     // ****************************************************************
     // 水平ブラー
     // ****************************************************************
@@ -549,6 +554,20 @@ bool SceneManager::Init(RendererEngine &renderer)
     obj = MeshFactory::CreateSprite(sprite);  
     sprite.pTextureMap.clear();
 
+    /*************************************
+    * ライティングパス出力用
+    *************************************/
+    sprite.ObjTag = "DefferdRenderTarget";
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
+    sprite.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE;
+    obj = MeshFactory::CreateSprite(sprite);
+    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
+    sprite.pTextureMap.clear();    
                    
     /*************************************
     * 水平ブラー用スプライト
@@ -603,20 +622,6 @@ bool SceneManager::Init(RendererEngine &renderer)
     copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
     obj = MeshFactory::CreateSprite(copyToFrameBufferSprite);
 
-    /*************************************
-    * ライティングパス出力用
-    *************************************/
-    sprite.ObjTag = "DefferdRenderTarget";
-    sprite.Width = 1.0f;
-    sprite.Height = 1.0f;
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
-    sprite.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE;
-    obj = MeshFactory::CreateSprite(sprite);
-    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
-    sprite.pTextureMap.clear();    
 
     return true;
 }
@@ -659,9 +664,9 @@ void SceneManager::Update(RendererEngine& renderer)
 
     auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight0");
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
-    lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
-    lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-    lig.lock()->get_Component<PointLight>()->set_Intensity(10.0);
+    //lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
+    //lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+    //lig.lock()->get_Component<PointLight>()->set_Intensity(10.0);
 
     auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
@@ -684,9 +689,9 @@ void SceneManager::Update(RendererEngine& renderer)
     //rad = cubuObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(cos(a), sin(a), sin(a));
 
-    //auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
-    //auto tf = skyObj.lock()->get_Component<Transform>();
-    //tf->set_Pos(camPos);
+    auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
+    auto tf = skyObj.lock()->get_Component<Transform>();
+    tf->set_Pos(camPos);
 
     // ライトのデバッグ
     Master::m_pDebugger->BeginDebugWindow("Light");
@@ -751,6 +756,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     static float t = 0.f;
     t += 0.1f;
 
+    // Gバッファ
     DX_RenderTarget* gbuffer[] = {
         m_pAlbedo_RT ,
         m_pNormal_RT,
@@ -761,6 +767,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     // プロジェクション変換行列の設定
     renderer.SetupProjectionTransform(1920,1080);
 
+    // ************************************************************************
+    // 
+    // Gパス
+    // 
+    // ************************************************************************
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
@@ -774,6 +785,12 @@ void SceneManager::Draw(RendererEngine& renderer)
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
+
+    // ************************************************************************
+    // 
+    // ライティングパス
+    //
+    // ************************************************************************
     // 最終合成用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
@@ -807,11 +824,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.ReleaseRenderTargetSetNull();
 
 
-    // Gbuffer作成時の深度バッファを設定
-    // フォワードの場合はこの下に記述
-    //renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
-    //auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
-    //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    // ************************************************************************
+    // 
+    // ブラー掛け
+    // 
+    // ************************************************************************
 
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth() / 2.0f, renderer.get_ScreenHeight());
@@ -842,6 +859,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
+    // ************************************************************************
+    // 
+    // フレームバッファ
+    // 
+    // ************************************************************************
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
@@ -851,6 +873,24 @@ void SceneManager::Draw(RendererEngine& renderer)
     auto copyToFrameBufferSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("CopyToFrameBufferSprite").lock();
     auto copyToFrameBufferSprite = copyToFrameBufferSpriteObj->get_Component<SpriteRenderer>();
     copyToFrameBufferSprite->Draw(renderer);
+
+
+    // ************************************************************************
+    // 
+    // フォワードの場合はこの下に記述（ポストエフェクトはかからないよ）
+    // 
+    // ************************************************************************
+    // Gbuffer作成時の深度バッファを設定
+    renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
+    
+    renderer.TestSet_DepthStencilState();
+
+    auto skyDorm = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm").lock();
+    skyDorm->get_Component<MeshRenderer>()->Draw(renderer);   
+
+    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
+    //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    renderer.ClearRenderTargetView(m_pDepth_RT);
 
 
     //// シーンの描画
