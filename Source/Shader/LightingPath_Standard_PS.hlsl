@@ -102,6 +102,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.xyz * diffuse + specular;
     finalCol.a = 1.0f;
-    return saturate(finalCol);
 
+    return saturate(finalCol);
 }

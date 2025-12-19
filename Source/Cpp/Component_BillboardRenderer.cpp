@@ -85,7 +85,7 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
 
     // ワールド行列セット ==========================
     XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_ExcludingRotWorldMtx();
-    worldMtx = XMMatrixMultiply(worldMtx, viewInvMtx); // ビルボード用にビューの逆行列を掛ける
+    worldMtx = XMMatrixMultiply(viewInvMtx,worldMtx ); // ビルボード用にビューの逆行列を掛ける
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
     XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
     

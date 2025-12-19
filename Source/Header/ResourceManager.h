@@ -42,9 +42,27 @@ public:
     void Term();                            // 終了
     void Release();                         // 全開放
 
-    std::shared_ptr<Texture> LoadWIC_Texture(const std::wstring &path);    // テクスチャのロード
-    std::shared_ptr<Texture> LoadDDS_CubeMap_Texture(const std::wstring &path);    // テクスチャのロード
-    std::shared_ptr<ModelData> LoadModel(const char* path);    // テクスチャのロード
+    /// <summary>
+    /// WIC対応テクスチャのロード
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    std::shared_ptr<Texture> LoadWIC_Texture(const std::wstring &path);           
+
+    /// <summary>
+    /// キューブマップ用DDSテクスチャのロード
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    std::shared_ptr<Texture> LoadDDS_CubeMap_Texture(const std::wstring &path);    
+
+    /// <summary>
+    /// FBXモデルのロード
+    /// ※ 確認できていないけど、Assimpを使っているのでFBX以外もいけるかも？
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    std::shared_ptr<ModelData> LoadModel(const char* path);                      
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）
     std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv);

@@ -28,7 +28,7 @@ private:
     ID3D11Texture2D                         * m_pDepthStencil;        // 画像を読み込んで使えるようにするもの
     ID3D11DepthStencilView                  * m_pDepthStencilView;    // 深度バッファ(ZBuffer)奥行き
     ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
-    ID3D11DepthStencilState                 * m_pTest_DepthStencilState;   // Z比較をするための設定
+    ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS;   // Z比較をするための設定
     ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     //ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
@@ -170,13 +170,10 @@ public:
     /// <returns></returns>
     XMMATRIX get_ViewInvMatrix()const;
 
-    void TestSet_DepthStencilState()
-    {
-        m_pImmediateContext->OMSetDepthStencilState(NULL, 0);
-        m_pImmediateContext->OMSetDepthStencilState(m_pTest_DepthStencilState, 0);
-    };
+    ID3D11DepthStencilState* get_DepthTestDisabled_DSS()const;
 
-    void RegisterDepthStencilState();
+    void RegisterDepthStencilState(ID3D11DepthStencilState* pDss, UINT stencilRef);
+    void RegisterDefaultDepthStencilState();
     void RegisterPSSetSamplers();
     void RegisterRSSetState();
 

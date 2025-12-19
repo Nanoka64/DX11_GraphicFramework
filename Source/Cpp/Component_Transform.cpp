@@ -212,7 +212,7 @@ XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
     XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(m_Rotation);
     XMMATRIX mtxT   = XMMatrixTranslationFromVector(m_Position);
 
-    XMMATRIX localMtx = mtxS * mtxRot * mtxT;
+    XMMATRIX localMtx = mtxS * mtxT;
 
     // e‚ª‚¢‚é‚È‚ç©•ª‚Æe‚ğŠ|‚¯‚½‚à‚Ì‚ğ•Ô‚·
     if (m_pParent.lock())

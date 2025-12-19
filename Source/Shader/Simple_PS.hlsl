@@ -7,6 +7,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
+#include "ConstantBuffers_H.hlsli"
 SamplerState g_sSampler : register(s0);
 Texture2D g_tTexture : register(t0); // ディフューズ
 
@@ -31,5 +32,6 @@ float4 PSMain(PS_SimpleIntput input) : SV_TARGET
     float4 texColor = g_tTexture.Sample(g_sSampler, input.UV);
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     finalColor = texColor * input.Color;
+    finalColor *= cb_DiffuseColor;
     return finalColor;
 }

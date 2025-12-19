@@ -10,6 +10,7 @@
 #include "Component_SpriteRenderer.h"
 #include "Component_BillboardRenderer.h"
 #include "Component_BillboardResource.h"
+#include "Component_SkyRenderer.h"
 #include "ResourceManager.h"
 #include "Texture.h"
 
@@ -167,6 +168,38 @@ std::weak_ptr<class GameObject> MeshFactory::CreateBillboard(const CreateBillbor
 
     // Rendererにリソースを設定
     billboardRenderer->set_BillboardResource(billboardResource);
+
+    return pObj;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:MeshFactory Class 
+//*【?】スカイボックスの生成
+//* 引数：1.CreateSkyboxInfo&
+//* 返値：std::weak_ptr<GameObject>
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<class GameObject> MeshFactory::CreateSkybox(const CreateSkyboxInfo& info)
+{
+    // オブジェクトの生成
+    std::weak_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    pObj.lock()->Init(*info.pRenderer);
+    pObj.lock()->set_Tag(info.ObjTag.c_str());
+
+    // オブジェクトの状態をアクティブにする
+    if (info.IsActive) {
+        pObj.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    }
+
+    // コンポーネントの追加
+    auto meshResource = pObj.lock()->add_Component<IMeshResource>();
+    auto skyRenderer = pObj.lock()->add_Component<SkyRenderer>();
+
+    // リソースのセットアップ                                  ↓キューブにする
+    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMat, info.MatNum))return {};
+
+    // Rendererにリソースを設定
+    skyRenderer->set_MeshResource(meshResource);
 
     return pObj;
 }

@@ -143,9 +143,33 @@ struct CreateBillboradInfo
         MaterialData(nullptr),
         MatNum(0),
         Type(BILLBOARD_USAGE_TYPE::SIMPLE),
-        FixedAxis()
+        FixedAxis(),
+        ShaderType(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE)
     {};
 };
+
+/// <summary>
+/// スカイボックス生成情報
+/// </summary>
+struct CreateSkyboxInfo
+{
+    RendererEngine* pRenderer;   // 描画エンジン
+    SHADER_TYPE ShaderType;      // 使用するシェーダの種類
+    std::string ObjTag;          // オブジェクトのタグ
+    bool IsActive;               // 生成時にオブジェクトをアクティブにするか
+    InputMaterial* MaterialData; // マテリアル情報
+    UINT MatNum;                 // マテリアル数
+
+    // コンストラクタ
+    CreateSkyboxInfo() :
+        pRenderer(nullptr),
+        IsActive(true),
+        MaterialData(nullptr),
+        MatNum(0),
+        ShaderType(SHADER_TYPE::SKYBOX)
+    {};
+};
+
 
 
 class MeshFactory
@@ -158,5 +182,6 @@ public:
     static std::weak_ptr<class GameObject> CreateUtilityMesh(const CreateUtilityMeshInfo& info);
     static std::weak_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
     static std::weak_ptr<class GameObject> CreateBillboard(const CreateBillboradInfo& info);
+    static std::weak_ptr<class GameObject> CreateSkybox(const CreateSkyboxInfo& info);
 }; 
 

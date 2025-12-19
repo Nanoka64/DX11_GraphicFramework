@@ -19,6 +19,7 @@
 #include "Component_PointLight.h"
 #include "Component_SpriteRenderer.h"
 #include "Component_BillboardRenderer.h"
+#include "Component_SkyRenderer.h"
 #include "DX_RenderTarget.h"
 
 
@@ -114,7 +115,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
         {
             /* ディレクションライトの生成(Cubuで分かりやすく) */
-            MATERIAL *mat = new MATERIAL;
+            MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 1.0f;
@@ -212,7 +213,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
-            model.Path   = "Resource/Model/Enemy/trader_ant_lowpoly.fbx";
+            model.Path = "Resource/Model/Enemy/trader_ant_lowpoly.fbx";
             model.ObjTag = "Model";
             model.IsAnim = true;
             model.MatNum = 1;
@@ -221,8 +222,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0,1.0,1.0);
-            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f,180,0.0);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0, 1.0, 1.0);
+            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -230,11 +231,11 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* B-2 モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
+            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
             mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
-            mat[0].Normal.Texture   = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
-            mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 200.0f;
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
+            mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower = 150.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -256,12 +257,12 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* クレイモア モデルの生成 */
             MATERIAL mat[1];
-            mat[0].Diffuse.Texture  = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
+            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
             mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Roughness.png");
-            mat[0].Normal.Texture   = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
-            mat[0].DiffuseColor     = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower    = 100.0f;
-            mat[0].SpecularColor    = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
+            mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower = 100.0f;
+            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -277,103 +278,88 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
             obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 1000.0f);
             obj.lock()->set_LayerRank(0);
-        }        
-
-        {
-            /* QUADの生成 */
-
-/*            for (int i = -1; i < 2; i++)
-            {
-                MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W050.jpg");
-                mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 30.0f;
-
-                CreateUtilityMeshInfo mesh;
-                mesh.pRenderer = &renderer;
-                mesh.Type = UTILITY_MESH_TYPE::QUAD;
-                mesh.ObjTag = "Quad" + std::to_string(i);
-                mesh.MatNum = 1;
-                mesh.MaterialData = new InputMaterial();
-                mesh.MaterialData->pMat = mat;
-
-                auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Scale(1000.0f, 1.0f, 1000.0f);
-                obj.lock()->get_Transform().lock()->set_Pos((i * 1000.0f), 0.0f, 0.0f);
-                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, (i * 90.0f));
-            }   */ 
-            
-            {
-                // 地面
-                MATERIAL* mat = new MATERIAL;
-                mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/WoodFloor051_2K-PNG_Color.png");
-                mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-                mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-                mat->SpecularPower = 100.0f;
-
-                CreateUtilityMeshInfo mesh;
-                mesh.pRenderer = &renderer;
-                mesh.Type = UTILITY_MESH_TYPE::PLANE;
-                mesh.ObjTag = "Ground";
-                mesh.MatNum = 1;
-                mesh.MaterialData = new InputMaterial();
-                mesh.MaterialData->pMat = mat;
-
-                auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 10000.0f, 10000.0f);
-                obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
-                obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f,  0.0f, 0.0f);
-            }
         }
-   
+
         {
-            // SkyDorm
+            // 地面
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
-            mat->DiffuseColor = VEC4(3.0f, 3.0f, 3.0f, 1.0f);
-            mat->SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 0.0f);
-            mat->SpecularPower = 1.0f;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
+            mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 70.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.ObjTag = "SkyDorm";
+            mesh.Type = UTILITY_MESH_TYPE::PLANE;
+            mesh.ObjTag = "Ground";
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
-            mesh.ShaderType = SHADER_TYPE::SKYBOX;
-            mesh.IsActive = false;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(1, 1, 1);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0, 0.0, 0.0);
-        } 
+            obj.lock()->get_Transform().lock()->set_Scale(20000.0f, 20000.0f, 20000.0f);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+            obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        }
+        {
+            // スカイボックスの作成
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
+            CreateSkyboxInfo skyInfo;
+            skyInfo.pRenderer = &renderer;
+            skyInfo.ObjTag = "Skybox";
+            skyInfo.MatNum = 1;
+            skyInfo.MaterialData = new InputMaterial();
+            skyInfo.MaterialData->pMat = mat;
+            skyInfo.ShaderType = SHADER_TYPE::SKYBOX;
+            skyInfo.IsActive = false;
+
+            auto obj = MeshFactory::CreateSkybox(skyInfo);
+            obj.lock()->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+        }
 
         {
             // ビルボード
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/0191.png");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Weak_1024.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 100.0f;
             mat->BlendMode = BLEND_MODE::ALPHA;
             CreateBillboradInfo billboard;
-            billboard.pRenderer     = &renderer;
-            billboard.Type          = BILLBOARD_USAGE_TYPE::SIMPLE;
-            billboard.ShaderType    = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
-            billboard.ObjTag        = "Billboard";
-            billboard.IsActive      = false;
-            billboard.MatNum        = 1;
-            billboard.MaterialData  = new InputMaterial();
-            billboard.MaterialData->pMat = mat;
-            auto obj = MeshFactory::CreateBillboard(billboard);
-            obj.lock()->get_Transform().lock()->set_Scale(1280.0f, 720.0f, 500.0f);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 500.0f, 0.0f);
+            billboard.pRenderer = &renderer;
+            billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
+            billboard.ShaderType = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
+            billboard.IsActive = false;
+            billboard.MatNum = 1;
+            billboard.MaterialData = new InputMaterial();
+
+            for (int i = 0; i < 30; i++)
+            {
+                VEC3 pos;
+                pos.x = static_cast<float>(rand() % 8000) - 4000.0f;
+                pos.y = static_cast<float>(rand() % 5000) - 2500.0f;;
+                pos.z = static_cast<float>(rand() % 8000) - 4000.0f;
+
+                VEC3 scl;
+                scl.x = static_cast<float>(rand() % 50) - 25.0f;
+                scl.y = static_cast<float>(rand() % 50) - 25.0f;;
+                scl.z = static_cast<float>(rand() % 50) - 25.0f;
+
+                VEC3 col;
+                col.x = static_cast<float>(rand() % 255) / 255.0f;
+                col.y = static_cast<float>(rand() % 255) / 255.0f;
+                col.z = static_cast<float>(rand() % 255) / 255.0f;
+
+                mat->DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
+                billboard.MaterialData->pMat = mat;
+                auto obj = MeshFactory::CreateBillboard(billboard);
+                obj.lock()->get_Transform().lock()->set_Pos(pos);
+                obj.lock()->get_Transform().lock()->set_Scale(2500, 2500, 2000);
+                obj.lock()->set_Tag("Billboard" + std::to_string(i));
+            }
         }
     }
-
-
     // 参照を持たせる
     m_pCamera = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
 
@@ -617,7 +603,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     copyToFrameBufferSprite.ObjTag = "CopyToFrameBufferSprite";
     copyToFrameBufferSprite.Width = 1.0f;
     copyToFrameBufferSprite.Height = 1.0f;
-    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_VerticalBlur", m_pVerticalBlur->get_SRV_ComPtr());
+    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_VerticalBlur", m_pSceneFinal_RT->get_SRV_ComPtr());
     copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
     obj = MeshFactory::CreateSprite(copyToFrameBufferSprite);
@@ -675,7 +661,7 @@ void SceneManager::Update(RendererEngine& renderer)
 
     auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
     rad = b_2Obj.lock()->get_Component<class Transform>();
-    rad->set_RotateToRad(0.0, 0.0, sin(a));
+    //rad->set_RotateToRad(0.0, 0.0, sin(a));
 
 
 
@@ -688,10 +674,6 @@ void SceneManager::Update(RendererEngine& renderer)
     //auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
     //rad = cubuObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(cos(a), sin(a), sin(a));
-
-    auto skyObj = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm");
-    auto tf = skyObj.lock()->get_Component<Transform>();
-    tf->set_Pos(camPos);
 
     // ライトのデバッグ
     Master::m_pDebugger->BeginDebugWindow("Light");
@@ -883,13 +865,25 @@ void SceneManager::Draw(RendererEngine& renderer)
     // Gbuffer作成時の深度バッファを設定
     renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
     
-    renderer.TestSet_DepthStencilState();
+    // スカイボックス用のデプスステンシル登録
+    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
-    auto skyDorm = Master::m_pGameObjectManager->get_ObjectByTag("SkyDorm").lock();
-    skyDorm->get_Component<MeshRenderer>()->Draw(renderer);   
+    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
+    skybox->get_Component<SkyRenderer>()->Draw(renderer);
 
-    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
+    // デプスステンシル解除
+    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+
+
+    //auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
     //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    
+    for (int i = 0; i < 30; i++)
+    {
+        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i)).lock();
+        //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    }
+
     renderer.ClearRenderTargetView(m_pDepth_RT);
 
 

@@ -77,10 +77,13 @@ void SkyRenderer::Draw(RendererEngine& renderer)
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
-
     /* ========== 定数バッファの更新 ========== */
+    XMMATRIX viewMtx = renderer.get_ViewMatrix();
+    viewMtx.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);// 平行移動成分をゼロにする
+
     // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
+    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_ExcludingRotWorldMtx();
+    worldMtx *= viewMtx;
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
     XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
 

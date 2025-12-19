@@ -76,7 +76,7 @@ PS_OUT PSMain(PS_IN input)
     // テスト出力
     PS_OUT output;
     output.Albedo       = finalCol;
-    output.Normal.xyz   = (input.Normal * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.xyz   = (normal * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
     output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)

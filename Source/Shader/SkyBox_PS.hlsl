@@ -8,6 +8,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
+#include "UtilityFunctions_H.hlsli"
 SamplerState g_sSampler : register(s0);
 TextureCube g_tSkyboxTexture : register(t0); // キューブマップ用
 
@@ -29,6 +30,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
 {
     // テクスチャ座標はそのまま頂点位置を入れる
     float4 skyTex = g_tSkyboxTexture.Sample(g_sSampler, input.TexCoord.xyz);
+    
+    skyTex += 0.2f;
     
     return float4(skyTex.xyz, 1.0f);
 }

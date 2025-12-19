@@ -27,6 +27,7 @@ RendererEngine::RendererEngine() :
     m_pSamplerLinear(nullptr),
     m_pRasterState(nullptr),
     m_pDepthStencilState(nullptr),
+    m_pDepthTestDisabled_DSS(nullptr),
     //m_pBlendStateAlpha(nullptr),
     //m_pBlendStateAdd(nullptr),
     //m_pBlendStateSub(nullptr),
@@ -81,7 +82,7 @@ bool RendererEngine::Init(HWND hWnd)
     // ガクつくときはここを大きくするとよい
     m_NearClipDist = 1.0f;
     m_FarClipDist  = 50000.0f;
-    m_Fov = XMConvertToRadians(30.0f);
+    m_Fov = XMConvertToRadians(100.0f);
 
 
     m_hWnd = hWnd;  // ウインドウハンドル受け取る
@@ -405,22 +406,22 @@ HRESULT RendererEngine::InitDX11_ZBuff()
     //
     D3D11_DEPTH_STENCIL_DESC depthSD;
     ZeroMemory(&depthSD, sizeof(D3D11_DEPTH_STENCIL_DESC));
-    depthSD.DepthEnable = TRUE;     // 深度テスト有効化
 
     // D3D11_DEPTH_WRITE_MASK_ZERO  = 0, Z(depth)Test OFF
     // D3D11_DEPTH_WRITE_MASK_ALL   = 1  Z(depth)Test ON
+
+    // Zテスト有りver
+    depthSD.DepthEnable = TRUE;                            // 深度テスト有効化
     depthSD.StencilEnable   = false;                       // ステンシルテスト無効
-    depthSD.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ALL;  // Zテストオン
+    depthSD.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ALL;  // 深度書き込み
     depthSD.DepthFunc       = D3D11_COMPARISON_LESS;       // ＜ 小なり(描画対象のＺ値が既存ピクセルより手前なら描画)
-    
     hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthStencilState); // ステート作成
     if (FAILED(hr))return hr;
     
-    m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);   // ステート設定
-    
-    depthSD.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // Zテストオン
+    // Zテストなしver
+    depthSD.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // 深度書き込みなし
     depthSD.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pTest_DepthStencilState); // ステート作成
+    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthTestDisabled_DSS); // ステート作成
      if (FAILED(hr))return hr;
 
     return hr;
@@ -879,3 +880,39 @@ void RendererEngine::ClearRenderTargetView(class DX_RenderTarget* pRT)
 }
 
 
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】デプスステンシルの登録
+//* 引数：1.ID3D11DepthStencilState*
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::RegisterDepthStencilState(ID3D11DepthStencilState* pDss, UINT stencilRef)
+{
+    m_pImmediateContext->OMSetDepthStencilState(pDss, stencilRef);
+}
+
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】RendererEngine内で定義しているデフォルトのものを設定する
+//* 引数：1.ID3D11DepthStencilState*
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::RegisterDefaultDepthStencilState()
+{
+    m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);
+}
+
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】深度テストなしの深度ステンシルを取得
+//* 引数：1.ID3D11DepthStencilState*
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+ID3D11DepthStencilState* RendererEngine::get_DepthTestDisabled_DSS()const
+{
+    return m_pDepthTestDisabled_DSS;
+}

@@ -38,11 +38,15 @@ VS_OUT VSMain(VS_IN input)
     float4 pos = float4(input.Pos, 1.0f);
     VS_OUT output;
     
-    pos = mul(pos,cb_Transform).xyww;
-    pos = mul(pos, cb_View).xyww;
-    pos = mul(pos, cb_Projection).xyww;
+    // cpp側で平行移動成分を除いた行列をワールド行列に対して掛けているので、
+    // ここでビュー変換はしない
+    pos = mul(pos,cb_Transform);
+    pos = mul(pos, cb_Projection);
     
-    output.Pos = pos;               // 画面空間（多分使わない）
+
+    pos.z = pos.w;
+    
+    output.Pos = pos;               // 画面空間
     output.TexCoord = input.Pos;    // これをテクスチャのサンプリングに使う（頂点位置そのまま）
     
     return output;
