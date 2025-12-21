@@ -864,27 +864,26 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // Gbuffer作成時の深度バッファを設定
     renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
-    
+
+
+
     // スカイボックス用のデプスステンシル登録
     renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
-    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
-    skybox->get_Component<SkyRenderer>()->Draw(renderer);
-
-    // デプスステンシル解除
-    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
-
-
-    //auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard").lock();
-    //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
-    
     for (int i = 0; i < 30; i++)
     {
         auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i)).lock();
-        //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
+    
+    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
+    skybox->get_Component<SkyRenderer>()->Draw(renderer);
 
+    
     renderer.ClearRenderTargetView(m_pDepth_RT);
+
+    // デプスステンシル解除
+    renderer.RegisterDepthStencilState(NULL, 0);
 
 
     //// シーンの描画

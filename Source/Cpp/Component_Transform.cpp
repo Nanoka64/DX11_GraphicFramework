@@ -3,7 +3,7 @@
 #include "GameObject.h"
 
 using namespace DirectX;
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 using namespace Tool::UV;
 using namespace Tool;
 

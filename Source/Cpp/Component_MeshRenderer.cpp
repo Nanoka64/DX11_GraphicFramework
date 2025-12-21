@@ -7,7 +7,7 @@
 #include "BlendManager.h"
 
 using namespace DirectX;
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 using namespace Tool::UV;
 
 //*---------------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     pContext->PSSetShaderResources(2, 1, &specularSRV);
 
     // 頂点＆インデックスバッファ設定 ==========================
-    UINT stride = sizeof(VERTEX);
+    UINT stride = sizeof(VERTEX_Static);
     UINT offset = 0;
     pContext->IASetVertexBuffers(0, 1, &vtxBuff, &stride, &offset); // 頂点バッファをセット
     pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット

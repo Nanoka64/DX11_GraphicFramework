@@ -8,7 +8,7 @@
 
 
 using namespace DirectX;
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 using namespace Tool::UV;
 
 //*---------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     CB_MATERIAL_SET *CB_MatSet      = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferMaterialDataSet();
     CB_TRANSFORM_SET *CB_TransSet   = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferTransformSet();
     UINT vertexNum          = pMeshes->get_VertexNum();
-    MODEL_VERTEX* vertices  = pMeshes->get_Vertices();
+    VERTEX_Skneed* vertices  = pMeshes->get_Vertices();
     SHADER_TYPE shaderType  = m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType();
 
     // モデルシェーダに切り替え

@@ -7,7 +7,7 @@ struct VERTEX3
 {
     static constexpr size_t VERTEX_NUM = 3; // 頂点数(三角形なので３)
 
-    BASE_VERTEX::VERTEX vertex[VERTEX_NUM];              // 頂点情報配列
+    VERTEX::VERTEX_Static vertex[VERTEX_NUM];              // 頂点情報配列
     ID3D11Buffer* vBuf;     // 頂点バッファ
     UINT CPUAccessFlags;    // CPUアクセスの方法
     D3D11_USAGE Usage;      // 使用方法
@@ -18,7 +18,7 @@ struct VERTEX3
     float scale;
 
     /* コンストラクタ */
-    VERTEX3(BASE_VERTEX::VEC3 centerPos, float size) :
+    VERTEX3(VERTEX::VEC3 centerPos, float size) :
         vBuf(nullptr), 
         vertex() , 
         CPUAccessFlags(D3D11_CPU_ACCESS_WRITE), 
@@ -28,10 +28,10 @@ struct VERTEX3
         scale(1.f),
         angle_Z(0.f)
     {
-        BASE_VERTEX::VEC3 a, b, c;
-        a = centerPos + (BASE_VERTEX::VEC3(0.0f, size, 0.0f));   // 上
-        b = centerPos + (BASE_VERTEX::VEC3(size, -size, 0.0f));  // 右
-        c = centerPos + (BASE_VERTEX::VEC3(-size, -size, 0.0f)); // 左
+        VERTEX::VEC3 a, b, c;
+        a = centerPos + (VERTEX::VEC3(0.0f, size, 0.0f));   // 上
+        b = centerPos + (VERTEX::VEC3(size, -size, 0.0f));  // 右
+        c = centerPos + (VERTEX::VEC3(-size, -size, 0.0f)); // 左
 
         // √3
         float sqrt3 = static_cast<float>(sqrt(3));
@@ -50,14 +50,14 @@ struct VERTEX3
         vertex[2].normal = c;
         
         /* uv */
-        vertex[0].uv = BASE_VERTEX::VEC2(0.5f, 0.0f); // 上
-        vertex[1].uv = BASE_VERTEX::VEC2(1.0f, 1.0f); // 右
-        vertex[2].uv = BASE_VERTEX::VEC2(0.0f, 1.0f); // 左
+        vertex[0].uv = VERTEX::VEC2(0.5f, 0.0f); // 上
+        vertex[1].uv = VERTEX::VEC2(1.0f, 1.0f); // 右
+        vertex[2].uv = VERTEX::VEC2(0.0f, 1.0f); // 左
 
         /* color */
-        vertex[0].color = BASE_VERTEX::VEC4(1, 0, 0, 1); // 上
-        vertex[1].color = BASE_VERTEX::VEC4(0, 1, 0, 1); // 右
-        vertex[2].color = BASE_VERTEX::VEC4(0, 0, 1, 1); // 左
+        vertex[0].color = VERTEX::VEC4(1, 0, 0, 1); // 上
+        vertex[1].color = VERTEX::VEC4(0, 1, 0, 1); // 右
+        vertex[2].color = VERTEX::VEC4(0, 0, 1, 1); // 左
     };
 
     ~VERTEX3() {

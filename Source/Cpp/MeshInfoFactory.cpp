@@ -2,7 +2,7 @@
 #include "MeshInfoFactory.h"
 #include "Window.h"
 
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 using namespace Tool::UV;
 
 MeshInfoFactory::MeshInfoFactory()
@@ -35,7 +35,7 @@ MeshInfo * MeshInfoFactory::CreateQuadInfo(MATERIAL* materials, UINT matNum )
 	//};	
 	
 	// 頂点情報 （前向き）
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex]{
 		// 座標                       // 法線                  // カラー                      // uv
 		{ VEC3(-1.0f,  1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
 		{ VEC3( 1.0f,  1.0f,  0.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
@@ -73,7 +73,7 @@ MeshInfo* MeshInfoFactory::CreateCubeInfo(MATERIAL* materials, UINT matNum)
 	meshInfo->NumVertex = 24;
 
 	// 頂点情報
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex]{
 		// 座標                       // 法線                  // カラー                      // uv
 		// 頂点フォーマット
 		// 正面 1
@@ -112,6 +112,27 @@ MeshInfo* MeshInfoFactory::CreateCubeInfo(MATERIAL* materials, UINT matNum)
 		{ VEC3(-1.0f,  -1.0f,  1.0f), VEC3(-1.0f, 0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC2(0.0f, 1.0f)  },  // 22 左下
 		{ VEC3(-1.0f,  -1.0f, -1.0f), VEC3(-1.0f, 0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC2(1.0f, 1.0f)  },  // 23 右下
 	};
+
+	VEC3 E1 = meshInfo->pVertices[1].pos - meshInfo->pVertices[0].pos;
+	VEC3 E2 = meshInfo->pVertices[2].pos - meshInfo->pVertices[0].pos;
+	VEC2 Delta_UV1 = meshInfo->pVertices[1].uv - meshInfo->pVertices[0].uv;
+	VEC2 Delta_UV2 = meshInfo->pVertices[2].uv - meshInfo->pVertices[0].uv;
+	float f = 1 / (Delta_UV1.x * Delta_UV2.y - Delta_UV2.x * Delta_UV1.y);
+	VEC3 T;
+	VEC3 B;
+	
+	// 接線
+	T.x = f * (Delta_UV2.y * E1.x - Delta_UV1.y * E2.x);
+	T.y = f * (Delta_UV2.y * E1.y - Delta_UV1.y * E2.y);
+	T.z = f * (Delta_UV2.y * E1.z - Delta_UV1.y * E2.z);
+	T.Normalize();
+
+	// 副接線
+	B.x = f * (-Delta_UV2.x * E1.x + Delta_UV1.x * E2.x);
+	B.y = f * (-Delta_UV2.x * E1.y + Delta_UV1.x * E2.y);
+	B.z = f * (-Delta_UV2.x * E1.z + Delta_UV1.x * E2.z);
+	B.Normalize();
+
 
 	// インデックス数
 	meshInfo->NumIndex = 36;
@@ -167,7 +188,7 @@ MeshInfo* MeshInfoFactory::CreateSphereInfo(MATERIAL* materials, UINT matNum)
 
 	// 頂点数
 	meshInfo->NumVertex = (stackCount + 1) * (sliceCount + 1);
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex];
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex];
 
 	// 頂点生成
 	UINT vertexIndex = 0;
@@ -241,7 +262,7 @@ MeshInfo* MeshInfoFactory::CreatePlaneInfo(MATERIAL* materials, UINT matNum)
 	meshInfo->NumVertex = 4;
 
 	// 頂点情報 （上向き）
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex]{
 		// 座標                       // 法線                  // カラー                      // uv
 		{ VEC3(-1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
 		{ VEC3( 1.0f, 0.0f,  1.0f),  VEC3(0.0f, 1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
@@ -281,7 +302,7 @@ MeshInfo* MeshInfoFactory::CreateSpriteQuadInfo(float w, float h)
 	float hh  = h * 0.5f;
 
 	// 頂点情報
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex]{
 		// 座標												// 法線                  // カラー                      // uv
 		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f, 0.0f)}, // 8 左上
 		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f, 0.0f)}, // 9 右上
@@ -341,7 +362,7 @@ MeshInfo* MeshInfoFactory::CreateRTSpriteInfo(float w, float h)
 	//	{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f + bunkatu,		0.0f - bunkatu + 1)}, // 11右下
 	//};
 		
-	meshInfo->pVertices = new BASE_VERTEX::VERTEX[meshInfo->NumVertex]{
+	meshInfo->pVertices = new VERTEX::VERTEX_Static[meshInfo->NumVertex]{
 		// 座標												// 法線                  // カラー                      // uv
 		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f,1.0f)}, // 8 左上
 		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f,1.0f)}, // 9 右上

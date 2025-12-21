@@ -4,7 +4,7 @@
 #include "RendererEngine.h"
 #include <assimp/mesh.h>
 
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 
 //*---------------------------------------------------------------------------------------
 //* @:ModelMesh Class 
@@ -46,7 +46,7 @@ ModelMesh::~ModelMesh()
 void ModelMesh::Draw(RendererEngine& render)
 {
 	auto pDeviceContext = render.get_DeviceContext();
-	uint32_t stride[1] = { sizeof(MODEL_VERTEX) };
+	uint32_t stride[1] = { sizeof(VERTEX_Skneed) };
 	uint32_t offset[1] = { 0 };
 
 	pDeviceContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, m_pVertex, 0, 0);
@@ -97,7 +97,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 
 	// 頂点データ取得
 	m_VertexNum = pMeshData->mNumVertices;	// メッシュの頂点数取得
-	m_pVertex   = new MODEL_VERTEX[m_VertexNum];	// 取得した頂点数分、頂点データ作る mVerticesはm_VertexNum分存在する
+	m_pVertex   = new VERTEX_Skneed[m_VertexNum];	// 取得した頂点数分、頂点データ作る mVerticesはm_VertexNum分存在する
 
 	// 頂点数分、データを格納
 	for (u_int vertexIdx = 0; vertexIdx < m_VertexNum; ++vertexIdx)
@@ -121,7 +121,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 		m_pVertex[vertexIdx].normal	  = VEC3(norm->x, norm->y, norm->z);				// 法線情報を取得 
 		m_pVertex[vertexIdx].uv		  = VEC2(uv->x, uv->y);// UV情報を取得  (モデルデータとDirectXの座標系の違いでV軸を反転させないと上手く表示されない ※ロード時のフラグで解決) 
 		m_pVertex[vertexIdx].tangent  = VEC3(tan->x,tan->y,tan->z);
-		m_pVertex[vertexIdx].biNormal = VEC3(biN->x, biN->y, biN->z);
+		m_pVertex[vertexIdx].bitangent= VEC3(biN->x, biN->y, biN->z);
 
 
 		// --- ボーン情報の初期化 ---
@@ -192,7 +192,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 //* 引数：3.影響度
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMesh::SetVertexBoneData(BASE_VERTEX::MODEL_VERTEX& vertex, int boneId, float weight)
+void ModelMesh::SetVertexBoneData(VERTEX::VERTEX_Skneed& vertex, int boneId, float weight)
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -271,7 +271,7 @@ bool ModelMesh::CreateVertexBuffer(RendererEngine& render)
 	D3D11_BUFFER_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
 	desc.Usage	   = D3D11_USAGE_DEFAULT;
-	desc.ByteWidth = sizeof(MODEL_VERTEX) * m_VertexNum;
+	desc.ByteWidth = sizeof(VERTEX_Skneed) * m_VertexNum;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	// サブリソース設定

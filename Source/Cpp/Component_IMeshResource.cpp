@@ -3,7 +3,7 @@
 #include "ResourceManager.h"
 #include "RendererEngine.h"
 
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 
 
 //*---------------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTIL
 	if(m_pMeshInfo==nullptr)return false;
 
 	// 頂点バッファの作成
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex))return false; 
+	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX_Static), m_pMeshInfo->NumVertex))return false; 
 	
 	// インデックスバッファの作成
 	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) return false;       

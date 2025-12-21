@@ -6,7 +6,7 @@
 #include "MeshFactory.h"
 
 using namespace DirectX;
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 using namespace Tool::UV;
 
 //*---------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	}
 
     // 頂点＆インデックスバッファ設定 ==========================
-    UINT stride = sizeof(VERTEX);
+    UINT stride = sizeof(VERTEX_Static);
     UINT offset = 0;
     pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset); // 頂点バッファをセット
     pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
@@ -196,7 +196,7 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 
 	// 各バッファの生成
 	// 頂点バッファの作成
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX), m_pMeshInfo->NumVertex)) {
+	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX_Static), m_pMeshInfo->NumVertex)) {
 		return false;
 	}
 	// インデックスバッファの作成

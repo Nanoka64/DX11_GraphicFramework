@@ -5,7 +5,7 @@
 */
 struct MeshInfo
 {
-	BASE_VERTEX::VERTEX*pVertices;		// 頂点情報
+	VERTEX::VERTEX_Static *pVertices;	// 頂点情報
 	UINT NumVertex;						// 頂点数
 	WORD *pIndices;						// インデックス情報
 	UINT NumIndex;						// インデックス数

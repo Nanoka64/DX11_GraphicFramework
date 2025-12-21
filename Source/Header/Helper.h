@@ -251,7 +251,7 @@ namespace Tool
     // https://iifx.dev/ja/articles/1421553/std-string%E3%81%A8std-wstring-c-%E6%96%87%E5%AD%97%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9%E3%81%A8%E3%83%88%E3%83%A9%E3%83%96%E3%83%AB%E8%A7%A3%E6%B1%BA
     //
     //************************************************************************
-    
+
     // stringからwstringへの変換
     inline std::wstring StringToWstring(const std::string& str)
     {
@@ -289,13 +289,13 @@ namespace Tool
             wstr.c_str(),//入力文字列
             static_cast<int>(wstr.length()),
             nullptr,
-            0, 
-            nullptr, 
+            0,
+            nullptr,
             nullptr
         );
         assert(len >= 0);
         ret.resize(len);    //文字数分確保する
-        
+
         //二度目の呼び出しは変換
         WideCharToMultiByte(
             CP_UTF8,
@@ -308,6 +308,15 @@ namespace Tool
             nullptr
         );
         return ret;
+    }
+
+
+    /// <summary>
+    /// 接線・副接線を求める
+    /// </summary>
+    inline void CalcTangentAndBitangent(VERTEX::VERTEX_Static_Tan *pVtx,UINT vtxSize)
+    {
+
     }
 }
 

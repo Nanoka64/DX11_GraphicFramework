@@ -22,7 +22,7 @@ struct VS_INPUT
     float3 Normal : NORMAL;     // 法線
     float4 Col    : COLOR;      // 頂点色
     float2 UV     : TEXCOORD;   // テクスチャ座標
-    uint4 boneIDs : BONEIDS; // ボーンID
+    uint4 boneIDs : BONEIDS;    // ボーンID
     float4 boneWeights : BONEWEIGHTS;   // ボーンウェイト
     
         

@@ -15,7 +15,7 @@ bool VERTEX3::CreateVertexBuffer(RendererEngine& render)
     D3D11_BUFFER_DESC vertexBuffDesc;
     ZeroMemory(&vertexBuffDesc, sizeof(vertexBuffDesc));
     vertexBuffDesc.Usage     = Usage;                       // 動的バッファ
-    vertexBuffDesc.ByteWidth = sizeof(BASE_VERTEX::VERTEX) * 3;       // ３つの頂点分
+    vertexBuffDesc.ByteWidth = sizeof(VERTEX::VERTEX_Static) * 3;       // ３つの頂点分
     vertexBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;    // 頂点バッファとの関連付け
     vertexBuffDesc.CPUAccessFlags = CPUAccessFlags;         // CPUからアクセス方法
 
@@ -68,7 +68,7 @@ void VERTEX3::Draw(RendererEngine& render)
 
     SetupTransform(render);
 
-    uint32_t strides[1] = { sizeof(BASE_VERTEX::VERTEX) };
+    uint32_t strides[1] = { sizeof(VERTEX::VERTEX_Static) };
     uint32_t offsets[1] = { 0 };
     pDeviceContext->IASetVertexBuffers(0, 1, &vBuf, strides, offsets);  // 頂点バッファの設定
     //pDeviceContext->IASetInputLayout(render.get_ShaderData().m_pVertexLayout);

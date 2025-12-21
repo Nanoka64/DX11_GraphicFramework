@@ -15,7 +15,7 @@
 #include <cassert>
 
 using namespace Input;
-using namespace BASE_VERTEX;
+using namespace VERTEX;
 
 
 Debugger                *Master::m_pDebugger            = nullptr;  // ImGui機能ラップ

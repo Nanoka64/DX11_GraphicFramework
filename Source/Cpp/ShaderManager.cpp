@@ -15,23 +15,23 @@ using namespace Microsoft::WRL;
 // シンプルシェーダ（スプライト兼用）
 static const D3D11_INPUT_ELEMENT_DESC SimpleLayout[] =
 {
-    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(BASE_VERTEX::VERTEX, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(BASE_VERTEX::VERTEX, normal),D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(BASE_VERTEX::VERTEX, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(BASE_VERTEX::VERTEX, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(VERTEX::VERTEX_Static, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(VERTEX::VERTEX_Static, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(VERTEX::VERTEX_Static, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(VERTEX::VERTEX_Static, normal),D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 // モデルアニメーション用シェーダ
-static const D3D11_INPUT_ELEMENT_DESC ModelLayout[] =
+static const D3D11_INPUT_ELEMENT_DESC SkneedLayout[] =
 {
-    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, normal),D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0, offsetof(BASE_VERTEX::MODEL_VERTEX, color), D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,        0, offsetof(BASE_VERTEX::MODEL_VERTEX, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"BONEIDS",    0, DXGI_FORMAT_R32G32B32A32_SINT,   0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneIDs),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(BASE_VERTEX::MODEL_VERTEX, boneWeights),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"BINORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT,     0, offsetof(BASE_VERTEX::MODEL_VERTEX, biNormal),   D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, pos),        D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,         0, offsetof(VERTEX::VERTEX_Skneed, uv),         D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, normal),     D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TANGENT",    0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, bitangent),  D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Skneed, color),      D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"BONEIDS",    0, DXGI_FORMAT_R8G8B8A8_UINT,        0, offsetof(VERTEX::VERTEX_Skneed, boneIDs),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"BONEWEIGHTS",0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Skneed, boneWeights),D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
 
@@ -68,8 +68,8 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
         {
             /* スキニング3Dモデル */
             SHADER_TYPE::DEFFERD_STANDARD_SKINNED,
-            ARRAYSIZE(ModelLayout),
-            ModelLayout,
+            ARRAYSIZE(SkneedLayout),
+            SkneedLayout,
         },      
         //DEFFERD_STANDARD_BILLBOARD
         {

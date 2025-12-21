@@ -14,10 +14,10 @@
 /* =========================================================================*/
 struct VS_SimpleInput
 {
-    float3 Pos : POSITION;
-    float3 Normal : NORMAL;
-    float4 Color : COLOR;
-    float2 UV : TEXCOORD;
+    float3 Pos      : POSITION;
+    float2 UV       : TEXCOORD;
+    float4 Color    : COLOR;
+    float3 Normal   : NORMAL;
 };
 
 /* =========================================================================
