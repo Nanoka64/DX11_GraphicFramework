@@ -48,7 +48,7 @@ struct CreateModelInfo
         InitAnimIndex(0),
         MaterialData(nullptr),
         MatNum(0),
-        ShaderType(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE)
+        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC)
     {
     }
 };
@@ -63,6 +63,7 @@ struct CreateUtilityMeshInfo
     
     UTILITY_MESH_TYPE Type;      // メッシュタイプ
     SHADER_TYPE ShaderType;      // 使用するシェーダの種類
+    bool IsNormalMap;            // 法線マップ使用するかどうか
 
     std::string ObjTag;          // オブジェクトのタグ
     bool IsActive;               // 生成時にオブジェクトをアクティブにするか
@@ -77,7 +78,8 @@ struct CreateUtilityMeshInfo
         MaterialData(nullptr),
         MatNum(0),
         Type(UTILITY_MESH_TYPE::NONE),
-        ShaderType(SHADER_TYPE::DEFFERD_STANDARD_SIMPLE)
+        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC), 
+        IsNormalMap(false)
     {};
 };
 
@@ -110,7 +112,7 @@ struct CreateSpriteInfo
         Width(0.0f),
         Height(0.0f),
         Type(SPRITE_USAGE_TYPE::NORMAL),
-        ShaderType(SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE),
+        ShaderType(SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE),
         pPSConstantBuffers(nullptr),
         pVSConstantBuffers(nullptr),
         PSConstBufferNum(0),
@@ -144,7 +146,7 @@ struct CreateBillboradInfo
         MatNum(0),
         Type(BILLBOARD_USAGE_TYPE::SIMPLE),
         FixedAxis(),
-        ShaderType(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE)
+        ShaderType(SHADER_TYPE::FORWARD_UNLIT_STATIC)
     {};
 };
 
@@ -166,7 +168,7 @@ struct CreateSkyboxInfo
         IsActive(true),
         MaterialData(nullptr),
         MatNum(0),
-        ShaderType(SHADER_TYPE::SKYBOX)
+        ShaderType(SHADER_TYPE::POST_SKYBOX)
     {};
 };
 

@@ -123,10 +123,8 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
         m_ConstanrBufferBonesData->Data.BonesMatrices[i] = m_BoneList[i].FinalTransformation;
     }
 
-
     // モデルシェーダに切り替え
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::DEFFERD_STANDARD_SKINNED);
-
+    Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType());
 
     // 定数バッファ更新
     pContext->UpdateSubresource(

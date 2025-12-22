@@ -13,11 +13,8 @@ using namespace VERTEX;
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 IMeshResource::IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank ) :IComponent(pOwner, updateRank),
-	m_pVertexBuffer(nullptr),
-	m_pIndexBuffer(nullptr),
 	m_pCBTransformSet(nullptr),
-	m_pCBMaterialDataSet(nullptr),
-	m_pMeshInfo(nullptr)
+	m_pCBMaterialDataSet(nullptr)
 {
 	this->set_Tag("MeshResource");
 }
@@ -28,18 +25,6 @@ IMeshResource::IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank ) 
 /// </summary>
 IMeshResource::~IMeshResource()
 {
-	// 頂点バッファの解放
-	if (m_pVertexBuffer) {
-		m_pVertexBuffer->Release();
-		m_pVertexBuffer = nullptr;
-	}
-
-	// インデックスバッファの解放
-	if (m_pIndexBuffer) {
-		m_pIndexBuffer->Release();
-		m_pIndexBuffer = nullptr;
-	}
-
 	// 定数バッファの解放
 	if (m_pCBTransformSet) {
 		if (m_pCBTransformSet->pBuff) {
@@ -59,60 +44,10 @@ IMeshResource::~IMeshResource()
 
 
 	// マテリアルの解放
-	if (m_pMeshInfo->pMaterials) {
-		delete m_pMeshInfo->pMaterials;
-		m_pMeshInfo->pMaterials = nullptr;
+	if (m_pMeshData->pMaterials) {
+		delete m_pMeshData->pMaterials;
+		m_pMeshData->pMaterials = nullptr;
 	}
-}
-
-// ----------------------------------------------------------------------------------------------------------------------
-//       * IPolyResource Class - 頂点バッファの作成- *
-// ----------------------------------------------------------------------------------------------------------------------
-bool IMeshResource::CreateVertexBuffer(ID3D11Device* pDevice, const void* pVertices, UINT vertexStride, UINT numVertices)
-{
-	// 頂点バッファの設定
-	D3D11_BUFFER_DESC bd{};
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = vertexStride * numVertices;			// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;			// 頂点バッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-
-	// 頂点バッファのデータ初期化構造体
-	D3D11_SUBRESOURCE_DATA initData{};
-	initData.pSysMem = pVertices;
-
-	// 頂点バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, &initData, &m_pVertexBuffer);
-	if (FAILED(hr)){
-		return false;
-	}
-
-	return true;
-}
-
-// ----------------------------------------------------------------------------------------------------------------------
-//       * IPolyResource Class - インデックスバッファの作成- *
-// ----------------------------------------------------------------------------------------------------------------------
-bool IMeshResource::CreateIndexBuffer(ID3D11Device* pDevice, const void* pIndices, UINT indexStride, UINT numIndices)
-{
-	// インデックスバッファの設定
-	D3D11_BUFFER_DESC bd{};
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = indexStride * numIndices;				// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;				// インデックスバッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-
-	// インデックスバッファのデータ初期化構造体
-	D3D11_SUBRESOURCE_DATA initData{};
-	initData.pSysMem = pIndices;
-
-	// インデックスバッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
-	if (FAILED(hr)){
-		return false;
-	}
-
-	return true;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------
@@ -127,7 +62,7 @@ bool IMeshResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std
 	}
 
 	// 範囲外アクセスチェック
-	if (m_pMeshInfo->NumMaterial <= matIndex) {
+	if (m_pMeshData->NumMaterial <= matIndex) {
 		return false;
 	}
 
@@ -137,13 +72,13 @@ bool IMeshResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std
 	case TEXTURE_MAP_NONE:
 		break;
 	case TEXTURE_MAP_DIFFUSE:
-		m_pMeshInfo->pMaterials[matIndex].Diffuse.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].Diffuse.Texture = texture;
 		break;
 	case TEXTURE_MAP_NORMAL:
-		m_pMeshInfo->pMaterials[matIndex].Normal.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].Normal.Texture = texture;
 		break;
 	case TEXTURE_MAP_SPECULAR:
-		m_pMeshInfo->pMaterials[matIndex].Specular.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].Specular.Texture = texture;
 		break;
 	default:
 		break;
@@ -212,7 +147,7 @@ bool IMeshResource::CreateCBuffer(ID3D11Device* pDevice)
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum)
+bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTILITY_MESH_TYPE type, MATERIAL* materials, UINT materialNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 
@@ -221,37 +156,30 @@ bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTIL
 	/*
 	*  メッシュ情報の作成
 	*/
-
 	switch (type)
 	{
 	case UTILITY_MESH_TYPE::NONE:
 		return false;
 		break;
 	case UTILITY_MESH_TYPE::CUBU:
-		m_pMeshInfo = MeshInfoFactory::CreateCubeInfo(materials, materialNum);
+		m_pMeshData = MeshInfoFactory::CreateCubeInfo(renderer,materials, materialNum,isNormalMap);
 		break;
 	case UTILITY_MESH_TYPE::QUAD:
-		m_pMeshInfo = MeshInfoFactory::CreateQuadInfo(materials, materialNum);
+		m_pMeshData = MeshInfoFactory::CreateQuadInfo(renderer, materials, materialNum, isNormalMap);
 		break;
 	case UTILITY_MESH_TYPE::SPHERE:
-		m_pMeshInfo = MeshInfoFactory::CreateSphereInfo(materials, materialNum);
+		m_pMeshData = MeshInfoFactory::CreateSphereInfo(renderer, materials, materialNum, isNormalMap);
 		break;	
 	case UTILITY_MESH_TYPE::PLANE:
-		m_pMeshInfo = MeshInfoFactory::CreatePlaneInfo(materials, materialNum);
+		m_pMeshData = MeshInfoFactory::CreatePlaneInfo(renderer, materials, materialNum, isNormalMap);
 		break;
 	default:
 		return false;
 		break;
 	}
 
-	if(m_pMeshInfo==nullptr)return false;
+	if(m_pMeshData ==nullptr)return false;
 
-	// 頂点バッファの作成
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX_Static), m_pMeshInfo->NumVertex))return false; 
-	
-	// インデックスバッファの作成
-	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) return false;       
-	
 	// 定数バッファの作成
 	if (!CreateCBuffer(pDevice))	return false;	
 

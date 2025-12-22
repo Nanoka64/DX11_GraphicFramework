@@ -70,14 +70,14 @@ void BillboardRenderer::Update(RendererEngine& renderer)
 void BillboardRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-    MeshInfo* meshInfo = m_pResource.lock()->m_pMeshInfo;
+    auto meshData = m_pResource.lock()->m_pMeshData;
     CB_TRANSFORM_SET* cbTransSet = m_pResource.lock()->m_pCBTransformSet;
     CB_MATERIAL_SET* cbMatSet = m_pResource.lock()->m_pCBMaterialDataSet;
-    ID3D11Buffer* vtxBuff = m_pResource.lock()->m_pVertexBuffer;
-    ID3D11Buffer* idxBuff = m_pResource.lock()->m_pIndexBuffer;
+    ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
+    ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
 
     // シェーダセット ==========================
-    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE);
+    Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::FORWARD_UNLIT_STATIC);
 
     /* ========== 定数バッファの更新 ========== */
     XMMATRIX viewInvMtx = renderer.get_ViewInvMatrix();
@@ -102,10 +102,10 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
 
     // マテリアル情報セット ==========================
     CB_MATERIAL mat{};
-    mat.Diffuse = meshInfo->pMaterials[0].DiffuseColor;
-    mat.Specular = meshInfo->pMaterials[0].SpecularColor;
-    mat.Normal = meshInfo->pMaterials[0].NormalColor;
-    mat.SpecularPower = meshInfo->pMaterials[0].SpecularPower;
+    mat.Diffuse = meshData->pMaterials[0].DiffuseColor;
+    mat.Specular = meshData->pMaterials[0].SpecularColor;
+    mat.Normal = meshData->pMaterials[0].NormalColor;
+    mat.SpecularPower = meshData->pMaterials[0].SpecularPower;
     cbMatSet->Data = mat;
 
     // 定数バッファに転送
@@ -128,13 +128,13 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     ID3D11ShaderResourceView* diffuseSRV = nullptr;
     ID3D11ShaderResourceView* normalSRV = nullptr;
     ID3D11ShaderResourceView* specularSRV = nullptr;
-    if (auto tex = meshInfo->pMaterials->Diffuse.Texture.lock()) {
+    if (auto tex = meshData->pMaterials->Diffuse.Texture.lock()) {
         diffuseSRV = tex.get()->get_SRV();
     }
-    if (auto tex = meshInfo->pMaterials->Normal.Texture.lock()) {
+    if (auto tex = meshData->pMaterials->Normal.Texture.lock()) {
         normalSRV = tex.get()->get_SRV();
     }
-    if (auto tex = meshInfo->pMaterials->Specular.Texture.lock()) {
+    if (auto tex = meshData->pMaterials->Specular.Texture.lock()) {
         specularSRV = tex.get()->get_SRV();
     }
 
@@ -150,10 +150,10 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
     //ブレンドステート設定 ==========================
-    Master::m_pBlendManager->DeviceToSetBlendState(meshInfo->pMaterials[0].BlendMode);
+    Master::m_pBlendManager->DeviceToSetBlendState(meshData->pMaterials[0].BlendMode);
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
-    pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
+    pContext->DrawIndexed(meshData->NumIndex, 0, 0);
 }
 
 

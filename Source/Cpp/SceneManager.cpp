@@ -195,7 +195,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
@@ -220,7 +220,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(1.0, 1.0, 1.0);
             obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
@@ -247,7 +247,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SKINNED;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 500.0f, 0.0f);
@@ -273,7 +273,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_SIMPLE;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
             obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 1000.0f);
@@ -295,12 +295,15 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
+            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            mesh.IsNormalMap = true;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj.lock()->get_Transform().lock()->set_Scale(20000.0f, 20000.0f, 20000.0f);
             obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
+
         {
             // スカイボックスの作成
             MATERIAL* mat = new MATERIAL;
@@ -311,7 +314,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             skyInfo.MatNum = 1;
             skyInfo.MaterialData = new InputMaterial();
             skyInfo.MaterialData->pMat = mat;
-            skyInfo.ShaderType = SHADER_TYPE::SKYBOX;
+            skyInfo.ShaderType = SHADER_TYPE::POST_SKYBOX;
             skyInfo.IsActive = false;
 
             auto obj = MeshFactory::CreateSkybox(skyInfo);
@@ -329,7 +332,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             CreateBillboradInfo billboard;
             billboard.pRenderer = &renderer;
             billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
-            billboard.ShaderType = SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE;
+            billboard.ShaderType = SHADER_TYPE::FORWARD_UNLIT_STATIC;
             billboard.IsActive = false;
             billboard.MatNum = 1;
             billboard.MaterialData = new InputMaterial();
@@ -500,7 +503,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     CreateSpriteInfo sprite;
     sprite.pRenderer = &renderer;
     sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    sprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
+    sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
     sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
 
 
@@ -550,7 +553,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
-    sprite.ShaderType = SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE;
+    sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
     obj = MeshFactory::CreateSprite(sprite);
     //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
@@ -571,7 +574,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     horizontalBlurSprite.Height = 1.0f;                                                    
     horizontalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_SceneFinal", m_pSceneFinal_RT->get_SRV_ComPtr());
     horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    horizontalBlurSprite.ShaderType = SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL;
+    horizontalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL;
     obj = MeshFactory::CreateSprite(horizontalBlurSprite);
 
 
@@ -591,7 +594,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     verticalBlurSprite.Height = 1.0f;
     verticalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_HorizontalBlur", m_pHorizontalBlur->get_SRV_ComPtr());
     verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    verticalBlurSprite.ShaderType = SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL;
+    verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;
     obj = MeshFactory::CreateSprite(verticalBlurSprite);
 
     /*************************************
@@ -605,7 +608,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     copyToFrameBufferSprite.Height = 1.0f;
     copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_VerticalBlur", m_pSceneFinal_RT->get_SRV_ComPtr());
     copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE;
+    copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
     obj = MeshFactory::CreateSprite(copyToFrameBufferSprite);
 
 

@@ -63,7 +63,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &
     meshRenderer.lock()->set_MeshResource(meshResource);
 
     // スキニングモデルの場合、アニメーションコンポーネントを追加
-    if (info.ShaderType == SHADER_TYPE::DEFFERD_STANDARD_SKINNED)
+    if (info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED_N || info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED)
     {
         // アニメーションコンポーネント追加
         if (info.IsAnim) {
@@ -104,7 +104,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUtili
     auto meshRenderer = pObj.lock()->add_Component<MeshRenderer>();
 
     // リソースのセットアップ
-    if (!meshResource->Setup(*info.pRenderer,info.ShaderType, info.Type, info.MaterialData->pMat, info.MatNum))return {};
+    if (!meshResource->Setup(*info.pRenderer,info.ShaderType, info.Type, info.MaterialData->pMat, info.MatNum, info.IsNormalMap))return {};
     
     // Rendererにリソースを設定
     meshRenderer->set_MeshResource(meshResource);
@@ -196,7 +196,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateSkybox(const CreateSkyboxInfo
     auto skyRenderer = pObj.lock()->add_Component<SkyRenderer>();
 
     // リソースのセットアップ                                  ↓キューブにする
-    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMat, info.MatNum))return {};
+    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMat, info.MatNum, false))return {};
 
     // Rendererにリソースを設定
     skyRenderer->set_MeshResource(meshResource);

@@ -314,7 +314,7 @@ namespace Tool
     /// <summary>
     /// ÚüE•›Úü‚ğ‹‚ß‚é
     /// </summary>
-    inline void CalcTangentAndBitangent(VERTEX::VERTEX_Static_Tan *pVtx,UINT vtxSize)
+    inline void CalcTangentAndBitangent(VERTEX::VERTEX_Static_N *pVtx,UINT vtxSize)
     {
 
     }

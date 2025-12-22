@@ -43,8 +43,7 @@ VS_OUT VSMain(VS_IN input)
 {
     VS_OUT output;
     
-    output.pos.xyz = float4(input.Pos.xyz, 1.0f);
-    output.pos.w = 1.0f;
+    output.pos = float4(input.Pos.xyz, 1.0f);
     
     // テクスチャのサイズを取得
     float2 texSize;

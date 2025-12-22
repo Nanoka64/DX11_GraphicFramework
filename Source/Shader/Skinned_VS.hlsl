@@ -18,16 +18,14 @@
 /* =========================================================================*/
 struct VS_INPUT
 {
-    float3 Pos    : POSITION;   // 頂点座標
-    float3 Normal : NORMAL;     // 法線
-    float4 Col    : COLOR;      // 頂点色
-    float2 UV     : TEXCOORD;   // テクスチャ座標
-    uint4 boneIDs : BONEIDS;    // ボーンID
+    float3 Pos    : POSITION;           // 頂点座標
+    float2 UV     : TEXCOORD;           // テクスチャ座標
+    float4 Color  : COLOR;              // 頂点色
+    float3 Normal : NORMAL;             // 法線
+    float3 Tan    : TANGENT;            // 接ベクトル
+    float3 BiNorm : BINORMAL;           // 従ベクトル
+    uint4 boneIDs : BONEIDS;            // ボーンID
     float4 boneWeights : BONEWEIGHTS;   // ボーンウェイト
-    
-        
-    float3 Tan    : TANGENT; // 接ベクトル
-    float3 BiNorm : BINORMAL; // 従ベクトル
 };
 
 //　セマンティック名こっちは名前が決まってる！
@@ -38,14 +36,13 @@ struct VS_INPUT
 /* =========================================================================*/
 struct VS_OUTPUT
 {
-    float4 Pos    : SV_POSITION; // 頂点座標(画面空間)
-    float4 WPos   : POSITION;    // ライティング用のワールド座標
-    float3 Normal : NORMAL0;     // 法線
-    float4 Col    : COLOR0;      // 頂点色
-    float2 UV     : TEXCOORD0;   // テクスチャ座標
-    
-    float3 Tan    : TANGENT;  // 接ベクトル
-    float3 BiNorm : BINORMAL; // 従ベクトル
+    float4 Pos    : SV_POSITION;    // 頂点座標(画面空間)
+    float4 WPos   : POSITION;       // ライティング用のワールド座標
+    float3 Normal : NORMAL0;        // 法線
+    float4 Color  : COLOR0;         // 頂点色
+    float2 UV     : TEXCOORD0;      // テクスチャ座標
+    float3 Tan    : TANGENT;        // 接ベクトル
+    float3 BiNorm : BINORMAL;       // 従ベクトル
 };
 
 /* ---------------------------------------------------------------------------------------
@@ -140,34 +137,32 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.Pos    = pos;            // 画面空間の頂点座標
     output.Normal = norm;           // スキニング後の法線
     output.UV     = input.UV;       // テクスチャ座標
-    output.Col    = input.Col;      // カラー
+    output.Color  = input.Color; // カラー
 
     // 接ベクトルと従ベクトルをワールド空間に変換する
     output.Tan    = normalize(mul(input.Tan, (float3x3) cb_Transform));
     output.BiNorm = normalize(mul(input.BiNorm, (float3x3) cb_Transform));
     
-    //output.Col = float4(0.5f, 0.5f, 0.5f, 1.0f);
-    
-    if (input.boneIDs[0].x == 0)
-    {
-        //output.Col = float4(1.0f,0.0f,0.0f,1.0f);
-    }    
-    if (input.boneIDs[0].x == 0)
-    {
-        //output.Col = float4(1.0f,0.0f,0.0f,1.0f);   // 赤
-    }   
+    //if (input.boneIDs[0].x == 0)
+    //{
+    //    output.Col = float4(1.0f,0.0f,0.0f,1.0f);
+    //}    
+    //if (input.boneIDs[0].x == 0)
+    //{
+    //    output.Col = float4(1.0f,0.0f,0.0f,1.0f);   // 赤
+    //}   
     
     // 主ボーンID（最も重みの高いボーン）を取得
-    int mainBone = input.boneIDs[0];
-    float maxWeight = input.boneWeights[0];
-    for (int j = 1; j < 4; j++)
-    {
-        if (input.boneWeights[j] > maxWeight)
-        {
-            mainBone = input.boneIDs[j];
-            maxWeight = input.boneWeights[j];
-        }
-    }
+    //int mainBone = input.boneIDs[0];
+    //float maxWeight = input.boneWeights[0];
+    //for (int j = 1; j < 4; j++)
+    //{
+    //    if (input.boneWeights[j] > maxWeight)
+    //    {
+    //        mainBone = input.boneIDs[j];
+    //        maxWeight = input.boneWeights[j];
+    //    }
+    //}
 
     // ボーンの影響度デバッグカラー設定
     //output.Col = GetBoneDebugColor(mainBone);

@@ -14,8 +14,6 @@ Texture2D g_tNormalTex : register(t1);      // ノーマル
 Texture2D g_tSpecularTex : register(t2);    // スペキュラ
 
 
-
-
 // ディザパターン
 static const int ditherPattern[4][4] =
 {
@@ -60,7 +58,9 @@ PS_OUT PSMain(PS_IN input)
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * cb_DiffuseColor;
-    float3 normal = GetNorm(normalMap, float3(1.0, 0.0, 0.0), float3(0.0, 0.0, -1.0), input.Normal);
+    
+    // こっちは法線マップなしver
+    //float3 normal = GetNorm(normalMap, float3(1.0, 0.0, 0.0), float3(0.0, 0.0, -1.0), input.Normal);
     
     // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
     int x = (int) fmod(input.Pos.x, 4.0f);
@@ -76,14 +76,13 @@ PS_OUT PSMain(PS_IN input)
     // テスト出力
     PS_OUT output;
     output.Albedo       = finalCol;
-    output.Normal.xyz = (normal.xyz * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.xyz = (input.Normal.xyz * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
     output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
     output.Depth;
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
-    
     // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ
     // 理由はDSVをパイプラインにバインドしているので、ハードウェア側が自動で深度値を入れてくれている。
     // output.Depth.x      = 0;

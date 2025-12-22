@@ -21,7 +21,7 @@ struct PS_IN
     float4 Pos      : SV_POSITION;
     float4 WPos     : POSITION;
     float3 Normal   : NORMAL0;
-    float4 Col      : COLOR0;
+    float4 Color    : COLOR0;
     float2 UV       : TEXCOORD0;
     
     float3 Tan      : TANGENT;  // ê⁄ÉxÉNÉgÉã

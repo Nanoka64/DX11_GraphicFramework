@@ -68,11 +68,11 @@ void SkyRenderer::Update(RendererEngine& renderer)
 void SkyRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-    MeshInfo* meshInfo = m_pMeshResource.lock()->m_pMeshInfo;
+    auto meshData = m_pMeshResource.lock()->m_pMeshData;
     CB_TRANSFORM_SET* cbTransSet = m_pMeshResource.lock()->m_pCBTransformSet;
     CB_MATERIAL_SET* cbMatSet = m_pMeshResource.lock()->m_pCBMaterialDataSet;
-    ID3D11Buffer* vtxBuff = m_pMeshResource.lock()->m_pVertexBuffer;
-    ID3D11Buffer* idxBuff = m_pMeshResource.lock()->m_pIndexBuffer;
+    ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
+    ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
 
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
@@ -105,7 +105,7 @@ void SkyRenderer::Draw(RendererEngine& renderer)
     ID3D11ShaderResourceView* diffuseSRV = nullptr;
 
     // 今のところディフューズのみ
-    if (auto tex = meshInfo->pMaterials->Diffuse.Texture.lock()) {
+    if (auto tex = meshData->pMaterials->Diffuse.Texture.lock()) {
         diffuseSRV = tex.get()->get_SRV();
     }
     pContext->PSSetShaderResources(0, 1, &diffuseSRV);
@@ -118,7 +118,7 @@ void SkyRenderer::Draw(RendererEngine& renderer)
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
-    pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
+    pContext->DrawIndexed(meshData->NumIndex, 0, 0);
 
 }
 

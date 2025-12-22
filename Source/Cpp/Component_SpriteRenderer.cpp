@@ -18,10 +18,7 @@ using namespace Tool::UV;
 SpriteRenderer::SpriteRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
 m_Width(0.0f),
 m_Height(0.0f),
-m_pVertexBuffer(nullptr),
-m_pIndexBuffer(nullptr),
 m_pCBTransformSet(nullptr),
-m_pMeshInfo(nullptr),
 m_ShaderType(SHADER_TYPE::NONE),
 m_pVSUserExpandCBuffers(nullptr),
 m_pPSUserExpandCBuffers(nullptr),
@@ -117,8 +114,8 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
     // 頂点＆インデックスバッファ設定 ==========================
     UINT stride = sizeof(VERTEX_Static);
     UINT offset = 0;
-    pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset); // 頂点バッファをセット
-    pContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
+    pContext->IASetVertexBuffers(0, 1, &m_pMeshData->pVertexBuffer, &m_pMeshData->VertexStride, &offset); // 頂点バッファをセット
+    pContext->IASetIndexBuffer(m_pMeshData->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
     // 描画コール：インデックス数は6（三角形2個 × 3頂点） ==========================
@@ -180,29 +177,20 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 	switch (info.Type)
 	{
 	case SPRITE_USAGE_TYPE::NORMAL:
-		m_pMeshInfo = MeshInfoFactory::CreateSpriteQuadInfo(m_Width, m_Height);
+		m_pMeshData = MeshInfoFactory::CreateSpriteQuadInfo(*info.pRenderer,m_Width, m_Height);
 		break;
 	case SPRITE_USAGE_TYPE::RENDER_TARGET:
-		m_pMeshInfo = MeshInfoFactory::CreateRTSpriteInfo(m_Width, m_Height);
+		m_pMeshData = MeshInfoFactory::CreateRTSpriteInfo(*info.pRenderer, m_Width, m_Height);
 		break;
 	default:
 		break;
 	}
 
-	if (m_pMeshInfo == nullptr){
+	if (m_pMeshData == nullptr){
 		assert(false);
 		return false;
 	}
 
-	// 各バッファの生成
-	// 頂点バッファの作成
-	if (!CreateVertexBuffer(pDevice, m_pMeshInfo->pVertices, sizeof(VERTEX_Static), m_pMeshInfo->NumVertex)) {
-		return false;
-	}
-	// インデックスバッファの作成
-	if (!CreateIndexBuffer(pDevice, m_pMeshInfo->pIndices, sizeof(WORD), m_pMeshInfo->NumIndex)) {
-		return false;
-	}
 	// 定数バッファの作成
 	if (!CreateCBuffer(pDevice)) {
 		return false;
@@ -237,63 +225,22 @@ void SpriteRenderer::VertexUpdate(RendererEngine& renderer)
 	float hh = m_Height;
 	VEC3 centerPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 
-	m_pMeshInfo->pVertices[0].pos = VEC3(centerPos.x - hw, centerPos.y - hh,  0.0f);
-	m_pMeshInfo->pVertices[1].pos = VEC3(centerPos.x + hw, centerPos.y - hh,  0.0f);
-	m_pMeshInfo->pVertices[2].pos = VEC3(centerPos.x - hw, centerPos.y + hh,  0.0f);
-	m_pMeshInfo->pVertices[3].pos = VEC3(centerPos.x + hw, centerPos.y + hh,  0.0f);
-	pContext->UpdateSubresource(m_pVertexBuffer, 0, nullptr, m_pMeshInfo->pVertices, 0, 0);
+	VERTEX_Static vertices[4];
+
+	vertices[0].pos = VEC3(centerPos.x - hw, centerPos.y - hh,  0.0f);
+	vertices[1].pos = VEC3(centerPos.x + hw, centerPos.y - hh,  0.0f);
+	vertices[2].pos = VEC3(centerPos.x - hw, centerPos.y + hh,  0.0f);
+	vertices[3].pos = VEC3(centerPos.x + hw, centerPos.y + hh,  0.0f);	
+	vertices[0].uv = VEC2(0.0f, 0.0f);
+	vertices[1].uv = VEC2(1.0f, 0.0f);
+	vertices[2].uv = VEC2(0.0f, 1.0f);
+	vertices[3].uv = VEC2(1.0f, 1.0f);
+	vertices[0].color = VEC4(1.0f, 1.0f,1.0f,1.0f);
+	vertices[1].color = VEC4(1.0f, 1.0f,1.0f,1.0f);
+	vertices[2].color = VEC4(1.0f, 1.0f,1.0f,1.0f);
+	vertices[3].color = VEC4(1.0f, 1.0f,1.0f,1.0f);
+	pContext->UpdateSubresource(m_pMeshData->pVertexBuffer, 0, nullptr, vertices, 0, 0);
 }
-
-// ----------------------------------------------------------------------------------------------------------------------
-//       * IPolyResource Class - 頂点バッファの作成- *
-// ----------------------------------------------------------------------------------------------------------------------
-bool SpriteRenderer::CreateVertexBuffer(ID3D11Device *pDevice, const void *pVertices, UINT vertexStride, UINT numVertices)
-{
-	// 頂点バッファの設定
-	D3D11_BUFFER_DESC bd{};
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = vertexStride * numVertices;			// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;			// 頂点バッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-
-	// 頂点バッファのデータ初期化構造体
-	D3D11_SUBRESOURCE_DATA initData{};
-	initData.pSysMem = pVertices;
-
-	// 頂点バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, &initData, &m_pVertexBuffer);
-	if (FAILED(hr)) {
-		return false;
-	}
-
-	return true;
-}
-
-// ----------------------------------------------------------------------------------------------------------------------
-//       * IPolyResource Class - インデックスバッファの作成- *
-// ----------------------------------------------------------------------------------------------------------------------
-bool SpriteRenderer::CreateIndexBuffer(ID3D11Device *pDevice, const void *pIndices, UINT indexStride, UINT numIndices)
-{
-	// インデックスバッファの設定
-	D3D11_BUFFER_DESC bd{};
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-	bd.ByteWidth = indexStride * numIndices;				// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;				// インデックスバッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-
-	// インデックスバッファのデータ初期化構造体
-	D3D11_SUBRESOURCE_DATA initData{};
-	initData.pSysMem = pIndices;
-
-	// インデックスバッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, &initData, &m_pIndexBuffer);
-	if (FAILED(hr)) {
-		return false;
-	}
-
-	return true;
-}
-
 
 // ----------------------------------------------------------------------------------------------------------------------
 //       * IPolyResource Class - 定数バッファの作成- *

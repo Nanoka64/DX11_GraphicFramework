@@ -16,27 +16,40 @@ enum class SHADER_TYPE
 {
     NONE,       // なし
 
+    //* **********************************************
+    //* 【命名規則的なやつ】
+    //* 
+    //* STD   : 標準ライティング
+    //* UNLIT : ライティングなし
+    //* _N    : 法線マップあり
+    //* 
+    //* ◆    : 未実装
+    //* **********************************************
+
+    /////////////////////////////////////////////////////////////////////
     // ディファードシェーディング **************************************
     // 不透明オブジェクト用
-    DEFFERD_STANDARD_RT_SPRITE, // RT用スプライト     標準ライティング
-    DEFFERD_STANDARD_SIMPLE,    // 簡易3Dオブジェクト 標準ライティング
-    DEFFERD_STANDARD_SKINNED,   // スキニング3Dモデル 標準ライティング
-    DEFFERD_STANDARD_BILLBOARD, // 未実装 ビルボード         標準ライティング 
+    DEFERRED_STD_STATIC,                // 簡易静的3Dオブジェクト * 法線マップなし        
+    DEFERRED_STD_STATIC_N,              // 静的3Dオブジェクト * 法線マップあり
+    DEFERRED_STD_SKINNED,               // ◆ スキニング3Dモデル * 法線マップなし
+    DEFERRED_STD_SKINNED_N,             // スキニング3Dモデル * 法線マップあり     
+    DEFERRED_STD_RT_SPRITE,             // RT描画用スプライト        
+    DEFERRED_STD_BILLBOARD,             // ◆ ビルボード                  
 
-
+    /////////////////////////////////////////////////////////////////////
     // フォワードシェーディング ****************************************
     // UIやαブレンドがあるオブジェクト用
-    FOWARD_STANDARD_UI_SPRITE, // スプライト 標準 UI用 
-    FOWARD_STANDARD_BILLBOARD, // 未実装 ビルボード 標準ライティング
-    FOWARD_STANDARD_SIMPLE,    // 未実装 簡易3Dオブジェクト 標準ライティング
-    FOWARD_NO_LIGHTING_SIMPLE, // 簡易3Dオブジェクト ライティング無し
+    FORWARD_STD_STATIC,                 // ◆ 簡易3Dオブジェクト
+    FORWARD_UNLIT_UI_SPRITE,            // スプライト 標準 UI用  ライティングなし
+    FORWARD_STD_BILLBOARD,              // ◆ ビルボード
+    FORWARD_UNLIT_STATIC,               // 簡易3Dオブジェクト ライティングなし
 
-    GAUSSIAN_BLUR_HORIZONTAL,    // ガウシアン水平ブラー 
-    GAUSSIAN_BLUR_VERTICAL,      // ガウシアン垂直ブラー 
-
-    POST_EFFECT, // ポストエフェクト用
-
-    SKYBOX,                    // スカイボックス用
+    /////////////////////////////////////////////////////////////////////
+    // ポストエフェクト的なやつ ****************************************
+    POST_GAUSSIAN_BLUR_HORIZONTAL,      // ガウシアン水平ブラー 
+    POST_GAUSSIAN_BLUR_VERTICAL,        // ガウシアン垂直ブラー 
+    POST_SKYBOX,                        // スカイボックス用
+    POST_EFFECT,                        // ◆ ポストエフェクト用
     
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用

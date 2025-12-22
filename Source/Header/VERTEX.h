@@ -46,7 +46,7 @@ namespace VERTEX
         VERTEX_Static(const VEC3& _pos) : pos(_pos), normal(VEC3()), color(VEC4()), uv(VEC2()) {};
         VERTEX_Static(const VEC3& _pos, const VEC3& _normal) : pos(_pos), normal(_normal), color(VEC4()), uv(VEC2()) {};
         VERTEX_Static(const VEC3& _pos, const VEC3& _normal, const VEC4& _color) : pos(_pos), normal(_normal), color(_color), uv(VEC2()) {};
-        VERTEX_Static(const VEC3& _pos, const VEC3& _normal, const VEC4& _color, const VEC2& _uv) : pos(_pos), normal(_normal), color(_color), uv(_uv) {};
+        VERTEX_Static(const VEC3& _pos,const VEC2& _uv, const VEC4& _color, const VEC3& _normal ) : pos(_pos), normal(_normal), color(_color), uv(_uv) {};
 
         // 正規化
         void Normalize() {
@@ -58,7 +58,7 @@ namespace VERTEX
     /// 静的メッシュ
     /// 法線マップを使う場合は基本これ
     /// </summary>
-    struct VERTEX_Static_Tan
+    struct VERTEX_Static_N
     {
         VEC3 pos;
         VEC2 uv;
@@ -68,7 +68,8 @@ namespace VERTEX
         VEC3 bitangent;
 
         /* コンストラクタ */
-        VERTEX_Static_Tan() : pos(VEC3()), uv(VEC2()), color(VEC4()), normal(VEC3()), tangent(VEC3()), bitangent(VEC3()) {};
+        VERTEX_Static_N() : pos(VEC3()), uv(VEC2()), color(VEC4()), normal(VEC3()), tangent(VEC3()), bitangent(VEC3()) {};
+        VERTEX_Static_N(const VEC3& _pos, const VEC2& _uv, const VEC4& _color, const VEC3& _normal, const VEC3& _tan, const VEC3& _biTan) : pos(_pos), normal(_normal), color(_color), uv(_uv), tangent(_tan), bitangent(_biTan) {};
 
 
         // 正規化

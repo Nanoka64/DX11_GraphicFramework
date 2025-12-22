@@ -65,11 +65,12 @@ void MeshRenderer::Update(RendererEngine& renderer)
 void MeshRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-    MeshInfo* meshInfo = m_pMeshResource.lock()->m_pMeshInfo;
+    auto meshInfo = m_pMeshResource.lock()->m_pMeshData;
     CB_TRANSFORM_SET* cbTransSet =  m_pMeshResource.lock()->m_pCBTransformSet;
     CB_MATERIAL_SET* cbMatSet =  m_pMeshResource.lock()->m_pCBMaterialDataSet;
-    ID3D11Buffer* vtxBuff = m_pMeshResource.lock()->m_pVertexBuffer;
-    ID3D11Buffer* idxBuff = m_pMeshResource.lock()->m_pIndexBuffer;
+    ID3D11Buffer* vtxBuff = meshInfo->pVertexBuffer;
+    UINT vtxStride = meshInfo->VertexStride;
+    ID3D11Buffer* idxBuff = meshInfo->pIndexBuffer;
 
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
@@ -136,9 +137,8 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     pContext->PSSetShaderResources(2, 1, &specularSRV);
 
     // 頂点＆インデックスバッファ設定 ==========================
-    UINT stride = sizeof(VERTEX_Static);
     UINT offset = 0;
-    pContext->IASetVertexBuffers(0, 1, &vtxBuff, &stride, &offset); // 頂点バッファをセット
+    pContext->IASetVertexBuffers(0, 1, &vtxBuff, &vtxStride, &offset); // 頂点バッファをセット
     pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 

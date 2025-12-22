@@ -12,8 +12,8 @@
 using namespace Path;
 using namespace Microsoft::WRL;
 
-// シンプルシェーダ（スプライト兼用）
-static const D3D11_INPUT_ELEMENT_DESC SimpleLayout[] =
+// 法線マップなし簡易静的3Dオブジェクト用
+static const D3D11_INPUT_ELEMENT_DESC g_Static_Layout[] =
 {
     {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(VERTEX::VERTEX_Static, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(VERTEX::VERTEX_Static, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -21,15 +21,26 @@ static const D3D11_INPUT_ELEMENT_DESC SimpleLayout[] =
     {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(VERTEX::VERTEX_Static, normal),D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
 
-// モデルアニメーション用シェーダ
-static const D3D11_INPUT_ELEMENT_DESC SkneedLayout[] =
+// 法線マップ有り静的3Dオブジェクト用
+static const D3D11_INPUT_ELEMENT_DESC g_StaticTan_Layout[] =
+{
+    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Static_N, pos),        D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,         0, offsetof(VERTEX::VERTEX_Static_N, uv),         D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Static_N, color),      D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Static_N, normal),     D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TANGENT",    0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Static_N, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Static_N, bitangent),  D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
+
+// スキニング用モデルシェーダ
+static const D3D11_INPUT_ELEMENT_DESC g_Skneed_Layout[] =
 {
     {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, pos),        D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,         0, offsetof(VERTEX::VERTEX_Skneed, uv),         D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Skneed, color),      D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"NORMAL",     0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, normal),     D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"TANGENT",    0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, tangent),    D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BINORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,      0, offsetof(VERTEX::VERTEX_Skneed, bitangent),  D3D11_INPUT_PER_VERTEX_DATA, 0},
-    {"COLOR",      0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Skneed, color),      D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BONEIDS",    0, DXGI_FORMAT_R8G8B8A8_UINT,        0, offsetof(VERTEX::VERTEX_Skneed, boneIDs),    D3D11_INPUT_PER_VERTEX_DATA, 0},
     {"BONEWEIGHTS",0, DXGI_FORMAT_R32G32B32A32_FLOAT,   0, offsetof(VERTEX::VERTEX_Skneed, boneWeights),D3D11_INPUT_PER_VERTEX_DATA, 0},
 };
@@ -53,57 +64,78 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
     // 入力レイアウト定義
     InputLayoutSetupData layout[] =
     {        
+        ///////////////////////////////////////////////////
+        // ディファードシェーディング
+        ///////////////////////////////////////////////////
         {
-            /* RT用スプライト */
-            SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
+            /* 簡易静的3Dオブジェクト */
+            SHADER_TYPE::DEFERRED_STD_STATIC,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         },
         {
-            /* 簡易3Dオブジェクト */
-            SHADER_TYPE::DEFFERD_STANDARD_SIMPLE,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
-        },            
+            /* 静的3Dオブジェクト（法線マップ有り） */
+            SHADER_TYPE::DEFERRED_STD_STATIC_N,
+            ARRAYSIZE(g_StaticTan_Layout),
+            g_StaticTan_Layout,
+        },
+        // DEFERRED_STD_SKINNED
         {
             /* スキニング3Dモデル */
-            SHADER_TYPE::DEFFERD_STANDARD_SKINNED,
-            ARRAYSIZE(SkneedLayout),
-            SkneedLayout,
-        },      
-        //DEFFERD_STANDARD_BILLBOARD
+            SHADER_TYPE::DEFERRED_STD_SKINNED_N,
+            ARRAYSIZE(g_Skneed_Layout),
+            g_Skneed_Layout,
+        },
+        {
+            /* RT用スプライト */
+            SHADER_TYPE::DEFERRED_STD_RT_SPRITE,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        },
+        //DEFERRED_STD_BILLBOARD
+
+        ///////////////////////////////////////////////////
+        // フォワードシェーディング
+        ///////////////////////////////////////////////////
+        
+        // FORWARD_STD_STATIC
         {
             /* スプライト 標準 UI用  */
-            SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
+            SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         },       
         //FOWARD_STANDARD_BILLBOARD
-        //FOWARD_STANDARD_SIMPLE
         {
             /* 簡易3Dオブジェクト ライティング無し  */
-            SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
+            SHADER_TYPE::FORWARD_UNLIT_STATIC,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         }, 
+
+        ///////////////////////////////////////////////////
+        // ポストエフェクト的な奴
+        ///////////////////////////////////////////////////
         {
             /* 水平ガウシアンブラー用  */
-            SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
+            SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         },
         {
             /* 垂直ガウシアンブラー用  */
-            SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL,
-            ARRAYSIZE(SimpleLayout),
-            SimpleLayout,
+            SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         },          
         {
              /* スカイボックス用  */
-             SHADER_TYPE::SKYBOX,
-             ARRAYSIZE(SimpleLayout),
-             SimpleLayout,
+             SHADER_TYPE::POST_SKYBOX,
+             ARRAYSIZE(g_Static_Layout),
+             g_Static_Layout,
         },        
+
+        // POST_EFFECT
     };
 
     // 格納
@@ -307,28 +339,42 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
+        ///////////////////////////////////////////////////
+        // ディファードシェーディング
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:   // RT用スプライト
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
-            hr = this->CompileShader(HLSL__Simple_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+        case SHADER_TYPE::DEFERRED_STD_STATIC:      // 静的簡易3Dオブジェクト（法線マップなし）
+            hr = this->CompileShader(HLSL__Static_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;       
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:  // 静的3Dオブジェクト（法線マップあり）
+            hr = this->CompileShader(HLSL__Static_Tan_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:     // スキニング3Dモデル
             hr = this->CompileShader(HLSL__Skinned_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
+
+        ///////////////////////////////////////////////////
+        // フォワードシェーディング
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:    // スプライト 標準 UI用
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;       
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
-            hr = this->CompileShader(HLSL__Simple_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
-            break;      
-        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+        case SHADER_TYPE::FORWARD_UNLIT_STATIC:    // 簡易3Dオブジェクト ライティング無し
+            hr = this->CompileShader(HLSL__Static_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break; 
+            
+        ///////////////////////////////////////////////////
+        // ポストエフェクト
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
             hr = this->CompileShader(HLSL__XBlur_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             hr = this->CompileShader(HLSL__YBlur_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;       
-        case SHADER_TYPE::SKYBOX:                      // スカイボックス
+        case SHADER_TYPE::POST_SKYBOX:                      // スカイボックス
             hr = this->CompileShader(HLSL__Skybox_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
         default:
@@ -376,28 +422,31 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
+        case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:           // RT用スプライト
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
-            this->LoadCSOFile(HLSL_CSO__Simple_VS_PATH.c_str(), &csoByteCode);
+        case SHADER_TYPE::DEFERRED_STD_STATIC:              // 静的簡易3Dオブジェクト（法線マップなし）
+            this->LoadCSOFile(HLSL_CSO__Static_VS_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:            // 静的3Dオブジェクト（法線マップあり）
+            this->LoadCSOFile(HLSL_CSO__Static_Tan_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:           // スキニング3Dモデル
             this->LoadCSOFile(HLSL_CSO__Skinned_VS_PATH.c_str(),&csoByteCode);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
+        case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:          // スプライト 標準 UI用
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
-            this->LoadCSOFile(HLSL_CSO__Simple_VS_PATH.c_str(), &csoByteCode);
+        case SHADER_TYPE::FORWARD_UNLIT_STATIC:             // 簡易3Dオブジェクト ライティング無し
+            this->LoadCSOFile(HLSL_CSO__Static_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
             this->LoadCSOFile(HLSL_CSO__XBlur_VS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             this->LoadCSOFile(HLSL_CSO__YBlur_VS_PATH.c_str(), &csoByteCode);
             break;        
-        case SHADER_TYPE::SKYBOX:                       // スカイボックス
+        case SHADER_TYPE::POST_SKYBOX:                       // スカイボックス
             this->LoadCSOFile(HLSL_CSO__Skybox_VS_PATH.c_str(), &csoByteCode);
             break;
         default:
@@ -465,28 +514,43 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:   // RT用スプライト
+
+        ///////////////////////////////////////////////////
+        // ディファードシェーディング
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:   // RT用スプライト
             hr = this->CompileShader(HLSL__LightingPath_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:      // 簡易3Dオブジェクト
+        case SHADER_TYPE::DEFERRED_STD_STATIC:      // 静的簡易3Dオブジェクト(法線マップなし)
             hr = CompileShader(HLSL__GBuffer_Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
-            break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:     // スキニング3Dモデル
+            break;      
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:  // 静的3Dオブジェクト(法線マップあり)
             hr = CompileShader(HLSL__GBuffer_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:    // スプライト 標準 UI用
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:     // スキニング3Dモデル
+            hr = CompileShader(HLSL__GBuffer_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
+
+        ///////////////////////////////////////////////////
+        // フォワードシェーディング
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:    // スプライト 標準 UI用
             hr = this->CompileShader(HLSL__Sprite_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;      
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:    // 簡易3Dオブジェクト ライティング無し
+        case SHADER_TYPE::FORWARD_UNLIT_STATIC:    // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;        
-        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
+
+        ///////////////////////////////////////////////////
+        // ポストエフェクト
+        ///////////////////////////////////////////////////
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
             hr = this->CompileShader(HLSL__GaussianBlur_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL:       // ガウシアン垂直ブラー
             hr = this->CompileShader(HLSL__GaussianBlur_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;       
-        case SHADER_TYPE::SKYBOX:                       // スカイボックス
+        case SHADER_TYPE::POST_SKYBOX:                       // スカイボックス
             hr = this->CompileShader(HLSL__Skybox_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
         default:
@@ -525,28 +589,31 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::NONE:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_RT_SPRITE:
+        case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:
             this->LoadCSOFile(HLSL_CSO__LightingPath_Standard_PS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SIMPLE:
+        case SHADER_TYPE::DEFERRED_STD_STATIC:
             this->LoadCSOFile(HLSL_CSO__GBuffer_Simple_PS_PATH.c_str(), &csoByteCode);
-            break;
-        case SHADER_TYPE::DEFFERD_STANDARD_SKINNED:
+            break;     
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:
             this->LoadCSOFile(HLSL_CSO__GBuffer_Standard_PS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::FOWARD_STANDARD_UI_SPRITE:
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:
+            this->LoadCSOFile(HLSL_CSO__GBuffer_Standard_PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:
             this->LoadCSOFile(HLSL_CSO__Sprite_PS_PATH.c_str(), &csoByteCode);
             break;   
-        case SHADER_TYPE::FOWARD_NO_LIGHTING_SIMPLE:
+        case SHADER_TYPE::FORWARD_UNLIT_STATIC:
             this->LoadCSOFile(HLSL_CSO__Simple_PS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_HORIZONTAL:
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:
             this->LoadCSOFile(HLSL_CSO__GaussianBlur_PS_PATH.c_str(), &csoByteCode);
             break;
-        case SHADER_TYPE::GAUSSIAN_BLUR_VERTICAL:
+        case SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL:
             this->LoadCSOFile(HLSL_CSO__GaussianBlur_PS_PATH.c_str(), &csoByteCode);
             break;       
-        case SHADER_TYPE::SKYBOX:
+        case SHADER_TYPE::POST_SKYBOX:
             this->LoadCSOFile(HLSL_CSO__Skybox_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
