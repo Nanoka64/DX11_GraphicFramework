@@ -7,7 +7,6 @@ using namespace DirectX;
 Texture::Texture():
 	m_pSRV(nullptr)
 {
-
 }
 
 Texture::~Texture()
@@ -42,6 +41,9 @@ HRESULT Texture::Load_WIC(const std::wstring& path, RendererEngine& renderer)
 		&metadata, 
 		image
 	);
+
+	m_Width = metadata.width;
+	m_Height = metadata.height;
 
 	if (FAILED(hr))return hr;
 
@@ -83,7 +85,6 @@ HRESULT Texture::Load_DDS_CubeMap(const std::wstring& path, RendererEngine& rend
 	HRESULT hr = S_OK;
 	TexMetadata metadata;	// 画像の情報
 	ScratchImage image;		// 画像本体
-
 
 	// テクスチャの読み込み
 	hr = LoadFromDDSFile(
@@ -138,10 +139,23 @@ void Texture::set_SRV_ComPtr(const Microsoft::WRL::ComPtr<ID3D11ShaderResourceVi
 {
 	m_pSRV = pSrv;
 }
-
-
 void Texture::Release()
 {
 	SAFE_RELEASE(m_pSRV);
 }
-
+void Texture::set_Width(UINT w)
+{
+	m_Width = w;
+}
+void Texture::set_Height(UINT h)
+{
+	m_Height = h;
+}
+UINT Texture::get_Width()const
+{
+	return m_Width;
+}
+UINT Texture::get_Height()const
+{
+	return m_Height;
+}

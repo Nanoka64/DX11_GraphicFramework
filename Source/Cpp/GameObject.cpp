@@ -62,3 +62,14 @@ std::weak_ptr<Transform> GameObject::get_Transform() const
 {
 	return m_pTransform;
 }
+
+//*---------------------------------------------------------------------------------------
+//* @:Object Class 
+//*【?】Transformの取得
+//* 引数：なし
+//* 戻値：弱参照ポインタ
+//*----------------------------------------------------------------------------------------
+std::vector<std::shared_ptr<IComponent>> GameObject::get_ComponentList()const
+{
+	return m_pComponentList;
+}

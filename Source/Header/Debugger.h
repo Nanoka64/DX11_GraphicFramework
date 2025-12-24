@@ -57,14 +57,28 @@ public:
 	bool DG_RadioButton(std::string label, bool active);													// ラジオボタン
 	bool DG_CheckBox(std::string label, bool *active);														// チェックボックス
 
+	void DG_Image(ID3D11ShaderResourceView* pSrv, VECTOR2::VEC2 size = { 200.0f,200.0f }, VECTOR2::VEC2 uv0 = { 0.0f,0.0f }, VECTOR2::VEC2 uv1 = { 1.0f,1.0f });
+	void DG_Bullet();
+	void DG_BulletText(const std::string& label);
+	void DG_Spacing();
+	void DG_Separator();
+	bool DG_TreeNode(const std::string& label);
+	void DG_TreePop();
 
 	/* テンプレート */
-
+	
 	// テキスト表示
 	template<typename ...Args>
 	void DG_TextValue(const std::string& tex, Args&& ...args)
 	{
 		ImGui::Text(tex.c_str(), std::forward<Args>(args)...);
+	}	
+	
+	// バレットテキスト表示
+	template<typename ...Args>
+	void DG_BulletText(const std::string& tex, Args&& ...args)
+	{
+		ImGui::BulletText(tex.c_str(), std::forward<Args>(args)...);
 	}
 };
 

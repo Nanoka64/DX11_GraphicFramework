@@ -138,6 +138,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT 
     descDepth.SampleDesc.Quality = 0;                   // サンプリングのモード切替え(ハードウェア依存) 基本的に 0 
     descDepth.Format = DXGI_FORMAT_R32_TYPELESS;        // 
 
+
     // D3D11_USAGE_DEFAULT = 0,     // GPUからRead,Write
     // D3D11_USAGE_IMMUTABLE = 1,   // GPUからRead
     // D3D11_USAGE_DYNAMIC = 2,     // CPUからWrite,GPUからRead

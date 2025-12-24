@@ -119,7 +119,7 @@ bool RendererEngine::Init(HWND hWnd)
 void RendererEngine::BeginRender()
 {
     // フレームバッファのレンダリングターゲットとデプスステンシルのクリア
-    FLOAT clearColor[] = { 1.0f,0.0f,1.0f,1.0f };
+    FLOAT clearColor[] = { 1.0f,0.0f,0.0f,1.0f };
     m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, clearColor);
     m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
@@ -873,7 +873,7 @@ void RendererEngine::ClearRenderTargetView(class DX_RenderTarget* pRT)
     }
 
     if (pRT->get_RTV() != nullptr) {
-        float col[4] = {1.0,1.0,1.0,1.0};
+        float col[4] = {0.0,0.0,0.0,1.0};
         // ターゲットのクリア
         m_pImmediateContext->ClearRenderTargetView(pRT->get_RTV(), col);
     }

@@ -14,7 +14,7 @@
 //*----------------------------------------------------------------------------------------
 DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank)
 {
-
+	this->set_Tag("DirectionalLight");
 }
 
 

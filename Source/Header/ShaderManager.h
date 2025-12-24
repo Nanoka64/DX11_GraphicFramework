@@ -45,12 +45,13 @@ enum class SHADER_TYPE
     FORWARD_UNLIT_STATIC,               // 簡易3Dオブジェクト ライティングなし
 
     /////////////////////////////////////////////////////////////////////
-    // ポストエフェクト的なやつ ****************************************
+    // その他 ポストエフェクト的なやつとか ******************************
     POST_GAUSSIAN_BLUR_HORIZONTAL,      // ガウシアン水平ブラー 
     POST_GAUSSIAN_BLUR_VERTICAL,        // ガウシアン垂直ブラー 
     POST_SKYBOX,                        // スカイボックス用
     POST_EFFECT,                        // ◆ ポストエフェクト用
-    
+    POST_LUMINANCE_FILTER,              // 輝度抽出用
+
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用
     FOWARD_UI_IMAGE,  // イメージ UI用

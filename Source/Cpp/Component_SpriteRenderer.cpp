@@ -77,7 +77,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	Master::m_pShaderManager->DeviceToSetShader(m_ShaderType);
 	
 	// 頂点情報の更新
-	VertexUpdate(renderer);
+	//VertexUpdate(renderer);
 
     // テクスチャセット ==========================
 	for (auto it = m_pTextureMap.begin(); it != m_pTextureMap.end(); it++)

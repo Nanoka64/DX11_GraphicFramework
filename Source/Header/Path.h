@@ -27,6 +27,7 @@ namespace Path
     const std::wstring HLSL__Simple_PS_PATH = std::wstring(Shader)                  + L"Simple_PS.hlsl";
     const std::wstring HLSL__GaussianBlur_PS_PATH = std::wstring(Shader)            + L"GaussianBlur_PS.hlsl";
     const std::wstring HLSL__Skybox_PS_PATH = std::wstring(Shader)                  + L"Skybox_PS.hlsl";
+    const std::wstring HLSL__HighLuminanceFilter_PS_PATH = std::wstring(Shader)     + L"HighLuminanceFilter_PS.hlsl";
 
     // VS
     const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
@@ -46,7 +47,7 @@ namespace Path
     const std::wstring HLSL_CSO__Simple_PS_PATH = std::wstring(CSO)                 + L"Simple_PS.cso";
     const std::wstring HLSL_CSO__GaussianBlur_PS_PATH = std::wstring(CSO)           + L"GaussianBlur_PS.cso";
     const std::wstring HLSL_CSO__Skybox_PS_PATH = std::wstring(CSO)                 + L"Skybox_PS.cso";
-
+    const std::wstring HLSL_CSO__HighLuminanceFilter_PS_PATH = std::wstring(CSO)    + L"HighLuminanceFilter_PS.cso";
 
     // VS
     const std::wstring HLSL_CSO__Skinned_VS_PATH = std::wstring(CSO)                + L"Skinned_VS.cso";

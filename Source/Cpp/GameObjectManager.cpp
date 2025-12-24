@@ -2,6 +2,7 @@
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "Master.h"
 #include  <algorithm>
 
 
@@ -78,6 +79,10 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::ObjectRender(RendererEngine &renderer)
 {
+    int id = 0;
+    Master::m_pDebugger->BeginDebugWindow("GameObject");
+    Master::m_pDebugger->DG_BulletText("Count : %d", m_pObjectList.size());
+
     // 描画
     for (auto& obj : m_pObjectList)
     {
@@ -85,7 +90,26 @@ void GameObjectManager::ObjectRender(RendererEngine &renderer)
             obj->Draw(renderer);
             obj->ComponentRender(renderer);
         }
+
+        //******************************************************
+        // 各オブジェクトのコンポーネントをツリー上に表示
+        //******************************************************
+        id++;
+        // IDを名前に入れて一意にする（##ID は表示されず、内部的な識別子になる）
+        std::string label = obj->get_Tag() + "##" + std::to_string(id);
+
+        if (Master::m_pDebugger->DG_TreeNode(label))
+        {
+            // オブジェクトが持つコンポーネントを一覧表示
+            for (auto& component : obj->get_ComponentList())
+            {
+                Master::m_pDebugger->DG_BulletText(component->get_Tag().c_str());
+            }
+            Master::m_pDebugger->DG_TreePop();
+        }
     }
+    Master::m_pDebugger->EndDebugWindow();
+
 }
 
 
@@ -294,7 +318,7 @@ namespace GIGA_Engine
 {
     std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<Transform> parent )
     {
-        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, pos, rot, parent);
+        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, pos, rot, parent).lock();
     }
 };
 

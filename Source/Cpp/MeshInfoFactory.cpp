@@ -6,6 +6,86 @@
 using namespace VERTEX;
 using namespace Tool::UV;
 
+// 頂点数 ***************************************
+constexpr UINT g_QuadVertexNum		   = 4;
+constexpr UINT g_CubeVertexNum		   = 24;
+constexpr UINT g_PlaneVertexNum		   = 4;
+constexpr UINT g_SpriteQuadVertexNum   = 4;
+constexpr UINT g_RTSpriteQuadVertexNum = 4;
+// インデックス数 *******************************
+constexpr UINT g_QuadIndexNum			= 6;
+constexpr UINT g_CubeIndexNum			= 36;
+constexpr UINT g_PlaneIndexNum			= 6;
+constexpr UINT g_SpriteQuadIndexNum		= 6;
+constexpr UINT g_RTSpriteQuadIndexNum	= 6;
+
+ 
+//* =========================================================================
+//* - @:クアッド（板ポリ） - */
+//* =========================================================================
+VERTEX::VERTEX_Static g_QuadVertices[] = {
+	{ VEC3(-1.0f,  1.0f,  0.0f), VEC2(0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 8 左上
+	{ VEC3( 1.0f,  1.0f,  0.0f), VEC2(1.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 9 右上
+	{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 10左下
+	{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 11右下
+};
+
+
+//* =========================================================================
+//* - @:キューブ（箱） - */
+//* =========================================================================
+VERTEX::VERTEX_Static g_CubeVertices[] = {
+	// 座標                       // 法線                  // カラー                      // uv
+	// 正面 1
+	{ VEC3(-1.0f,  1.0f, -1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 0 左上
+	{ VEC3( 1.0f,  1.0f, -1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 1 右上
+	{ VEC3(-1.0f, -1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 2 左下
+	{ VEC3( 1.0f, -1.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 3 右下
+								 
+	// 天井ポリゴン  3                   
+	{ VEC3(-1.0f,  1.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 4 左上
+	{ VEC3( 1.0f,  1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 5 右上
+	{ VEC3(-1.0f,  1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 6 左下
+	{ VEC3( 1.0f,  1.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 7 右下
+
+	// 地面ポリゴン   4                                                                      
+	{ VEC3( 1.0f,  -1.0f,  1.0f),VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 8 左上
+	{ VEC3(-1.0f,  -1.0f,  1.0f),VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 9 右上
+	{ VEC3( 1.0f,  -1.0f, -1.0f),VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 10左下
+	{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 11右下
+
+	// 裏ポリゴン 6
+	{ VEC3( 1.0f,  1.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 12 左上
+	{ VEC3(-1.0f,  1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 13 右上
+	{ VEC3( 1.0f, -1.0f,  1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 14 左下
+	{ VEC3(-1.0f, -1.0f,  1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 15 右下
+
+	// 右ポリゴン  2                                                                         
+	{ VEC3(1.0f,   1.0f, -1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 16 左上
+	{ VEC3(1.0f,   1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 17 右上
+	{ VEC3(1.0f,  -1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 18 左下
+	{ VEC3(1.0f,  -1.0f,  1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 19 右下
+
+	// 左ポリゴン 5
+	{ VEC3(-1.0f,   1.0f,  1.0f),VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 20 左上
+	{ VEC3(-1.0f,   1.0f, -1.0f),VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 21 右上
+	{ VEC3(-1.0f,  -1.0f,  1.0f),VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 22 左下
+	{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 23 右下
+};
+
+
+//* =========================================================================
+//* - @:プレーン（平面） - */
+//* =========================================================================
+VERTEX::VERTEX_Static g_PlaneVertices[] = {
+	// 座標   // uv  // カラー					   // 法線                          
+	{VEC3(-1.0f, 0.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 8 左上
+	{VEC3( 1.0f, 0.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 9 右上
+	{VEC3(-1.0f, 0.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 10左下
+	{VEC3( 1.0f, 0.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 11右下
+};
+
+
 MeshInfoFactory::MeshInfoFactory()
 {
 }
@@ -27,26 +107,22 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine
 	// 法線マップあり
 	if (isNormalMap)
 	{
-		VERTEX::VERTEX_Static vertices[] = {
+		VERTEX::VERTEX_Static_N vertices[] = {
 			// 座標						    // uv,			// カラー                   // 法線                  
-			{ VEC3(-1.0f,  1.0f,  0.0f), VEC2(0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 8 左上
-			{ VEC3( 1.0f,  1.0f,  0.0f), VEC2(1.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 9 右上
-			{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 10左下
-			{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 11右下
+			{ VEC3(-1.0f,  1.0f,  0.0f), VEC2(0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC3(),VEC3() }, // 8 左上
+			{ VEC3( 1.0f,  1.0f,  0.0f), VEC2(1.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC3(),VEC3() }, // 9 右上
+			{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC3(),VEC3() }, // 10左下
+			{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC3(),VEC3() }, // 11右下
 		};
-		*meshData = CreateMesh(pDevice,vertices, 4, indices, 6);
+		// 接線・副接線を求める
+		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+
+		*meshData = CreateMesh(pDevice,vertices, g_QuadVertexNum, indices, g_QuadIndexNum);
 	}
 	// 法線マップなし
 	else
 	{
-		VERTEX::VERTEX_Static vertices[] = {
-			// 座標                      // uv			   // カラー                     // 法線                
-			{ VEC3(-1.0f,  1.0f,  0.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f) }, // 8 左上
-			{ VEC3( 1.0f,  1.0f,  0.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f) }, // 9 右上
-			{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f) }, // 10左下
-			{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f) }, // 11右下
-		};																				  
-		*meshData = CreateMesh(pDevice, vertices, 4, indices, 6);
+		*meshData = CreateMesh(pDevice, g_QuadVertices, g_QuadVertexNum, indices, g_QuadIndexNum);
 	}
 
 	// マテリアル情報設定
@@ -167,51 +243,14 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine
 			{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f), tan, biTan },  // 23 右下
 		};
 
-		*meshData = CreateMesh(pDevice, vertices, 24, indices, 36);
+		// 接線・副接線を求める
+		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+
+		*meshData = CreateMesh(pDevice, vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
 	}
 	else
 	{
-		VERTEX::VERTEX_Static vertices[] = {
-			// 座標                       // 法線                  // カラー                      // uv
-			// 頂点フォーマット
-			// 正面 1
-			{ VEC3(-1.0f,  1.0f, -1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 0 左上
-			{ VEC3( 1.0f,  1.0f, -1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 1 右上
-			{ VEC3(-1.0f, -1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 2 左下
-			{ VEC3( 1.0f, -1.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 3 右下
-										 
-			// 天井ポリゴン  3                   
-			{ VEC3(-1.0f,  1.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 4 左上
-			{ VEC3( 1.0f,  1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 5 右上
-			{ VEC3(-1.0f,  1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 6 左下
-			{ VEC3( 1.0f,  1.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 7 右下
-
-			// 地面ポリゴン   4                                                                      
-			{ VEC3( 1.0f,  -1.0f,  1.0f),VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 8 左上
-			{ VEC3(-1.0f,  -1.0f,  1.0f),VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 9 右上
-			{ VEC3( 1.0f,  -1.0f, -1.0f),VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 10左下
-			{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f) ,VEC3(0.0f, -1.0f, 0.0f)}, // 11右下
-
-			// 裏ポリゴン 6
-			{ VEC3( 1.0f,  1.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 12 左上
-			{ VEC3(-1.0f,  1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 13 右上
-			{ VEC3( 1.0f, -1.0f,  1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 14 左下
-			{ VEC3(-1.0f, -1.0f,  1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 1.0f) }, // 15 右下
-
-			// 右ポリゴン  2                                                                         
-			{ VEC3(1.0f,   1.0f, -1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 16 左上
-			{ VEC3(1.0f,   1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 17 右上
-			{ VEC3(1.0f,  -1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 18 左下
-			{ VEC3(1.0f,  -1.0f,  1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(1.0f, 0.0f, 0.0f) }, // 19 右下
-
-			// 左ポリゴン 5
-			{ VEC3(-1.0f,   1.0f,  1.0f),VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 20 左上
-			{ VEC3(-1.0f,   1.0f, -1.0f),VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 21 右上
-			{ VEC3(-1.0f,  -1.0f,  1.0f),VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 22 左下
-			{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 23 右下
-		};
-
-		*meshData = CreateMesh(pDevice, vertices, 24, indices, 36);
+		*meshData = CreateMesh(pDevice, g_CubeVertices, g_CubeVertexNum, indices, g_CubeIndexNum);
 	}
 
 	// マテリアルの設定
@@ -331,50 +370,27 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 		VEC2(1.0f, 1.0f),
 	};
 
-	VEC3 E1 = pos[1] - pos[0];
-	VEC3 E2 = pos[2] - pos[0];
-	VEC2 Delta_UV1 = uv[1] - uv[0];
-	VEC2 Delta_UV2 = uv[2] - uv[0];
-	float f = 1 / (Delta_UV1.x * Delta_UV2.y - Delta_UV2.x * Delta_UV1.y);
-	VEC3 tan;
-	VEC3 biTan;
-	
-	// 接線
-	tan.x = f * (Delta_UV2.y * E1.x - Delta_UV1.y * E2.x);
-	tan.y = f * (Delta_UV2.y * E1.y - Delta_UV1.y * E2.y);
-	tan.z = f * (Delta_UV2.y * E1.z - Delta_UV1.y * E2.z);
-	tan = tan.Normalize();
-	
-	// 副接線
-	biTan.x = f * (-Delta_UV2.x * E1.x + Delta_UV1.x * E2.x);
-	biTan.y = f * (-Delta_UV2.x * E1.y + Delta_UV1.x * E2.y);
-	biTan.z = f * (-Delta_UV2.x * E1.z + Delta_UV1.x * E2.z);
-	biTan = biTan.Normalize();
-
 
 	// 法線マップあり
 	if (isNormalMap)
 	{
 		VERTEX::VERTEX_Static_N vertices[] = {
 			// 座標   // uv  // カラー					   // 法線                          
-			{ pos[0], uv[0], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), tan, biTan}, // 8 左上
-			{ pos[1], uv[1], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), tan, biTan}, // 9 右上
-			{ pos[2], uv[2], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), tan, biTan}, // 10左下
-			{ pos[3], uv[3], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), tan, biTan}, // 11右下
+			{ pos[0], uv[0], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), VEC3(),VEC3() }, // 8 左上
+			{ pos[1], uv[1], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), VEC3(),VEC3() }, // 9 右上
+			{ pos[2], uv[2], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), VEC3(),VEC3() }, // 10左下
+			{ pos[3], uv[3], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f), VEC3(),VEC3() }, // 11右下
 		};
-		*meshData = CreateMesh(pDevice, vertices, 4, indices, 6);
+		
+		// 接線・副接線を求める
+		Tool::CalcTangentAndBitangent(vertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
+
+		*meshData = CreateMesh(pDevice, vertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
 	}
 	// 法線マップなし
 	else
 	{
-		VERTEX::VERTEX_Static vertices[] = {
-			// 座標   // uv  // カラー					   // 法線                          
-			{ pos[0], uv[0], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 8 左上
-			{ pos[1], uv[1], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 9 右上
-			{ pos[2], uv[2], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 10左下
-			{ pos[3], uv[3], VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 11右下
-		};
-		*meshData = CreateMesh(pDevice, vertices, 4, indices, 6);
+		*meshData = CreateMesh(pDevice, g_PlaneVertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
 	}
 
 	// マテリアル情報設定
@@ -412,7 +428,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSpriteQuadInfo(Renderer
 		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, // 11右下
 	};
 
-	*meshData = CreateMesh(pDevice, vertices, 4, indices, 6);
+	*meshData = CreateMesh(pDevice, vertices, g_SpriteQuadVertexNum, indices, g_SpriteQuadIndexNum);
 
 	// マテリアル情報設定
 	meshData->pMaterials = nullptr;
@@ -441,14 +457,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 		1,3,2
 	};
 
-
-	//// インデックス情報
-	//WORD indices[]{
-	//	0,2,1,
-	//	1,2,3
-	//};
-
-
 	/* テクスチャ座標では
 	* 上：0.0
 	* 下：1.0
@@ -475,7 +483,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 11右下
 	};
 
-	*meshData = CreateMesh(pDevice, vertices, 4, indices, 6);
+	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, indices, g_RTSpriteQuadIndexNum);
 
 	// マテリアル情報設定
 	meshData->pMaterials = nullptr;

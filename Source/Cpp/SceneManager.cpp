@@ -21,6 +21,7 @@
 #include "Component_BillboardRenderer.h"
 #include "Component_SkyRenderer.h"
 #include "DX_RenderTarget.h"
+#include "GaussianBlur.h"
 
 
 using namespace VECTOR4;
@@ -30,39 +31,6 @@ using namespace Tool::UV;
 using namespace Input;
 
 using namespace GIGA_Engine;
-
-
-/// <summary>
-/// ※ 魔導書にあった関数
-/// ガウシアン関数を利用して重みテーブルを計算する
-/// </summary>
-/// <param name="weightsTbl">重みテーブルの記録先</param>
-/// <param name="sizeOfWeightsTbl">重みテーブルのサイズ</param>
-/// <param name="sigma">分散具合。この数値が大きくなると分散具合が強くなる</param>
-void CalcWeightsTableFromGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma)
-{
-    if (sigma <= 0.0f)
-    {
-        return;
-    }
-
-    // 重みの合計を記録する変数を定義する
-    float total = 0;
-
-    // ここからガウス関数を用いて重みを計算している
-    // ループ変数のxが基準テクセルからの距離
-    for (int x = 0; x < sizeOfWeightsTbl; x++)
-    {
-        weightsTbl[x] = expf(-0.5f * (float)(x * x) / sigma);
-        total += 2.0f * weightsTbl[x];
-    }
-
-    // 重みの合計で除算することで、重みの合計を1にしている
-    for (int i = 0; i < sizeOfWeightsTbl; i++)
-    {
-        weightsTbl[i] /= total;
-    }
-}
 
 
 
@@ -142,10 +110,11 @@ bool SceneManager::Init(RendererEngine &renderer)
         {
             /* ポイントライトの生成 (Cubuで分かりやすく)*/
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+            mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 1.0f;
+            mat->SpecularPower = 100.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -154,6 +123,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
             mesh.IsActive = true;
+            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            mesh.IsNormalMap = true;
 
             for (int i = 0; i < 30; i++)
             {
@@ -173,7 +144,7 @@ bool SceneManager::Init(RendererEngine &renderer)
                 auto light = obj.lock()->add_Component<PointLight>();
                 light->set_LightColor(col);
                 light->set_Range(1000.0f);
-                light->set_Intensity(10.0f);
+                light->set_Intensity(20.0f);
                 light->Init(renderer);
             }
         }
@@ -197,7 +168,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -286,7 +257,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
             mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 70.0f;
+            mat->SpecularPower = 100.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -454,41 +425,22 @@ bool SceneManager::Init(RendererEngine &renderer)
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
-    
+
     // ****************************************************************
-    // 水平ブラー
+    // 輝度抽出用
     // ****************************************************************
-    m_pHorizontalBlur = new DX_RenderTarget();
-    result = m_pHorizontalBlur->Create(
+    m_pLuminance_RT = new DX_RenderTarget();
+    result = m_pLuminance_RT->Create(
         renderer,
-        renderer.get_ScreenWidth() / 2.0f,
+        renderer.get_ScreenWidth(),     // シーンと同じに
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
-    
 
-
-    // ****************************************************************
-    // 垂直ブラー
-    // ****************************************************************
-    m_pVerticalBlur = new DX_RenderTarget();
-    result = m_pVerticalBlur->Create(
-        renderer,        
-        renderer.get_ScreenWidth() / 2.0f,
-        renderer.get_ScreenHeight() / 2.0f,
-        1,
-        1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        DXGI_FORMAT_D32_FLOAT
-    );
-    if (result == false)return false;
-    
-    // ガウシアンブラー用の重みテーブルを計算する
-    CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, 4.0f);
     
     //========================================================================================
     //
@@ -510,7 +462,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.ObjTag = "RenderTarget1";
     sprite.Width = 0.5f;
     sprite.Height = 0.5f;
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(),m_pAlbedo_RT->get_Height());
     auto obj = MeshFactory::CreateSprite(sprite);    
     obj.lock()->get_Transform().lock()->set_Pos(0.5, 0.5, 0.0);
     sprite.pTextureMap.clear();
@@ -521,7 +473,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.ObjTag = "RenderTarget2";
     sprite.Width = 0.5;
     sprite.Height = 0.5f;
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
     obj = MeshFactory::CreateSprite(sprite);    
     obj.lock()->get_Transform().lock()->set_Pos(-0.5, 0.5, 0.0);
     sprite.pTextureMap.clear();
@@ -530,7 +482,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     * スペキュラ用
     *************************************/
     sprite.ObjTag = "RenderTarget3";
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
     obj = MeshFactory::CreateSprite(sprite);    
     obj.lock()->get_Transform().lock()->set_Pos(-0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();
@@ -539,7 +491,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     * Z値用
     *************************************/
     sprite.ObjTag = "RenderTarget4";
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr(), m_pDepth_RT->get_Width(), m_pDepth_RT->get_Height());
     obj = MeshFactory::CreateSprite(sprite);  
     sprite.pTextureMap.clear();
 
@@ -549,68 +501,81 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.ObjTag = "DefferdRenderTarget";
     sprite.Width = 1.0f;
     sprite.Height = 1.0f;
-    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr());
-    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr());
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1");
+    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2");
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3");
+    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4");
     sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
     obj = MeshFactory::CreateSprite(sprite);
     //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
                    
     /*************************************
-    * 水平ブラー用スプライト
+    * 輝度抽出用スプライト
     *************************************/
-    CreateSpriteInfo horizontalBlurSprite;
-    horizontalBlurSprite.pRenderer = &renderer;
-    horizontalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
-    horizontalBlurSprite.pPSConstantBuffers->SetSlot = 7;               // スロット7にセット
-    horizontalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
-    horizontalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
-    horizontalBlurSprite.PSConstBufferNum = 1;
-    horizontalBlurSprite.IsActive = false;
-    horizontalBlurSprite.ObjTag = "HorizontalBlurSprite";
-    horizontalBlurSprite.Width = 1.0f;      // サイズの変更はRTだけでいい
-    horizontalBlurSprite.Height = 1.0f;                                                    
-    horizontalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_SceneFinal", m_pSceneFinal_RT->get_SRV_ComPtr());
-    horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    horizontalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL;
-    obj = MeshFactory::CreateSprite(horizontalBlurSprite);
+    CreateSpriteInfo luminanceSprite;
+    luminanceSprite.pRenderer      = &renderer;
+    luminanceSprite.IsActive       = false;
+    luminanceSprite.ObjTag         = "LuminanceSprite";
+    luminanceSprite.Width          = 1.0f;
+    luminanceSprite.Height         = 1.0f;
+    luminanceSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture(
+        "RT_SceneFinal", 
+        m_pSceneFinal_RT->get_SRV_ComPtr(), 
+        m_pSceneFinal_RT->get_Width(), 
+        m_pSceneFinal_RT->get_Height()
+    );
+    luminanceSprite.Type           = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    luminanceSprite.ShaderType     = SHADER_TYPE::POST_LUMINANCE_FILTER;
+    obj = MeshFactory::CreateSprite(luminanceSprite);
+
+    
+    /*************************************************************************
+    * 輝度抽出テクスチャにガウスブラーを掛ける
+    *************************************************************************/
+    m_pGaussianBlur = new GaussianBlur();
+    m_pGaussianBlur->Setup(
+        renderer, 
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "RT_Luminance",
+            m_pLuminance_RT->get_SRV_ComPtr(), 
+            m_pLuminance_RT->get_Width(), 
+            m_pLuminance_RT->get_Height())
+    );
+
+    /*************************************************************************
+    * 最終合成用スプライト
+    *************************************************************************/
+    CreateSpriteInfo finalSprite;
+    finalSprite.pRenderer = &renderer;
+    finalSprite.IsActive = false;
+    finalSprite.ObjTag = "FinalSprite";
+    finalSprite.Width = 1.0f;
+    finalSprite.Height = 1.0f;
+    finalSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture(
+        "AfterBlur",
+        m_pGaussianBlur->get_AfterBlurTexture(),
+        m_pLuminance_RT->get_Width(),
+        m_pLuminance_RT->get_Height()
+    );
+    finalSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    finalSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+    MeshFactory::CreateSprite(finalSprite);
 
 
-    /*************************************
-    * 垂直ブラー用スプライト
-    *************************************/
-    CreateSpriteInfo verticalBlurSprite;
-    verticalBlurSprite.pRenderer = &renderer;
-    verticalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
-    verticalBlurSprite.pPSConstantBuffers->SetSlot = 7;                 // スロット7にセット
-    verticalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
-    verticalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
-    verticalBlurSprite.PSConstBufferNum = 1;
-    verticalBlurSprite.IsActive = false;
-    verticalBlurSprite.ObjTag = "VerticalBlurSprite";
-    verticalBlurSprite.Width = 1.0f;
-    verticalBlurSprite.Height = 1.0f;
-    verticalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_HorizontalBlur", m_pHorizontalBlur->get_SRV_ComPtr());
-    verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;
-    obj = MeshFactory::CreateSprite(verticalBlurSprite);
-
-    /*************************************
-    * 最終的に合成してフレームバッファにコピーする用のスプライト
-    *************************************/
+    /*************************************************************************
+    * フレームバッファにコピーする用のスプライト
+    *************************************************************************/
     CreateSpriteInfo copyToFrameBufferSprite;
     copyToFrameBufferSprite.pRenderer = &renderer;
     copyToFrameBufferSprite.IsActive = false;
     copyToFrameBufferSprite.ObjTag = "CopyToFrameBufferSprite";
     copyToFrameBufferSprite.Width = 1.0f;
     copyToFrameBufferSprite.Height = 1.0f;
-    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_VerticalBlur", m_pSceneFinal_RT->get_SRV_ComPtr());
+    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_SceneFinal");
     copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
     obj = MeshFactory::CreateSprite(copyToFrameBufferSprite);
-
 
     return true;
 }
@@ -680,22 +645,13 @@ void SceneManager::Update(RendererEngine& renderer)
 
     // ライトのデバッグ
     Master::m_pDebugger->BeginDebugWindow("Light");
-    Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -1.0f, 1.0f);
+    Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -3.0f, 3.0f);
     Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
     Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
     Master::m_pDebugger->EndDebugWindow();
 
     auto objList = Master::m_pGameObjectManager->get_ObjectList();
-
-    // オブジェクトデバッグ
-    Master::m_pDebugger->BeginDebugWindow("GameObject");
-    Master::m_pDebugger->DG_TextValue("Num : %d", (int)objList.size());
-    for (auto& obj : objList)
-    {
-        Master::m_pDebugger->DG_TextValue("name : %s", obj->get_Tag().c_str());
-    }
-    Master::m_pDebugger->EndDebugWindow();
 
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
@@ -719,9 +675,9 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
+    static float blurIntensity = 1.0f;
     // ポストエフェクトデバッグ
     {
-        static float blurIntensity = 1.0f;
         // ブラー強度
         Master::m_pDebugger->BeginDebugWindow("PostEffect");
         Master::m_pDebugger->DG_SliderFloat("BlurIntencity", 1, &blurIntensity, 0.01f, 100.0f);
@@ -734,10 +690,34 @@ void SceneManager::Draw(RendererEngine& renderer)
         Master::m_pDebugger->DG_TextValue("weight6:%f.2", m_weights[6]);
         Master::m_pDebugger->DG_TextValue("weight7:%f.2", m_weights[7]);
         Master::m_pDebugger->EndDebugWindow();
-
-        // ガウシアンブラー用の重みテーブルを計算する
-        CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, blurIntensity);
     }
+
+    {
+        Master::m_pDebugger->BeginDebugWindow("RenderTarget");
+        
+        Master::m_pDebugger->DG_BulletText("Albed");
+        Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+        
+        Master::m_pDebugger->DG_BulletText("Normal");
+        Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(), VEC2(400, 200));       
+        Master::m_pDebugger->DG_Separator();
+        
+        Master::m_pDebugger->DG_BulletText("Specular");
+        Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));  
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Luminance");
+        Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Final");
+        Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->EndDebugWindow();
+    }
+
     static float t = 0.f;
     t += 0.1f;
 
@@ -780,22 +760,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
 
-    {
-        // ターゲット描画
-        //auto renderSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget1").lock();
-        //auto renderSpriteObj2 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget2").lock();
-        //auto renderSpriteObj3 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget3").lock();
-        //auto renderSpriteObj4 =Master::m_pGameObjectManager->get_ObjectByTag("RenderTarget4").lock();
-        //auto sprite = renderSpriteObj->get_Component<SpriteRenderer>();
-        //auto sprite2 = renderSpriteObj2->get_Component<SpriteRenderer>();
-        //auto sprite3 = renderSpriteObj3->get_Component<SpriteRenderer>();
-        //auto sprite4 = renderSpriteObj4->get_Component<SpriteRenderer>();
-        //sprite->Draw(renderer);
-        //sprite2->Draw(renderer);
-        //sprite3->Draw(renderer);
-        //sprite4->Draw(renderer);
-    }
-
     // ライトの更新
     Master::m_pLightManager->Update();
 
@@ -811,38 +775,46 @@ void SceneManager::Draw(RendererEngine& renderer)
 
     // ************************************************************************
     // 
-    // ブラー掛け
-    // 
+    // 輝度抽出
+    //
     // ************************************************************************
+    // 輝度抽出用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pLuminance_RT->get_RTV(), m_pLuminance_RT->get_DSV());
+    renderer.ClearRenderTargetView(m_pLuminance_RT);
 
-    // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth() / 2.0f, renderer.get_ScreenHeight());
+    // 輝度スプライト
+    auto luminanceSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("LuminanceSprite").lock();
+    auto luminance = luminanceSpriteObj->get_Component<SpriteRenderer>();
+    luminance->Draw(renderer);
 
-    // 水平ブラー用レンダリングターゲットに変更
-    renderer.RegisterRenderTarget(m_pHorizontalBlur->get_RTV(), nullptr);
-    renderer.ClearRenderTargetView(m_pHorizontalBlur);
-    // 水平ブラー
-    auto horizontalBlurSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("HorizontalBlurSprite").lock();
-    auto horizontalBlurSprite = horizontalBlurSpriteObj->get_Component<SpriteRenderer>();
-    horizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
-    horizontalBlurSprite->Draw(renderer);
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
+
+    // ************************************************************************
+    // 
+    // 取り出した輝度にブラーを掛けて、ブルーム効果にする
+    //
+    // ************************************************************************
+    m_pGaussianBlur->ExcuteOnGPU(renderer, blurIntensity);
+
+    // 加算モード
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ADD);
+
+    // 最終合成用レンダリングターゲットに変更
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth() / 2.0f, renderer.get_ScreenHeight() / 2.0f);
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);    // 深度テストなし
 
-    // 垂直ブラー用レンダリングターゲットに変更
-    renderer.RegisterRenderTarget(m_pVerticalBlur->get_RTV(), nullptr);
-    renderer.ClearRenderTargetView(m_pVerticalBlur);
+    // ブラー合成スプライト
+    auto finalSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("FinalSprite").lock();
+    auto finalSprite = finalSpriteObj->get_Component<SpriteRenderer>();
+    finalSprite->Draw(renderer);
 
-    // 垂直ブラー
-    auto verticalBlurSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("VerticalBlurSprite").lock();
-    auto verticalBlurSprite = verticalBlurSpriteObj->get_Component<SpriteRenderer>();
-    verticalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
-    verticalBlurSprite->Draw(renderer);
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
+
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
     // ************************************************************************
     // 
@@ -859,7 +831,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     auto copyToFrameBufferSprite = copyToFrameBufferSpriteObj->get_Component<SpriteRenderer>();
     copyToFrameBufferSprite->Draw(renderer);
 
-
     // ************************************************************************
     // 
     // フォワードの場合はこの下に記述（ポストエフェクトはかからないよ）
@@ -867,8 +838,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // Gbuffer作成時の深度バッファを設定
     renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
-
-
 
     // スカイボックス用のデプスステンシル登録
     renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
@@ -881,13 +850,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     
     auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
     skybox->get_Component<SkyRenderer>()->Draw(renderer);
-
     
     renderer.ClearRenderTargetView(m_pDepth_RT);
 
     // デプスステンシル解除
     renderer.RegisterDepthStencilState(NULL, 0);
-
 
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);

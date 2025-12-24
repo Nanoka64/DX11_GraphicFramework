@@ -136,6 +136,13 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
         },        
 
         // POST_EFFECT
+        {
+            /* 輝度抽出用  */
+            SHADER_TYPE::POST_LUMINANCE_FILTER,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        },
+
     };
 
     // 格納
@@ -348,10 +355,10 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::DEFERRED_STD_STATIC:      // 静的簡易3Dオブジェクト（法線マップなし）
             hr = this->CompileShader(HLSL__Static_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;       
-        case SHADER_TYPE::DEFERRED_STD_STATIC_N:  // 静的3Dオブジェクト（法線マップあり）
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:    // 静的3Dオブジェクト（法線マップあり）
             hr = this->CompileShader(HLSL__Static_Tan_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
-        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:     // スキニング3Dモデル
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:   // スキニング3Dモデル
             hr = this->CompileShader(HLSL__Skinned_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
 
@@ -361,7 +368,7 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:    // スプライト 標準 UI用
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;       
-        case SHADER_TYPE::FORWARD_UNLIT_STATIC:    // 簡易3Dオブジェクト ライティング無し
+        case SHADER_TYPE::FORWARD_UNLIT_STATIC:       // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Static_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break; 
             
@@ -376,6 +383,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;       
         case SHADER_TYPE::POST_SKYBOX:                      // スカイボックス
             hr = this->CompileShader(HLSL__Skybox_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;        
+        case SHADER_TYPE::POST_LUMINANCE_FILTER:            // 輝度抽出
+            hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -448,6 +458,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;        
         case SHADER_TYPE::POST_SKYBOX:                       // スカイボックス
             this->LoadCSOFile(HLSL_CSO__Skybox_VS_PATH.c_str(), &csoByteCode);
+            break;        
+        case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
+            this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -552,6 +565,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;       
         case SHADER_TYPE::POST_SKYBOX:                       // スカイボックス
             hr = this->CompileShader(HLSL__Skybox_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;     
+        case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
+            hr = this->CompileShader(HLSL__HighLuminanceFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
@@ -615,6 +631,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;       
         case SHADER_TYPE::POST_SKYBOX:
             this->LoadCSOFile(HLSL_CSO__Skybox_PS_PATH.c_str(), &csoByteCode);
+            break;      
+        case SHADER_TYPE::POST_LUMINANCE_FILTER:
+            this->LoadCSOFile(HLSL_CSO__HighLuminanceFilter_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);

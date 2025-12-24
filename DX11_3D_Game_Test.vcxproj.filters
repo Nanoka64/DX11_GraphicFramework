@@ -154,6 +154,9 @@
     <Filter Include="ソース ファイル\Component\Mesh\Sky">
       <UniqueIdentifier>{a002f88e-90e5-42e9-90ec-d0d7e75b918c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Graphics\PostEffect">
+      <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -365,6 +368,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\GaussianBlur.cpp">
+      <Filter>ソース ファイル\Graphics\PostEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -611,6 +617,9 @@
     <ClInclude Include="Source\Header\Component_SkyRenderer.h">
       <Filter>ソース ファイル\Component\Mesh\Sky</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\GaussianBlur.h">
+      <Filter>ソース ファイル\Graphics\PostEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -681,6 +690,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\Static_Tan_VS.hlsl">
       <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\HighLuminanceFilter_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

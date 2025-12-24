@@ -55,7 +55,7 @@ void BlendManager::DeviceToSetBlendState( BLEND_MODE type)
 {
 	// OMにブレンドステートオブジェクトを設定
 	FLOAT BlendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
-	m_pContext->OMSetBlendState(m_pBlendStateArray[(int)type]->get(), nullptr, 1);
+	m_pContext->OMSetBlendState(m_pBlendStateArray[(int)type]->get(), BlendFactor, 0xffffffff);
 }
 
 
@@ -122,7 +122,7 @@ std::unique_ptr<IDX_BlendState>  BlendManager::BlendStateFactory(BLEND_MODE type
 	{
 		info.alphaToCoverageEnable					= FALSE;
 		info.renderTargets[0].blendEnable			= TRUE;
-		info.renderTargets[0].blendOp				= D3D11_BLEND_OP_SUBTRACT;
+		info.renderTargets[0].blendOp				= D3D11_BLEND_OP_REV_SUBTRACT;
 		info.renderTargets[0].destBlend				= D3D11_BLEND_ONE;
 		info.renderTargets[0].srcBlend				= D3D11_BLEND_SRC_ALPHA;
 		break;

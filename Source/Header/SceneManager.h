@@ -31,12 +31,13 @@ private:
 	class DX_RenderTarget *m_pNormal_RT;
 	class DX_RenderTarget *m_pDepth_RT;
 	class DX_RenderTarget *m_pSpecular_RT;
-	class DX_RenderTarget *m_pHorizontalBlur;   // 水平ブラー
-	class DX_RenderTarget *m_pVerticalBlur;		// 垂直ブラー
 	class DX_RenderTarget *m_pSceneFinal_RT;	// シーン最終合成用
+	class DX_RenderTarget *m_pLuminance_RT;		// 輝度抽出用
 
 	static const int NUM_WEIGHTS = 8;
 	float m_weights[NUM_WEIGHTS];
+
+	class GaussianBlur* m_pGaussianBlur;
 
 public:
 	SceneManager();

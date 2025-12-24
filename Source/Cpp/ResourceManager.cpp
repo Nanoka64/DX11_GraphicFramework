@@ -158,18 +158,21 @@ std::shared_ptr<ModelData> ResourceManager::LoadModel(const char *path)
 //*【?】SRVからtextureに変換 （）
 //* 引数：1.タグ（TextureはあくまでResourceManagerが持つので取り出したいときなどに）
 //* 引数：2.変換したいRSVのポインタ
+//* 引数：3.横幅
+//* 引数：4.縦幅
 //* 返値：変換したTexture
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string &tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv)
+std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string &tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv, UINT w, UINT h)
 {
-    if (pSrv == nullptr)return {};
-
-    auto it = m_RTTextureMap.find(tag);
-
-    // 既に登録済みならそれを返す
-    if (it != m_RTTextureMap.end())
+    if (pSrv == nullptr)
     {
-        return it->second;
+        auto it = m_RTTextureMap.find(tag);
+
+        // 既に登録済みならそれを返す
+        if (it != m_RTTextureMap.end())
+        {
+            return it->second;
+        }
     }
 
     // shared_ptrを受け取る
@@ -183,6 +186,8 @@ std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string
 
         // 読み込み
         texture->set_SRV_ComPtr(pSrv);
+        texture->set_Width(w);
+        texture->set_Height(h);
 
         // 配列に登録
         m_RTTextureMap[tag] = std::move(texture);

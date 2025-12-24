@@ -65,6 +65,6 @@ public:
     std::shared_ptr<ModelData> LoadModel(const char* path);                      
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）
-    std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv);
+    std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv = NULL, UINT w = 0, UINT h = 0);
 };
 

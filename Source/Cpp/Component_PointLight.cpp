@@ -16,7 +16,7 @@
 PointLight::PointLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
 m_Range(0.0f)
 {
-
+    this->set_Tag("PointLight");
 }
 
 

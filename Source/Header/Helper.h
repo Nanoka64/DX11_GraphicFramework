@@ -314,9 +314,58 @@ namespace Tool
     /// <summary>
     /// 接線・副接線を求める
     /// </summary>
-    inline void CalcTangentAndBitangent(VERTEX::VERTEX_Static_N *pVtx,UINT vtxSize)
+    inline void CalcTangentAndBitangent(VERTEX::VERTEX_Static_N *vertices, UINT vtxNum, const WORD* indices, UINT idxNum)
     {
+        using VECTOR2::VEC2;
+        using VECTOR3::VEC3;
 
+        for (UINT i = 0; i < vtxNum; i++) {
+            vertices[i].tangent = VEC3(0, 0, 0);
+            vertices[i].bitangent = VEC3(0, 0, 0);
+        }
+
+        // 三角形ごとに計算し、加算していく
+        for (UINT i = 0; i < idxNum; i += 3)
+        {
+            WORD i0 = indices[i];
+            WORD i1 = indices[i + 1];
+            WORD i2 = indices[i + 2];
+
+            VEC3 E1 = vertices[i1].pos - vertices[i0].pos;
+            VEC3 E2 = vertices[i2].pos - vertices[i0].pos;
+            VEC2 Delta_UV1 = vertices[i1].uv - vertices[i0].uv;
+            VEC2 Delta_UV2 = vertices[i2].uv - vertices[i0].uv;
+            float f = 1.0f / (Delta_UV1.x * Delta_UV2.y - Delta_UV2.x * Delta_UV1.y);
+
+            VEC3 tan;
+            VEC3 biTan;
+
+            // 接線
+            tan.x = f * (Delta_UV2.y * E1.x - Delta_UV1.y * E2.x);
+            tan.y = f * (Delta_UV2.y * E1.y - Delta_UV1.y * E2.y);
+            tan.z = f * (Delta_UV2.y * E1.z - Delta_UV1.y * E2.z);
+            tan = tan.Normalize();
+
+            // 副接線
+            biTan.x = f * (-Delta_UV2.x * E1.x + Delta_UV1.x * E2.x);
+            biTan.y = f * (-Delta_UV2.x * E1.y + Delta_UV1.x * E2.y);
+            biTan.z = f * (-Delta_UV2.x * E1.z + Delta_UV1.x * E2.z);
+            biTan = biTan.Normalize();
+
+            vertices[i0].tangent += tan;
+            vertices[i0].bitangent += biTan;            
+            vertices[i1].tangent += tan;
+            vertices[i1].bitangent += biTan;            
+            vertices[i2].tangent += tan;
+            vertices[i2].bitangent += biTan;
+        }
+
+        // 全頂点正規化
+        for (int i = 0; i < vtxNum; i++)
+        {
+            vertices[i].tangent = vertices[i].tangent.Normalize();
+            vertices[i].bitangent = vertices[i].bitangent.Normalize();
+        }
     }
 }
 

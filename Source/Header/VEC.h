@@ -43,6 +43,25 @@ namespace VECTOR3
 		operator DirectX::XMFLOAT3()const		{ return DirectX::XMFLOAT3(x, y, z); }		// XMFLOAT3に渡す際の変換
 		operator DirectX::XMVECTOR()const		{ return DirectX::XMVectorSet(x, y, z, 1.0f); }    // XMVECTORに渡す際の変換
 
+		// 複合代入 プラス
+		VEC3& operator+=(const VEC3& vec) {
+			this->x += vec.x;
+			this->y += vec.y;
+			this->z += vec.z;
+
+			return *this;
+		};
+		
+		// 複合代入 マイナス
+		VEC3& operator-=(const VEC3& vec) {
+			this->x -= vec.x;
+			this->y -= vec.y;
+			this->z -= vec.z;
+
+			return *this;
+		};
+
+
 		// 代入演算子 float[4]
 		template<size_t N>
 		VEC3& operator=(const float(&other)[N]) {

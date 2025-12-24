@@ -15,7 +15,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pSRV;   // テクスチャをシェーダに渡すためのもの
     Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pTexture2D;   
     std::wstring m_FilePath;
-
+    UINT m_Width;
+    UINT m_Height;
 public:
     Texture();
     ~Texture();
@@ -60,5 +61,10 @@ public:
     /// </summary>
     /// <returns></returns>
     ID3D11ShaderResourceView* get_SRV() { return m_pSRV.Get(); }  
+
+    void set_Width(UINT w);
+    void set_Height(UINT h);
+    UINT get_Width()const;
+    UINT get_Height()const;
 };
 
