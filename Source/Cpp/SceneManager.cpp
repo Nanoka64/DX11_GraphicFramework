@@ -144,7 +144,7 @@ bool SceneManager::Init(RendererEngine &renderer)
                 auto light = obj.lock()->add_Component<PointLight>();
                 light->set_LightColor(col);
                 light->set_Range(1000.0f);
-                light->set_Intensity(20.0f);
+                light->set_Intensity(10.0f);
                 light->Init(renderer);
             }
         }
@@ -154,7 +154,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             MATERIAL mat[1];
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-            mat[0].SpecularPower = 30.0f;
+            mat[0].SpecularPower = 80.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -168,7 +168,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(5.0f, 5.0f, 5.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
@@ -206,7 +206,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 150.0f;
+            mat[0].SpecularPower = 50.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -257,7 +257,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
             mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 100.0f;
+            mat->SpecularPower = 50.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -529,19 +529,59 @@ bool SceneManager::Init(RendererEngine &renderer)
     luminanceSprite.ShaderType     = SHADER_TYPE::POST_LUMINANCE_FILTER;
     obj = MeshFactory::CreateSprite(luminanceSprite);
 
-    
+
     /*************************************************************************
-    * 輝度抽出テクスチャにガウスブラーを掛ける
+    * 輝度抽出テクスチャにダウンサンプリングしたガウスブラーを掛ける
     *************************************************************************/
-    m_pGaussianBlur = new GaussianBlur();
-    m_pGaussianBlur->Setup(
+    
+    m_pGaussianBlur = new GaussianBlur[BLUR_COUNT]();
+
+    result = m_pGaussianBlur[0].Setup(
         renderer, 
         ResourceManager::Instance().Convert_SRVToTexture(
             "RT_Luminance",
             m_pLuminance_RT->get_SRV_ComPtr(), 
             m_pLuminance_RT->get_Width(), 
-            m_pLuminance_RT->get_Height())
+            m_pLuminance_RT->get_Height()),
+        0
+    );    
+    if (!result)return false;
+    
+    // 2 / 1
+    result = m_pGaussianBlur[1].Setup(
+        renderer,
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur1",
+            m_pGaussianBlur[0].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 2,
+            m_pLuminance_RT->get_Height() / 2),
+        1
     );
+    if (!result)return false;
+    
+    // 4 / 1
+    result = m_pGaussianBlur[2].Setup(
+        renderer, 
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur2",
+            m_pGaussianBlur[1].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 4,
+            m_pLuminance_RT->get_Height() / 4),
+        2
+    );    
+    if (!result)return false;
+
+    // 8 / 1
+    result = m_pGaussianBlur[3].Setup(
+        renderer, 
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur3",
+            m_pGaussianBlur[2].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 8,
+            m_pLuminance_RT->get_Height() / 8),
+        3
+    );
+    if (!result)return false;
 
     /*************************************************************************
     * 最終合成用スプライト
@@ -553,13 +593,19 @@ bool SceneManager::Init(RendererEngine &renderer)
     finalSprite.Width = 1.0f;
     finalSprite.Height = 1.0f;
     finalSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture(
-        "AfterBlur",
-        m_pGaussianBlur->get_AfterBlurTexture(),
-        m_pLuminance_RT->get_Width(),
-        m_pLuminance_RT->get_Height()
+        "RT_Luminance"
+    );
+    finalSprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur1"
+    );  
+    finalSprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur2"
+    );   
+    finalSprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur3"
     );
     finalSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    finalSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+    finalSprite.ShaderType = SHADER_TYPE::POST_KAWASE_FILTER;
     MeshFactory::CreateSprite(finalSprite);
 
 
@@ -614,13 +660,16 @@ void SceneManager::Update(RendererEngine& renderer)
     VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
 
 
-    static VEC3 pLigPos{};
+    static VEC3 pLigPos{ 0,0,0 };
+    static VEC3 ligCol{ 1,1,1 };
+    static float pointIntensity = 10.0f;
 
     auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight0");
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
-    //lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
-    //lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-    //lig.lock()->get_Component<PointLight>()->set_Intensity(10.0);
+    lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
+    lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
+    lig.lock()->get_Component<PointLight>()->set_Intensity(pointIntensity);
+    lig.lock()->get_Component<PointLight>()->set_LightColor(ligCol);
 
     auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
     auto rad = dlig.lock()->get_Component<Transform>();
@@ -648,7 +697,9 @@ void SceneManager::Update(RendererEngine& renderer)
     Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -3.0f, 3.0f);
     Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
     Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
+    Master::m_pDebugger->DG_SliderFloat("PointLig_Intensity", 1, &pointIntensity, 0.0f, 1000.0f);
     Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
+    Master::m_pDebugger->DG_ColorEdit3("LigCol", &ligCol);
     Master::m_pDebugger->EndDebugWindow();
 
     auto objList = Master::m_pGameObjectManager->get_ObjectList();
@@ -705,6 +756,10 @@ void SceneManager::Draw(RendererEngine& renderer)
         
         Master::m_pDebugger->DG_BulletText("Specular");
         Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));  
+        Master::m_pDebugger->DG_Separator();        
+
+        Master::m_pDebugger->DG_BulletText("m_pDepth_RT");
+        Master::m_pDebugger->DG_Image(m_pDepth_RT->get_SRV(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->DG_BulletText("Luminance");
@@ -794,9 +849,13 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // 
     // 取り出した輝度にブラーを掛けて、ブルーム効果にする
+    // 輝度抽出テクスチャにダウンサンプリングしたガウスブラーを掛ける
     //
     // ************************************************************************
-    m_pGaussianBlur->ExcuteOnGPU(renderer, blurIntensity);
+    m_pGaussianBlur[0].ExcuteOnGPU(renderer, blurIntensity);
+    m_pGaussianBlur[1].ExcuteOnGPU(renderer, blurIntensity);
+    m_pGaussianBlur[2].ExcuteOnGPU(renderer, blurIntensity);
+    m_pGaussianBlur[3].ExcuteOnGPU(renderer, blurIntensity);
 
     // 加算モード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ADD);
@@ -827,6 +886,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
+    // シーンのテクスチャを表示する
     auto copyToFrameBufferSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("CopyToFrameBufferSprite").lock();
     auto copyToFrameBufferSprite = copyToFrameBufferSpriteObj->get_Component<SpriteRenderer>();
     copyToFrameBufferSprite->Draw(renderer);
@@ -834,9 +894,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // 
     // フォワードの場合はこの下に記述（ポストエフェクトはかからないよ）
+    // 本当はライティングパスの後にやった方が良いっぽい
     // 
     // ************************************************************************
     // Gbuffer作成時の深度バッファを設定
+
     renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
 
     // スカイボックス用のデプスステンシル登録
@@ -845,12 +907,12 @@ void SceneManager::Draw(RendererEngine& renderer)
     for (int i = 0; i < 30; i++)
     {
         auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i)).lock();
-        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+        //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
-    
+
     auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
     skybox->get_Component<SkyRenderer>()->Draw(renderer);
-    
+
     renderer.ClearRenderTargetView(m_pDepth_RT);
 
     // デプスステンシル解除

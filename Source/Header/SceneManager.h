@@ -37,7 +37,8 @@ private:
 	static const int NUM_WEIGHTS = 8;
 	float m_weights[NUM_WEIGHTS];
 
-	class GaussianBlur* m_pGaussianBlur;
+	static const int BLUR_COUNT = 4;
+	class GaussianBlur *m_pGaussianBlur;
 
 public:
 	SceneManager();

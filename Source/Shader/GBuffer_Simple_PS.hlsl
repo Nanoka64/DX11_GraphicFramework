@@ -80,7 +80,7 @@ PS_OUT PSMain(PS_IN input)
     output.Normal.w     = 1.0f;
     output.Specular.xyz = cb_SpecularColor.xyz;
     output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
-    output.Depth;
+    output.Depth = float4(0, 0, 0, 0);
     
     //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
     // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ

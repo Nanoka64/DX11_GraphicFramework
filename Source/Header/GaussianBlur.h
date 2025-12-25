@@ -20,6 +20,8 @@ private:
 	class DX_RenderTarget* m_pVerticalBlur;		// 垂直ブラー
 	std::weak_ptr<class GameObject> m_pHorizontalBlurSprite;// 水平ブラースプライト
 	std::weak_ptr<class GameObject> m_pVerticalBlurSprite;	// 垂直ブラースプライト
+	int m_Id;	// タグ被りしてしまうため識別番号を持たせる
+
 public:
 	GaussianBlur();
 	~GaussianBlur();
@@ -29,7 +31,7 @@ public:
 	/// </summary>
 	/// <param name="pTex">ブラーを掛けるテクスチャ</param>
 	/// <returns></returns>
-	bool Setup(RendererEngine& renderer, std::shared_ptr<class Texture> pTex);
+	bool Setup(RendererEngine& renderer, std::shared_ptr<class Texture> pTex, int id);
 	void Term();
 
 	void ExcuteOnGPU(RendererEngine& renderer, float blurPow);

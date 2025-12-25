@@ -2,15 +2,16 @@
 //
 /* - @:ピクセルシェーダ -*/
 //
-//  【?】スカイボックス用
-//      参考サイト：https://www.braynzarsoft.net/viewtutorial/q16390-20-cube-mapping-skybox
-//                  https://rovecoder.net/article/directx-11/skybox
+//  【?】川瀬式ブルームのためのPS
+//       ダウンサンプリングしたガウスフィルタを掛けたテクスチャの平均を求める    
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
-#include "UtilityFunctions_H.hlsli"
 SamplerState g_sSampler : register(s0);
-TextureCube g_tSkyboxTexture : register(t0); // キューブマップ用
+Texture2D g_tTexture0 : register(t0); // ディフューズ
+Texture2D g_tTexture1 : register(t1); // ディフューズ
+Texture2D g_tTexture2 : register(t2); // ディフューズ
+Texture2D g_tTexture3 : register(t3); // ディフューズ
 
 
 /* =========================================================================
@@ -19,7 +20,8 @@ TextureCube g_tSkyboxTexture : register(t0); // キューブマップ用
 struct PS_IN
 {
     float4 Pos : SV_POSITION;
-    float3 TexCoord : TEXCOORD;
+    float4 Color : COLOR;
+    float2 UV : TEXCOORD;
 };
 
 
@@ -28,10 +30,13 @@ struct PS_IN
 // **************************************************************************
 float4 PSMain(PS_IN input) : SV_TARGET
 {
-    // テクスチャ座標はそのまま頂点位置を入れる
-    float4 skyTex = g_tSkyboxTexture.Sample(g_sSampler, input.TexCoord.xyz);
+    // ブラー画像をサンプリングし平均を取って出力
+    float4 combineColor = g_tTexture0.Sample(g_sSampler, input.UV);
+    combineColor += g_tTexture1.Sample(g_sSampler, input.UV);
+    combineColor += g_tTexture2.Sample(g_sSampler, input.UV);
+    combineColor += g_tTexture3.Sample(g_sSampler, input.UV);
+    combineColor /= 4.0f;
+    combineColor.a = 1.0f;
     
-    //skyTex += 0.2f;
-    
-    return float4(skyTex.xyz, 1.0f);
+    return combineColor;
 }

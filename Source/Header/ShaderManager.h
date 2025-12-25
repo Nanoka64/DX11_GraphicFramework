@@ -51,6 +51,7 @@ enum class SHADER_TYPE
     POST_SKYBOX,                        // スカイボックス用
     POST_EFFECT,                        // ◆ ポストエフェクト用
     POST_LUMINANCE_FILTER,              // 輝度抽出用
+    POST_KAWASE_FILTER,                 // 川瀬式ブルーム（ダウンサンプリングしたガウス適用後のテクスチャをぼかす）
 
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用

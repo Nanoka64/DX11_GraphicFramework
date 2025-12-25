@@ -141,6 +141,12 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             SHADER_TYPE::POST_LUMINANCE_FILTER,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
+        },       
+        {
+            /* 川瀬式ブルーム（ダウンサンプリングしたガウス適用後のテクスチャをぼかす）  */
+            SHADER_TYPE::POST_KAWASE_FILTER,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
         },
 
     };
@@ -386,6 +392,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;        
         case SHADER_TYPE::POST_LUMINANCE_FILTER:            // 輝度抽出
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;       
+        case SHADER_TYPE::POST_KAWASE_FILTER:               // 川瀬ブルーム用
+            hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -460,6 +469,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             this->LoadCSOFile(HLSL_CSO__Skybox_VS_PATH.c_str(), &csoByteCode);
             break;        
         case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
+            this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
+            break;      
+        case SHADER_TYPE::POST_KAWASE_FILTER:                // 川瀬ブルーム用
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;
         default:
@@ -568,6 +580,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;     
         case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
             hr = this->CompileShader(HLSL__HighLuminanceFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;       
+        case SHADER_TYPE::POST_KAWASE_FILTER:             // 川瀬ブルーム用
+            hr = this->CompileShader(HLSL__KawaseFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
@@ -634,6 +649,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;      
         case SHADER_TYPE::POST_LUMINANCE_FILTER:
             this->LoadCSOFile(HLSL_CSO__HighLuminanceFilter_PS_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::POST_KAWASE_FILTER:
+            this->LoadCSOFile(HLSL_CSO__KawaseFilter_PS_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
