@@ -75,9 +75,9 @@ bool RendererEngine::Init(HWND hWnd)
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
-    //m_pBlendStateAlpha = NULL;        // αブレンド用
-    //m_pBlendStateAdd   = NULL;        // 加算合成用
-    //m_pBlendStateSub   = NULL;        // 減算合成用
+    //m_pBlendStateAlpha = NULL;           // αブレンド用
+    //m_pBlendStateAdd   = NULL;           // 加算合成用
+    //m_pBlendStateSub   = NULL;           // 減算合成用
 
     // ガクつくときはここを大きくするとよい
     m_NearClipDist = 1.0f;
@@ -237,7 +237,7 @@ HRESULT RendererEngine::InitDX11_SwapChain()
     // ※ Direct2Dを使う場合、HADWAREじゃないと動かない http://mitsunagistudio.net/old_posts/tips/d2d-d3d11-sharing/
     D3D_DRIVER_TYPE driverTypes[] =
     {
-        D3D_DRIVER_TYPE_HARDWARE,   // GPUにレンダリングを任せる
+        D3D_DRIVER_TYPE_HARDWARE,     // GPUにレンダリングを任せる
         //D3D_DRIVER_TYPE_WARP,       // 高機能？
         //D3D_DRIVER_TYPE_REFERENCE,  // 精度重視(速度遅め)
     };

@@ -55,7 +55,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	
 	VECTOR3::VEC3 myDir = m_pOwnerTransform.lock()->get_Forward();
 
-	dirData.Direction		  = myDir;
+	dirData.Direction = myDir;
     dirData.DiffuseColor	  = m_LightColor;
 	dirData.DiffuseIntensity  = m_Intensity;
     dirData.SpecularColor	  = m_LightColor;

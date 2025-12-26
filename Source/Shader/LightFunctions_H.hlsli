@@ -33,7 +33,7 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
-    float diffuseFactor = max(0.0, (dot(-_ligDir, _norm)));
+    float diffuseFactor = saturate(dot(-_ligDir, _norm));
     
     // 拡散反射求める
     finalDfs = _ligCol * diffuseFactor;
@@ -167,7 +167,10 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
     float3 diffuseLig = LambertDiffuseLightCalc(ligDir, _ligData.DiffuseColor, _norm);
     
     // 鏡面（スペキュラ）反射
-    float3 specularLig = Blinn_PhongSpecularLightCalc(-ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
+    float3 specularLig = PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
+    
+    // Blinn版
+    //float3 specularLig = Blinn_PhongSpecularLightCalc(-ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
     OUT_DiffAndSpec outData;
     outData.Diffuse = diffuseLig * _ligData.DiffuseIntensity;

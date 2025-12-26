@@ -251,8 +251,7 @@ int DXApp::MainLoop()
                 // 前回時刻を更新
                 lastTime = crntTime;
 
-                Master::m_pDebugger->BeginFrame();
-
+                Master::m_pDebugger->BeginFrame(m_pRenderer->get_ScreenWidth(), m_pRenderer->get_ScreenHeight());
 
                 // アプリケーション情報
                 Master::m_pDebugger->BeginDebugWindow("Application");
@@ -340,7 +339,7 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     wcex.cbClsExtra    = 0;                     // ウインドウクラス構造体の後ろに割り当てる補足バイト数
     wcex.cbWndExtra    = 0;                     // ウインドウインスタンスの後ろに割り当てる補足バイト数
     wcex.hInstance     = hInstance;             // インスタンスハンドル
-    wcex.hIcon         = NULL;                  // アイコンのハンドル
+    wcex.hIcon         = LoadIcon(NULL, IDI_QUESTION);  // アイコンのハンドル
     wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);   // マウスカーソルのハンドル
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);    // ウインドウ背景色
     wcex.lpszMenuName  = NULL;                  // デフォルトメニュー名
@@ -354,12 +353,13 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     // Create window
     m_hInst = hInstance;
     RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  WND_RECT_RIGHT, WND_RECT_BOTTOM };      // 矩形を設定する
-    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);  // ウインドウの形を整える
+    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);   // ウインドウの形を整える
     m_hWnd = CreateWindowW(
-        g_WindowClassNameW,                             // 上で設定した名前と合わせる
-        g_WindowTitle,                                  // ウインドウタイトル
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU         // ウインドウスタイル
-        /*| WS_OVERLAPPEDWINDOW | WS_POPUP*/,           // 基本ウインドウ、タイトルバー表示、Xボタンなど、サイズ変更、全画面
+        g_WindowClassNameW,                              // 上で設定した名前と合わせる
+        g_WindowTitle,                                   // ウインドウタイトル
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |        // ウインドウスタイル
+        WS_MAXIMIZEBOX | WS_MINIMIZEBOX,
+        /*WS_OVERLAPPEDWINDOW | WS_POPUP,*/              // 基本ウインドウ、タイトルバー表示、Xボタンなど、サイズ変更、全画面
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         rc.right - rc.left,
@@ -421,6 +421,7 @@ LRESULT CALLBACK DXApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     case WM_DESTROY:    // 終了時に呼ばれる
         PostQuitMessage(0);
         break;
+
 
     default:            // デフォルトウインドウプロシージャ(いい感じにやってくれる)
         return DefWindowProc(hWnd, message, wParam, lParam);

@@ -27,7 +27,7 @@ public:
 	bool Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer);
 
 	// 描画開始前の処理
-	void BeginFrame();
+	void BeginFrame(float winW,float winH);
 
 	// 描画終了後の処理
 	void EndFrame();

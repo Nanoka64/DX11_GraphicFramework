@@ -48,8 +48,11 @@ bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
 //**************************************************************************************
 //      * Debugger Class - •`‰æ‘O‚ÉŒÄ‚Ô‚â‚Â - *
 //=======================================================================================
-void Debugger::BeginFrame()
+void Debugger::BeginFrame(float winW, float winH)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2(winW, winH);
+
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();

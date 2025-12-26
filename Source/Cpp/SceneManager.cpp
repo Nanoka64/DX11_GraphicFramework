@@ -167,6 +167,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
+            model.IsActive = true;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(5.0f, 5.0f, 5.0f);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
@@ -179,13 +180,13 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 50.0f;
+            mat[0].SpecularPower = 100.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
             model.Path = "Resource/Model/Enemy/trader_ant_lowpoly.fbx";
-            model.ObjTag = "Model";
+            model.ObjTag = "Ant1";
             model.IsAnim = true;
             model.MatNum = 1;
             model.MaterialData = new InputMaterial();
@@ -197,6 +198,13 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+
+            model.ObjTag = "Ant2";
+            obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0, 1.0, 1.0);
+            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 90, 0.0);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
         }
 
         {
@@ -206,7 +214,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 50.0f;
+            mat[0].SpecularPower = 200.0f;
             mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
@@ -244,9 +252,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
             obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 1000.0f);
             obj.lock()->set_LayerRank(0);
         }
@@ -359,7 +367,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         renderer,
         renderer.get_ScreenWidth(),
         renderer.get_ScreenHeight(),
-        0,
+        1,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
@@ -460,22 +468,20 @@ bool SceneManager::Init(RendererEngine &renderer)
 
 
     sprite.ObjTag = "RenderTarget1";
-    sprite.Width = 0.5f;
-    sprite.Height = 0.5f;
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(),m_pAlbedo_RT->get_Height());
     auto obj = MeshFactory::CreateSprite(sprite);    
-    obj.lock()->get_Transform().lock()->set_Pos(0.5, 0.5, 0.0);
     sprite.pTextureMap.clear();
 
     /*************************************
     * 法線用
     *************************************/
     sprite.ObjTag = "RenderTarget2";
-    sprite.Width = 0.5;
-    sprite.Height = 0.5f;
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
     obj = MeshFactory::CreateSprite(sprite);    
-    obj.lock()->get_Transform().lock()->set_Pos(-0.5, 0.5, 0.0);
     sprite.pTextureMap.clear();
 
     /*************************************
@@ -484,7 +490,6 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.ObjTag = "RenderTarget3";
     sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
     obj = MeshFactory::CreateSprite(sprite);    
-    obj.lock()->get_Transform().lock()->set_Pos(-0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();
 
     /*************************************
@@ -651,8 +656,11 @@ void SceneManager::Update(RendererEngine& renderer)
     static float intensity = 0.1f;
 
 
-    auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Model");
+    auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
     obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
+    
+    obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
+    obj.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, 0.0f, 0.0f);
 
 
 
@@ -677,7 +685,7 @@ void SceneManager::Update(RendererEngine& renderer)
     dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
     auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
-    rad = b_2Obj.lock()->get_Component<class Transform>();
+    rad = b_2Obj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(0.0, 0.0, sin(a));
 
 
@@ -685,8 +693,6 @@ void SceneManager::Update(RendererEngine& renderer)
     //auto sphereObj = Master::m_pGameObjectManager->get_ObjectByTag("sphere");
     //rad = sphereObj.lock()->get_Component<Transform>();
     //rad->set_RotateToRad(0.0, 0.0, 0.0f);
-
-
 
     //auto cubuObj = GameObjectManager::Instance().get_ObjectByTag("Cubu");
     //rad = cubuObj.lock()->get_Component<Transform>();
@@ -898,7 +904,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     // 
     // ************************************************************************
     // Gbuffer作成時の深度バッファを設定
-
     renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
 
     // スカイボックス用のデプスステンシル登録

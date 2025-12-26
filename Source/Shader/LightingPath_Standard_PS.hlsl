@@ -43,7 +43,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 specularTex = g_tSpecularTexture.Sample(g_sSampler, input.UV);
     
 
-    float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
+    float4 finalCol = float4(0.0, 0.0, 0.0, 1.0);
     
     float depth = depthTex.r; // 深度値
     float4 worldPos; // 深度情報からワールド座標を計算する。
