@@ -23,6 +23,8 @@ struct DirectionalLight
     
     float3 SpecularColor;       // スペキュラ
     float SpecularIntensity;    // スペキュラ強度
+    
+    float4x4 LightViewProj;     // ライトから見た画面座標
 };
 
 /* =========================================================================
@@ -46,7 +48,7 @@ struct PointLight
 //* =========================================================================
 cbuffer CB_TRANSFORM : register(b0) 
 {
-    matrix cb_Transform;
+    float4x4 cb_Transform;
 };
 
 
@@ -55,8 +57,8 @@ cbuffer CB_TRANSFORM : register(b0)
 //* =========================================================================
 cbuffer CB_VIEW : register(b1)   
 {
-    matrix cb_View;
-    matrix cb_ViewProjInvMatrix; // ビュープロジェクション行列の逆行列。
+    float4x4 cb_View;
+    float4x4 cb_ViewProjInvMatrix; // ビュープロジェクション行列の逆行列。
 };
 
 
@@ -65,7 +67,7 @@ cbuffer CB_VIEW : register(b1)
 //* =========================================================================
 cbuffer CB_PROJECTION : register(b2)         
 {
-    matrix cb_Projection;
+    float4x4 cb_Projection;
 };
 
 

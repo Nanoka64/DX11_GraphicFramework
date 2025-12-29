@@ -87,6 +87,9 @@ struct CB_DIRECTION_LIGHT
     // TODO:ここに置くと色々ずれるので場所変える
     DirectX::XMFLOAT3 EyePos;       // 視点の位置
     float Padding4;
+
+    // ライトから見た画面座標
+    DirectX::XMFLOAT4X4 LightViewProj;
 };
 
 

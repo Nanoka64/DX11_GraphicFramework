@@ -10,8 +10,10 @@ using namespace VECTOR2;
 
 using namespace DirectX;
 
-#define CAMERA_ANGLE_SPEED 0.03f		// カメラの方向転換スピード
-#define CAMERA_MOVE_SPEED  10.0f		// カメラの移動スピード
+#define CAMERA_ANGLE_SPEED		0.1f		// カメラの方向転換スピード
+#define CAMERA_MOVE_FACTOR		0.5f		// カメラの移動スピード
+#define CAMERA_POS_OFFSET		300.0f		// カメラの移動スピード
+#define CAMERA_FOCUS_Y_OFFSET	200.0f		// カメラの移動スピード
 
 
 //*---------------------------------------------------------------------------------------
@@ -21,13 +23,18 @@ using namespace DirectX;
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 Camera3D::Camera3D(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
-m_EyePos({ 0.0f,2.0f,-15.0f }),
 m_FocusPoint({ 0.0f,0.0f,0.0f }),
 m_UpVec({ 0.0f,1.0f,0.0f }),
 m_Angle_H(1.57f),
 m_Angle_V(0.f)
 {
-	this->set_Tag("Camera3D");
+	this->set_Tag("Camera3D"); 
+	m_PosOffset.x = CAMERA_POS_OFFSET;
+	m_PosOffset.y = CAMERA_POS_OFFSET;
+	m_PosOffset.z = CAMERA_POS_OFFSET;
+	m_FocusOffset.x = 0.0f;
+	m_FocusOffset.y = CAMERA_FOCUS_Y_OFFSET;
+	m_FocusOffset.z = 0.0f;
 }
 
 
@@ -71,8 +78,8 @@ void Camera3D::Update(RendererEngine& renderer)
 	if (GetInput(CONFIG_INPUT::UP))		// 下
 	{
 		m_Angle_V -= CAMERA_ANGLE_SPEED;
-		if (m_Angle_V <= -1.3f) {
-			m_Angle_V = -1.3f;
+		if (m_Angle_V <= -1.0f) {
+			m_Angle_V = -1.0f;
 		}
 	}
 	if (GetInput(CONFIG_INPUT::LEFT))	// 右
@@ -90,50 +97,35 @@ void Camera3D::Update(RendererEngine& renderer)
 		}
 	}
 
+	VEC3 focusObjPos = m_pFocusObject.lock()->get_Transform().lock()->get_VEC3ToPos();
+	focusObjPos += m_FocusOffset;
+
+	// 注視点を設定
+	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, CAMERA_MOVE_FACTOR);	// ガタガタする
+	m_FocusPoint = focusObjPos;
+	
 	// 方向ベクトルを作る
 	VEC3 lookDir;
-	lookDir.x = cosf(m_Angle_V) * cosf(m_Angle_H);
-	lookDir.y = sinf(m_Angle_V);
-	lookDir.z = cosf(m_Angle_V) * sin(m_Angle_H);
+	lookDir.x = m_PosOffset.x * cosf(m_Angle_V) * cosf(m_Angle_H);
+	lookDir.y = m_PosOffset.y * sinf(m_Angle_V);
+	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sin(m_Angle_H);
 
-	// 前方向と右方向ベクトルを作る 
-	// 右方向ベクトルは上方向と前方向ベクトルの外積を取ることでできる
-	VEC3 forward = lookDir.Normalize();
-	VEC3 right = VEC3::Cross(m_UpVec, forward);
-	VEC3 moveDir{ 0.0f,0.0f,0.0f };
-
-	// 移動 
-	if (GetInput(CONFIG_INPUT::MOVE_F)) moveDir = moveDir + forward;
-	if (GetInput(CONFIG_INPUT::MOVE_B)) moveDir = moveDir - forward;
-	if (GetInput(CONFIG_INPUT::MOVE_R)) moveDir = moveDir + right;
-	if (GetInput(CONFIG_INPUT::MOVE_L)) moveDir = moveDir - right;
-	if (GetInput(CONFIG_INPUT::JUMP))   moveDir = moveDir + m_UpVec;
-	if (GetInput(CONFIG_INPUT::C))   moveDir = moveDir - m_UpVec;
-
-	// 空中浮遊させないように
-	//moveDir.y = 0.0f;
+	// カメラの位置
+	m_pOwner.lock()->get_Transform().lock()->set_Pos(lookDir + m_FocusPoint);
 
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 
 	// Imgui デバッグ
 	static float debugSpeed = 5.1f;
 	Master::m_pDebugger->BeginDebugWindow("CameraInfo");
-	Master::m_pDebugger->DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
-	Master::m_pDebugger->DG_TextValue("CrntMoveSpeed: %f.1", (CAMERA_MOVE_SPEED * debugSpeed));
 	Master::m_pDebugger->DG_TextValue("Angle_H: %f.1", m_Angle_H);
 	Master::m_pDebugger->DG_TextValue("Angle_V: %f.1", m_Angle_V);
 	Master::m_pDebugger->DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
 	Master::m_pDebugger->DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);
+	Master::m_pDebugger->DG_DragVec3("ofs",&m_PosOffset,1.0f,10.0f,1000.0f);
+	Master::m_pDebugger->DG_DragVec3("ofsY",&m_FocusOffset,1.0f,-1000.0f,1000.0f);
 	Master::m_pDebugger->EndDebugWindow();
 
-	if (moveDir.Length() > 0.001) {
-		VEC3 crntPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
-		// 移動ベクトルを加算
-		m_pOwner.lock()->get_Transform().lock()->set_Pos((crntPos + (moveDir.Normalize() * (CAMERA_MOVE_SPEED * debugSpeed))));
-	}
-
-	// 注視点を設定
-	m_FocusPoint = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos() + lookDir;
 }
 
 
@@ -157,15 +149,40 @@ void Camera3D::Draw(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 XMMATRIX Camera3D::get_ViewMatrix()const
 {
-	XMFLOAT3 eye = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
-	XMFLOAT3 foucut = m_FocusPoint;
+	XMFLOAT3 eye = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();;
+	XMFLOAT3 foucus = m_FocusPoint;
 	XMFLOAT3 upVec = m_UpVec;
 
 	XMMATRIX viewMat = XMMatrixLookAtLH(
 		XMLoadFloat3(&eye),
-		XMLoadFloat3(&foucut),
+		XMLoadFloat3(&foucus),
 		XMLoadFloat3(&upVec)
 	);
 
 	return viewMat;
+}
+
+void Camera3D::set_UpVec(const VECTOR3::VEC3& upVec)
+{
+	m_UpVec = upVec;
+}
+
+void Camera3D::set_FocusPoint(const VECTOR3::VEC3& focus)
+{
+	m_FocusPoint = focus;
+}
+
+void Camera3D::set_FocusObject(std::weak_ptr<class GameObject> pObj)
+{
+	m_pFocusObject = pObj;
+}
+
+VECTOR3::VEC3 Camera3D::get_UpVec()const
+{
+	return m_UpVec;
+}
+
+VECTOR3::VEC3 Camera3D::get_FocusPoint()const
+{
+	return m_FocusPoint;
 }

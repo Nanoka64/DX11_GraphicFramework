@@ -16,15 +16,15 @@ class GameObjectManager
 private:
 	std::list<std::shared_ptr<class GameObject>> m_pObjectList;
 
-
 public:
 	GameObjectManager();
 	~GameObjectManager();
 
-	bool Init(RendererEngine &renderer);			// 初期化
-	void ObjectUpdate(RendererEngine &renderer);	// 更新
-	void ObjectRender(RendererEngine &renderer);	// 描画
-	bool Term(RendererEngine &renderer);			// 終了処理
+	bool Init(RendererEngine &renderer);					// 初期化
+	void ObjectUpdate(RendererEngine &renderer);			// 更新
+	void ObjectMainRenderPass(RendererEngine &renderer);	// 通常描画パス
+	void ObjectShadowRenderPass(RendererEngine &renderer);	// シャドウ描画パス
+	bool Term(RendererEngine &renderer);					// 終了処理
 
 	
 	/// <summary>
@@ -34,7 +34,7 @@ public:
 	/// <param name="pos"></param>
 	/// <param name="rot"></param>
 	/// <returns></returns>
-	std::weak_ptr<GameObject>Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<class Transform> parent = {});
+	std::shared_ptr<GameObject>Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<class Transform> parent = {});
 
 
 	/// <summary>
@@ -56,7 +56,7 @@ public:
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-	std::weak_ptr<GameObject>get_ObjectByTag(const std::string& tag);
+	std::shared_ptr<GameObject>get_ObjectByTag(const std::string& tag);
 
 
 	/// <summary>
@@ -64,7 +64,7 @@ public:
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-	std::list<std::weak_ptr<GameObject>>get_ObjectListByTag(const std::string &tag);
+	std::list<std::shared_ptr<GameObject>>get_ObjectListByTag(const std::string &tag);
 
 
 	/// <summary>
@@ -104,9 +104,9 @@ public:
 	/// <param name="ifFunc">条件ラムダ式</param>
 	/// <returns></returns>
 	template<typename Function>
-	std::list<std::weak_ptr<GameObject>> get_ObjectListByIfFunction(Function ifFunc)
+	std::list<std::shared_ptr<GameObject>> get_ObjectListByIfFunction(Function ifFunc)
 	{
-		std::list<std::weak_ptr<GameObject>> resList;
+		std::list<std::shared_ptr<GameObject>> resList;
 
 		for (auto &obj : m_pObjectList)
 		{
@@ -144,5 +144,5 @@ namespace GIGA_Engine
 	//* 引数：4.親
 	//* 返値：void
 	//*----------------------------------------------------------------------------------------
-	std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<Transform> parent = {});
+	std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<Transform> parent = {});
 }

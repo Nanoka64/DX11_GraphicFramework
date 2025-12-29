@@ -13,15 +13,14 @@ struct InputMaterial
 };
 
 /// <summary>
-/// 定数バッファ情報
+/// 拡張定数バッファ情報
 /// </summary>
-struct ConstantBufferInfo
+struct ExpandConstantBufferInfo
 {
     int SetSlot = -1; 						    // 定数バッファ番号
     void* pUserExpandConstantBuffer = nullptr;  // ユーザー拡張用定数バッファ
     int UserExpandConstantBufferSize = 0;       // ユーザー拡張用定数バッファサイズ
 };
-
 
 /// <summary>
 /// モデルの生成情報
@@ -35,6 +34,7 @@ struct CreateModelInfo
     bool IsAnim;                    // アニメーションするかどうか
     int InitAnimIndex;              // 最初に再生するアニメーション
     SHADER_TYPE ShaderType;         // 使用するシェーダの種類
+    SHADER_TYPE Shadow_ShaderType;  // シャドウマップ生成に使用するシェーダの種類
 
     InputMaterial* MaterialData;    // マテリアル情報
     UINT MatNum;                    // マテリアル数
@@ -48,7 +48,8 @@ struct CreateModelInfo
         InitAnimIndex(0),
         MaterialData(nullptr),
         MatNum(0),
-        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC)
+        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC),
+        Shadow_ShaderType(SHADER_TYPE::POST_SHADOWMAP)
     {
     }
 };
@@ -95,8 +96,8 @@ struct CreateSpriteInfo
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
     SHADER_TYPE ShaderType;             // 使用するシェーダの種類
 
-    ConstantBufferInfo *pPSConstantBuffers;  // ピクセルシェーダ用定数バッファ
-    ConstantBufferInfo *pVSConstantBuffers;  // 頂点シェーダ用定数バッファ
+    ExpandConstantBufferInfo*pPSConstantBuffers;  // ピクセルシェーダ用定数バッファ
+    ExpandConstantBufferInfo*pVSConstantBuffers;  // 頂点シェーダ用定数バッファ
     int PSConstBufferNum;               // ピクセルシェーダ用定数バッファ数
     int VSConstBufferNum;               // 頂点シェーダ用定数バッファ数
 

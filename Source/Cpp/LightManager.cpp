@@ -107,6 +107,7 @@ void LightManager::DirectionLight_SetCBuffer()
 	m_pContext->Unmap(m_pCBDirectionLightSet->pBuff, 0);
 
 	// ピクセルシェーダにセット
+	m_pContext->VSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
 	m_pContext->PSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
 
 	m_TemporaryDirectionLightData.clear();

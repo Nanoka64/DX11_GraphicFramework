@@ -12,6 +12,20 @@
 using namespace Path;
 using namespace Microsoft::WRL;
 
+//*****************************************************************
+//
+// セマンティクスがあっていれば頂点の入力に渡る
+//  オフセットは一致してる必要がある。
+// 
+//*****************************************************************
+
+// 法線マップなし簡易静的3Dオブジェクト用
+static const D3D11_INPUT_ELEMENT_DESC g_Simple_Layout[] =
+{
+    {"POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, offsetof(VERTEX::VERTEX_Simple, pos),   D3D11_INPUT_PER_VERTEX_DATA, 0},
+    {"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT,       0, offsetof(VERTEX::VERTEX_Simple, uv),    D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
+
 // 法線マップなし簡易静的3Dオブジェクト用
 static const D3D11_INPUT_ELEMENT_DESC g_Static_Layout[] =
 {
@@ -145,6 +159,18 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
         {
             /* 川瀬式ブルーム（ダウンサンプリングしたガウス適用後のテクスチャをぼかす）  */
             SHADER_TYPE::POST_KAWASE_FILTER,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        },  
+        {
+            /* 通常シャドウマップ */
+            SHADER_TYPE::POST_SHADOWMAP,
+            ARRAYSIZE(g_Simple_Layout),
+            g_Simple_Layout,
+        },
+        {
+            /* シャドウマップ */
+            SHADER_TYPE::POST_SHADOW_RECIEVER,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         },
@@ -395,7 +421,14 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;       
         case SHADER_TYPE::POST_KAWASE_FILTER:               // 川瀬ブルーム用
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;        
+        case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowMap_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;     
+        case SHADER_TYPE::POST_SHADOW_RECIEVER:             // シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
+        
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -403,7 +436,6 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
 
         // 失敗
         if (FAILED(hr)) {
-            pVSBlob->Release();
             MessageBox(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
             return false;
         }
@@ -473,6 +505,12 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;      
         case SHADER_TYPE::POST_KAWASE_FILTER:                // 川瀬ブルーム用
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
+            break;      
+        case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
+            this->LoadCSOFile(HLSL_CSO__ShadowMap_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_SHADOW_RECIEVER:              // シャドウマップ
+            this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);
             break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
@@ -584,6 +622,14 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::POST_KAWASE_FILTER:             // 川瀬ブルーム用
             hr = this->CompileShader(HLSL__KawaseFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
+        case SHADER_TYPE::POST_SHADOWMAP:                // シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowMap_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;    
+        case SHADER_TYPE::POST_SHADOW_RECIEVER:                // シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
+
+
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
@@ -652,7 +698,15 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;       
         case SHADER_TYPE::POST_KAWASE_FILTER:
             this->LoadCSOFile(HLSL_CSO__KawaseFilter_PS_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::POST_SHADOWMAP:
+            this->LoadCSOFile(HLSL_CSO__ShadowMap_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_SHADOW_RECIEVER:
+            this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);
             break;
+        
+        
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;

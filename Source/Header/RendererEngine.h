@@ -8,6 +8,15 @@
 
 using namespace DirectX;
 
+/// <summary>
+/// 描画パス
+/// </summary>
+enum class RENDER_PASS
+{
+    MAIN,   // 通常
+    SHADOW, // シャドウ
+};
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -56,6 +65,7 @@ private:
     float m_FarClipDist;
     float m_Fov;
 
+    RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
 
 public:
     RendererEngine();
@@ -93,6 +103,18 @@ public:
     void set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height); // ビューポート設定
 
     /// <summary>
+    /// 現在の描画パスを取得
+    /// </summary>
+    /// <returns></returns>
+    RENDER_PASS get_CrntRenderPass()const;
+
+    /// <summary>
+    /// 描画パスを設定
+    /// </summary>
+    void set_CrntRenderPass(RENDER_PASS pass);
+
+
+    /// <summary>
     /// レンダーターゲットをフレームバッファに変更
     /// </summary>
     void ChangeRenderTargetFrameBuffer();
@@ -125,6 +147,14 @@ public:
     /// <param name="pRtv"></param>
     /// <param name="pDsv"></param>
     void RegisterRenderTarget(ID3D11RenderTargetView* pRtv, ID3D11DepthStencilView* pDsv);
+    
+    
+    /// <summary>
+    /// 単一のレンダーターゲットの登録とそのRTのに設定された大きさでビューポート設定
+    /// </summary>
+    /// <param name="pRtv"></param>
+    /// <param name="pDsv"></param>
+    void RegisterRenderTargetAndViewPort(class DX_RenderTarget* pRt);
 
     /// <summary>
     /// レンダーターゲットのクリア
@@ -144,7 +174,12 @@ public:
     /// <returns></returns>
     bool SetupViewTransform(const XMMATRIX& viewMat);
 
-
+    /// <summary>
+    /// プロジェクション行列の取得
+    /// </summary>
+    /// <returns></returns>
+    XMMATRIX get_ProjectionMatrix()const;
+    
     /// <summary>
     /// ビュープロジェクション行列の取得
     /// </summary>

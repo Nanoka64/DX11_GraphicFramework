@@ -69,24 +69,32 @@ void ModelMeshRenderer::Update(RendererEngine &renderer)
 void ModelMeshRenderer::Draw(RendererEngine &renderer)
 {
     if (m_pMeshResource.lock() == nullptr) return;
-
+    auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
     auto pDeviceContext             = renderer.get_DeviceContext();
-    std::vector<MATERIAL>matList    = m_pMeshResource.lock()->get_ModelData().lock()->get_MaterialList();
-    const aiScene *pScene           = m_pMeshResource.lock()->get_ModelData().lock()->get_Scene();
-    ModelMesh *pMeshes              = m_pMeshResource.lock()->get_ModelData().lock()->get_Meshes();
-    UINT meshNum                    = m_pMeshResource.lock()->get_ModelData().lock()->get_MeshNum();
-    CB_MATERIAL_SET *CB_MatSet      = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferMaterialDataSet();
-    CB_TRANSFORM_SET *CB_TransSet   = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferTransformSet();
-    UINT vertexNum          = pMeshes->get_VertexNum();
-    VERTEX_Skneed* vertices  = pMeshes->get_Vertices();
-    SHADER_TYPE shaderType  = m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType();
+    std::vector<MATERIAL>matList    = modelData->get_MaterialList();
+    const aiScene *pScene           = modelData->get_Scene();
+    ModelMesh *pMeshes              = modelData->get_Meshes();
+    UINT meshNum                    = modelData->get_MeshNum();
+    CB_MATERIAL_SET *CB_MatSet      = modelData->GetConstantBufferMaterialDataSet();
+    CB_TRANSFORM_SET *CB_TransSet   = modelData->GetConstantBufferTransformSet();
+    UINT vertexNum                  = pMeshes->get_VertexNum();
+    VERTEX_Skneed* vertices         = pMeshes->get_Vertices();
+    SHADER_TYPE shaderType          = modelData->get_ShaderType();
+    SHADER_TYPE shadowShaderType    = modelData->get_ShadowShaderType();
 
-    // モデルシェーダに切り替え
-    Master::m_pShaderManager->DeviceToSetShader(shaderType);
+    // 通常描画
+    if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
+        Master::m_pShaderManager->DeviceToSetShader(shaderType);
+    }
+    // シャドウ
+    else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
+        return;
+        Master::m_pShaderManager->DeviceToSetShader(shaderType);
+    }
 
+    // ImGUI
     Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());
     Master::m_pDebugger->DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
-
     for (size_t i = 0; i < std::min<size_t>(vertexNum, m_DebugDrawBoneNum); i++)
     {
         for (size_t j = 0; j < 4; j++)
@@ -120,7 +128,6 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 
     // トランスフォーム用定数バッファのセット
     pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
-
 
     // マテリアル情報セット ==========================
     CB_MATERIAL mat{};

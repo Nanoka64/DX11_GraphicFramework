@@ -54,6 +54,7 @@ std::weak_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &
     
     // 使用するシェーダの設定
     modeldata.lock()->set_ShaderType(info.ShaderType);
+    modeldata.lock()->set_ShadowShaderType(info.Shadow_ShaderType);
 
     // リソースにモデル情報を持たせる
     meshResource.lock()->set_ModelData(modeldata);

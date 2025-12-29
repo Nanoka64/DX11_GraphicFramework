@@ -46,7 +46,7 @@ PS_OUT PSMain(PS_IN input)
 {
     float4 diffuseMap   = g_tDiffuseTex.Sample(g_sSampler, input.UV);
     float4 normalMap    = g_tNormalTex.Sample(g_sSampler, input.UV);
-    float specularMap   = g_tSpecularTex.Sample(g_sSampler, input.UV).r;
+    float4 specularMap   = g_tSpecularTex.Sample(g_sSampler, input.UV);
     float smooth        = g_tSpecularTex.Sample(g_sSampler, input.UV).a;
     
     // 最終出力用
@@ -62,7 +62,7 @@ PS_OUT PSMain(PS_IN input)
     output.Normal.xyz = (normal * 0.5f) + 0.5f;
     output.Normal.w = 1.0f;
     output.Depth = float4(0, 0, 0, 0);
-    output.Specular.xyz = cb_SpecularColor.xyz;
+    output.Specular.xyz = specularMap.xyz + cb_SpecularColor.xyz;
     output.Specular.w = (cb_SpecularPower) / (255.0f); // wに反射強度入れる
     //output.Specular = input.WPos;
     return output;

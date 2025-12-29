@@ -73,8 +73,16 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     ID3D11Buffer* idxBuff = meshInfo->pIndexBuffer;
 
     // シェーダセット ==========================
-    Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
+    //Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
+    // 通常描画
+    if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
+        Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
+    }
+    // シャドウ
+    else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
+        Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
+    }
 
     /* ========== 定数バッファの更新 ========== */
 

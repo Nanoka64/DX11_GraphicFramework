@@ -33,7 +33,7 @@ private:
 	//bool m_IsDelete;     // Mngからの削除フラグ
 	//bool m_IsDontDestroy;// 削除しないでーっていうやつ（Unityのシーンを跨いで存在するようなやつ）
 
-	int m_LayerRank;     // 描画順を決めるために使うランク
+	int m_LayerRank;       // 描画順を決めるために使うランク
 
 	unsigned int m_ObjectStatusBitFlag;	// 状態をビット管理
 

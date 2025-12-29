@@ -18,6 +18,10 @@ protected:
     float m_Intensity;   // ディフューズ強度
     float m_SpecularIntensity;  // スペキュラ強度
 
+    VECTOR3::VEC3 m_FocusPoint;
+    VECTOR3::VEC3 m_UpVec;
+
+
 public:
     Light(std::weak_ptr<GameObject> pOwner, int updateRank);
     virtual ~Light() = default;

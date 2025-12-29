@@ -20,8 +20,6 @@ struct PS_IN
     float4 Color : COLOR;
     float2 UV : TEXCOORD;
 };
-float threshold = 1.0;
-float softRange = 0.5;
 
 // **************************************************************************
 /* - @:エントリーポイント - */

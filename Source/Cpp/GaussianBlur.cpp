@@ -43,11 +43,17 @@ void CalcWeightsTableFromGaussian(float* weightsTbl, int sizeOfWeightsTbl, float
 
 
 
-GaussianBlur::GaussianBlur()
-{}
+GaussianBlur::GaussianBlur():
+    m_weights(),
+    m_pHorizontalBlur(nullptr),
+    m_pVerticalBlur(nullptr),
+    m_Id()
+{
+}
 
 GaussianBlur::~GaussianBlur()
-{}
+{
+}
 
 bool GaussianBlur::Setup(RendererEngine& renderer, std::shared_ptr<Texture> pTex, int id)
 {
@@ -173,7 +179,7 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     *************************************/
     CreateSpriteInfo horizontalBlurSprite;
     horizontalBlurSprite.pRenderer = &renderer;
-    horizontalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
+    horizontalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
     horizontalBlurSprite.pPSConstantBuffers->SetSlot = 7;               // スロット7にセット
     horizontalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
     horizontalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
@@ -193,7 +199,7 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     *************************************/
     CreateSpriteInfo verticalBlurSprite;
     verticalBlurSprite.pRenderer = &renderer;
-    verticalBlurSprite.pPSConstantBuffers = new ConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
+    verticalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
     verticalBlurSprite.pPSConstantBuffers->SetSlot = 7;                 // スロット7にセット
     verticalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
     verticalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);

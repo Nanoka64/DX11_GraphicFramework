@@ -10,7 +10,7 @@
 Object::Object() :
 	m_Tag("None"),
 	m_LayerRank(0),
-	m_ObjectStatusBitFlag(0)
+	m_ObjectStatusBitFlag()
 {
 	// Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
 	// (Unity風に)

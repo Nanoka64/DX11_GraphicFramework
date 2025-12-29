@@ -111,8 +111,10 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
         animTimeTicks = static_cast<float>(fmod(timeInTicks, m_Animations[m_CurrentAnimIndex]->Duration));
     }
 
-    // ボーン変換
-    TransformBone(animTimeTicks, 0, XMMatrixIdentity());
+    if (m_IsAnimationFlag) {
+        // ボーン変換
+        TransformBone(animTimeTicks, 0, XMMatrixIdentity());
+    }
 
     auto pContext = renderer.get_DeviceContext();
 

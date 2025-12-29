@@ -38,6 +38,8 @@ public:
 	void set_PointLightData(const CB_POINT_LIGHT& data);
 	void set_DirectionLightData(const CB_DIRECTION_LIGHT& data);
 
+	/// ライトビュープロジェクションの設定（多分ディレクションライト専用）
+
 private:
 	// コピー禁止用
 	LightManager(const LightManager&) = delete;

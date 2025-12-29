@@ -25,5 +25,6 @@ public:
 	virtual void Draw(RendererEngine &renderer) {};		// •`‰æˆ—
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// XV‚Ì‡”Ôæ“¾
+	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };
 };
 

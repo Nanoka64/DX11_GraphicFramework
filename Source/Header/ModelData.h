@@ -117,6 +117,7 @@ private:
     UINT m_MaterialNum;		// マテリアル数
 
 	SHADER_TYPE m_ShaderType; // 使用するシェーダタイプ
+	SHADER_TYPE m_ShadowShaderType; // シャドウ用シェーダタイプ
 
     Assimp::Importer m_Importer;			// インポーター
     const aiScene *m_pScene;				// シーン情報
@@ -141,6 +142,7 @@ public:
 	bool Setup(RendererEngine &render, const char *filePath);	// モデルデータのセットアップ
 	bool SetupTextureMap(MATERIAL matData, int matIndex);	// テクスチャマップ設定 Setup後に呼ぶ
 	void set_ShaderType(SHADER_TYPE type) { m_ShaderType = type; }	// シェーダタイプ設定
+	void set_ShadowShaderType(SHADER_TYPE type) { m_ShadowShaderType = type; }	// シャドウ用シェーダタイプ設定
 
 
 	// ****************************************************************************************************************************************
@@ -171,6 +173,7 @@ public:
 
 	// シェーダタイプ取得
 	const SHADER_TYPE &get_ShaderType() const { return m_ShaderType; }	
+	const SHADER_TYPE &get_ShadowShaderType() const { return m_ShadowShaderType; }	
 
 	/* 定数バッファ */
 	CB_BONES_DATA_SET *GetConstantBufferBonesData() const { return m_pConstanrBufferBonesData; }

@@ -10,6 +10,7 @@
 #include "SceneFactory.h"
 #include "Camera.h"
 #include "Component_3DCamera.h"
+#include "Component_PlayerController.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
 #include "Component_ModelMeshRenderer.h"
@@ -40,7 +41,7 @@ using namespace GIGA_Engine;
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
 SceneManager::SceneManager():
-    m_pCamera(),
+    m_pPlayer(),
     m_StateMachine(this)
 {
 
@@ -72,19 +73,54 @@ bool SceneManager::Init(RendererEngine &renderer)
 
     // オブジェクトの生成
     {
+        /* カメラの作成 */
         {
-            /* カメラの生成 */
-            std::weak_ptr<GameObject> pCam = Instantiate(std::move(std::make_shared<GameObject>()));
-            pCam.lock()->Init(renderer);
-            pCam.lock()->set_Tag("Camera");
-            pCam.lock()->add_Component<Camera3D>();
-            pCam.lock()->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
+            m_pCamera = Instantiate(std::move(std::make_shared<GameObject>()));
+            m_pCamera->Init(renderer);
+            m_pCamera->set_Tag("Camera");
+            m_pCamera->add_Component<Camera3D>();
+            m_pCamera->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
+            m_pCamera->set_LayerRank(100);
+            m_pCamera->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
         }
 
+        /* プレイヤー モデルの生成 */
         {
-            /* ディレクションライトの生成(Cubuで分かりやすく) */
+            MATERIAL mat[1];
+            mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁S050.jpg");
+            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+            mat[0].DiffuseColor = VEC4(0.4f, 0.4f, 0.6f, 1.0f);
+            mat[0].SpecularPower = 150.0f;
+            mat[0].SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Player2/AL_Standard.fbx";
+            model.ObjTag = "Player";
+            model.IsAnim = true;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
+            model.Shadow_ShaderType = SHADER_TYPE::POST_SHADOWMAP;
+            auto obj = MeshFactory::CreateModel(model);
+            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            obj.lock()->add_Component<PlayerController>(1);
+            obj.lock()->get_Component<PlayerController>()->Init(renderer);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -500.0f);
+            obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // カメラのフォーカスオブジェクトに設定
+            m_pCamera->get_Component<Camera3D>()->set_FocusObject(obj);
+        }
+
+        /* ディレクションライトの生成(Cubuで分かりやすく) */
+        {
             MATERIAL* mat = new MATERIAL;
-            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Wood022_2K-JPG_Color.jpg");
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularPower = 1.0f;
 
@@ -103,18 +139,18 @@ bool SceneManager::Init(RendererEngine &renderer)
             light->Init(renderer);
 
             obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
-            obj.lock()->get_Transform().lock()->set_Scale(VEC3(40, 40, 100));
+            obj.lock()->get_Transform().lock()->set_Scale(VEC3(40, 40, 40));
             obj.lock()->get_Transform().lock()->set_RotateToRad(VEC3(1.0f, -1.0f, 1.0f));
         }
 
+        /* ポイントライトの生成 (Cubuで分かりやすく)*/
         {
-            /* ポイントライトの生成 (Cubuで分かりやすく)*/
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
             mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
             mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->SpecularPower = 100.0f;
+            mat->SpecularPower = 20.0f;
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
@@ -139,7 +175,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
                 auto obj = MeshFactory::CreateUtilityMesh(mesh);
                 obj.lock()->get_Transform().lock()->set_Pos(pt);
-                obj.lock()->get_Transform().lock()->set_Scale(VEC3(25, 25, 25));
+                obj.lock()->get_Transform().lock()->set_Scale(VEC3(250, 250, 250));
                 obj.lock()->set_Tag("PointLight" + std::to_string(i));
                 auto light = obj.lock()->add_Component<PointLight>();
                 light->set_LightColor(col);
@@ -149,39 +185,14 @@ bool SceneManager::Init(RendererEngine &renderer)
             }
         }
 
+        /* アリ モデルの生成 */
         {
-            /* プレイヤー モデルの生成 */
-            MATERIAL mat[1];
-            mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-            mat[0].DiffuseColor = VEC4(1.0, 0.0, 1.0, 1.0);
-            mat[0].SpecularPower = 80.0f;
-            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-
-            CreateModelInfo model;
-            model.pRenderer = &renderer;
-            model.Path = "Resource/Model/Player2/AL_Standard.fbx";
-            model.ObjTag = "Player";
-            model.IsAnim = true;
-            model.MatNum = 1;
-            model.MaterialData = new InputMaterial();
-            model.MaterialData->MatIndex = 0;
-            model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
-            model.IsActive = true;
-            auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(5.0f, 5.0f, 5.0f);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
-        }
-
-        {
-            /* アリ モデルの生成 */
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].SpecularPower = 100.0f;
-            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -205,17 +216,19 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 90, 0.0);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+
         }
 
+        /* B-2 モデルの生成 */
         {
-            /* B-2 モデルの生成 */
+
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
-            mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jepg");
+            mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jpeg");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 200.0f;
-            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower = 100.0f;
+            mat[0].SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -233,15 +246,16 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->set_LayerRank(0);
         }
 
+        /* クレイモア モデルの生成 */
         {
-            /* クレイモア モデルの生成 */
+
             MATERIAL mat[1];
             mat[0].Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
             mat[0].Specular.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Roughness.png");
             mat[0].Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
             mat[0].DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].SpecularPower = 100.0f;
-            mat[0].SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].SpecularPower = 200.0f;
+            mat[0].SpecularColor = VEC4(0.0f, 0.0f, 0.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -255,12 +269,13 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             auto obj = MeshFactory::CreateModel(model);
             obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
-            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 1000.0f);
+            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 00.0f, 1000.0f);
             obj.lock()->set_LayerRank(0);
         }
 
+        /* 地面の生成 */
         {
-            // 地面
+
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
             mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
@@ -278,13 +293,14 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.IsNormalMap = true;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(20000.0f, 20000.0f, 20000.0f);
+            obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 10000.0f, 10000.0f);
             obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
 
+        /* スカイボックスの生成 */
         {
-            // スカイボックスの作成
+
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
             CreateSkyboxInfo skyInfo;
@@ -301,8 +317,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
         }
 
+        /* ビルボードの生成 */
         {
-            // ビルボード
+
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/Weak_1024.png");
             mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -342,11 +359,12 @@ bool SceneManager::Init(RendererEngine &renderer)
             }
         }
     }
+
     // 参照を持たせる
-    m_pCamera = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
+    m_pPlayer = Master::m_pGameObjectManager->get_ObjectByTag("Player");
 
     // ライトにカメラのTransformを持たせる
-    Master::m_pLightManager->set_CameraTransform(m_pCamera.lock()->get_Transform());
+    Master::m_pLightManager->set_CameraTransform(m_pCamera->get_Transform());
 
 
     bool result = true;
@@ -445,6 +463,21 @@ bool SceneManager::Init(RendererEngine &renderer)
         1,
         1,
         DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;  
+    
+    // ****************************************************************
+    // LVPからの深度値書き込みシャドウマップ
+    // ****************************************************************
+    m_pShadowMap_RT = new DX_RenderTarget();
+    result = m_pShadowMap_RT->Create(
+        renderer,
+        1024,       // 影の品質は何も対策しなければ解像度依存
+        1024,
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
@@ -657,16 +690,13 @@ void SceneManager::Update(RendererEngine& renderer)
 
 
     auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
-    obj.lock()->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
+    obj->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
     
     obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
-    obj.lock()->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, 0.0f, 0.0f);
+    obj->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, 0.0f, 0.0f);
 
 
-
-    auto cam = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
-    VEC3 camPos = cam.lock()->get_Component<Transform>()->get_VEC3ToPos();
-
+    VEC3 camPos = m_pCamera->get_Component<Transform>()->get_VEC3ToPos();
 
     static VEC3 pLigPos{ 0,0,0 };
     static VEC3 ligCol{ 1,1,1 };
@@ -674,18 +704,19 @@ void SceneManager::Update(RendererEngine& renderer)
 
     auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight0");
     //lig.lock()->get_Component<Transform>()->set_Pos((cos(a) * 1000.0f) * -1, 200.0f, 0.0f);
-    lig.lock()->get_Component<Transform>()->set_Pos(pLigPos);
-    lig.lock()->get_Component<PointLight>()->set_Range(m_PointLightRange);
-    lig.lock()->get_Component<PointLight>()->set_Intensity(pointIntensity);
-    lig.lock()->get_Component<PointLight>()->set_LightColor(ligCol);
+    lig->get_Component<Transform>()->set_Pos(pLigPos);
+    lig->get_Component<PointLight>()->set_Range(m_PointLightRange);
+    lig->get_Component<PointLight>()->set_Intensity(pointIntensity);
+    lig->get_Component<PointLight>()->set_LightColor(ligCol);
 
     auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
-    auto rad = dlig.lock()->get_Component<Transform>();
+    auto rad = dlig->get_Component<Transform>();
     rad->set_RotateToRad(m_LightDir);
-    dlig.lock()->get_Component<DirectionalLight>()->set_Intensity(intensity);
+    rad->set_Pos(m_LightPos);
+    dlig->get_Component<DirectionalLight>()->set_Intensity(intensity);
 
     auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
-    rad = b_2Obj.lock()->get_Component<Transform>();
+    rad = b_2Obj->get_Component<Transform>();
     //rad->set_RotateToRad(0.0, 0.0, sin(a));
 
 
@@ -701,6 +732,7 @@ void SceneManager::Update(RendererEngine& renderer)
     // ライトのデバッグ
     Master::m_pDebugger->BeginDebugWindow("Light");
     Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -3.0f, 3.0f);
+    Master::m_pDebugger->DG_DragVec3("pos", &m_LightPos, 1.0f, -3000.0f, 3000.0f);
     Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
     Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
     Master::m_pDebugger->DG_SliderFloat("PointLig_Intensity", 1, &pointIntensity, 0.0f, 1000.0f);
@@ -712,15 +744,14 @@ void SceneManager::Update(RendererEngine& renderer)
 
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
-
+    
     // カメラ更新
-    auto viewMatrix = m_pCamera.lock()->get_Component<Camera3D>()->get_ViewMatrix();
+    auto viewMatrix = m_pCamera->get_Component<Camera3D>()->get_ViewMatrix();
 
     // ビュー変換
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
-
 }
 
 
@@ -776,6 +807,10 @@ void SceneManager::Draw(RendererEngine& renderer)
         Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
+        Master::m_pDebugger->DG_BulletText("ShadowMap");
+        Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
         Master::m_pDebugger->EndDebugWindow();
     }
 
@@ -804,19 +839,37 @@ void SceneManager::Draw(RendererEngine& renderer)
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
+    renderer.set_CrntRenderPass(RENDER_PASS::MAIN);
 
-    // オブジェクト描画
-    Master::m_pGameObjectManager->ObjectRender(renderer);
+    // オブジェクト描画パス
+    Master::m_pGameObjectManager->ObjectMainRenderPass(renderer);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
+    // ************************************************************************
+    // 
+    // ライティングの前にシャドウパス
+    //
+    // ************************************************************************
+    renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
+    renderer.ClearRenderTargetView(m_pShadowMap_RT);
+    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
+    // ライトの更新
+    Master::m_pLightManager->Update();
+    Master::m_pGameObjectManager->ObjectShadowRenderPass(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
 
     // ************************************************************************
     // 
     // ライティングパス
     //
     // ************************************************************************
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
     // 最終合成用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
@@ -825,7 +878,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     Master::m_pLightManager->Update();
 
     // ディファードスプライト
-    auto defferdRTSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("DefferdRenderTarget").lock();
+    auto defferdRTSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("DefferdRenderTarget");
     auto defferd = defferdRTSpriteObj->get_Component<SpriteRenderer>();
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     defferd->Draw(renderer);
@@ -839,12 +892,14 @@ void SceneManager::Draw(RendererEngine& renderer)
     // 輝度抽出
     //
     // ************************************************************************
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
     // 輝度抽出用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pLuminance_RT->get_RTV(), m_pLuminance_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pLuminance_RT);
 
     // 輝度スプライト
-    auto luminanceSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("LuminanceSprite").lock();
+    auto luminanceSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("LuminanceSprite");
     auto luminance = luminanceSpriteObj->get_Component<SpriteRenderer>();
     luminance->Draw(renderer);
 
@@ -872,7 +927,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);    // 深度テストなし
 
     // ブラー合成スプライト
-    auto finalSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("FinalSprite").lock();
+    auto finalSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("FinalSprite");
     auto finalSprite = finalSpriteObj->get_Component<SpriteRenderer>();
     finalSprite->Draw(renderer);
 
@@ -893,7 +948,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
     // シーンのテクスチャを表示する
-    auto copyToFrameBufferSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("CopyToFrameBufferSprite").lock();
+    auto copyToFrameBufferSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("CopyToFrameBufferSprite");
     auto copyToFrameBufferSprite = copyToFrameBufferSpriteObj->get_Component<SpriteRenderer>();
     copyToFrameBufferSprite->Draw(renderer);
 
@@ -911,11 +966,11 @@ void SceneManager::Draw(RendererEngine& renderer)
 
     for (int i = 0; i < 30; i++)
     {
-        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i)).lock();
+        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
         //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
 
-    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox").lock();
+    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
     skybox->get_Component<SkyRenderer>()->Draw(renderer);
 
     renderer.ClearRenderTargetView(m_pDepth_RT);

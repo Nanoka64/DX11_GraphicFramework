@@ -38,5 +38,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     combineColor /= 4.0f;
     combineColor.a = 1.0f;
     
+    
     return combineColor;
 }

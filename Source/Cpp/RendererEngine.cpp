@@ -605,6 +605,30 @@ void RendererEngine::set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, U
     m_pImmediateContext->RSSetViewports(1, &vp);
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】現在の描画パスの取得
+//* [引数]
+//* なし
+//* [返値]
+//* 描画ぱす
+//*----------------------------------------------------------------------------------------
+RENDER_PASS RendererEngine::get_CrntRenderPass()const
+{
+    return m_CrntRenderPass;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】現在の描画パスの設定
+//* [引数]
+//* pass : 描画パス
+//* [返値]
+//* void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_CrntRenderPass(RENDER_PASS pass)
+{
+    m_CrntRenderPass = pass;
+}
+
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
@@ -703,6 +727,17 @@ bool RendererEngine::SetupViewTransform(const XMMATRIX& viewMat)
     pDeviceContext->PSSetConstantBuffers(1, 1, &cb.pBuff);
 
     return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】プロジェクション行列を取得
+//* 引数：なし
+//* 戻値：XMMATRIX
+//*----------------------------------------------------------------------------------------
+XMMATRIX RendererEngine::get_ProjectionMatrix()const
+{
+    return m_Proj;
 }
 
 //*---------------------------------------------------------------------------------------
@@ -832,6 +867,34 @@ void RendererEngine::RegisterRenderTarget(ID3D11RenderTargetView* pRtv, ID3D11De
 {
     m_pImmediateContext->OMSetRenderTargets(1, &pRtv, pDsv);
 }
+
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】単一のレンダーターゲットの登録とそのRTのに設定された大きさでビューポート設定
+//* 引数：1.レンダーターゲット
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::RegisterRenderTargetAndViewPort(class DX_RenderTarget* pRT)
+{
+    // ビューポートの設定
+    this->set_ViewPort(0, 0, pRT->get_Width(), pRT->get_Height());
+
+    // 深度ビューあり
+    if (pRT->HasDepthStencilBuffer()) {
+        ID3D11RenderTargetView* rtv = pRT->get_RTV();
+        ID3D11DepthStencilView* dsv = pRT->get_DSV();
+
+        m_pImmediateContext->OMSetRenderTargets(1, &rtv, dsv);
+    }
+    // 深度ビューなし
+    else
+    {
+        ID3D11RenderTargetView* rtv = pRT->get_RTV();
+        m_pImmediateContext->OMSetRenderTargets(1, &rtv, NULL);
+    }
+}
+
 
 
 //*---------------------------------------------------------------------------------------

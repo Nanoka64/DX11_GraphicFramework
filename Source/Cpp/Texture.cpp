@@ -41,11 +41,11 @@ HRESULT Texture::Load_WIC(const std::wstring& path, RendererEngine& renderer)
 		&metadata, 
 		image
 	);
+	if (FAILED(hr))return hr;
 
 	m_Width = metadata.width;
 	m_Height = metadata.height;
 
-	if (FAILED(hr))return hr;
 
 	auto device = renderer.get_Device();
 	

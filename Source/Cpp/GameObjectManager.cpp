@@ -53,9 +53,11 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 
     for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
     {
-        (*it).get()->Update(renderer);
-        (*it).get()->ComponentUpdate(renderer);
-
+        if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
+        {
+            (*it).get()->Update(renderer);
+            (*it).get()->ComponentUpdate(renderer);
+        }
         // 削除フラグが立っていれば削除リストに追加
         if ((*it).get()->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE) == true)
         {
@@ -77,7 +79,7 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 //* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void GameObjectManager::ObjectRender(RendererEngine &renderer)
+void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
 {
     int id = 0;
     Master::m_pDebugger->BeginDebugWindow("GameObject");
@@ -109,7 +111,28 @@ void GameObjectManager::ObjectRender(RendererEngine &renderer)
         }
     }
     Master::m_pDebugger->EndDebugWindow();
+}
 
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】描画
+//* 引数：1.RendererEngine
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::ObjectShadowRenderPass(RendererEngine &renderer)
+{
+    int id = 0;
+
+    // 描画
+    for (auto& obj : m_pObjectList)
+    {
+        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) {
+            obj->Draw(renderer);
+            obj->ComponentRender(renderer);
+        }
+    }
 }
 
 
@@ -132,7 +155,7 @@ bool GameObjectManager::Term(RendererEngine &renderer)
 //* 引数：1.RendererEngine
 //* 返値：生成したオブジェクトの共有ポインタ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<Transform> parent)
+std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<Transform> parent)
 {
     // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
     // (Unity風に)
@@ -220,7 +243,7 @@ void GameObjectManager::remove_ObjectByTag(const std::string &tag)
 //* 引数：1.タグ
 //* 返値：オブジェクトの参照ポインタ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string &tag)
+std::shared_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string &tag)
 {
     auto begin = m_pObjectList.begin();
     auto end = m_pObjectList.end();
@@ -245,9 +268,9 @@ std::weak_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string &
 //* 引数：1.タグ
 //* 返値：オブジェクトの参照ポインタリスト
 //*----------------------------------------------------------------------------------------
-std::list<std::weak_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(const std::string &tag)
+std::list<std::shared_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(const std::string &tag)
 {
-    std::list<std::weak_ptr<GameObject>> resList;
+    std::list<std::shared_ptr<GameObject>> resList;
 
     for (auto &obj : m_pObjectList)
     {
@@ -316,9 +339,9 @@ void GameObjectManager::clear_NotIsDontDestroyObject()
 
 namespace GIGA_Engine
 {
-    std::weak_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<Transform> parent )
+    std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<Transform> parent )
     {
-        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, pos, rot, parent).lock();
+        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, pos, rot, parent);
     }
 };
 
