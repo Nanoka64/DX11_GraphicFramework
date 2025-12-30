@@ -158,6 +158,11 @@ public:
     /// <param name="type">セットするシェーダ種別</param>
     void DeviceToSetShader(SHADER_TYPE type);
 
+    /// <summary>
+    /// 頂点・ピクセル両方にnull設定
+    /// </summary>
+    void NullSetAllShader();
+
 private:
     // コピー禁止
     ShaderManager(const ShaderManager &) = delete;

@@ -25,6 +25,7 @@ RendererEngine::RendererEngine() :
     m_pDepthStencilView(nullptr),
     m_pVertexBuffer(nullptr),
     m_pSamplerLinear(nullptr),
+    m_pSamplerShadow(nullptr),
     m_pRasterState(nullptr),
     m_pDepthStencilState(nullptr),
     m_pDepthTestDisabled_DSS(nullptr),
@@ -73,6 +74,7 @@ bool RendererEngine::Init(HWND hWnd)
     m_pDepthStencilView     = NULL;        // 深度バッファ(ZBuffer)奥行き
     m_pVertexBuffer         = NULL;        // 頂点バッファ(実際の頂点のデータが詰まっている)
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
+    m_pSamplerShadow        = NULL;        // シャドウマップ用サンプラー
     m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
     //m_pBlendStateAlpha = NULL;           // αブレンド用
@@ -136,6 +138,7 @@ void RendererEngine::BeginRender()
 
     // サンプラー設定
     m_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
+    m_pImmediateContext->PSSetSamplers(1, 1, &m_pSamplerShadow);
 }
 
 
@@ -230,9 +233,8 @@ HRESULT RendererEngine::InitDX11_SwapChain()
 
     /* ここフラグ指定するとエラーが出るので一旦コメントアウト */
 #ifdef  _DEBUG
-    //createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+    createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif 
-
     // ドライバタイプ 描画をハードウェアとソフトウェアのどちらで行うか
     // ※ Direct2Dを使う場合、HADWAREじゃないと動かない http://mitsunagistudio.net/old_posts/tips/d2d-d3d11-sharing/
     D3D_DRIVER_TYPE driverTypes[] =
@@ -492,9 +494,9 @@ HRESULT RendererEngine::InitDX11_Sampler()
     // D3D11_TEXTURE_ADDRESS_CLAMP = 3,      最後のピクセルを繰り返す
     // D3D11_TEXTURE_ADDRESS_BORDER = 4,     自分で色を設定する
     // D3D11_TEXTURE_ADDRESS_MIRROR_ONCE = 5 一回だけ反転させる
-    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_CLAMP;
-    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_CLAMP;
-    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
@@ -502,6 +504,14 @@ HRESULT RendererEngine::InitDX11_Sampler()
     sampDesc.MaxAnisotropy  = 16;
     // 作成
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
+    if (FAILED(hr))return hr;
+
+    // シャドウマップ用サンプラー
+
+    sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    sampDesc.MaxAnisotropy = 1;
+    hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerShadow);
     if (FAILED(hr))return hr;
 
     return hr;
@@ -572,6 +582,7 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pRasterState);
     SAFE_RELEASE(m_pDepthStencilState);
     SAFE_RELEASE(m_pSamplerLinear);
+    SAFE_RELEASE(m_pSamplerShadow);
     //SAFE_RELEASE(m_pBlendStateAlpha);
     //SAFE_RELEASE(m_pBlendStateAdd);
     //SAFE_RELEASE(m_pBlendStateSub);

@@ -39,6 +39,7 @@ private:
     ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
     ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS;   // Z比較をするための設定
     ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
+    ID3D11SamplerState                      * m_pSamplerShadow;       // シャドウマップ用サンプラー
     ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     //ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
     //ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用

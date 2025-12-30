@@ -18,7 +18,7 @@ class ResourceManager
 private:
     // プライベートコンストラクタ・デストラクタ
     ResourceManager() = default;
-    ~ResourceManager() = default;
+    ~ResourceManager();
     ResourceManager(const ResourceManager &) = delete;
     ResourceManager &operator=(const ResourceManager &) = delete;
 

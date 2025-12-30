@@ -11,6 +11,11 @@
 
 using namespace DirectX;
 
+ResourceManager::~ResourceManager()
+{
+    Release();
+}
+
 //--------------------------------------------------------------------------------------
 //      * ResourceManager - 初期化 - *
 // 引数：デバイスの共有ポインタ

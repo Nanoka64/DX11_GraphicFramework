@@ -5,13 +5,16 @@
 using namespace DirectX;
 
 Texture::Texture():
-	m_pSRV(nullptr)
+	m_pSRV(nullptr),
+	m_FilePath(),
+	m_Width(0),
+	m_Height(0)
 {
 }
 
 Texture::~Texture()
 {
-	this->Release();
+	//SAFE_RELEASE(m_pSRV);
 }
 
 

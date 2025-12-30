@@ -183,6 +183,32 @@ bool SceneManager::Init(RendererEngine &renderer)
                 light->set_Intensity(10.0f);
                 light->Init(renderer);
             }
+        }        /* ポイントライトの生成 (Cubuで分かりやすく)*/
+
+        /* 壁 */
+        {
+            MATERIAL* mat = new MATERIAL;
+            mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+            mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
+            mat->DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->SpecularPower = 20.0f;
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::PLANE;
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+            mesh.IsActive = true;
+            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            mesh.IsNormalMap = true;
+            mesh.ObjTag = "Wall";
+
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            obj.lock()->get_Transform().lock()->set_Scale(3000.0f, 3000.0f, 3000.0f);
+            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -1000.0f);
+            obj.lock()->get_Transform().lock()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
         }
 
         /* アリ モデルの生成 */
@@ -477,7 +503,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         1024,
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
@@ -543,6 +569,12 @@ bool SceneManager::Init(RendererEngine &renderer)
     sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2");
     sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3");
     sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4");
+    sprite.pTextureMap[4] = ResourceManager::Instance().Convert_SRVToTexture(
+        "ShadowMap", 
+        m_pShadowMap_RT->get_DepthSRV_ComPtr(), 
+        m_pShadowMap_RT->get_Width(), 
+        m_pShadowMap_RT->get_Height()
+    );
     sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
     obj = MeshFactory::CreateSprite(sprite);
     //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
@@ -796,7 +828,7 @@ void SceneManager::Draw(RendererEngine& renderer)
         Master::m_pDebugger->DG_Separator();        
 
         Master::m_pDebugger->DG_BulletText("m_pDepth_RT");
-        Master::m_pDebugger->DG_Image(m_pDepth_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->DG_BulletText("Luminance");
@@ -808,7 +840,7 @@ void SceneManager::Draw(RendererEngine& renderer)
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->DG_BulletText("ShadowMap");
-        Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->EndDebugWindow();
@@ -835,7 +867,13 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    // 【追加】ここで前回のフレームで残っているSRV（読み込み設定）を解除する！
+    // 特に Slot 0 (Albedo等) が衝突しているようです。
+    ID3D11ShaderResourceView* nullSRVs[4] = { nullptr, nullptr, nullptr, nullptr };
 
+    // 警告に "VS shader resource" と出ているので、頂点シェーダー側も忘れずに解除
+    renderer.get_DeviceContext()->VSSetShaderResources(0, 4, nullSRVs);
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 4, nullSRVs);
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
@@ -852,6 +890,16 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ライティングの前にシャドウパス
     //
     // ************************************************************************
+    auto context = renderer.get_DeviceContext();
+    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+    // ピクセルシェーダーの該当スロットを解除 (ここでは例としてスロット3と4を解除)
+    // ※警告ログに "slot 4" と出ているので、slot 4に何か（おそらく深度テクスチャ）が刺さっています
+    context->PSSetShaderResources(3, 1, nullSRV);
+    context->PSSetShaderResources(4, 1, nullSRV);
+    context->PSSetShaderResources(4, 1, nullSRV);
+    context->VSSetShaderResources(4, 1, nullSRV);
+
+
     renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
     renderer.ClearRenderTargetView(m_pShadowMap_RT);
     renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
@@ -873,9 +921,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     // 最終合成用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
-
-    // ライトの更新
-    Master::m_pLightManager->Update();
 
     // ディファードスプライト
     auto defferdRTSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("DefferdRenderTarget");

@@ -17,10 +17,13 @@
 // 追記：CSOファイル読み込みにすればデバッグ可能
 
 SamplerState g_sSampler : register(s0);
-Texture2D<float4> g_tAlbedoTexture : register(t0);   // xyzにアルベド
-Texture2D<float4> g_tNormalTexture : register(t1);   // xyzに法線
-Texture2D<float4> g_tSpecularTexture : register(t2); // xyzにスペキュラ色  wにスペキュラ強度
-Texture2D<float4> g_tDepthTexture : register(t3);    // xに深度値
+SamplerComparisonState g_sShadowSampler : register(s1); // シャドウマップ用
+Texture2D<float4> g_tAlbedoTexture : register(t0);    // xyzにアルベド
+Texture2D<float4> g_tNormalTexture : register(t1);    // xyzに法線
+Texture2D<float4> g_tSpecularTexture : register(t2);  // xyzにスペキュラ色  wにスペキュラ強度
+Texture2D<float4> g_tDepthTexture : register(t3);     // xに深度値
+Texture2D<float4> g_tShadowMapTexture : register(t4); // シャドウマップ
+
 
 /* =========================================================================
 /* - @:出力構造体 - */
@@ -61,8 +64,32 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
     //normal = normalize(normal); // 頂点シェーダですでに正規化済み
     
+    float4 posInLVP = mul(worldPos, cb_DirLightData[0].LightViewProj);
+    
+    // ライトビュースクリーン空間（NDC）からUV空間に座標変換
+    // -1.0 ～ 1.0 を 0.0～1.0に
+    
+    // 平行投影の場合はw除算は要らないっぽい
+    
+    float2 shadowMapUV = posInLVP.xy;
+    shadowMapUV *= float2(0.5f, -0.5f);
+    shadowMapUV += 0.5f;
+    
+    // ライトから見た深度値を計算
+    float zInLVP = posInLVP.z;
+    
+    float shadowFactor = 1.0f;
+    
+    // シャドウマップの範囲内か
+    if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f && 
+        shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
+    {
+        // シャドウマップから深度値をサンプリング
+        shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(g_sShadowSampler, shadowMapUV, zInLVP).r;
+    }
+    
     // スペキュラ強度・カラー
-    float spcPow = specularTex.a;
+        float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
     spcPow *= 255;
@@ -96,12 +123,14 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-    float3 diffuse  = dirLig.Diffuse + pointLig.Diffuse + hemiLig + 0.1f;
-    float3 specular = dirLig.Specular + pointLig.Specular;
+    // 平行光源のみシャドウの影響を受ける
+    float3 diffuse  = (dirLig.Diffuse * shadowFactor) + pointLig.Diffuse + hemiLig + 0.1f;
+    float3 specular = (dirLig.Specular * shadowFactor) + pointLig.Specular;
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.xyz * diffuse + specular;
     finalCol.a = 1.0f;
+    
 
     return (finalCol);
 }

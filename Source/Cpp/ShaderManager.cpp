@@ -239,6 +239,18 @@ void ShaderManager::DeviceToSetShader(SHADER_TYPE type)
 }
 
 
+/* ---------------------------------------------------------------------------------------
+/* 【?】頂点・ピクセル両方にnull設定
+/* ---------------------------------------------------------------------------------------*/
+void ShaderManager::NullSetAllShader()
+{
+    auto pContext = m_pRenderer.lock().get()->get_DeviceContext();
+
+    pContext->VSSetShader(nullptr, nullptr, 0);
+    pContext->PSSetShader(nullptr, nullptr, 0);
+}
+
+
 
 /* ---------------------------------------------------------------------------------------
 /* - @:ShaderManager Class - 入力レイアウトの作成 - * - */

@@ -59,7 +59,6 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 	VEC3 pos = transform->get_VEC3ToPos();
 	VEC3 foward = transform->get_Forward();
-
 	dirData.Direction		  = foward;
     dirData.DiffuseColor	  = m_LightColor;
 	dirData.DiffuseIntensity  = m_Intensity;
@@ -81,10 +80,10 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	);
 
 	// 正投影行列を作成する（こっちじゃないとダメっぽい？）
-	float width  = 200.0f;  // ライトがカバーする横幅 (メートル単位)
-	float height = 200.0f; // ライトがカバーする縦幅
+	float width  = 30000.0;  // ライトがカバーする横幅 (メートル単位)
+	float height = 30000.0; // ライトがカバーする縦幅
 	float nearZ  = 0.1f;    // ライトから見た描画開始距離
-	float farZ   = 1000.0f;  // ライトから見た描画終了距離（地球防衛軍なら長めが必要）
+	float farZ   = 30000.0f;  // ライトから見た描画終了距離（地球防衛軍なら長めが必要）
 
 	XMMATRIX projMat = XMMatrixOrthographicLH(width, height, nearZ, farZ);
 	//XMMATRIX projMat = renderer.get_ProjectionMatrix();
