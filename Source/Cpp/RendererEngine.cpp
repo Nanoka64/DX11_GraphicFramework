@@ -494,9 +494,9 @@ HRESULT RendererEngine::InitDX11_Sampler()
     // D3D11_TEXTURE_ADDRESS_CLAMP = 3,      最後のピクセルを繰り返す
     // D3D11_TEXTURE_ADDRESS_BORDER = 4,     自分で色を設定する
     // D3D11_TEXTURE_ADDRESS_MIRROR_ONCE = 5 一回だけ反転させる
-    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_CLAMP;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;

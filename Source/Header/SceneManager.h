@@ -27,7 +27,7 @@ private:
 
 	float m_PointLightRange;
 	VECTOR3::VEC3 m_LightDir;
-	VECTOR3::VEC3 m_LightPos;
+	VECTOR3::VEC3 m_LightPos = { 0,1,0 };
 
 	class DX_RenderTarget *m_pAlbedo_RT;
 	class DX_RenderTarget *m_pNormal_RT;

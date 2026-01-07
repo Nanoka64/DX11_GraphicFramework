@@ -13,7 +13,7 @@ using namespace VECTOR2;
 
 using namespace DirectX;
 
-#define PLAYER_MOVE_SPEED  10.0f		// プレイヤーの移動スピード
+#define PLAYER_MOVE_SPEED  5.0f		// プレイヤーの移動スピード
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -94,7 +94,7 @@ void PlayerController::Update(RendererEngine& renderer)
 
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();;
 
-	static float debugSpeed = 5.1f;
+	static float debugSpeed = 1.5f;
 	m_IsAnim = false;
 	if (moveDir.Length() > 0.001) {
 		moveDir = moveDir.Normalize();

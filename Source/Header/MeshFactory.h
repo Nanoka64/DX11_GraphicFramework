@@ -181,10 +181,10 @@ private:
 
 
 public:
-    static std::weak_ptr<class GameObject> CreateModel(const CreateModelInfo& info);
-    static std::weak_ptr<class GameObject> CreateUtilityMesh(const CreateUtilityMeshInfo& info);
-    static std::weak_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
-    static std::weak_ptr<class GameObject> CreateBillboard(const CreateBillboradInfo& info);
-    static std::weak_ptr<class GameObject> CreateSkybox(const CreateSkyboxInfo& info);
+    static std::shared_ptr<class GameObject> CreateModel(const CreateModelInfo& info);
+    static std::shared_ptr<class GameObject> CreateUtilityMesh(const CreateUtilityMeshInfo& info);
+    static std::shared_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
+    static std::shared_ptr<class GameObject> CreateBillboard(const CreateBillboradInfo& info);
+    static std::shared_ptr<class GameObject> CreateSkybox(const CreateSkyboxInfo& info);
 }; 
 

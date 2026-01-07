@@ -104,17 +104,17 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             model.Shadow_ShaderType = SHADER_TYPE::POST_SHADOWMAP;
-            auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
-            obj.lock()->add_Component<PlayerController>(1);
-            obj.lock()->get_Component<PlayerController>()->Init(renderer);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -500.0f);
-            obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+            m_pPlayer = MeshFactory::CreateModel(model);
+            m_pPlayer->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
+            m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            m_pPlayer->add_Component<PlayerController>(1);
+            m_pPlayer->get_Component<PlayerController>()->Init(renderer);
+            m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, -50.0f);
+            m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
             // カメラのフォーカスオブジェクトに設定
-            m_pCamera->get_Component<Camera3D>()->set_FocusObject(obj);
+            m_pCamera->get_Component<Camera3D>()->set_FocusObject(m_pPlayer);
         }
 
         /* ディレクションライトの生成(Cubuで分かりやすく) */
@@ -132,15 +132,19 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            auto light = obj.lock()->add_Component<DirectionalLight>();
+            //auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            auto obj = Instantiate(std::move(std::make_shared<GameObject>()));
+            obj->set_Tag("DirLight");
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            auto light = obj->add_Component<DirectionalLight>();
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
             light->set_Intensity(0.1f);
+            light->set_Player(m_pPlayer);
             light->Init(renderer);
 
-            obj.lock()->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
-            obj.lock()->get_Transform().lock()->set_Scale(VEC3(40, 40, 40));
-            obj.lock()->get_Transform().lock()->set_RotateToRad(VEC3(1.0f, -1.0f, 1.0f));
+            obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
+            obj->get_Transform().lock()->set_Scale(VEC3(1.0, 1.0, 1.0));
+            obj->get_Transform().lock()->set_RotateToRad(VEC3(0.0f, -0.0f, 0.0f));
         }
 
         /* ポイントライトの生成 (Cubuで分かりやすく)*/
@@ -165,21 +169,21 @@ bool SceneManager::Init(RendererEngine &renderer)
             for (int i = 0; i < 30; i++)
             {
                 VEC3 pt;
-                pt.x = static_cast<float>(rand() % 10000) - 5000.0f;
-                pt.y = 700.0f;
-                pt.z = static_cast<float>(rand() % 10000) - 5000.0f;
+                pt.x = static_cast<float>(rand() % 1000) - 500.0f;
+                pt.y = 50.0f;
+                pt.z = static_cast<float>(rand() % 1000) - 500.0f;
                 VEC3 col;
                 col.x = static_cast<float>(rand() % 255) / 255.0f;
                 col.y = static_cast<float>(rand() % 255) / 255.0f;
                 col.z = static_cast<float>(rand() % 255) / 255.0f;
 
                 auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj.lock()->get_Transform().lock()->set_Pos(pt);
-                obj.lock()->get_Transform().lock()->set_Scale(VEC3(250, 250, 250));
-                obj.lock()->set_Tag("PointLight" + std::to_string(i));
-                auto light = obj.lock()->add_Component<PointLight>();
+                obj->get_Transform().lock()->set_Pos(pt);
+                obj->get_Transform().lock()->set_Scale(VEC3(10, 10, 10));
+                obj->set_Tag("PointLight" + std::to_string(i));
+                auto light = obj->add_Component<PointLight>();
                 light->set_LightColor(col);
-                light->set_Range(1000.0f);
+                light->set_Range(10.0f);
                 light->set_Intensity(10.0f);
                 light->Init(renderer);
             }
@@ -205,10 +209,10 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.IsNormalMap = true;
             mesh.ObjTag = "Wall";
 
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(3000.0f, 3000.0f, 3000.0f);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, -1000.0f);
-            obj.lock()->get_Transform().lock()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
+            //auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            //obj->get_Transform().lock()->set_Scale(30.0f, 30.0f, 30.0f);
+            //obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, -10.0f);
+            //obj->get_Transform().lock()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
         }
 
         /* アリ モデルの生成 */
@@ -231,17 +235,19 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0, 1.0, 1.0);
-            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            obj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
+            obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
+            obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, -100.0);
+            obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
             model.ObjTag = "Ant2";
             obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(1.0, 1.0, 1.0);
-            obj.lock()->get_Component<Transform>()->set_RotateToDeg(0.0f, 90, 0.0);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj.lock()->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            obj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
+            obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, -100.0);
+            obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 90, 0.0);
+            obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
         }
 
@@ -267,9 +273,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 500.0f, 0.0f);
-            obj.lock()->set_LayerRank(0);
+            obj->get_Component<Transform>()->set_Scale(0.15f, 0.15f, 0.15f);
+            obj->get_Component<Transform>()->set_Pos(0.0f, 50.0f, 0.0f);
+            obj->set_LayerRank(0);
         }
 
         /* クレイモア モデルの生成 */
@@ -294,14 +300,13 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj.lock()->get_Component<Transform>()->set_Scale(10.0f, 10.0f, 10.0f);
-            obj.lock()->get_Component<Transform>()->set_Pos(0.0f, 00.0f, 1000.0f);
-            obj.lock()->set_LayerRank(0);
+            obj->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj->get_Component<Transform>()->set_Pos(0.0f, 00.0f, 10.0f);
+            obj->set_LayerRank(0);
         }
 
         /* 地面の生成 */
         {
-
             MATERIAL* mat = new MATERIAL;
             mat->Diffuse.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
             mat->Normal.Texture = ResourceManager::Instance().LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
@@ -319,9 +324,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.IsNormalMap = true;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj.lock()->get_Transform().lock()->set_Scale(10000.0f, 10000.0f, 10000.0f);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
-            obj.lock()->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+            obj->get_Transform().lock()->set_Scale(1000.0f, 500.0f, 1000.0f);
+            obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+            obj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
 
         /* スカイボックスの生成 */
@@ -339,8 +344,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             skyInfo.IsActive = false;
 
             auto obj = MeshFactory::CreateSkybox(skyInfo);
-            obj.lock()->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
-            obj.lock()->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+            obj->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
         }
 
         /* ビルボードの生成 */
@@ -379,22 +384,18 @@ bool SceneManager::Init(RendererEngine &renderer)
                 mat->DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
                 billboard.MaterialData->pMat = mat;
                 auto obj = MeshFactory::CreateBillboard(billboard);
-                obj.lock()->get_Transform().lock()->set_Pos(pos);
-                obj.lock()->get_Transform().lock()->set_Scale(2500, 2500, 2000);
-                obj.lock()->set_Tag("Billboard" + std::to_string(i));
+                obj->get_Transform().lock()->set_Pos(pos);
+                obj->get_Transform().lock()->set_Scale(2500, 2500, 2000);
+                obj->set_Tag("Billboard" + std::to_string(i));
             }
         }
     }
 
-    // 参照を持たせる
-    m_pPlayer = Master::m_pGameObjectManager->get_ObjectByTag("Player");
 
     // ライトにカメラのTransformを持たせる
     Master::m_pLightManager->set_CameraTransform(m_pCamera->get_Transform());
 
-
     bool result = true;
-
 
     //========================================================================================
     //
@@ -577,7 +578,6 @@ bool SceneManager::Init(RendererEngine &renderer)
     );
     sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
     obj = MeshFactory::CreateSprite(sprite);
-    //obj.lock()->get_Transform().lock()->set_Pos(0.5, -0.5, 0.0);
     sprite.pTextureMap.clear();    
                    
     /*************************************
@@ -721,11 +721,11 @@ void SceneManager::Update(RendererEngine& renderer)
     static float intensity = 0.1f;
 
 
-    auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
-    obj->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 1000.0f);
-    
-    obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
-    obj->get_Component<Transform>()->set_Pos(sin(a) * 1000.0f, 0.0f, 0.0f);
+    //auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
+    //obj->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 100.0f);
+    //
+    //obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
+    //obj->get_Component<Transform>()->set_Pos(sin(a) * 100.0f, 0.0f, 0.0f);
 
 
     VEC3 camPos = m_pCamera->get_Component<Transform>()->get_VEC3ToPos();
@@ -858,7 +858,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     };
 
     // プロジェクション変換行列の設定
-    renderer.SetupProjectionTransform(1920,1080);
+    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
     // ************************************************************************
     // 
@@ -867,13 +867,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     // ************************************************************************
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
-    // 【追加】ここで前回のフレームで残っているSRV（読み込み設定）を解除する！
-    // 特に Slot 0 (Albedo等) が衝突しているようです。
-    ID3D11ShaderResourceView* nullSRVs[4] = { nullptr, nullptr, nullptr, nullptr };
 
-    // 警告に "VS shader resource" と出ているので、頂点シェーダー側も忘れずに解除
-    renderer.get_DeviceContext()->VSSetShaderResources(0, 4, nullSRVs);
-    renderer.get_DeviceContext()->PSSetShaderResources(0, 4, nullSRVs);
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
@@ -891,14 +885,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     //
     // ************************************************************************
     auto context = renderer.get_DeviceContext();
-    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-    // ピクセルシェーダーの該当スロットを解除 (ここでは例としてスロット3と4を解除)
-    // ※警告ログに "slot 4" と出ているので、slot 4に何か（おそらく深度テクスチャ）が刺さっています
-    context->PSSetShaderResources(3, 1, nullSRV);
-    context->PSSetShaderResources(4, 1, nullSRV);
-    context->PSSetShaderResources(4, 1, nullSRV);
-    context->VSSetShaderResources(4, 1, nullSRV);
-
 
     renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
     renderer.ClearRenderTargetView(m_pShadowMap_RT);

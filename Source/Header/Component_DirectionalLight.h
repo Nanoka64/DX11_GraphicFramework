@@ -13,6 +13,7 @@
 class DirectionalLight : public Light
 {
 private:
+	std::weak_ptr<class GameObject> m_pPlayer;
 
 public:
 	DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank);
@@ -22,5 +23,6 @@ public:
 	void Update(RendererEngine &renderer) override;// XV
 	void Draw(RendererEngine &renderer) override;	// •`‰æ
 
+	void set_Player(std::shared_ptr<class GameObject> pObj);
 };
 

@@ -64,34 +64,11 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
     //normal = normalize(normal); // 頂点シェーダですでに正規化済み
     
-    float4 posInLVP = mul(worldPos, cb_DirLightData[0].LightViewProj);
-    
-    // ライトビュースクリーン空間（NDC）からUV空間に座標変換
-    // -1.0 ～ 1.0 を 0.0～1.0に
-    
-    // 平行投影の場合はw除算は要らないっぽい
-    
-    float2 shadowMapUV = posInLVP.xy;
-    shadowMapUV *= float2(0.5f, -0.5f);
-    shadowMapUV += 0.5f;
-    
-    // ライトから見た深度値を計算
-    float zInLVP = posInLVP.z;
-    
-    float shadowFactor = 1.0f;
-    
-    // シャドウマップの範囲内か
-    if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f && 
-        shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
-    {
-        // シャドウマップから深度値をサンプリング
-        shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(g_sShadowSampler, shadowMapUV, zInLVP).r;
-    }
-    
     // スペキュラ強度・カラー
-        float spcPow = specularTex.a;
+    float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
+    // スペキュラ値を復元
     spcPow *= 255;
     
     OUT_DiffAndSpec dirLig;             // ディレクション用
@@ -101,7 +78,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
     
+    //************************************************************************
     // ディレクションライト計算
+    //************************************************************************
     for (int dirIdx = 0; dirIdx < DIRECTIONLIGHT_MAX_NUM; dirIdx++)
     { 
         OUT_DiffAndSpec res = DirectionLightCalc(cb_DirLightData[dirIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
@@ -109,8 +88,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
         dirLig.Specular += res.Specular;
     }
     
+    //************************************************************************
     // ポイントライト計算 
-    // TODO : 定数にする
+    //************************************************************************
     for (int pointIdx = 0; pointIdx < 50; pointIdx++)
     {
         OUT_DiffAndSpec res = PointLightCalc(cb_PointLightData[pointIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
@@ -123,14 +103,58 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
-    // 平行光源のみシャドウの影響を受ける
-    float3 diffuse  = (dirLig.Diffuse * shadowFactor) + pointLig.Diffuse + hemiLig + 0.1f;
-    float3 specular = (dirLig.Specular * shadowFactor) + pointLig.Specular;
+    // 平行光源のみシャドウの影響を受けるので、一旦別で保持
+    float3 dirDiffuse = dirLig.Diffuse;
+    float3 dirSpecular = dirLig.Specular;
+    float3 diffuse  =  + pointLig.Diffuse + hemiLig + 0.1f;
+    float3 specular =  + pointLig.Specular;
+    
+    
+    //************************************************************************
+    // シャドウ
+    //************************************************************************
+    float4 posInLVP = mul(worldPos, cb_DirLightData[0].LightViewProj);
+    
+    // ライトビュースクリーン空間（NDC）からUV空間に座標変換
+    // -1.0 ～ 1.0 を 0.0～1.0に
+    // 平行投影の場合はw除算は要らないっぽい
+    
+    float2 shadowMapUV = posInLVP.xy;
+    shadowMapUV *= float2(0.5f, -0.5f);
+    shadowMapUV += 0.5f;
+    // ライトから見た深度値を計算
+    float zInLVP = posInLVP.z;
+    float shadowFactor = 1.0f;
+    //return float4(shadowMapUV, 0, 1);
+    // シャドウマップの範囲内か
+    if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
+        shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
+    {
+        // シャドウマップから深度値をサンプリング
+        // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
+        shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
+            g_sShadowSampler, shadowMapUV, zInLVP
+        );
+
+        //return float4(1, 1, 1, 1);
+        
+        // 1.0 = 光が当たっている, 0.0 = 影
+        dirDiffuse *= shadowFactor;
+        dirSpecular *= shadowFactor;
+    }
+    
+    //return float4(shadowFactor, shadowFactor, shadowFactor, 1.0f);
+    
+    //************************************************************************
+    // 最終調整
+    //************************************************************************
+    // シャドウ計算後のディレクションライト加算
+    diffuse += dirDiffuse;
+    specular += dirSpecular;
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.xyz * diffuse + specular;
     finalCol.a = 1.0f;
     
-
     return (finalCol);
 }
