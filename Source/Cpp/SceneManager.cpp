@@ -881,14 +881,15 @@ void SceneManager::Draw(RendererEngine& renderer)
 
     // ************************************************************************
     // 
-    // ライティングの前にシャドウパス
+    // ライティングの前に シャドウパス
     //
     // ************************************************************************
     auto context = renderer.get_DeviceContext();
-
     renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
     renderer.ClearRenderTargetView(m_pShadowMap_RT);
     renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
+    renderer.RegisterCullMode(CULL_MODE::FRONT);    // 表カリング
+
     // ライトの更新
     Master::m_pLightManager->Update();
     Master::m_pGameObjectManager->ObjectShadowRenderPass(renderer);
@@ -907,6 +908,8 @@ void SceneManager::Draw(RendererEngine& renderer)
     // 最終合成用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
+
+    renderer.RegisterCullMode(CULL_MODE::BACK);    // 裏カリング
 
     // ディファードスプライト
     auto defferdRTSpriteObj = Master::m_pGameObjectManager->get_ObjectByTag("DefferdRenderTarget");
@@ -1001,6 +1004,7 @@ void SceneManager::Draw(RendererEngine& renderer)
         //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
 
+    renderer.RegisterCullMode(CULL_MODE::FRONT);    // 表カリング スカイボックスは内側に表示しているため
     auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
     skybox->get_Component<SkyRenderer>()->Draw(renderer);
 
@@ -1022,5 +1026,13 @@ void SceneManager::Draw(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Term(RendererEngine &renderer)
 {
+    SAFE_DELETE(m_pAlbedo_RT);
+    SAFE_DELETE(m_pNormal_RT);
+    SAFE_DELETE(m_pDepth_RT);
+    SAFE_DELETE(m_pSpecular_RT);
+    SAFE_DELETE(m_pSceneFinal_RT);
+    SAFE_DELETE(m_pLuminance_RT);
+    SAFE_DELETE(m_pShadowMap_RT);
+    //SAFE_DELETE(m_pGaussianBlur);
 }
 

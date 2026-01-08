@@ -17,6 +17,18 @@ enum class RENDER_PASS
     SHADOW, // シャドウ
 };
 
+/// <summary>
+/// カリングモード
+/// </summary>
+enum class CULL_MODE
+{
+	NONE,
+	FRONT,
+    BACK,
+
+    NUM,
+};
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -29,21 +41,23 @@ class RendererEngine
 {
 private:
     D3D_DRIVER_TYPE                           m_driverType;
-    D3D_FEATURE_LEVEL                         m_featureLevel;         // DirectXのバージョン
-    ID3D11Device                            * m_pd3dDevice;           // GPUを抽象化してくれる
-    ID3D11DeviceContext                     * m_pImmediateContext;    // 絵を描く部分を抽象化したもの
-    IDXGISwapChain                          * m_pSwapChain;           // バッファの入れ替え(バッファ数増やすと入力遅延が起きる)
-    ID3D11RenderTargetView                  * m_pRenderTargetView;    // 絵を描く領域を切り替える(メモリ領域を覗く、眼鏡みたいなもの)
-    ID3D11Texture2D                         * m_pDepthStencil;        // 画像を読み込んで使えるようにするもの
-    ID3D11DepthStencilView                  * m_pDepthStencilView;    // 深度バッファ(ZBuffer)奥行き
-    ID3D11DepthStencilState                 * m_pDepthStencilState;   // Z比較をするための設定
-    ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS;   // Z比較をするための設定
-    ID3D11SamplerState                      * m_pSamplerLinear;       // テクスチャからどうピクセルをもらうか、サンプルをどうするか
-    ID3D11SamplerState                      * m_pSamplerShadow;       // シャドウマップ用サンプラー
-    ID3D11RasterizerState                   * m_pRasterState;         // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
-    //ID3D11BlendState                        * m_pBlendStateAlpha;     // αブレンド用
-    //ID3D11BlendState                        * m_pBlendStateAdd;       // 加算合成用
-    //ID3D11BlendState                        * m_pBlendStateSub;       // 減算合成用
+    D3D_FEATURE_LEVEL                         m_featureLevel;           // DirectXのバージョン
+    ID3D11Device                            * m_pd3dDevice;             // GPUを抽象化してくれる
+    ID3D11DeviceContext                     * m_pImmediateContext;      // 絵を描く部分を抽象化したもの
+    IDXGISwapChain                          * m_pSwapChain;             // バッファの入れ替え(バッファ数増やすと入力遅延が起きる)
+    ID3D11RenderTargetView                  * m_pRenderTargetView;      // 絵を描く領域を切り替える(メモリ領域を覗く、眼鏡みたいなもの)
+    ID3D11Texture2D                         * m_pDepthStencil;          // 画像を読み込んで使えるようにするもの
+    ID3D11DepthStencilView                  * m_pDepthStencilView;      // 深度バッファ(ZBuffer)奥行き
+    ID3D11DepthStencilState                 * m_pDepthStencilState;     // Z比較をするための設定
+    ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS; // Z比較をしないための設定
+    ID3D11SamplerState                      * m_pSamplerLinear;         // テクスチャからどうピクセルをもらうか、サンプルをどうするか
+    ID3D11SamplerState                      * m_pSamplerShadow;         // シャドウマップ用サンプラー
+
+    // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
+    ID3D11RasterizerState                   * m_pRasterState_NoneCull;           // カリングなし
+    ID3D11RasterizerState                   * m_pRasterState_FrontCull;          // 表カリング
+    ID3D11RasterizerState                   * m_pRasterState_BackCull;           // 裏カリング
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pFrameBufferSRV; // フレームバッファのSRV
 
     DirectX::XMMATRIX m_Proj;
@@ -101,7 +115,14 @@ public:
     UINT get_ScreenHeight()const { return m_Screenheight; };
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
     
-    void set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height); // ビューポート設定
+    /// <summary>
+    ///  ビューポート設定
+    /// </summary>
+    /// <param name="_topLeftX"></param>
+    /// <param name="_topLeftY"></param>
+    /// <param name="_width"></param>
+    /// <param name="_height"></param>
+    void set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height);
 
     /// <summary>
     /// 現在の描画パスを取得
@@ -114,12 +135,23 @@ public:
     /// </summary>
     void set_CrntRenderPass(RENDER_PASS pass);
 
+    /// <summary>
+    /// カリングモードの設定
+    /// </summary>
+    /// <param name="mode"></param>
+    void RegisterCullMode(CULL_MODE mode);
+
+
+    // ************************************************************************
+    // 
+    // レンダーターゲット関連
+    //
+    // ************************************************************************
 
     /// <summary>
     /// レンダーターゲットをフレームバッファに変更
     /// </summary>
     void ChangeRenderTargetFrameBuffer();
-    
 
     /// <summary>
     /// レンダーターゲットをフレームバッファに変更
@@ -127,7 +159,6 @@ public:
     /// </summary>
     /// <param name="pDsv"></param>
     void ChangeRenderTargetFrameBuffer(ID3D11DepthStencilView* pDsv);
-
 
     /// <summary>
     /// レンダーターゲットを解除しNULL設定
@@ -140,7 +171,6 @@ public:
     /// <param name="num"></param>
     /// <param name="renderTargets"></param>
     void RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[]);
-
     
     /// <summary>
     /// 単一のレンダーターゲットを登録
@@ -148,7 +178,6 @@ public:
     /// <param name="pRtv"></param>
     /// <param name="pDsv"></param>
     void RegisterRenderTarget(ID3D11RenderTargetView* pRtv, ID3D11DepthStencilView* pDsv);
-    
     
     /// <summary>
     /// 単一のレンダーターゲットの登録とそのRTのに設定された大きさでビューポート設定
@@ -166,7 +195,13 @@ public:
     /// 単一のレンダーターゲットのクリア
     /// </summary>
     void ClearRenderTargetView(class DX_RenderTarget *renderTargets);
-
+    
+    
+    // ************************************************************************
+    // 
+    // ビュープロジェクション行列関連
+    //
+    // ************************************************************************
 
     /// <summary>
     /// ビューマトリクスを設定し更新
@@ -187,7 +222,6 @@ public:
     /// <returns></returns>
     XMMATRIX get_ViewProjectionMatrix()const;
 
-
     /// <summary>
     /// ビュープロジェクション行列の逆行列取得
     /// </summary>
@@ -206,12 +240,28 @@ public:
     /// <returns></returns>
     XMMATRIX get_ViewInvMatrix()const;
 
+    // ************************************************************************
+    // 
+    // 深度テスト関連
+    //
+    // ************************************************************************
+
+    /// <summary>
+    /// 深度テストなしの深度ステンシルを取得
+    /// </summary>
+    /// <returns></returns>
     ID3D11DepthStencilState* get_DepthTestDisabled_DSS()const;
 
+    /// <summary>
+    /// デプスステンシルステートの登録
+    /// </summary>
+    /// <param name="pDss"></param>
+    /// <param name="stencilRef"></param>
     void RegisterDepthStencilState(ID3D11DepthStencilState* pDss, UINT stencilRef);
-    void RegisterDefaultDepthStencilState();
-    void RegisterPSSetSamplers();
-    void RegisterRSSetState();
 
+    /// <summary>
+    /// デフォルトのデプスステンシルステートの登録
+    /// </summary>
+    void RegisterDefaultDepthStencilState();
 };
 

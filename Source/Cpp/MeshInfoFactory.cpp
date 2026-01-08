@@ -41,7 +41,7 @@ VERTEX::VERTEX_Static g_CubeVertices[] = {
 	{ VEC3( 1.0f,  1.0f, -1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 1 右上
 	{ VEC3(-1.0f, -1.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 2 左下
 	{ VEC3( 1.0f, -1.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 3 右下
-								 
+	
 	// 天井ポリゴン  3                   
 	{ VEC3(-1.0f,  1.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 4 左上
 	{ VEC3( 1.0f,  1.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 5 右上
@@ -352,7 +352,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
-	WORD indices[] = { 0, 1, 2, 1, 3, 2 };
 
 	const VEC3 pos[]
 	{
@@ -370,6 +369,12 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 		VEC2(1.0f, 1.0f),
 	};
 
+	// インデックス情報
+	WORD indices[] = 
+	{ 
+		0, 1, 2, 
+		1, 3, 2 
+	};
 
 	// 法線マップあり
 	if (isNormalMap)
@@ -422,10 +427,10 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSpriteQuadInfo(Renderer
 	// 頂点情報
 	VERTEX::VERTEX_Static vertices[]{
 		  // 座標										   // uv			 // カラー					   // 法線                 
-		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, // 8 左上
-		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, // 9 右上
-		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, // 10左下
-		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, // 11右下
+		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, //　左上
+		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, //　右上
+		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, //　左下
+		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, //　右下
 	};
 
 	*meshData = CreateMesh(pDevice, vertices, g_SpriteQuadVertexNum, indices, g_SpriteQuadIndexNum);
@@ -453,8 +458,8 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 
 	// インデックス情報
 	WORD indices[] = {
-		0,1,2,
-		1,3,2
+		0, 1, 2, // 左上 -> 右上 -> 左下
+		1, 3, 2  // 右上 -> 右下 -> 左下
 	};
 
 	/* テクスチャ座標では
@@ -474,13 +479,14 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 	//	{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(0.0f - bunkatu + 1,	0.0f - bunkatu + 1)}, // 10左下
 	//	{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC3(0.0f, 0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC2(1.0f + bunkatu,		0.0f - bunkatu + 1)}, // 11右下
 	//};
-		
+	 
+	// 頂点情報
 	VERTEX::VERTEX_Static vertices[]{
 		// 座標											   // uv            // カラー                     // 法線        
-		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC2(0.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 8 左上
-		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 9 右上
-		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC2(0.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 10左下
-		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 11右下
+		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC2(0.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左上
+		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右上
+		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC2(0.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左下
+		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右下
 	};
 
 	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, indices, g_RTSpriteQuadIndexNum);

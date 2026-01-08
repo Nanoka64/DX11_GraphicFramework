@@ -26,7 +26,9 @@ RendererEngine::RendererEngine() :
     m_pVertexBuffer(nullptr),
     m_pSamplerLinear(nullptr),
     m_pSamplerShadow(nullptr),
-    m_pRasterState(nullptr),
+    m_pRasterState_NoneCull(nullptr),
+    m_pRasterState_FrontCull(nullptr),
+    m_pRasterState_BackCull(nullptr),
     m_pDepthStencilState(nullptr),
     m_pDepthTestDisabled_DSS(nullptr),
     //m_pBlendStateAlpha(nullptr),
@@ -75,7 +77,9 @@ bool RendererEngine::Init(HWND hWnd)
     m_pVertexBuffer         = NULL;        // 頂点バッファ(実際の頂点のデータが詰まっている)
     m_pSamplerLinear        = NULL;        // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     m_pSamplerShadow        = NULL;        // シャドウマップ用サンプラー
-    m_pRasterState          = NULL;        // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
+    m_pRasterState_NoneCull = NULL;        // ラスタライザ
+    m_pRasterState_FrontCull = NULL;
+    m_pRasterState_BackCull = NULL;
     m_pDepthStencilState    = NULL;        // Z比較をするための設定
     //m_pBlendStateAlpha = NULL;           // αブレンド用
     //m_pBlendStateAdd   = NULL;           // 加算合成用
@@ -134,7 +138,7 @@ void RendererEngine::BeginRender()
     m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);   
 
     // ラスタライザ設定
-    m_pImmediateContext->RSSetState(m_pRasterState); 
+    m_pImmediateContext->RSSetState(m_pRasterState_NoneCull);
 
     // サンプラー設定
     m_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
@@ -444,7 +448,7 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
 
     D3D11_RASTERIZER_DESC rd;
     ZeroMemory(&rd, sizeof(rd));
-
+    
     // ※ CullMode
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
     // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
@@ -459,8 +463,17 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
     rd.DepthClipEnable       = TRUE;    // 0.0より小さい1.0より大きい場合計算しない(カメラのnarとfarのやつ)
     rd.ScissorEnable         = FALSE;   // シザー矩形なし
     rd.AntialiasedLineEnable = FALSE;   // ライン・アンチエイリアシングなし
-    m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState);  // ステート作成
-    m_pImmediateContext->RSSetState(m_pRasterState);;           // ステート設定
+
+    // カリングなしステート作成 **********************************************************
+    m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState_NoneCull);
+
+    // 表カリングステート作成 **********************************************************
+    rd.CullMode = D3D11_CULL_FRONT;
+    m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState_FrontCull);
+
+    // 裏カリングステート作成 **********************************************************
+    rd.CullMode = D3D11_CULL_BACK; 
+    m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState_BackCull); 
 
     return hr;
 }
@@ -510,6 +523,14 @@ HRESULT RendererEngine::InitDX11_Sampler()
 
     sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    // 境界線の色を「1.0（一番遠い深度）」に設定する
+    sampDesc.BorderColor[0] = 1.0f;
+    sampDesc.BorderColor[1] = 1.0f;
+    sampDesc.BorderColor[2] = 1.0f;
+    sampDesc.BorderColor[3] = 1.0f;
     sampDesc.MaxAnisotropy = 1;
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerShadow);
     if (FAILED(hr))return hr;
@@ -579,7 +600,9 @@ void RendererEngine::CleanupDX11()
 {
     if (m_pImmediateContext) m_pImmediateContext->ClearState();
     SAFE_RELEASE(m_pImmediateContext);
-    SAFE_RELEASE(m_pRasterState);
+    SAFE_RELEASE(m_pRasterState_NoneCull);
+    SAFE_RELEASE(m_pRasterState_FrontCull);
+    SAFE_RELEASE(m_pRasterState_BackCull);
     SAFE_RELEASE(m_pDepthStencilState);
     SAFE_RELEASE(m_pSamplerLinear);
     SAFE_RELEASE(m_pSamplerShadow);
@@ -638,6 +661,37 @@ RENDER_PASS RendererEngine::get_CrntRenderPass()const
 void RendererEngine::set_CrntRenderPass(RENDER_PASS pass)
 {
     m_CrntRenderPass = pass;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】カリングモードの設定
+//*
+//* ※以下の三つがある
+//*    ・カリングなし
+//*    ・表カリング
+//*    ・裏カリング
+//* 
+//* [引数]
+//* mode : カリングモード 
+//* [返値]
+//* void
+//*----------------------------------------------------------------------------------------
+void RendererEngine::RegisterCullMode(CULL_MODE mode)
+{
+    switch (mode)
+    {
+    case CULL_MODE::NONE:
+        m_pImmediateContext->RSSetState(m_pRasterState_NoneCull);
+        break;
+    case CULL_MODE::FRONT:
+        m_pImmediateContext->RSSetState(m_pRasterState_FrontCull);
+        break;
+    case CULL_MODE::BACK:
+        m_pImmediateContext->RSSetState(m_pRasterState_BackCull);
+        break;
+    default:
+        break;
+    }
 }
 
 

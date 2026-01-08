@@ -40,7 +40,7 @@ DirectionalLight::~DirectionalLight()
 void DirectionalLight::Init(RendererEngine &renderer)
 {
     m_pOwnerTransform = m_pOwner.lock()->get_Transform();
-	m_UpVec = VEC3(1, 0, 0);
+	m_UpVec = VEC3(0, 1, 0);
 }
 
 
@@ -74,7 +74,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	float shadowDistance = 2000.0f;
 
 	// 注視点
-	m_FocusPoint = playerPos - (foward * 500.0f);
+	m_FocusPoint = playerPos - (foward * 1000.0f);
 
 
 	// ライトから見たビュー行列の計算
@@ -99,6 +99,19 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	
 	XMMATRIX viewProj = viewMat * projMat;
 	XMStoreFloat4x4(&dirData.LightViewProj, XMMatrixTranspose(viewProj));
+
+	Master::m_pDebugger->BeginDebugWindow("DirectionLight");
+	Master::m_pDebugger->DG_BulletText("Forward");
+	Master::m_pDebugger->DG_TextValue("X : %f.1", foward.x);
+	Master::m_pDebugger->DG_TextValue("Y : %f.1", foward.y);
+	Master::m_pDebugger->DG_TextValue("Z : %f.1", foward.z);
+
+	Master::m_pDebugger->DG_BulletText("FocusPoint");
+	Master::m_pDebugger->DG_TextValue("X : %f.1", m_FocusPoint.x);
+	Master::m_pDebugger->DG_TextValue("Y : %f.1", m_FocusPoint.y);
+	Master::m_pDebugger->DG_TextValue("Z : %f.1", m_FocusPoint.z);
+	Master::m_pDebugger->EndDebugWindow();
+
 
 	// 情報を設定
 	Master::m_pLightManager->set_DirectionLightData(dirData);

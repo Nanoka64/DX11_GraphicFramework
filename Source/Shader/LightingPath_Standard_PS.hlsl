@@ -51,6 +51,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float depth = depthTex.r; // 深度値
     float4 worldPos; // 深度情報からワールド座標を計算する。
     
+    
     // 遠すぎる物体にはライティングしない( ´Д｀)ﾉ~ﾊﾞｲﾊﾞｲ
     if (depth >= 1.0f)
     {
@@ -59,7 +60,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
 
     // 深度値からワールド座標を求める
     worldPos = GetConvertPosFromDepthToWorld(depth, input.UV);
-    
+
     // 法線取り出す（0～1 を -1～1 に）
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
     //normal = normalize(normal); // 頂点シェーダですでに正規化済み
@@ -125,6 +126,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ライトから見た深度値を計算
     float zInLVP = posInLVP.z;
     float shadowFactor = 1.0f;
+    
+    
     //return float4(shadowMapUV, 0, 1);
     // シャドウマップの範囲内か
     if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
