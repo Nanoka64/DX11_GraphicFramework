@@ -40,6 +40,7 @@ namespace Path
     const std::wstring HLSL__Skybox_VS_PATH = std::wstring(Shader)                  + L"Skybox_VS.hlsl";
 
     const std::wstring HLSL__ShadowMap_PATH = std::wstring(Shader)                  + L"ShadowMap.hlsl";
+    const std::wstring HLSL__ShadowMap_Skinned_PATH = std::wstring(Shader)          + L"ShadowMap_Skinned.hlsl";
     const std::wstring HLSL__ShadowReciever_PATH = std::wstring(Shader)             + L"ShadowReciever.hlsl";
 
     // csoファイル(コンパイル済みシェーダ) ***************************************************************************
@@ -64,5 +65,6 @@ namespace Path
     const std::wstring HLSL_CSO__Skybox_VS_PATH = std::wstring(CSO)                 + L"Skybox_VS.cso";
 
     const std::wstring HLSL_CSO__ShadowMap_PATH = std::wstring(CSO)                 + L"ShadowMap.cso";
+    const std::wstring HLSL_CSO__ShadowMap_Skinned_PATH = std::wstring(CSO)         + L"ShadowMap_Skinned.cso";
     const std::wstring HLSL_CSO__ShadowReciever_PATH = std::wstring(CSO)            + L"ShadowReciever.cso";
 }

@@ -72,20 +72,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     UINT vtxStride = meshInfo->VertexStride;
     ID3D11Buffer* idxBuff = meshInfo->pIndexBuffer;
 
-    // シェーダセット ==========================
-    //Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
-
-    // 通常描画
-    if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
-        Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
-    }
-    // シャドウ
-    else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
-        Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
-    }
-
     /* ========== 定数バッファの更新 ========== */
-
     // ワールド行列セット ==========================
     XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
@@ -101,58 +88,67 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         0
     );
 
+    // 通常パス **********************************************************
+    if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
+        Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
-    // マテリアル情報セット ==========================
-    CB_MATERIAL mat{};
-    mat.Diffuse = meshInfo->pMaterials[0].DiffuseColor;
-    mat.Specular = meshInfo->pMaterials[0].SpecularColor;
-    mat.Normal = meshInfo->pMaterials[0].NormalColor;
-    mat.SpecularPower = meshInfo->pMaterials[0].SpecularPower;
-    cbMatSet->Data = mat;
+        // マテリアル情報セット ==========================
+        CB_MATERIAL mat{};
+        mat.Diffuse = meshInfo->pMaterials[0].DiffuseColor;
+        mat.Specular = meshInfo->pMaterials[0].SpecularColor;
+        mat.Normal = meshInfo->pMaterials[0].NormalColor;
+        mat.SpecularPower = meshInfo->pMaterials[0].SpecularPower;
+        cbMatSet->Data = mat;
 
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbMatSet->pBuff,
-        0,
-        nullptr,
-        &cbMatSet->Data,
-        0,
-        0
-    );
+        // 定数バッファに転送
+        pContext->UpdateSubresource(
+            cbMatSet->pBuff,
+            0,
+            nullptr,
+            &cbMatSet->Data,
+            0,
+            0
+        );
 
-    // 定数バッファをセット ==========================
-    pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
-    pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
-    //pContext->PSSetConstantBuffers(0, 1, &m_pCB3DObjectSet->pBuff);
+        // 定数バッファをセット ==========================
+        pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
+        pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
 
+        // テクスチャセット ==========================
+        ID3D11ShaderResourceView *diffuseSRV = nullptr;
+        ID3D11ShaderResourceView *normalSRV = nullptr;
+        ID3D11ShaderResourceView *specularSRV = nullptr;
+        if (auto tex = meshInfo->pMaterials->Diffuse.Texture.lock()) {
+            diffuseSRV = tex.get()->get_SRV();
+        }
+        if (auto tex = meshInfo->pMaterials->Normal.Texture.lock()) {
+            normalSRV = tex.get()->get_SRV();
+        }
+        if (auto tex = meshInfo->pMaterials->Specular.Texture.lock()) {
+            specularSRV = tex.get()->get_SRV();
+        }
 
-    // テクスチャセット ==========================
-    ID3D11ShaderResourceView* diffuseSRV = nullptr;
-    ID3D11ShaderResourceView* normalSRV = nullptr;
-    ID3D11ShaderResourceView* specularSRV = nullptr;
-    if (auto tex = meshInfo->pMaterials->Diffuse.Texture.lock()) {
-        diffuseSRV = tex.get()->get_SRV();
+        // シェーダーリソースビューをセット
+        pContext->PSSetShaderResources(0, 1, &diffuseSRV);
+        pContext->PSSetShaderResources(1, 1, &normalSRV);
+        pContext->PSSetShaderResources(2, 1, &specularSRV);
     }
-    if (auto tex = meshInfo->pMaterials->Normal.Texture.lock()) {
-        normalSRV = tex.get()->get_SRV();
-    }
-    if (auto tex = meshInfo->pMaterials->Specular.Texture.lock()) {
-        specularSRV = tex.get()->get_SRV();
-    }
+    // シャドウパス **********************************************************
+    else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
+        Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
 
-    pContext->PSSetShaderResources(0, 1, &diffuseSRV);
-    pContext->PSSetShaderResources(1, 1, &normalSRV);
-    pContext->PSSetShaderResources(2, 1, &specularSRV);
+        // 定数バッファをセット ==========================
+        pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
+    }
 
     // 頂点＆インデックスバッファ設定 ==========================
     UINT offset = 0;
-    pContext->IASetVertexBuffers(0, 1, &vtxBuff, &vtxStride, &offset); // 頂点バッファをセット
-    pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
+    pContext->IASetVertexBuffers(0, 1, &vtxBuff, &vtxStride, &offset);      // 頂点バッファをセット
+    pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);           // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
-
 }
 
 

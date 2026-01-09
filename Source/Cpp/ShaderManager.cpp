@@ -169,7 +169,13 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             g_Simple_Layout,
         },
         {
-            /* シャドウマップ */
+            /* スキニングモデル用シャドウマップ */
+            SHADER_TYPE::POST_SHADOWMAP_SKINNED,
+            ARRAYSIZE(g_Skneed_Layout),
+            g_Skneed_Layout,
+        },
+        {
+            /* シャドウマップ 多分使わないかも*/
             SHADER_TYPE::POST_SHADOW_RECIEVER,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
@@ -433,9 +439,12 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;       
         case SHADER_TYPE::POST_KAWASE_FILTER:               // 川瀬ブルーム用
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
-            break;        
+            break;
         case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;     
+        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:            // スキニングモデル用シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowMap_Skinned_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;     
         case SHADER_TYPE::POST_SHADOW_RECIEVER:             // シャドウマップ
             hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
@@ -520,6 +529,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;      
         case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
             this->LoadCSOFile(HLSL_CSO__ShadowMap_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:                   // シャドウマップ
+            this->LoadCSOFile(HLSL_CSO__ShadowMap_Skinned_PATH.c_str(), &csoByteCode);
             break;     
         case SHADER_TYPE::POST_SHADOW_RECIEVER:              // シャドウマップ
             this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);
@@ -631,11 +643,14 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
             hr = this->CompileShader(HLSL__HighLuminanceFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;       
-        case SHADER_TYPE::POST_KAWASE_FILTER:             // 川瀬ブルーム用
+        case SHADER_TYPE::POST_KAWASE_FILTER:               // 川瀬ブルーム用
             hr = this->CompileShader(HLSL__KawaseFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::POST_SHADOWMAP:                // シャドウマップ
+        case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;    
+        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:            // スキニングモデル用シャドウマップ
+            hr = this->CompileShader(HLSL__ShadowMap_Skinned_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
         case SHADER_TYPE::POST_SHADOW_RECIEVER:                // シャドウマップ
             hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
@@ -713,6 +728,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;       
         case SHADER_TYPE::POST_SHADOWMAP:
             this->LoadCSOFile(HLSL_CSO__ShadowMap_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:
+            this->LoadCSOFile(HLSL_CSO__ShadowMap_Skinned_PATH.c_str(), &csoByteCode);
             break;     
         case SHADER_TYPE::POST_SHADOW_RECIEVER:
             this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);

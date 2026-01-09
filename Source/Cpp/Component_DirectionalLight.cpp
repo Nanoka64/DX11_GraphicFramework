@@ -59,29 +59,33 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	// トランスフォームの取得
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 
-
-	VEC3 pos = transform->get_VEC3ToPos();
-	VEC3 foward = transform->get_Forward();	// 前方
+	VEC3 forward = transform->get_Forward();	// 前方
 	VEC3 playerPos = m_pPlayer.lock()->get_Transform().lock()->get_VEC3ToPos();
+	
+	// 正規化しないとデカい影が出てしまう！！
+	forward = forward.Normalize();
 
-
-	dirData.Direction		  = foward;			// 方向
+	dirData.Direction		  = forward;		// 方向
     dirData.DiffuseColor	  = m_LightColor;	// ディフューズ
 	dirData.DiffuseIntensity  = m_Intensity;	// つよさ
     dirData.SpecularColor	  = m_LightColor;	// スペキュラ
     dirData.SpecularIntensity = 0.5f;			// つよさ
 
-	float shadowDistance = 2000.0f;
+    // シャドウマップの距離
+	float shadowDistance = 3000.0f;
 
-	// 注視点
-	m_FocusPoint = playerPos - (foward * 1000.0f);
+	// 注視点（プレイヤーを見るように）
+	m_FocusPoint = playerPos;
 
+	// プレイヤーから少し離れた場所
+    VEC3 eyePos = playerPos - (forward * 1000.0f);;
 
 	// ライトから見たビュー行列の計算
-	XMFLOAT3 eye	= pos;
+	XMFLOAT3 eye	= eyePos;
 	XMFLOAT3 foucus = m_FocusPoint;
 	XMFLOAT3 upVec	= m_UpVec;
 
+    // ビュー行列の作成
 	XMMATRIX viewMat = XMMatrixLookAtLH(
 		XMLoadFloat3(&eye),
 		XMLoadFloat3(&foucus),
@@ -89,29 +93,29 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	);
 
 	// 正投影行列を作成する（こっちじゃないとダメっぽい？）
-	float width  = 1500.0f;  // ライトがカバーする横幅 (メートル単位)
+	float width  = 1500.0f;  // ライトがカバーする横幅 
 	float height = 1500.0f;  // ライトがカバーする縦幅
-	float nearZ  = 0.1f;     // ライトから見た描画開始距離
-	float farZ   = shadowDistance + 1000.0f;  // ライトから見た描画終了距離
+	float nearZ  = 1.0f;     // ライトから見た描画開始距離
+	float farZ   = shadowDistance;  // ライトから見た描画終了距離
 
+	// 平行投影行列（ディレクションライトはこれがいいらしい）
 	XMMATRIX projMat = XMMatrixOrthographicLH(width, height, nearZ, farZ);
-	//XMMATRIX projMat = renderer.get_ProjectionMatrix();
-	
+
+    // ビュープロジェクション行列計算し、転置して格納
 	XMMATRIX viewProj = viewMat * projMat;
 	XMStoreFloat4x4(&dirData.LightViewProj, XMMatrixTranspose(viewProj));
 
 	Master::m_pDebugger->BeginDebugWindow("DirectionLight");
 	Master::m_pDebugger->DG_BulletText("Forward");
-	Master::m_pDebugger->DG_TextValue("X : %f.1", foward.x);
-	Master::m_pDebugger->DG_TextValue("Y : %f.1", foward.y);
-	Master::m_pDebugger->DG_TextValue("Z : %f.1", foward.z);
+	Master::m_pDebugger->DG_TextValue("X : %f.1", forward.x);
+	Master::m_pDebugger->DG_TextValue("Y : %f.1", forward.y);
+	Master::m_pDebugger->DG_TextValue("Z : %f.1", forward.z);
 
 	Master::m_pDebugger->DG_BulletText("FocusPoint");
 	Master::m_pDebugger->DG_TextValue("X : %f.1", m_FocusPoint.x);
 	Master::m_pDebugger->DG_TextValue("Y : %f.1", m_FocusPoint.y);
 	Master::m_pDebugger->DG_TextValue("Z : %f.1", m_FocusPoint.z);
 	Master::m_pDebugger->EndDebugWindow();
-
 
 	// 情報を設定
 	Master::m_pLightManager->set_DirectionLightData(dirData);

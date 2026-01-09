@@ -132,8 +132,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
 
-            //auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            auto obj = Instantiate(std::move(std::make_shared<GameObject>()));
+            auto obj = MeshFactory::CreateUtilityMesh(mesh);
+            //auto obj = Instantiate(std::move(std::make_shared<GameObject>()));
             obj->set_Tag("DirLight");
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             auto light = obj->add_Component<DirectionalLight>();
@@ -143,7 +143,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             light->Init(renderer);
 
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
-            obj->get_Transform().lock()->set_Scale(VEC3(1.0, 1.0, 1.0));
+            obj->get_Transform().lock()->set_Scale(VEC3(10.0, 10.0, 15.0));
             obj->get_Transform().lock()->set_RotateToRad(VEC3(0.0f, -0.0f, 0.0f));
         }
 
@@ -500,8 +500,8 @@ bool SceneManager::Init(RendererEngine &renderer)
     m_pShadowMap_RT = new DX_RenderTarget();
     result = m_pShadowMap_RT->Create(
         renderer,
-        1024,       // 影の品質は何も対策しなければ解像度依存
-        1024,
+        2048,       // 影の品質は何も対策しなければ解像度依存
+        2048,
         1,
         1,
         DXGI_FORMAT_UNKNOWN,
@@ -721,11 +721,10 @@ void SceneManager::Update(RendererEngine& renderer)
     static float intensity = 0.1f;
 
 
-    //auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
-    //obj->get_Component<Transform>()->set_Pos(0, 0, sin(a) * 100.0f);
-    //
-    //obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
-    //obj->get_Component<Transform>()->set_Pos(sin(a) * 100.0f, 0.0f, 0.0f);
+    auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant1");
+    obj->get_Component<Transform>()->set_Pos(0, 20.0f, sin(a) * 100.0f);
+    obj = Master::m_pGameObjectManager->get_ObjectByTag("Ant2");
+    obj->get_Component<Transform>()->set_Pos(sin(a) * 100.0f, 20.0f, 0.0f);
 
 
     VEC3 camPos = m_pCamera->get_Component<Transform>()->get_VEC3ToPos();
@@ -887,8 +886,8 @@ void SceneManager::Draw(RendererEngine& renderer)
     auto context = renderer.get_DeviceContext();
     renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
     renderer.ClearRenderTargetView(m_pShadowMap_RT);
-    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
-    renderer.RegisterCullMode(CULL_MODE::FRONT);    // 表カリング
+    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);// パスをシャドウに
+    renderer.RegisterCullMode(CULL_MODE::FRONT);     // 表カリング
 
     // ライトの更新
     Master::m_pLightManager->Update();

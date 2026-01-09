@@ -60,7 +60,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
 
     // 深度値からワールド座標を求める
     worldPos = GetConvertPosFromDepthToWorld(depth, input.UV);
-
+    worldPos.w = 1.0f;
+    
     // 法線取り出す（0～1 を -1～1 に）
     float3 normal = normalTex.xyz * 2.0f - 1.0f;
     //normal = normalize(normal); // 頂点シェーダですでに正規化済み
@@ -136,7 +137,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
         // シャドウマップから深度値をサンプリング
         // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
         shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
-            g_sShadowSampler, shadowMapUV, zInLVP
+            g_sShadowSampler, shadowMapUV, zInLVP - 0.0005f
         );
 
         //return float4(1, 1, 1, 1);

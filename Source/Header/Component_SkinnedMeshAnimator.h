@@ -39,6 +39,7 @@ private:
 	int m_CurrentAnimIndex = -1;						 // 現在のアニメーションインデックス
 	bool m_IsAnimationFlag;	// アニメーションさせるかどうか（とりまデバッグ用）
 	float m_AnimProcTime;	// 更新用カウンタ
+	float m_ShadowAnimProcTime;	// シャドウ用更新カウンタ
 
 public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

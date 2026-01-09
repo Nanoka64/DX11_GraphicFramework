@@ -18,6 +18,7 @@ m_AnimationTime(0.0),
 m_CurrentAnimIndex(0),
 m_IsAnimationFlag(false),
 m_AnimProcTime(0.0),
+m_ShadowAnimProcTime(0.0),
 m_ConstanrBufferBonesData(nullptr)
 {
     this->set_Tag("SkinnedMeshAnimator");
@@ -52,8 +53,9 @@ void SkinnedMeshAnimator::Init(RendererEngine &renderer)
 //* 引数：1.RendererEngine 
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::Draw(RendererEngine& renderer)
+void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
 {
+
     Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
     Master::m_pDebugger->DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
     Master::m_pDebugger->DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
@@ -61,9 +63,18 @@ void SkinnedMeshAnimator::Draw(RendererEngine& renderer)
     Master::m_pDebugger->DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
     Master::m_pDebugger->DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
     Master::m_pDebugger->EndDebugWindow();
-    
-    m_AnimProcTime += 0.023f;
-    BoneTransformsUpdate(renderer, m_AnimProcTime);
+
+    // シャドウパス時
+    if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN)
+    {
+        m_AnimProcTime += 0.023f;
+        BoneTransformsUpdate(renderer, m_AnimProcTime);
+    }
+    else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW)
+    {
+        m_ShadowAnimProcTime += 0.023f;
+        BoneTransformsUpdate(renderer, m_ShadowAnimProcTime);
+    }
 }
 
 

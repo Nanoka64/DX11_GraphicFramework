@@ -709,6 +709,9 @@
     <FxCompile Include="Source\Shader\ShadowMap.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\ShadowMap_Skinned.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Lib\DirectXTex\DirectXTex.lib">

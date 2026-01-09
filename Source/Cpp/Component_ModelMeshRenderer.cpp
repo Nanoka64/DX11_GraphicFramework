@@ -82,14 +82,100 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     SHADER_TYPE shaderType          = modelData->get_ShaderType();
     SHADER_TYPE shadowShaderType    = modelData->get_ShadowShaderType();
 
-    // 通常描画
+
+    /* デバッグモード指定の場合、ワイヤーフレームで表示 */
+    if (m_IsDrawLine) {
+        pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+    }
+    else {
+        pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
+    // ワールド行列更新 ==========================
+    XMMATRIX worldMtx = m_pOwner.lock()->get_Component<Transform>()->get_WorldMtx();
+    worldMtx = XMMatrixTranspose(worldMtx);
+    XMStoreFloat4x4(&CB_TransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
+
+    // バッファの更新
+    pDeviceContext->UpdateSubresource(
+        CB_TransSet->pBuff,
+        0,
+        nullptr,
+        &CB_TransSet->Data,
+        0,
+        0
+    );
+
+    // 通常パス **********************************************************
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
         Master::m_pShaderManager->DeviceToSetShader(shaderType);
+
+        // マテリアル情報セット ==========================
+        CB_MATERIAL mat{};
+        mat.Diffuse = matList[0].DiffuseColor;
+        mat.Specular = matList[0].SpecularColor;
+        mat.Normal = matList[0].NormalColor;
+        mat.SpecularPower = matList[0].SpecularPower;
+        CB_MatSet->Data = mat;
+
+        // 定数バッファに転送
+        pDeviceContext->UpdateSubresource(
+            CB_MatSet->pBuff,
+            0,
+            nullptr,
+            &CB_MatSet->Data,
+            0,
+            0
+        );
+
+        // トランスフォーム用定数バッファのセット
+        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
+        pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);
+
+        // メッシュの描画
+        for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
+        {
+            aiMesh *mesh = pScene->mMeshes[meshIdx];
+            auto &mat = matList[mesh->mMaterialIndex];
+
+            /* ビューの設定 */
+            {
+                // ディフューズ
+                if (mat.Diffuse.Texture.lock() != nullptr) {
+                    auto diff = mat.Diffuse.Texture.lock()->get_SRV();
+                    if (diff != nullptr)
+                        pDeviceContext->PSSetShaderResources(0, 1, &diff);
+                }
+
+                // ノーマル
+                if (mat.Normal.Texture.lock() != nullptr) {
+                    auto norm = mat.Normal.Texture.lock()->get_SRV();
+                    if (norm != nullptr)
+                        pDeviceContext->PSSetShaderResources(1, 1, &norm);
+                }
+                // スペキュラ
+                if (mat.Specular.Texture.lock() != nullptr) {
+                    auto spec = mat.Specular.Texture.lock()->get_SRV();
+                    if (spec != nullptr)
+                        pDeviceContext->PSSetShaderResources(2, 1, &spec);
+                }
+            }
+            pMeshes[meshIdx].Draw(renderer);
+        }
     }
-    // シャドウ
+    // シャドウパス **********************************************************
     else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
-        return;
-        Master::m_pShaderManager->DeviceToSetShader(shaderType);
+        Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED);
+
+        // トランスフォーム用定数バッファのセット
+        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
+
+        // メッシュの描画 マテリアル等なし
+        for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
+        {
+            aiMesh *mesh = pScene->mMeshes[meshIdx];
+            pMeshes[meshIdx].Draw(renderer);
+        }
     }
 
     // ImGUI
@@ -109,87 +195,6 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
         }
     }
     Master::m_pDebugger->EndDebugWindow();
-
-
-    // トランスフォームのセット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Component<Transform>()->get_WorldMtx();
-    worldMtx = XMMatrixTranspose(worldMtx);
-    XMStoreFloat4x4(&CB_TransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
-
-    // 定数バッファに転送
-    pDeviceContext->UpdateSubresource(
-        CB_TransSet->pBuff,
-        0,
-        nullptr,
-        &CB_TransSet->Data,
-        0,
-        0
-    );
-
-    // トランスフォーム用定数バッファのセット
-    pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
-
-    // マテリアル情報セット ==========================
-    CB_MATERIAL mat{};
-    mat.Diffuse         = matList[0].DiffuseColor;
-    mat.Specular        = matList[0].SpecularColor;
-    mat.Normal          = matList[0].NormalColor;
-    mat.SpecularPower   = matList[0].SpecularPower;
-    CB_MatSet->Data     = mat;
-
-    // 定数バッファに転送
-    pDeviceContext->UpdateSubresource(
-        CB_MatSet->pBuff,
-        0,
-        nullptr,
-        &CB_MatSet->Data,
-        0,
-        0
-    );
-
-    // マテリアル用定数バッファのセット
-    pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);
-
-
-    /* デバッグモード指定の場合、ワイヤーフレームで表示 */
-    if (m_IsDrawLine) {
-        pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-    }
-    else {
-        pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    }
-
-
-    // メッシュの描画
-    for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
-    {
-        aiMesh *mesh = pScene->mMeshes[meshIdx];
-        auto &mat = matList[mesh->mMaterialIndex];
-
-        /* ビューの設定 */
-        {
-            // ディフューズ
-            if (mat.Diffuse.Texture.lock() != nullptr) {
-                auto diff = mat.Diffuse.Texture.lock()->get_SRV();
-                if (diff != nullptr)
-                    pDeviceContext->PSSetShaderResources(0, 1, &diff);
-            }
-
-            // ノーマル
-            if (mat.Normal.Texture.lock() != nullptr) {
-                auto norm = mat.Normal.Texture.lock()->get_SRV();
-                if (norm != nullptr)
-                    pDeviceContext->PSSetShaderResources(1, 1, &norm);
-            }
-            // スペキュラ
-            if (mat.Specular.Texture.lock() != nullptr) {
-                auto spec = mat.Specular.Texture.lock()->get_SRV();
-                if (spec != nullptr)
-                    pDeviceContext->PSSetShaderResources(2, 1, &spec);
-            }
-        }
-        pMeshes[meshIdx].Draw(renderer);
-    }
 }
 
 
