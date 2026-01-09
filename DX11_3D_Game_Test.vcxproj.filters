@@ -336,9 +336,6 @@
     <ClCompile Include="Source\Cpp\BlendManager.cpp">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
-      <Filter>ソース ファイル\DXLap</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\LightManager.cpp">
       <Filter>ソース ファイル\Graphics\Light</Filter>
     </ClCompile>
@@ -374,6 +371,12 @@
     </ClCompile>
     <ClCompile Include="Source\Header\Component_PlayerController.cpp">
       <Filter>ソース ファイル\Component\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
+      <Filter>ソース ファイル\DXLap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
+      <Filter>ソース ファイル\DXLap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -584,9 +587,6 @@
     <ClInclude Include="Source\Header\BlendManager.h">
       <Filter>ソース ファイル\DXLap\BlendState</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\RendererEngine.h">
-      <Filter>ソース ファイル\DXLap</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\LightManager.h">
       <Filter>ソース ファイル\Graphics\Light</Filter>
     </ClInclude>
@@ -625,6 +625,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_PlayerController.h">
       <Filter>ソース ファイル\Component\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RendererEngine.h">
+      <Filter>ソース ファイル\DXLap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RenderPipeline.h">
+      <Filter>ソース ファイル\DXLap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

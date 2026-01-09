@@ -29,6 +29,16 @@ enum class CULL_MODE
     NUM,
 };
 
+/// <summary>
+/// レンダリングパイプラインの種類
+/// </summary>
+enum class RENDER_PIPELINE_STATE
+{
+    NONE,
+    DEFAULT,
+
+    NUM,
+};
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -81,6 +91,8 @@ private:
     float m_Fov;
 
     RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
+
+    class RenderPipeline *m_pRendererPipeline; // 描画パイプラインの実体を持つ
 
 public:
     RendererEngine();
@@ -141,6 +153,18 @@ public:
     /// <param name="mode"></param>
     void RegisterCullMode(CULL_MODE mode);
 
+    void RegisterRendererPipeline(class RenderPipeline *pPipeline);
+
+    /// <summary>
+    /// レンダリングパイプラインのセットアップ
+    /// </summary>
+    /// <returns></returns>
+    bool CreateRenerererPipeline(RENDER_PIPELINE_STATE type);
+
+    /// <summary>
+    /// デフォルトのレンダリングパイプラインを実行
+    /// </summary>
+    void ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type);
 
     // ************************************************************************
     // 

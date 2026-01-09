@@ -29,20 +29,6 @@ private:
 	VECTOR3::VEC3 m_LightDir;
 	VECTOR3::VEC3 m_LightPos = { 0,1,0 };
 
-	class DX_RenderTarget *m_pAlbedo_RT;
-	class DX_RenderTarget *m_pNormal_RT;
-	class DX_RenderTarget *m_pDepth_RT;
-	class DX_RenderTarget *m_pSpecular_RT;
-	class DX_RenderTarget *m_pSceneFinal_RT;	// シーン最終合成用
-	class DX_RenderTarget *m_pLuminance_RT;		// 輝度抽出用
-	class DX_RenderTarget *m_pShadowMap_RT;		// シャドウマップ（ライトから見た深度を書き込む）
-
-	static const int NUM_WEIGHTS = 8;
-	float m_weights[NUM_WEIGHTS];
-
-	static const int BLUR_COUNT = 4;
-	class GaussianBlur *m_pGaussianBlur;
-
 public:
 	SceneManager();
 	~SceneManager();

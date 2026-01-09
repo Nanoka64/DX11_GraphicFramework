@@ -70,7 +70,7 @@ PS_OUT PSMain(PS_IN input)
     int dither = ditherPattern[x][y];
     
     // 閾値が 10 以下のピクセルはピクセルキルする
-    //clip(dither - 10);
+    //clip(dither - 50);
     
 
     // テスト出力

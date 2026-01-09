@@ -1,0 +1,733 @@
+#include "pch.h"
+#include "RenderPipeline.h"
+#include "RendererEngine.h"
+#include "GameObject.h"
+#include "ResourceManager.h"
+#include "GameObjectManager.h"
+#include "MeshFactory.h"
+#include "Component_SpriteRenderer.h"
+#include "Component_SkyRenderer.h"
+#include "Component_BillboardRenderer.h"
+#include "DX_RenderTarget.h"
+#include "GaussianBlur.h"
+
+using namespace VECTOR4;
+using namespace VECTOR3;
+using namespace VECTOR2;
+
+//*---------------------------------------------------------------------------------------
+//*【?】コンストラクタ
+//*----------------------------------------------------------------------------------------
+RenderPipeline::RenderPipeline()
+{
+}
+//*---------------------------------------------------------------------------------------
+//*【?】デストラクタ
+//*----------------------------------------------------------------------------------------
+RenderPipeline::~RenderPipeline()
+{
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】パイプラインの作成
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//*
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool RenderPipeline::Setup(RendererEngine &renderer)
+{
+    bool result = true;
+
+    // レンダリングターゲットの作成
+    if (!CreateRenderTargets(renderer))
+    {
+        return false;
+    }
+    // ポストエフェクトの作成
+    if (!CreatePostEffect(renderer)) 
+    {
+        return false;
+    }
+    // レンダーターゲット用スプライトの作成
+    if (!CreateRenderTargetSprites(renderer)) 
+    { 
+        return false; 
+    }
+
+    return true;
+}
+
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】パイプラインの実行
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Execute(RendererEngine &renderer)
+{
+    // ポストエフェクトデバッグ
+    {
+        // ブラー強度
+        Master::m_pDebugger->BeginDebugWindow("PostEffect");
+        Master::m_pDebugger->DG_TextValue("weight0:%f.2", m_GaussWeights[0]);
+        Master::m_pDebugger->DG_TextValue("weight1:%f.2", m_GaussWeights[1]);
+        Master::m_pDebugger->DG_TextValue("weight2:%f.2", m_GaussWeights[2]);
+        Master::m_pDebugger->DG_TextValue("weight3:%f.2", m_GaussWeights[3]);
+        Master::m_pDebugger->DG_TextValue("weight4:%f.2", m_GaussWeights[4]);
+        Master::m_pDebugger->DG_TextValue("weight5:%f.2", m_GaussWeights[5]);
+        Master::m_pDebugger->DG_TextValue("weight6:%f.2", m_GaussWeights[6]);
+        Master::m_pDebugger->DG_TextValue("weight7:%f.2", m_GaussWeights[7]);
+        Master::m_pDebugger->EndDebugWindow();
+    }
+
+    // レンダーターゲットデバッグ
+    {
+        Master::m_pDebugger->BeginDebugWindow("RenderTarget");
+
+        Master::m_pDebugger->DG_BulletText("Albed");
+        Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Normal");
+        Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Specular");
+        Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("m_pDepth_RT");
+        Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Luminance");
+        Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("Final");
+        Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->DG_BulletText("ShadowMap");
+        Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Separator();
+
+        Master::m_pDebugger->EndDebugWindow();
+    }
+
+    // プロジェクション変換行列の設定
+    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
+    /* ジオメトリパス */
+    Geometry_PathRender(renderer);
+
+    /* シャドウパス */
+    Shadow_PathRender(renderer);
+
+    /* ディファードライティングパス */
+    Lighting_PathRender(renderer);
+
+    /* ポストエフェクトパス */
+    PostEffect_PathRender(renderer);
+
+    /* フレームバッファにコピーするパス */
+    CopyToFrameBuffer_PathRender(renderer);
+
+
+    // ************************************************************************
+    // 
+    // フォワードの場合はこの下に記述（ポストエフェクトはかからないよ）
+    // 本当はライティングパスの後にやった方が良いっぽい
+    // 
+    // ************************************************************************
+    // Gbuffer作成時の深度バッファを設定
+    renderer.ChangeRenderTargetFrameBuffer(m_pDepth_RT->get_DSV());
+
+    // スカイボックス用のデプスステンシル登録
+    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+
+    for (int i = 0; i < 30; i++)
+    {
+        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
+        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    }
+
+    renderer.RegisterCullMode(CULL_MODE::FRONT);    // 表カリング スカイボックスは内側に表示しているため
+    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
+    skybox->get_Component<SkyRenderer>()->Draw(renderer);
+
+    renderer.ClearRenderTargetView(m_pDepth_RT);
+
+    // デプスステンシル解除
+    renderer.RegisterDepthStencilState(NULL, 0);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】解放
+//*
+//* [引数]
+//* なし
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Release()
+{
+    SAFE_DELETE(m_pAlbedo_RT);
+    SAFE_DELETE(m_pNormal_RT);
+    SAFE_DELETE(m_pDepth_RT);
+    SAFE_DELETE(m_pSpecular_RT);
+    SAFE_DELETE(m_pSceneFinal_RT);
+    SAFE_DELETE(m_pLuminance_RT);
+    SAFE_DELETE(m_pShadowMap_RT);
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】ジオメトリパス Gバッファ作成
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
+{
+    // Gバッファ
+    DX_RenderTarget *gbuffer[] = {
+        m_pAlbedo_RT ,
+        m_pNormal_RT,
+        m_pSpecular_RT,
+        m_pDepth_RT
+    };
+
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
+    // レンダリングターゲットの設定とクリア
+    renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
+    renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
+
+    // メイン描画パス
+    renderer.set_CrntRenderPass(RENDER_PASS::MAIN);
+
+    // オブジェクト描画
+    Master::m_pGameObjectManager->ObjectMainRenderPass(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】シャドウパス ライティングの前に
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
+{
+    // レンダリングターゲットの設定とクリア
+    renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
+    renderer.ClearRenderTargetView(m_pShadowMap_RT);
+
+    // シャドウパス
+    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
+    renderer.RegisterCullMode(CULL_MODE::FRONT);     // 表カリング
+
+    // ライトの更新
+    Master::m_pLightManager->Update();
+
+    // シャドウ用オブジェクト描画
+    Master::m_pGameObjectManager->ObjectShadowRenderPass(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ディファードライティングパス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
+{
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
+    // 最終合成用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
+    renderer.ClearRenderTargetView(m_pSceneFinal_RT);
+
+    // 裏カリング
+    renderer.RegisterCullMode(CULL_MODE::BACK);
+
+    // ディファードスプライト
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+    m_pDefferdLighting_Sprite->Draw(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】フォワードパス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
+{
+
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】ポストエフェクトパス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
+{
+    // ************************************************************************
+    // 
+    // 輝度抽出
+    //
+    // ************************************************************************
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    // 輝度抽出用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pLuminance_RT->get_RTV(), m_pLuminance_RT->get_DSV());
+    renderer.ClearRenderTargetView(m_pLuminance_RT);
+
+    // 輝度スプライト
+    m_pLuminance_Sprite->Draw(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+
+    // ************************************************************************
+    // 
+    // 取り出した輝度にブラーを掛けて、ブルーム効果にする
+    // 輝度抽出テクスチャにダウンサンプリングしたガウスブラーを掛ける
+    //
+    // ************************************************************************
+    m_pGaussianBlur[0].ExcuteOnGPU(renderer, 8.0f);
+    m_pGaussianBlur[1].ExcuteOnGPU(renderer, 8.0f);
+    m_pGaussianBlur[2].ExcuteOnGPU(renderer, 8.0f);
+    m_pGaussianBlur[3].ExcuteOnGPU(renderer, 8.0f);
+
+    // 加算モード
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ADD);
+
+    // 最終合成用レンダリングターゲットに変更
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);    // 深度テストなし
+
+    // ブラー合成
+    m_pSceneFinal_Sprite->Draw(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】フレームバッファにコピーするパス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
+{
+    // レンダリングターゲットをフレームバッファに変更
+    renderer.ChangeRenderTargetFrameBuffer();
+
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
+    // シーンのテクスチャを表示する
+    m_pCopyToFrameBuffer_Sprite->Draw(renderer);
+}
+
+
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】レンダーターゲットの作成
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
+{
+    bool result = true;
+
+    //========================================================================================
+    //
+    //
+    /* レンダリングターゲット作成 */
+    //
+    //
+    //========================================================================================
+    // ****************************************************************
+    // アルベド
+    // ****************************************************************
+    m_pAlbedo_RT = new DX_RenderTarget();
+    result = m_pAlbedo_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // 法線
+    // ****************************************************************
+    m_pNormal_RT = new DX_RenderTarget();
+    result = m_pNormal_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // スペキュラ
+    // ****************************************************************
+    m_pSpecular_RT = new DX_RenderTarget();
+    result = m_pSpecular_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // デプス
+    // ****************************************************************
+    m_pDepth_RT = new DX_RenderTarget();
+    result = m_pDepth_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_UNKNOWN,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // シーン最終合成用
+    // ****************************************************************
+    m_pSceneFinal_RT = new DX_RenderTarget();
+    result = m_pSceneFinal_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // 輝度抽出用
+    // ****************************************************************
+    m_pLuminance_RT = new DX_RenderTarget();
+    result = m_pLuminance_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),     // シーンと同じに
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // LVPからの深度値書き込みシャドウマップ
+    // ****************************************************************
+    m_pShadowMap_RT = new DX_RenderTarget();
+    result = m_pShadowMap_RT->Create(
+        renderer,
+        2048,       // 影の品質は何も対策しなければ解像度依存
+        2048,
+        1,
+        1,
+        DXGI_FORMAT_UNKNOWN,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ポストエフェクトの作成
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
+{
+    bool result = true;
+
+    /*************************************************************************
+    * 輝度抽出テクスチャにダウンサンプリングしたガウスブラーを掛ける
+    *************************************************************************/
+    m_pGaussianBlur = new GaussianBlur[BLUR_COUNT]();
+
+    result = m_pGaussianBlur[0].Setup(
+        renderer,
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "RT_Luminance",
+            m_pLuminance_RT->get_SRV_ComPtr(),
+            m_pLuminance_RT->get_Width(),
+            m_pLuminance_RT->get_Height()),
+        0
+    );
+    if (!result)return false;
+
+    // 2 / 1
+    result = m_pGaussianBlur[1].Setup(
+        renderer,
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur1",
+            m_pGaussianBlur[0].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 2,
+            m_pLuminance_RT->get_Height() / 2),
+        1
+    );
+    if (!result)return false;
+
+    // 4 / 1
+    result = m_pGaussianBlur[2].Setup(
+        renderer,
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur2",
+            m_pGaussianBlur[1].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 4,
+            m_pLuminance_RT->get_Height() / 4),
+        2
+    );
+    if (!result)return false;
+
+    // 8 / 1
+    result = m_pGaussianBlur[3].Setup(
+        renderer,
+        ResourceManager::Instance().Convert_SRVToTexture(
+            "DownBlur3",
+            m_pGaussianBlur[2].get_AfterBlurTexture(),
+            m_pLuminance_RT->get_Width() / 8,
+            m_pLuminance_RT->get_Height() / 8),
+        3
+    );
+    if (!result)return false;
+
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】レンダーターゲット用スプライトの作成
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
+{
+    bool result = true;
+
+    //========================================================================================
+    //
+    //
+    /* レンダリングターゲット用スプライト */
+    //
+    //
+    //========================================================================================
+    /*************************************************************************
+    * アルベド用
+    *************************************************************************/
+    CreateSpriteInfo sprite;
+    sprite.pRenderer = &renderer;
+    sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+    sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
+    sprite.ObjTag = "RenderTarget1";
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(), m_pAlbedo_RT->get_Height());
+    
+    // スプライト取得
+    m_pAlbed_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+    
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
+    * 法線用
+    *************************************************************************/
+    sprite.ObjTag = "RenderTarget2";
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
+    
+    // スプライト取得
+    m_pNormal_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
+    * スペキュラ用
+    *************************************************************************/
+    sprite.ObjTag = "RenderTarget3";
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
+    
+    // スプライト取得
+    m_pSpecular_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
+    * Z値用
+    *************************************************************************/
+    sprite.ObjTag = "RenderTarget4";
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr(), m_pDepth_RT->get_Width(), m_pDepth_RT->get_Height());
+    
+    // スプライト取得
+    m_pDepth_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
+    * ライティングパス出力用
+    *************************************************************************/
+    sprite.ObjTag = "DefferdLightingSprite";
+    sprite.Width = 1.0f;
+    sprite.Height = 1.0f;
+    sprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT1");
+    sprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture("RT2");
+    sprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture("RT3");
+    sprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture("RT4");
+    sprite.pTextureMap[4] = ResourceManager::Instance().Convert_SRVToTexture(
+        "ShadowMap",
+        m_pShadowMap_RT->get_DepthSRV_ComPtr(),
+        m_pShadowMap_RT->get_Width(),
+        m_pShadowMap_RT->get_Height()
+    );
+    sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
+
+    // スプライト取得
+    m_pDefferdLighting_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
+    * 輝度抽出用スプライト
+    *************************************************************************/
+    CreateSpriteInfo luminanceSprite;
+    luminanceSprite.pRenderer = &renderer;
+    luminanceSprite.IsActive = false;
+    luminanceSprite.ObjTag = "LuminanceSprite";
+    luminanceSprite.Width = 1.0f;
+    luminanceSprite.Height = 1.0f;
+    luminanceSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture(
+        "RT_SceneFinal",
+        m_pSceneFinal_RT->get_SRV_ComPtr(),
+        m_pSceneFinal_RT->get_Width(),
+        m_pSceneFinal_RT->get_Height()
+    );
+    luminanceSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    luminanceSprite.ShaderType = SHADER_TYPE::POST_LUMINANCE_FILTER;
+
+    // スプライト取得
+    m_pLuminance_Sprite = MeshFactory::CreateSprite(luminanceSprite)->get_Component<SpriteRenderer>();
+
+    /*************************************************************************
+    * フレームバッファにコピーする用のスプライト
+    *************************************************************************/
+    CreateSpriteInfo copyToFrameBufferSprite;
+    copyToFrameBufferSprite.pRenderer = &renderer;
+    copyToFrameBufferSprite.IsActive = false;
+    copyToFrameBufferSprite.ObjTag = "CopyToFrameBufferSprite";
+    copyToFrameBufferSprite.Width = 1.0f;
+    copyToFrameBufferSprite.Height = 1.0f;
+    copyToFrameBufferSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_SceneFinal");
+    copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+
+    // スプライト取得
+    m_pCopyToFrameBuffer_Sprite = MeshFactory::CreateSprite(copyToFrameBufferSprite)->get_Component<SpriteRenderer>();
+
+    /*************************************************************************
+    * 最終合成用スプライト
+    *************************************************************************/
+    CreateSpriteInfo finalSprite;
+    finalSprite.pRenderer = &renderer;
+    finalSprite.IsActive = false;
+    finalSprite.ObjTag = "FinalSprite";
+    finalSprite.Width = 1.0f;
+    finalSprite.Height = 1.0f;
+    finalSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture(
+        "RT_Luminance"
+    );
+    finalSprite.pTextureMap[1] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur1"
+    );
+    finalSprite.pTextureMap[2] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur2"
+    );
+    finalSprite.pTextureMap[3] = ResourceManager::Instance().Convert_SRVToTexture(
+        "DownBlur3"
+    );
+    finalSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    finalSprite.ShaderType = SHADER_TYPE::POST_KAWASE_FILTER;
+
+    // スプライト取得
+    m_pSceneFinal_Sprite = MeshFactory::CreateSprite(finalSprite)->get_Component<SpriteRenderer>();
+
+
+    return true;
+}
+
+

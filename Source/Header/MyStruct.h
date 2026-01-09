@@ -251,3 +251,11 @@ enum TEXTURE_MAP
     TEXTURE_MAP_SPECULAR,	// ƒXƒyƒLƒ…ƒ‰	”½ŽËŒõ
 };
 
+
+struct InstanceData
+{
+    DirectX::XMMATRIX World;
+    VECTOR4::VEC4 Color;
+    VECTOR2::VEC2 UV;
+};
+

@@ -7,6 +7,7 @@
 #include "Path.h"
 #include "DX_RenderTarget.h"
 #include "BlendManager.h"
+#include "RenderPipeline.h"
 #include <string>
 
 //*---------------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ RendererEngine::RendererEngine() :
     m_pDepthStencil(nullptr),
     m_pDepthStencilView(nullptr),
     m_pVertexBuffer(nullptr),
+    m_pIndexBuffer(nullptr),
     m_pSamplerLinear(nullptr),
     m_pSamplerShadow(nullptr),
     m_pRasterState_NoneCull(nullptr),
@@ -31,6 +33,8 @@ RendererEngine::RendererEngine() :
     m_pRasterState_BackCull(nullptr),
     m_pDepthStencilState(nullptr),
     m_pDepthTestDisabled_DSS(nullptr),
+    m_pRendererPipeline(nullptr),
+    m_CrntRenderPass(RENDER_PASS::MAIN),
     //m_pBlendStateAlpha(nullptr),
     //m_pBlendStateAdd(nullptr),
     //m_pBlendStateSub(nullptr),
@@ -110,7 +114,10 @@ bool RendererEngine::Init(HWND hWnd)
 
     m_StartTime = timeGetTime();    // 開始時間取得
 
+    // 投影変換行列の設定
     SetupProjectionTransform(m_ScreenWidht, m_Screenheight);
+
+
 
     return true;
 }
@@ -538,58 +545,6 @@ HRESULT RendererEngine::InitDX11_Sampler()
     return hr;
 }
 
-
-//*---------------------------------------------------------------------------------------
-//* @:RendererEngine Class 
-//*【?】ブレンドステートの初期化
-//* 引数：なし
-//* 戻値：成功したか
-//*----------------------------------------------------------------------------------------
-//HRESULT RendererEngine::InitDX11_BlendState()
-//{
-//    /* ブレンドステート設定 */
-//
-//    HRESULT hr = S_OK;
-//
-//    D3D11_BLEND_DESC blendDesc;
-//    ZeroMemory(&blendDesc, sizeof(blendDesc));
-//    blendDesc.AlphaToCoverageEnable       = FALSE;  // α値をカバレッジマスクに変換するか(高密度の葉のようなものに使用するといいらしい？)
-//    blendDesc.IndependentBlendEnable      = FALSE;  // 複数のレンダーターゲットでブレンド設定を独立させるかどうか
-//    blendDesc.RenderTarget[0].BlendEnable = TRUE;   // そのレンダーターゲットのブレンド設定を有効にするかどうか
-//
-//    // αブレンド
-//    blendDesc.RenderTarget[0].BlendOp               = D3D11_BLEND_OP_ADD;
-//    blendDesc.RenderTarget[0].DestBlend             = D3D11_BLEND_INV_SRC_ALPHA;
-//    blendDesc.RenderTarget[0].SrcBlend              = D3D11_BLEND_SRC_ALPHA;
-//    blendDesc.RenderTarget[0].BlendOpAlpha          = D3D11_BLEND_OP_ADD;
-//    blendDesc.RenderTarget[0].DestBlendAlpha        = D3D11_BLEND_ZERO;
-//    blendDesc.RenderTarget[0].SrcBlendAlpha         = D3D11_BLEND_ONE;
-//    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-//    hr = m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAlpha);
-//    if (FAILED(hr))return hr;
-//
-//    // 加算ブレンド
-//    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_ADD;
-//    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-//    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
-//    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateAdd);
-//    if (FAILED(hr))return hr;
-//
-//    // 減算ブレンド
-//    blendDesc.RenderTarget[0].BlendOp   = D3D11_BLEND_OP_SUBTRACT;
-//    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-//    blendDesc.RenderTarget[0].SrcBlend  = D3D11_BLEND_SRC_ALPHA;
-//    m_pd3dDevice->CreateBlendState(&blendDesc, &m_pBlendStateSub);
-//    if (FAILED(hr))return hr;
-//
-//    // ブレンドステートを設定 ( ここではとりまαブレンドで )
-//    float blendFactor[4]{ 0.0f,0.0f,0.0f,0.0f };
-//    m_pImmediateContext->OMSetBlendState(m_pBlendStateAlpha, blendFactor, 0xffffffff);
-//
-//    return hr;
-//}
-//
-
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】リソース解放
@@ -606,9 +561,6 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pDepthStencilState);
     SAFE_RELEASE(m_pSamplerLinear);
     SAFE_RELEASE(m_pSamplerShadow);
-    //SAFE_RELEASE(m_pBlendStateAlpha);
-    //SAFE_RELEASE(m_pBlendStateAdd);
-    //SAFE_RELEASE(m_pBlendStateSub);
     SAFE_RELEASE(m_pVertexBuffer);
     SAFE_RELEASE(m_pDepthStencil);
     SAFE_RELEASE(m_pDepthStencilView);
@@ -694,6 +646,45 @@ void RendererEngine::RegisterCullMode(CULL_MODE mode)
     }
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】レンダリングパイプラインのセットアップ
+//* 引数：なし
+//* 戻値：成功か
+//*----------------------------------------------------------------------------------------
+bool RendererEngine::CreateRenerererPipeline(RENDER_PIPELINE_STATE type)
+{
+    switch (type)
+    {
+    case RENDER_PIPELINE_STATE::NONE:
+        return false;
+        break;
+    case RENDER_PIPELINE_STATE::DEFAULT:
+        // レンダーパイプラインの作成
+        m_pRendererPipeline = new RenderPipeline();
+
+        // レンダーパイプライン初期化
+        if (!m_pRendererPipeline->Setup(*this))
+        {
+            return false;
+        }
+        break;
+    default:
+        return false;
+        break;
+    }
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】デフォルトレンダリングパイプラインの実行
+//* 引数：なし
+//* 戻値：なし
+//*----------------------------------------------------------------------------------------
+void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type)
+{
+    m_pRendererPipeline->Execute(*this);
+}
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 

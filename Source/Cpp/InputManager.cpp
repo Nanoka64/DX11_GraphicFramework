@@ -24,16 +24,28 @@ bool InputManager::Init(HWND hWnd)
     m_InputStopFlag = false;
 
     hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pDInput, nullptr);
-    if (FAILED(hr))return false;
+    if (FAILED(hr)) {
+        MessageBox(NULL, "DirectInput8Create", "Error", MB_OK);
+        return false;
+    }
     
     hr = m_pDInput->CreateDevice(GUID_SysKeyboard, &m_pKeyDevice, nullptr);
-    if (FAILED(hr))return false;
+    if (FAILED(hr)) {
+        MessageBox(NULL, "CreateDevice", "Error", MB_OK);
+        return false;
+    }
 
     hr = m_pKeyDevice->SetDataFormat(&c_dfDIKeyboard);
-    if (FAILED(hr))return false;
+    if (FAILED(hr)) {
+        MessageBox(NULL, "SetDataFormat", "Error", MB_OK);
+        return false;
+    }
 
     hr = m_pKeyDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
-    if (FAILED(hr))return false;
+    if (FAILED(hr)) {
+        MessageBox(NULL, "SetCooperativeLevel", "Error", MB_OK);
+        return false;
+    }
 
     // ê≥èÌèIóπ
     return true;
