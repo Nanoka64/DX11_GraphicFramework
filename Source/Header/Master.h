@@ -1,4 +1,5 @@
 #pragma once
+#include "ResourceManager.h"
 #include "BlendManager.h"
 #include "ShaderManager.h"
 #include "LightManager.h"
@@ -15,4 +16,5 @@ public:
 	static DirectWriteManager	* m_pDirectWriteManager;// 文字管理
 	static BlendManager			* m_pBlendManager;		// ブレンド管理
 	static GameObjectManager	* m_pGameObjectManager;	// オブジェクト管理
+	static ResourceManager		* m_pResourceManager;	// リソース管理
 };

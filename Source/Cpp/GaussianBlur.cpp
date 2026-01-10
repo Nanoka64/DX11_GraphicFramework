@@ -208,7 +208,7 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     verticalBlurSprite.ObjTag = "VerticalBlurSprite" + std::to_string(m_Id);
     verticalBlurSprite.Width = 1.0f;
     verticalBlurSprite.Height = 1.0f;
-    verticalBlurSprite.pTextureMap[0] = ResourceManager::Instance().Convert_SRVToTexture("RT_HorizontalBlur" + std::to_string(m_Id), m_pHorizontalBlur->get_SRV_ComPtr());
+    verticalBlurSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT_HorizontalBlur" + std::to_string(m_Id), m_pHorizontalBlur->get_SRV_ComPtr());
     verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;
     m_pVerticalBlurSprite = MeshFactory::CreateSprite(verticalBlurSprite);

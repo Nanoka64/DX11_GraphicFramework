@@ -25,7 +25,7 @@ using namespace GIGA_Engine;
 std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &info)
 {
     // モデルの読み込み
-    std::weak_ptr<ModelData> modeldata = ResourceManager::Instance().LoadModel(info.Path.c_str());
+    std::weak_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.Path.c_str());
     if (modeldata.lock() == nullptr)return{};
 
     // オブジェクトの生成

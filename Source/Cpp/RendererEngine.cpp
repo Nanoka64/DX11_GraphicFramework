@@ -673,6 +673,8 @@ bool RendererEngine::CreateRenerererPipeline(RENDER_PIPELINE_STATE type)
         return false;
         break;
     }
+
+    return true;
 }
 
 //*---------------------------------------------------------------------------------------
@@ -709,8 +711,13 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h)
 
     mat = XMMatrixTranspose(mat);   // 転置
 
+    // 通常行列
     auto& cb = m_RenderParam.cbProjectionSet;
     XMStoreFloat4x4(&cb.Data.Projection, mat);
+
+    // 逆行列
+    mat = XMMatrixInverse(NULL, mat);
+    XMStoreFloat4x4(&cb.Data.InvProjection, mat);
 
     // サブリソース
     D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -734,6 +741,9 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h)
 
     // VSにProjectionMatrixをセット(ここで1度セットして以後不変)
     pDeviceContext->VSSetConstantBuffers(2, 1, &cb.pBuff);
+
+    // PSにも
+    pDeviceContext->PSSetConstantBuffers(2, 1, &cb.pBuff);
 
     return true;
 }
@@ -800,7 +810,7 @@ XMMATRIX RendererEngine::get_ProjectionMatrix()const
 //* @:RendererEngine Class 
 //*【?】ビュープロジェクション行列を取得
 //* 引数：なし
-//* 戻値：void
+//* 戻値：XMMATRIX
 //*----------------------------------------------------------------------------------------
 XMMATRIX RendererEngine::get_ViewProjectionMatrix() const
 {
@@ -814,7 +824,7 @@ XMMATRIX RendererEngine::get_ViewProjectionMatrix() const
 //* @:RendererEngine Class 
 //*【?】ビュープロジェクション行列の逆行列取得
 //* 引数：なし
-//* 戻値：void
+//* 戻値：XMFLOAT4X4
 //*----------------------------------------------------------------------------------------
 XMFLOAT4X4 RendererEngine::get_ViewProjectionInvMatrix()
 {

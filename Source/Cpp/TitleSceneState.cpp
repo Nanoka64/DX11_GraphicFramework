@@ -44,7 +44,7 @@ void TitleSceneState::OnEnter(SceneManager* pOwner)
     //uv[4] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // ¶
     //uv[5] = MakeSpriteUV(0.0f, 0.0f, 2048.0f, 2048.0f, 2048.0f, 2048.0f);    // — 
     //MATERIAL* mat = new MATERIAL();
-    //mat->Diffuse.Texture = ResourceManager::Instance().LoadTexture(L"Resource/Texture/ŠO•ÇW048.jpg");
+    //mat->Diffuse.Texture = Master::m_pResourceManager->LoadTexture(L"Resource/Texture/ŠO•ÇW048.jpg");
     //if (!pCubu->Setup(*m_pRenderer, mat, 1));
 
     //ObjectManager::Instance().add_Object(std::move(pCubu));

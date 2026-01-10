@@ -192,6 +192,7 @@
     <ClInclude Include="Source\Header\IChildSceneState.h" />
     <ClInclude Include="Source\Header\LightManager.h" />
     <ClInclude Include="Source\Header\Master.h" />
+    <ClInclude Include="Source\Header\Material.h" />
     <ClInclude Include="Source\Header\ModelData.h" />
     <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
     <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
     <ClCompile Include="Source\Cpp\LightManager.cpp" />
+    <ClCompile Include="Source\Cpp\Material.cpp" />
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -506,6 +508,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shader\DoF_Filter_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="Source\Shader\GaussianBlur_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

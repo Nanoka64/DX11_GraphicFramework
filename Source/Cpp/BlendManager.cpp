@@ -109,6 +109,15 @@ std::unique_ptr<IDX_BlendState>  BlendManager::BlendStateFactory(BLEND_MODE type
 		info.renderTargets[0].srcBlend				= D3D11_BLEND_SRC_ALPHA;
 		break;
 	}
+	case BLEND_MODE::ALPHA_TRANS:	/* アルファ合成ブレンド ====================*/
+	{
+		info.alphaToCoverageEnable					= FALSE;
+		info.renderTargets[0].blendEnable			= TRUE;
+		info.renderTargets[0].blendOp				= D3D11_BLEND_OP_ADD;
+		info.renderTargets[0].destBlend				= D3D11_BLEND_INV_SRC_ALPHA;
+		info.renderTargets[0].srcBlend				= D3D11_BLEND_SRC_ALPHA;
+		break;
+	}
 	case BLEND_MODE::ADD:	/* 加算合成 ====================*/
 	{
 		info.alphaToCoverageEnable					= FALSE;

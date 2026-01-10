@@ -123,7 +123,7 @@ private:
     const aiScene *m_pScene;				// シーン情報
 	ModelMesh *m_pMeshes;					// メッシュ
     std::vector<BoneInfo> m_BoneList;		// ボーンリスト
-    std::vector<MATERIAL> m_MaterialList;	// マテリアル
+    std::vector<Material> m_MaterialList;	// マテリアル
 
 	// ボーン変換用定数バッファ
 	CB_BONES_DATA_SET *m_pConstanrBufferBonesData;	// ボーン用
@@ -140,7 +140,7 @@ public:
 	~ModelData();
 
 	bool Setup(RendererEngine &render, const char *filePath);	// モデルデータのセットアップ
-	bool SetupTextureMap(MATERIAL matData, int matIndex);	// テクスチャマップ設定 Setup後に呼ぶ
+	bool SetupTextureMap(Material matData, int matIndex);	// テクスチャマップ設定 Setup後に呼ぶ
 	void set_ShaderType(SHADER_TYPE type) { m_ShaderType = type; }	// シェーダタイプ設定
 	void set_ShadowShaderType(SHADER_TYPE type) { m_ShadowShaderType = type; }	// シャドウ用シェーダタイプ設定
 
@@ -160,7 +160,7 @@ public:
 	
 	/* ボーン・マテリアル */
 	const std::vector<BoneInfo> &get_BoneList() const { return m_BoneList; }
-	const std::vector<MATERIAL> &get_MaterialList() const { return m_MaterialList; }
+	const std::vector<Material> &get_MaterialList() const { return m_MaterialList; }
 
 	/* Assimp関連 */
 	const Assimp::Importer &get_Importer() const { return m_Importer; }

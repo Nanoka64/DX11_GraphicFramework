@@ -32,12 +32,12 @@ float4 PSMain(PS_IN input) : SV_TARGET
 {
     // ブラー画像をサンプリングし平均を取って出力
     float4 combineColor = g_tTexture0.Sample(g_sSampler, input.UV);
-    combineColor += g_tTexture1.Sample(g_sSampler, input.UV);
-    combineColor += g_tTexture2.Sample(g_sSampler, input.UV);
-    combineColor += g_tTexture3.Sample(g_sSampler, input.UV);
+    combineColor  += g_tTexture1.Sample(g_sSampler, input.UV);
+    combineColor  += g_tTexture2.Sample(g_sSampler, input.UV);
+    combineColor  += g_tTexture3.Sample(g_sSampler, input.UV);
+    
     combineColor /= 4.0f;
     combineColor.a = 1.0f;
-    
     
     return combineColor;
 }

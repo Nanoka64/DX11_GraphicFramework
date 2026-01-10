@@ -175,8 +175,8 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             g_Skneed_Layout,
         },
         {
-            /* シャドウマップ 多分使わないかも*/
-            SHADER_TYPE::POST_SHADOW_RECIEVER,
+            /* 被写界深度 */
+            SHADER_TYPE::POST_DEPTH_OF_FILED,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         },
@@ -445,11 +445,10 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;     
         case SHADER_TYPE::POST_SHADOWMAP_SKINNED:            // スキニングモデル用シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_Skinned_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;           
+        case SHADER_TYPE::POST_DEPTH_OF_FILED:                         // 被写界深度
+            hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;     
-        case SHADER_TYPE::POST_SHADOW_RECIEVER:             // シャドウマップ
-            hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
-            break;
-        
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -532,10 +531,10 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;     
         case SHADER_TYPE::POST_SHADOWMAP_SKINNED:                   // シャドウマップ
             this->LoadCSOFile(HLSL_CSO__ShadowMap_Skinned_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::POST_DEPTH_OF_FILED:                          // 被写界深度
+            this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;     
-        case SHADER_TYPE::POST_SHADOW_RECIEVER:              // シャドウマップ
-            this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);
-            break;
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -651,10 +650,10 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;    
         case SHADER_TYPE::POST_SHADOWMAP_SKINNED:            // スキニングモデル用シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_Skinned_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;        
+        case SHADER_TYPE::POST_DEPTH_OF_FILED:                         // 被写界深度
+            hr = this->CompileShader(HLSL__DoF_Filter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
-        case SHADER_TYPE::POST_SHADOW_RECIEVER:                // シャドウマップ
-            hr = this->CompileShader(HLSL__ShadowReciever_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
-            break;
 
 
         default:
@@ -731,11 +730,10 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;     
         case SHADER_TYPE::POST_SHADOWMAP_SKINNED:
             this->LoadCSOFile(HLSL_CSO__ShadowMap_Skinned_PATH.c_str(), &csoByteCode);
+            break;       
+        case SHADER_TYPE::POST_DEPTH_OF_FILED:
+            this->LoadCSOFile(HLSL_CSO__DoF_Filter_PS_PATH.c_str(), &csoByteCode);
             break;     
-        case SHADER_TYPE::POST_SHADOW_RECIEVER:
-            this->LoadCSOFile(HLSL_CSO__ShadowReciever_PATH.c_str(), &csoByteCode);
-            break;
-        
         
         default:
             MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);

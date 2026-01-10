@@ -99,7 +99,7 @@ MeshInfoFactory::~MeshInfoFactory()
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine& renderer, MATERIAL* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
 {
 	auto meshData = std::make_shared<MeshResourceData>();
 	WORD indices[] = { 0, 1, 2, 1, 3, 2 };
@@ -167,7 +167,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine& renderer, MATERIAL* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
@@ -266,7 +266,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngine& renderer, MATERIAL* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
@@ -348,7 +348,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngi
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngine& renderer, MATERIAL* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();

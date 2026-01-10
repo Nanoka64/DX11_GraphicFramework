@@ -71,7 +71,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     if (m_pMeshResource.lock() == nullptr) return;
     auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
     auto pDeviceContext             = renderer.get_DeviceContext();
-    std::vector<MATERIAL>matList    = modelData->get_MaterialList();
+    std::vector<Material>matList    = modelData->get_MaterialList();
     const aiScene *pScene           = modelData->get_Scene();
     ModelMesh *pMeshes              = modelData->get_Meshes();
     UINT meshNum                    = modelData->get_MeshNum();
@@ -112,10 +112,9 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 
         // マテリアル情報セット ==========================
         CB_MATERIAL mat{};
-        mat.Diffuse = matList[0].DiffuseColor;
-        mat.Specular = matList[0].SpecularColor;
-        mat.Normal = matList[0].NormalColor;
-        mat.SpecularPower = matList[0].SpecularPower;
+        mat.Diffuse = matList[0].m_DiffuseColor;
+        mat.Specular = matList[0].m_SpecularColor;
+        mat.SpecularPower = matList[0].m_SpecularPower;
         CB_MatSet->Data = mat;
 
         // 定数バッファに転送
@@ -141,21 +140,21 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
             /* ビューの設定 */
             {
                 // ディフューズ
-                if (mat.Diffuse.Texture.lock() != nullptr) {
-                    auto diff = mat.Diffuse.Texture.lock()->get_SRV();
+                if (mat.m_DiffuseMap.Texture.lock() != nullptr) {
+                    auto diff = mat.m_DiffuseMap.Texture.lock()->get_SRV();
                     if (diff != nullptr)
                         pDeviceContext->PSSetShaderResources(0, 1, &diff);
                 }
 
                 // ノーマル
-                if (mat.Normal.Texture.lock() != nullptr) {
-                    auto norm = mat.Normal.Texture.lock()->get_SRV();
+                if (mat.m_NormalMap.Texture.lock() != nullptr) {
+                    auto norm = mat.m_NormalMap.Texture.lock()->get_SRV();
                     if (norm != nullptr)
                         pDeviceContext->PSSetShaderResources(1, 1, &norm);
                 }
                 // スペキュラ
-                if (mat.Specular.Texture.lock() != nullptr) {
-                    auto spec = mat.Specular.Texture.lock()->get_SRV();
+                if (mat.m_SpecularMap.Texture.lock() != nullptr) {
+                    auto spec = mat.m_SpecularMap.Texture.lock()->get_SRV();
                     if (spec != nullptr)
                         pDeviceContext->PSSetShaderResources(2, 1, &spec);
                 }

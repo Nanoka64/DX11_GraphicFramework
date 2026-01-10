@@ -24,6 +24,7 @@ LightManager            *Master::m_pLightManager        = nullptr;  // ƒ‰ƒCƒgŠÇ—
 BlendManager            *Master::m_pBlendManager        = nullptr;  // ƒuƒŒƒ“ƒhŠÇ—
 DirectWriteManager      *Master::m_pDirectWriteManager  = nullptr;  // •¶ŽšŠÇ— 
 GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // ƒIƒuƒWƒFƒNƒgŠÇ—
+ResourceManager         *Master::m_pResourceManager     = nullptr;  // ƒŠƒ\[ƒXŠÇ—
 
 
 //*---------------------------------------------------------------------------------------
@@ -79,6 +80,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pBlendManager         = new BlendManager();          // ƒuƒŒƒ“ƒhŠÇ—
     Master::m_pDirectWriteManager   = new DirectWriteManager();    // •¶ŽšŠÇ— 
     Master::m_pGameObjectManager    = new GameObjectManager();     // ƒIƒuƒWƒFƒNƒgŠÇ—
+    Master::m_pResourceManager      = new ResourceManager();        // ƒŠƒ\[ƒXŠÇ—
 
     // *************************************************************************************************
     /**  ƒEƒCƒ“ƒhƒE‚Ì‰Šú‰» **/
@@ -133,14 +135,14 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_KAWASE_FILTER,            SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOWMAP,                SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED,        SHADER_CREATE_TYPE::RUNTIME))return false;
-    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOW_RECIEVER,          SHADER_CREATE_TYPE::RUNTIME))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_DEPTH_OF_FILED,           SHADER_CREATE_TYPE::CSO))return false;
 
 
     // *************************************************************************************************
     //** ƒŠƒ\[ƒXŠÇ—‚Ì‰Šú‰» **/
     //** •`‰æƒNƒ‰ƒX‚ÌŽãŽQÆ‚ð“ü‚ê‚é   **/
     // *************************************************************************************************
-    if (!ResourceManager::Instance().Init(m_pRenderer))
+    if (!Master::m_pResourceManager->Init(m_pRenderer))
     {
         assert(false);
         return false;
@@ -244,7 +246,7 @@ int DXApp::MainLoop()
         else
         {
             crntTime = timeGetTime();   // Œ»ÝŽž‚ðXV
-            float difference = (crntTime - lastTime);
+            DWORD difference = (crntTime - lastTime);
 
             // Œ»ÝŽž‚Æ‘O‰ñXVŽž‚Ì·•ª‚ª‚P‚U.‚U‚Ums‚æ‚è‘å‚«‚¯‚ê‚ÎƒQ[ƒ€ˆ—‚ðŽÀs‚·‚é
             if (difference > 1000.0f / g_Fps)

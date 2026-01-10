@@ -5,6 +5,7 @@
 #include "ResourceManager.h"    // ƒŠƒ\[ƒX
 #include "RendererEngine.h"
 #include "Texture.h"
+#include "ModelData.h"
 #include <DirectXTex.h>
 #include <locale>
 #include <codecvt>
@@ -169,15 +170,12 @@ std::shared_ptr<ModelData> ResourceManager::LoadModel(const char *path)
 //*----------------------------------------------------------------------------------------
 std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string &tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv, UINT w, UINT h)
 {
-    if (pSrv == nullptr)
-    {
-        auto it = m_RTTextureMap.find(tag);
+    auto it = m_RTTextureMap.find(tag);
 
-        // Šù‚É“o˜^Ï‚İ‚È‚ç‚»‚ê‚ğ•Ô‚·
-        if (it != m_RTTextureMap.end())
-        {
-            return it->second;
-        }
+    // Šù‚É“o˜^Ï‚İ‚È‚ç‚»‚ê‚ğ•Ô‚·
+    if (it != m_RTTextureMap.end())
+    {
+        return it->second;
     }
 
     // shared_ptr‚ğó‚¯æ‚é

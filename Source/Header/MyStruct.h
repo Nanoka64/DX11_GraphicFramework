@@ -12,7 +12,8 @@ struct SimpleVertex     // 頂点フォーマット
 // *******************************************************************
 struct CB_PROJECTION
 {
-    DirectX::XMFLOAT4X4 Projection;
+    DirectX::XMFLOAT4X4 Projection;	    // 透視投影行列
+    DirectX::XMFLOAT4X4 InvProjection;  // 逆行列
 };
 
 struct CB_PROJECTION_SET
@@ -131,14 +132,18 @@ struct CB_POINT_LIGHT_SET
 
 
 // *******************************************************************
-/* マテリアル用定数バッファ */
+/* 定数バッファに渡すためのマテリアル  */
 // *******************************************************************
 struct CB_MATERIAL{
     DirectX::XMFLOAT4 Diffuse;    // ディフューズ反射光
+
 	DirectX::XMFLOAT4 Specular;   // スペキュラ反射光
-    DirectX::XMFLOAT4 Normal;     // 法線
-	float SpecularPower;          // スペキュラの強さ
-	float Padding[3];             // パディング(16バイトアラインメント ※詳細はUtilityHeader.hlsli側を見て)
+	
+    float SpecularPower;          // スペキュラの強さ
+    float EmissivePower;          // 自己発光の強さ（ブルーム強度）
+    DirectX::XMFLOAT2 OffsetUV;   // UVオフセット（エネルギーの流れる感じとかの表現に使えそう ヘクトルみたいな）
+
+	//float Padding[2];             // パディング(16バイトアラインメント ※詳細はUtilityHeader.hlsli側を見て)
 };
 
 struct CB_MATERIAL_SET{
@@ -147,7 +152,8 @@ struct CB_MATERIAL_SET{
 };
 
 // *******************************************************************
-/* ワールド変換とマテリアル情報をまとめた定数バッファ */
+/* ワールド変換とマテリアル情報をまとめた定数バッファ 
+    ※使わないかも？ */
 // *******************************************************************
 struct CB_OBJECT3D_DATA{
     CB_TRANSFORM Transform;      // ワールド変換行列
@@ -202,45 +208,16 @@ struct NORMAL_MAP_DATA
 //* =========================================================================
 enum class BLEND_MODE
 {
-    NONE,   // 何もしない
-    ALPHA,  // アルファ
-    ADD,    // 加算
-    SUB,    // 減算
+    NONE,           // 何もしない
+    ALPHA,          // 半透明
+    ALPHA_TRANS,    // 半透明合成
+    ADD,            // 加算
+    SUB,            // 減算
 
     NUM,
 };
 
 
-// マテリアル情報 テクスチャの弱参照をそれぞれ持つ リソース管理から受け取る
-struct MATERIAL {
-    // 基本パラメータ================================================
-    VECTOR4::VEC4 DiffuseColor;   // ディフューズ反射光
-    VECTOR4::VEC4 SpecularColor;  // スペキュラ反射光
-    VECTOR4::VEC4 NormalColor;    // 法線
-    float SpecularPower;          // スペキュラの絞り強さ
-
-
-    // テクスチャマップ==============================================
-    DIFFUSE_MAP_DATA Diffuse;     // ディフューズマップ
-    NORMAL_MAP_DATA Normal;       // ノーマルマップ
-    SPECULAR_MAP_DATA Specular;   // スペキュラマップ
-
-    // UV=============================================================
-    Tool::UV::SpriteUV UV;      // UV情報
-    
-    BLEND_MODE BlendMode;       // ブレンドモード
-
-    MATERIAL():
-        DiffuseColor(VECTOR4::VEC4(1.f,1.f,1.f,1.f)),
-        SpecularColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
-        NormalColor(),
-        SpecularPower(0.0f),
-        UV(),
-        BlendMode(BLEND_MODE::NONE)
-    {
-
-    };
-};
 
 // テクスチャマップ
 enum TEXTURE_MAP

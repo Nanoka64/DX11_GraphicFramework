@@ -94,10 +94,9 @@ void MeshRenderer::Draw(RendererEngine& renderer)
 
         // マテリアル情報セット ==========================
         CB_MATERIAL mat{};
-        mat.Diffuse = meshInfo->pMaterials[0].DiffuseColor;
-        mat.Specular = meshInfo->pMaterials[0].SpecularColor;
-        mat.Normal = meshInfo->pMaterials[0].NormalColor;
-        mat.SpecularPower = meshInfo->pMaterials[0].SpecularPower;
+        mat.Diffuse = meshInfo->pMaterials[0].m_DiffuseColor;
+        mat.Specular = meshInfo->pMaterials[0].m_SpecularColor;
+        mat.SpecularPower = meshInfo->pMaterials[0].m_SpecularPower;
         cbMatSet->Data = mat;
 
         // 定数バッファに転送
@@ -118,13 +117,13 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         ID3D11ShaderResourceView *diffuseSRV = nullptr;
         ID3D11ShaderResourceView *normalSRV = nullptr;
         ID3D11ShaderResourceView *specularSRV = nullptr;
-        if (auto tex = meshInfo->pMaterials->Diffuse.Texture.lock()) {
+        if (auto tex = meshInfo->pMaterials->m_DiffuseMap.Texture.lock()) {
             diffuseSRV = tex.get()->get_SRV();
         }
-        if (auto tex = meshInfo->pMaterials->Normal.Texture.lock()) {
+        if (auto tex = meshInfo->pMaterials->m_NormalMap.Texture.lock()) {
             normalSRV = tex.get()->get_SRV();
         }
-        if (auto tex = meshInfo->pMaterials->Specular.Texture.lock()) {
+        if (auto tex = meshInfo->pMaterials->m_SpecularMap.Texture.lock()) {
             specularSRV = tex.get()->get_SRV();
         }
 
@@ -145,7 +144,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     UINT offset = 0;
     pContext->IASetVertexBuffers(0, 1, &vtxBuff, &vtxStride, &offset);      // 頂点バッファをセット
     pContext->IASetIndexBuffer(idxBuff, DXGI_FORMAT_R16_UINT, 0);           // インデックスバッファをセット
-    pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);// Set primitive topology 頂点の組み合わせ方
+    pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);

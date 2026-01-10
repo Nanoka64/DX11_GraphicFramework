@@ -8,7 +8,7 @@
 // 入力マテリアル情報
 struct InputMaterial
 {
-    MATERIAL* pMat; // マテリアル（MatNum分）
+    Material* pMat; // マテリアル（MatNum分）
     int MatIndex;   // マテリアル番号
 };
 
@@ -38,7 +38,6 @@ struct CreateModelInfo
 
     InputMaterial* MaterialData;    // マテリアル情報
     UINT MatNum;                    // マテリアル数
-
 
     // コンストラクタ
     CreateModelInfo() :

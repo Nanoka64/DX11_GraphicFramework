@@ -55,8 +55,8 @@ enum class SHADER_TYPE
     POST_LUMINANCE_FILTER,              // 輝度抽出用
     POST_KAWASE_FILTER,                 // 川瀬式ブルーム（ダウンサンプリングしたガウス適用後のテクスチャをぼかす）
     POST_SHADOWMAP,                     // シャドウマップ
-    POST_SHADOWMAP_SKINNED,              // シャドウマップスキニング用
-    POST_SHADOW_RECIEVER,               // シャドウの書き込み先用
+    POST_SHADOWMAP_SKINNED,             // シャドウマップスキニング用
+    POST_DEPTH_OF_FILED,                // 被写界深度
 
     /* AIにそれっぽいもの出してもらった
     FOWARD_UI_TEXT,   // テキスト UI用

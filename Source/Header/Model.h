@@ -30,7 +30,7 @@ private:
 	DirectX::XMMATRIX m_GlobalInversTransformMtx;	// 初期姿勢逆行列（モデルを原点に戻す際に必要）
 	Assimp::Importer m_Importer;			// インポーター
 	const aiScene *m_pScene;				// シーン情報
-	std::vector<MATERIAL> m_MaterialList;	// マテリアル
+	std::vector<Material> m_MaterialList;	// マテリアル
 
 	// Transform関連
 	VECTOR3::VEC3 m_Position;

@@ -63,7 +63,7 @@ BillboardResource::~BillboardResource()
 bool BillboardResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std::wstring& path)
 {
 	// テクスチャ読み込み
-	auto texture = ResourceManager::Instance().LoadWIC_Texture(path);
+	auto texture = Master::m_pResourceManager->LoadWIC_Texture(path);
 	if (texture == nullptr) {
 		return false;
 	}
@@ -79,13 +79,13 @@ bool BillboardResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const
 	case TEXTURE_MAP_NONE:
 		break;
 	case TEXTURE_MAP_DIFFUSE:
-		m_pMeshData->pMaterials[matIndex].Diffuse.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].m_DiffuseMap.Texture = texture;
 		break;
 	case TEXTURE_MAP_NORMAL:
-		m_pMeshData->pMaterials[matIndex].Normal.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].m_NormalMap.Texture = texture;
 		break;
 	case TEXTURE_MAP_SPECULAR:
-		m_pMeshData->pMaterials[matIndex].Specular.Texture = texture;
+		m_pMeshData->pMaterials[matIndex].m_SpecularMap.Texture = texture;
 		break;
 	default:
 		break;
@@ -154,7 +154,7 @@ bool BillboardResource::CreateCBuffer(ID3D11Device* pDevice)
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool BillboardResource::Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE type, MATERIAL* materials, UINT materialNum)
+bool BillboardResource::Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE type, Material* materials, UINT materialNum)
 {
 	auto pDevice = renderer.get_Device();
 

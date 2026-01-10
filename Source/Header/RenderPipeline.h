@@ -27,7 +27,8 @@ private:
     float m_GaussWeights[NUM_WEIGHTS];  // ガウス重み係数
 
     static const int BLUR_COUNT = 4;    // ブラー回数
-    class GaussianBlur *m_pGaussianBlur;// ガウスブラー
+    class GaussianBlur *m_pBloomGaussianBlur;// ブルーム用ガウスブラー
+    class GaussianBlur *m_pDOF_GaussianBlur; // 被写界深度用ガウスブラー
 
     // レンダーターゲットのスプライト
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;
@@ -38,7 +39,7 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pLuminance_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pCopyToFrameBuffer_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pSceneFinal_Sprite;
-
+    std::shared_ptr<class SpriteRenderer> m_pDoF_Sprite;
 public:
     RenderPipeline();
     ~RenderPipeline();
@@ -66,9 +67,9 @@ private:
     void Geometry_PathRender(RendererEngine &renderer);
     void Shadow_PathRender(RendererEngine &renderer);
     void Lighting_PathRender(RendererEngine &renderer);
+    void Forward_PathRender(RendererEngine &renderer);
     void PostEffect_PathRender(RendererEngine &renderer);
     void CopyToFrameBuffer_PathRender(RendererEngine &renderer);
-    void Forward_PathRender(RendererEngine &renderer);
 
     /// <summary>
     /// レンダーターゲットの作成

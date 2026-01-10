@@ -105,7 +105,7 @@ void SkyRenderer::Draw(RendererEngine& renderer)
     ID3D11ShaderResourceView* diffuseSRV = nullptr;
 
     // 今のところディフューズのみ
-    if (auto tex = meshData->pMaterials->Diffuse.Texture.lock()) {
+    if (auto tex = meshData->pMaterials->m_DiffuseMap.Texture.lock()) {
         diffuseSRV = tex.get()->get_SRV();
     }
     pContext->PSSetShaderResources(0, 1, &diffuseSRV);

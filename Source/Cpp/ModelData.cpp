@@ -145,12 +145,12 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 //* 引数：3.ファイルパス
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelData::SetupTextureMap(MATERIAL matData, int matIndex)
+bool ModelData::SetupTextureMap(Material matData, int matIndex)
 {
-    MATERIAL mat{};
+    Material mat{};
 
     // テクスチャ読み込み
-    //auto texture = ResourceManager::Instance().LoadTexture(path);
+    //auto texture = Master::m_pResourceManager->LoadTexture(path);
     //if (texture == nullptr) {
     //    return false;
     //}

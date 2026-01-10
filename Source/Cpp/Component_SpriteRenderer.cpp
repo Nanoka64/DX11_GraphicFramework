@@ -89,7 +89,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	}
 
 
-	// 定数バッファセット ==========================
+	// 拡張定数バッファセット ==========================
 
 	// 頂点シェーダ
 	if (m_VSUserExpandCBNum > 0)

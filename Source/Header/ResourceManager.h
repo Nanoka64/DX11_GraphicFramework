@@ -6,7 +6,6 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include "Texture.h"
-#include "ModelData.h"
 
 // =======================================================================================
 //      * ResourceManager Class *
@@ -16,31 +15,34 @@
 class ResourceManager
 {
 private:
-    // プライベートコンストラクタ・デストラクタ
-    ResourceManager() = default;
-    ~ResourceManager();
+    // コピー禁止
     ResourceManager(const ResourceManager &) = delete;
     ResourceManager &operator=(const ResourceManager &) = delete;
-
+	// ------------------------------------------------------
+     
     // テクスチャリソース Textureの共有ポインタを持つ
-    std::unordered_map<std::wstring, std::shared_ptr<Texture>> m_TexturesMap;
+    std::unordered_map<std::wstring, std::shared_ptr<class Texture>> m_TexturesMap;
 
     // レンダーターゲット用のテクスチャ
-    std::unordered_map<std::string, std::shared_ptr<Texture>> m_RTTextureMap;
+    std::unordered_map<std::string, std::shared_ptr<class Texture>> m_RTTextureMap;
     
     // モデルリソース
-    std::unordered_map<std::string, std::shared_ptr<ModelData>> m_ModelsMap;
+    std::unordered_map<std::string, std::shared_ptr<class ModelData>> m_ModelsMap;
+
+    // マテリアルリソース
+    std::unordered_map<std::string, std::shared_ptr<class Material>> m_pMaterialMap;
 
     std::weak_ptr<class RendererEngine> m_pRenderer;    // 描画クラスの弱参照を持つ
 
 public:
-    static ResourceManager &Instance(){
-        static ResourceManager instance;
-        return instance;
-    }
+    ResourceManager() = default;
+    ~ResourceManager();
+
     bool Init(std::shared_ptr<class RendererEngine> renderer);   // 初期化
     void Term();                            // 終了
     void Release();                         // 全開放
+
+
 
     /// <summary>
     /// WIC対応テクスチャのロード
@@ -62,7 +64,7 @@ public:
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    std::shared_ptr<ModelData> LoadModel(const char* path);                      
+    std::shared_ptr<class ModelData> LoadModel(const char* path);                      
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）
     std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv = NULL, UINT w = 0, UINT h = 0);
