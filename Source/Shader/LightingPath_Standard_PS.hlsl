@@ -80,6 +80,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     pointLig.Diffuse = float3(0, 0, 0);
     pointLig.Specular = float3(0, 0, 0);
     
+    float3 limLig = float3(0, 0, 0);
+    
     //************************************************************************
     // ディレクションライト計算
     //************************************************************************
@@ -88,6 +90,24 @@ float4 PSMain(PS_IN input) : SV_TARGET
         OUT_DiffAndSpec res = DirectionLightCalc(cb_DirLightData[dirIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
         dirLig.Diffuse += res.Diffuse;
         dirLig.Specular += res.Specular;
+        
+        // リムライト
+
+        // 視線の方向
+        float3 viewDir = normalize(cb_EyePos - worldPos.xyz);
+        
+        // ライトとサーフェスの法線の内積を計算
+        float power1 = 1.0f - max(0.0f, saturate(dot(normalize(cb_DirLightData[dirIdx].Direction), normal)));
+        
+        // 視線と法線の内積を計算
+        float power2 = 1.0f - max(0.0f, saturate(dot(viewDir, normal)));
+        
+        // 強さを決定
+        float limPower = power1 * power2;
+        limPower = pow(limPower, 3.0f);
+        
+        // リムライトを乗算
+        limLig += dirLig.Diffuse * limPower;
     }
     
     //************************************************************************
@@ -99,6 +119,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
         pointLig.Diffuse += res.Diffuse;
         pointLig.Specular += res.Specular;
     }
+
+    
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
@@ -106,9 +128,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ディレクションライト + ポイントライト + 天球 + アンビエント
     //float3 lighting = dirLig + pointLig + hemiLig + 0.1f;
     // 平行光源のみシャドウの影響を受けるので、一旦別で保持
-    float3 dirDiffuse = dirLig.Diffuse;
+    float3 dirDiffuse = dirLig.Diffuse + limLig;
     float3 dirSpecular = dirLig.Specular;
-    float3 diffuse  =  + pointLig.Diffuse + hemiLig + 0.1f;
+    float3 diffuse  =  + pointLig.Diffuse + hemiLig;
     float3 specular =  + pointLig.Specular;
     
     
@@ -158,6 +180,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.xyz * diffuse + specular;
+    //finalCol.xyz = saturate(finalCol.xyz);
     finalCol.a = 1.0f;
     
     return (finalCol);

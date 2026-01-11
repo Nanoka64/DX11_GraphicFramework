@@ -132,7 +132,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         Master::m_pDebugger->DG_Separator();        
 
         Master::m_pDebugger->DG_BulletText("DofBlur");
-        Master::m_pDebugger->DG_Image(m_pDOF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
+        Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->EndDebugWindow();
@@ -156,7 +156,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
     /* ポストエフェクトパス */
     PostEffect_PathRender(renderer);
 
-    /* フレームバッファにコピーするパス */
+    /* 最終パス（フレームバッファにコピー） */
     CopyToFrameBuffer_PathRender(renderer);
 
 
@@ -201,7 +201,7 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
 
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
-    renderer.RegisterCullMode(CULL_MODE::NONE);     // カリングなし
+    renderer.RegisterCullMode(CULL_MODE::BACK);     // 裏カリング
 
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
@@ -299,7 +299,7 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // スカイボックス用のデプスステンシル登録
     renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
-    // 表カリング スカイボックスは内側に表示しているため
+    // 表カリング スカイボックスはボックスの内側に表示しているため
     renderer.RegisterCullMode(CULL_MODE::FRONT);    
 
     auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
@@ -350,7 +350,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // ************************************************************************
 
     // 被写界深度用ガウスブラー実行
-    m_pDOF_GaussianBlur->ExcuteOnGPU(renderer, 4.0f);
+    m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, 4.0f);
    
     // 加算モード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
@@ -650,8 +650,8 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
     /*************************************************************************
     * 被写界深度用ブラーの作成
     *************************************************************************/
-    m_pDOF_GaussianBlur = new GaussianBlur();
-    result = m_pDOF_GaussianBlur->Setup(renderer,
+    m_pDoF_GaussianBlur = new GaussianBlur();
+    result = m_pDoF_GaussianBlur->Setup(renderer,
         Master::m_pResourceManager->Convert_SRVToTexture(
             "RT_SceneFinal",
             m_pSceneFinal_RT->get_SRV_ComPtr(),
@@ -841,7 +841,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     depthOfFieldSprite.pTextureMap[0] = 
         Master::m_pResourceManager->Convert_SRVToTexture(
             "DOF_GaussianBlur", 
-            m_pDOF_GaussianBlur->get_AfterBlurTexture(), 
+            m_pDoF_GaussianBlur->get_AfterBlurTexture(), 
             m_pSceneFinal_RT->get_Width(),
             m_pSceneFinal_RT->get_Height()
         );

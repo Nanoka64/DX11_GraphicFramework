@@ -27,6 +27,7 @@ using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
 using namespace Tool::UV;
+using namespace Tool;
 using namespace Input;
 
 using namespace GIGA_Engine;
@@ -94,7 +95,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
             mat[0].m_DiffuseColor = VEC4(0.4f, 0.4f, 0.6f, 1.0f);
             mat[0].m_SpecularPower = 150.0f;
-            mat[0].m_SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
+            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
@@ -305,6 +306,31 @@ bool SceneManager::Init(RendererEngine &renderer)
             auto obj = MeshFactory::CreateModel(model);
             obj->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
             obj->get_Component<Transform>()->set_Pos(0.0f, 00.0f, 10.0f);
+        }      
+        
+        /* 建物 モデルの生成 */
+        {
+            Material mat[1];
+            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Building/01/texture/building5-lo.jpg");
+            mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularPower = 150.0f;
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Building/01/building01.fbx";
+            model.ObjTag = "Building";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            auto obj = MeshFactory::CreateModel(model);
+            obj->get_Component<Transform>()->set_Scale(100.0f, 100.0f, 50.0f);
+            obj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
+            obj->get_Component<Transform>()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
         }
 
         /* 地面の生成 */
@@ -450,16 +476,24 @@ void SceneManager::Update(RendererEngine& renderer)
     rad = b_2Obj->get_Component<Transform>();
     rad->set_RotateToRad(0.0, 0.0, sin(a) * 0.5f);
 
-
     // ライトのデバッグ
-    Master::m_pDebugger->BeginDebugWindow("Light");
-    Master::m_pDebugger->DG_DragVec3("dir", &m_LightDir, 0.005f, -3.0f, 3.0f);
-    Master::m_pDebugger->DG_DragVec3("pos", &m_LightPos, 1.0f, -3000.0f, 3000.0f);
-    Master::m_pDebugger->DG_SliderFloat("DirLig_Intensity",1, &intensity, 0.0f, 100.0f);
-    Master::m_pDebugger->DG_SliderFloat("PointLig_Range", 1, &m_PointLightRange, 0.0f, 10000.0f);
-    Master::m_pDebugger->DG_SliderFloat("PointLig_Intensity", 1, &pointIntensity, 0.0f, 1000.0f);
-    Master::m_pDebugger->DG_DragVec3("PointLig_Pos", &pLigPos, 1.0f, -10000.0f, 10000.0f);
-    Master::m_pDebugger->DG_ColorEdit3("LigCol", &ligCol);
+
+    Master::m_pDebugger->BeginDebugWindow(  U8ToChar(u8"ライトの設定"));
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ディレクションライト")))
+    {
+        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"位置"), &m_LightPos, 1.0f, -3000.0f, 3000.0f);
+        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"方向"), &m_LightDir, 0.005f, -3.0f, 3.0f);
+        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"強度"), 1, &intensity, 0.0f, 100.0f);
+        Master::m_pDebugger->DG_TreePop();
+    }
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ポイントライト")))
+    {
+        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"位置"), &pLigPos, 1.0f, -10000.0f, 10000.0f);
+        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"範囲"), 1, &m_PointLightRange, 0.0f, 10000.0f);
+        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"強度"), 1, &pointIntensity, 0.0f, 1000.0f);
+        Master::m_pDebugger->DG_ColorEdit3(     U8ToChar(u8"カラー"), &ligCol);
+        Master::m_pDebugger->DG_TreePop();
+    }
     Master::m_pDebugger->EndDebugWindow();
 
     // オブジェクト更新

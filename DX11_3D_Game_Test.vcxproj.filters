@@ -157,6 +157,12 @@
     <Filter Include="ソース ファイル\Component\Game">
       <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL\PS\PostEffect">
+      <UniqueIdentifier>{f62cc94b-ba6b-483e-99c1-30e861c2fda3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor">
+      <UniqueIdentifier>{5d9de550-829d-4bc9-b7ac-2c892411e2e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -377,6 +383,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
       <Filter>ソース ファイル\DXLap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Material.cpp">
+      <Filter>ソース ファイル\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -632,6 +641,9 @@
     <ClInclude Include="Source\Header\RenderPipeline.h">
       <Filter>ソース ファイル\DXLap</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Material.h">
+      <Filter>ソース ファイル\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -694,29 +706,29 @@
     <FxCompile Include="Source\Shader\YBlur_VS.hlsl">
       <Filter>HLSL\VS</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\GaussianBlur_PS.hlsl">
-      <Filter>HLSL\PS\Foward</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\SkyBox_PS.hlsl">
       <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\Static_Tan_VS.hlsl">
       <Filter>HLSL\VS</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\GaussianBlur_PS.hlsl">
+      <Filter>HLSL\PS\PostEffect</Filter>
+    </FxCompile>
     <FxCompile Include="Source\Shader\HighLuminanceFilter_PS.hlsl">
-      <Filter>HLSL\PS\Foward</Filter>
+      <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\KawaseFilter_PS.hlsl">
-      <Filter>HLSL\PS\Foward</Filter>
+      <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\ShadowReciever.hlsl">
-      <Filter>HLSL</Filter>
+    <FxCompile Include="Source\Shader\DoF_Filter_PS.hlsl">
+      <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap.hlsl">
-      <Filter>HLSL</Filter>
+      <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap_Skinned.hlsl">
-      <Filter>HLSL</Filter>
+      <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

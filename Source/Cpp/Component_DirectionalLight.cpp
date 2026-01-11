@@ -72,7 +72,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
     dirData.SpecularIntensity = 0.5f;			// つよさ
 
     // シャドウマップの距離
-	float shadowDistance = 3500.0f;
+	float shadowDistance = 4000.0f;
 
 	// 注視点（プレイヤーを見るように）
 	m_FocusPoint = playerPos;
@@ -93,8 +93,8 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	);
 
 	// 正投影行列を作成する（ディレクションライトの場合こっちじゃないとダメっぽい？）
-	float width  = 700.0f;		// ライトがカバーする横幅 
-	float height = 700.0f;		// ライトがカバーする縦幅
+	float width  = 800.0f;		// ライトがカバーする横幅 
+	float height = 800.0f;		// ライトがカバーする縦幅
 	float nearZ  = 1.0f;		// ライトから見た描画開始距離
 	float farZ   = shadowDistance;  // ライトから見た描画終了距離
 

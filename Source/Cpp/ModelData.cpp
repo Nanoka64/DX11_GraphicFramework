@@ -56,7 +56,8 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 {
     // aiProcess_FlipUVs ＵＶ値をdirect3Dに合うようにしてくれる (Ｖ軸の反転)
     // 他のフラグもあったほうがいいやつらしい https://qiita.com/dpals39/items/1681d9101e58b5aefa27
-    u_int flag = aiProcess_Triangulate |
+    u_int flag = 
+        aiProcess_Triangulate |
         aiProcess_CalcTangentSpace |
         aiProcess_GenNormals |
         aiProcess_MakeLeftHanded |
@@ -69,7 +70,7 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
     // 不要なノードを勝手に追加しないようにする https://qiita.com/24ban/items/3cdb37188b74bcf1028c
     m_Importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 
-    /* ↓日本語は対応してないっぽい ↓*/
+    /* ↓日本語は無理っぽい ↓*/
     m_pScene = m_Importer.ReadFile(filePath, flag);	// ファイルの読み込み
 
     // 読み込み失敗なら返す

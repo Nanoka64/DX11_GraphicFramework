@@ -68,7 +68,7 @@ void SkyRenderer::Update(RendererEngine& renderer)
 void SkyRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-    auto meshData = m_pMeshResource.lock()->m_pMeshData;
+    std::shared_ptr<MeshResourceData> meshData = m_pMeshResource.lock()->m_pMeshData;
     CB_TRANSFORM_SET* cbTransSet = m_pMeshResource.lock()->m_pCBTransformSet;
     CB_MATERIAL_SET* cbMatSet = m_pMeshResource.lock()->m_pCBMaterialDataSet;
     ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
@@ -119,7 +119,6 @@ void SkyRenderer::Draw(RendererEngine& renderer)
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshData->NumIndex, 0, 0);
-
 }
 
 

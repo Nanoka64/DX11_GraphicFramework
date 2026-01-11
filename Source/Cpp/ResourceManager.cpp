@@ -73,13 +73,21 @@ std::shared_ptr<Texture> ResourceManager::LoadWIC_Texture(const std::wstring &pa
         auto texture = std::make_shared<Texture>();
 
         // ì«Ç›çûÇ›
-        if(FAILED(texture->Load_WIC(path, *render))) return nullptr;
+        if (FAILED(texture->Load_WIC(path, *render)))
+        {
+            std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
+            errMsg = Tool::WStringToString(path.c_str()) + errMsg;
+            int result = MessageBox(NULL, errMsg.c_str() , "Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
 
+            return nullptr;
+        }
         // îzóÒÇ…ìoò^
         m_TexturesMap[path] = std::move(texture);
 
         return m_TexturesMap[path];
     }
+
+
     return nullptr;
 }
 
@@ -110,8 +118,13 @@ std::shared_ptr<Texture> ResourceManager::LoadDDS_CubeMap_Texture(const std::wst
         auto texture = std::make_shared<Texture>();
 
         // ì«Ç›çûÇ›
-        if (FAILED(texture->Load_DDS_CubeMap(path, *render))) return nullptr;
-
+        if (FAILED(texture->Load_DDS_CubeMap(path, *render)))
+        {
+            std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
+            errMsg = Tool::WStringToString(path.c_str()) + errMsg;
+            int result = MessageBox(NULL, errMsg.c_str(), "DDS Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
+            return nullptr;
+        }
         // îzóÒÇ…ìoò^
         m_TexturesMap[path] = std::move(texture);
 
@@ -147,7 +160,13 @@ std::shared_ptr<ModelData> ResourceManager::LoadModel(const char *path)
         auto model = std::make_shared<ModelData>();
 
         // ì«Ç›çûÇ›
-        if (!model->Setup(*render, path)) return nullptr;
+        if (!model->Setup(*render, path))
+        {
+            std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
+            errMsg = path + errMsg;
+            int result = MessageBox(NULL, errMsg.c_str(), "Model Load Error", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
+            return nullptr;
+        }
 
         // îzóÒÇ…ìoò^
         m_ModelsMap[path] = std::move(model);

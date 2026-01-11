@@ -310,6 +310,15 @@ namespace Tool
         return ret;
     }
 
+    /// <summary>
+    /// U8•¶š—ñ‚©‚ç’Êí‚Ì•¶š—ñ‚Ö•ÏŠ·
+    /// </summary>
+    /// <param name="str"></param>
+    /// <returns></returns>
+    inline const char* U8ToChar(const char8_t* str)
+    {
+        return reinterpret_cast<const char*>(str);
+    }
 
     /// <summary>
     /// ÚüE•›Úü‚ğ‹‚ß‚é

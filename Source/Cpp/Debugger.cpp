@@ -35,6 +35,23 @@ bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
 
     ImGui::StyleColorsDark();
 
+    // 日本語フォント設定 AIに頼んだ
+    {
+        // 日本語フォントのパスを指定（例：Windows標準のメイリオ）
+        // C:/Windows/Fonts/msjh.ttc (微軟正黑體) や msgothic.ttc など
+        ImFontConfig config;
+        config.MergeMode = false; // 他のフォントと合成しない場合はfalse
+
+        // 日本語の全範囲をカバーするグリフ（文字）範囲を指定
+        const ImWchar* glyphRanges = io.Fonts->GetGlyphRangesJapanese();
+
+        // フォントをロード（サイズ18px）
+        io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\meiryo.ttc", 20.0f, &config, glyphRanges);
+
+        // DirectX 11用のフォントテクスチャを再作成（これが必要！）
+        // ※エンジンの初期化フローに合わせて、テクスチャ構築の関数を呼んでください
+    }
+
     // ImGuiのWindows用バックエンドとDirectX11用バックエンドの初期化をする
     if(!ImGui_ImplWin32_Init(hWnd))
         return false;

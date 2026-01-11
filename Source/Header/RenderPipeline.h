@@ -28,7 +28,7 @@ private:
 
     static const int BLUR_COUNT = 4;    // ブラー回数
     class GaussianBlur *m_pBloomGaussianBlur;// ブルーム用ガウスブラー
-    class GaussianBlur *m_pDOF_GaussianBlur; // 被写界深度用ガウスブラー
+    class GaussianBlur *m_pDoF_GaussianBlur; // 被写界深度用ガウスブラー
 
     // レンダーターゲットのスプライト
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;

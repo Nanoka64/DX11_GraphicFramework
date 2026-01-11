@@ -35,7 +35,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // 深度が1.0f に近い背景は薄くぼかす
     if (depth >= 0.9999)
     {
-        blurTex.a = 0.3f;
+        blurTex.a = 0.5f;
         return blurTex;
     }
     
@@ -52,12 +52,15 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ビュー空間の深度値
     float viewDepth = ndcPos.z;
     
-    // 深度が500.0f以上の部分はクリップする
-    clip(viewDepth - 400.0f);
+    // 400以上からブラーがかかり、1200で最大になる
+    const float DOF_MAX_RANGE = 1200.0f;    // ぼかしが最大になる深度範囲
+    const float DOF_MIN_RANGE = 400.0f;     // ぼかしが開始される深度範囲
+    
+    // ぼかし開始範囲より近い場合はぼかし無し
+    clip(viewDepth - DOF_MIN_RANGE);
     
     // 深度に応じてぼかしの強さを変化させる
-    // 400以上からブラーがかかり、1500で最大になる
-    blurTex.a = min(0.8f, (viewDepth - 400.0f) / 1500.0f);
+    blurTex.a = min(1.0f, (viewDepth - DOF_MIN_RANGE) / DOF_MAX_RANGE);
     
     finalColor = blurTex;
     
