@@ -91,8 +91,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
         dirLig.Diffuse += res.Diffuse;
         dirLig.Specular += res.Specular;
         
-        // リムライト
-
+        /*
+         * リムライト
+        */
         // 視線の方向
         float3 viewDir = normalize(cb_EyePos - worldPos.xyz);
         
@@ -119,8 +120,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
         pointLig.Diffuse += res.Diffuse;
         pointLig.Specular += res.Specular;
     }
-
-    
     
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
@@ -162,8 +161,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
             g_sShadowSampler, shadowMapUV, zInLVP - 0.0005f
         );
 
-        //return float4(1, 1, 1, 1);
-        
         // 1.0 = 光が当たっている, 0.0 = 影
         dirDiffuse *= shadowFactor;
         dirSpecular *= shadowFactor;
@@ -180,7 +177,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // 最終色 アルベド * 光度 + スペキュラ
     finalCol.xyz = albedoTex.xyz * diffuse + specular;
-    //finalCol.xyz = saturate(finalCol.xyz);
     finalCol.a = 1.0f;
     
     return (finalCol);

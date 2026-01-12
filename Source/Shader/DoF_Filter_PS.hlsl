@@ -52,8 +52,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ビュー空間の深度値
     float viewDepth = ndcPos.z;
     
-    // 400以上からブラーがかかり、1200で最大になる
-    const float DOF_MAX_RANGE = 1200.0f;    // ぼかしが最大になる深度範囲
+    // 400以上からブラーがかかり、4000で最大になる
+    const float DOF_MAX_RANGE = 4000.0f;    // ぼかしが最大になる深度範囲
     const float DOF_MIN_RANGE = 400.0f;     // ぼかしが開始される深度範囲
     
     // ぼかし開始範囲より近い場合はぼかし無し

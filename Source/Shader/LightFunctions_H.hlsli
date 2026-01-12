@@ -44,7 +44,8 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
     */
     finalDfs /= 3.1415926f;
     
-    return saturate(finalDfs);
+    return (finalDfs);    
+    //return saturate(finalDfs);
 }
 
 
@@ -240,8 +241,8 @@ float3 HemisphereLightCalc(float3 _norm)
 {
     float3 finalLig     = float3(0, 0, 0);
     float3 groundNorm   = float3(0.0f, 1.0f, 0.0f);
-    float3 skyColor     = float3(0.35f, 0.6f, 0.85f);
-    float3 groundColor  = float3(0.5f, 0.5f, 0.5f);
+    float3 skyColor     = float3(0.25f, 0.6f, 0.75f);
+    float3 groundColor  = float3(0.6f, 0.3f, 0.3f);
     
     float factor = dot(_norm, groundNorm);
     

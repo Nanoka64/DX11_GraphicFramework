@@ -350,7 +350,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // ************************************************************************
 
     // 被写界深度用ガウスブラー実行
-    m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, 4.0f);
+    m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, 2.0f);
    
     // 加算モード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
