@@ -86,10 +86,6 @@ private:
 
     DWORD m_StartTime;
 
-    float m_NearClipDist;
-    float m_FarClipDist;
-    float m_Fov;
-
     RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
 
     class RenderPipeline *m_pRendererPipeline; // 描画パイプラインの実体を持つ
@@ -103,7 +99,7 @@ public:
     void EndRender();
 	void Term();
     void Swap();    // 裏表切り替え
-    bool SetupProjectionTransform(float _w, float _h);            //透視投影変換計算
+    bool SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far); //透視投影変換計算
 private:
     bool InitDx11();                            // ＤＸ１１の初期化
     HRESULT InitDX11_SwapChain();               // ＤＸ１１ スワップチェイン初期化
@@ -117,16 +113,16 @@ private:
 
 
 public:
-    ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
-    ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
-    IDXGISwapChain *get_SwapChain() const { return m_pSwapChain; }                // スワップチェイン取得
-    ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
-    RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
-    HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
-    UINT get_ScreenWidth()const { return m_ScreenWidht; };
-    UINT get_ScreenHeight()const { return m_Screenheight; };
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
-    
+    inline ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
+    inline ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
+    inline IDXGISwapChain *get_SwapChain() const { return m_pSwapChain; }                // スワップチェイン取得
+    inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
+    inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
+    inline HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
+    inline UINT get_ScreenWidth()const { return m_ScreenWidht; };
+    inline UINT get_ScreenHeight()const { return m_Screenheight; };
+    inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
+
     /// <summary>
     ///  ビューポート設定
     /// </summary>

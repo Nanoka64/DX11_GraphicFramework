@@ -26,9 +26,12 @@ private:
     static const int NUM_WEIGHTS = 8;
     float m_GaussWeights[NUM_WEIGHTS];  // ガウス重み係数
 
-    static const int BLUR_COUNT = 4;    // ブラー回数
+    static const int BLUR_COUNT = 4;    // ブラー回数（ブルーム用）
     class GaussianBlur *m_pBloomGaussianBlur;// ブルーム用ガウスブラー
+
     class GaussianBlur *m_pDoF_GaussianBlur; // 被写界深度用ガウスブラー
+    float m_DoF_BlurIncensity;  // DOFブラーの強さ
+
 
     // レンダーターゲットのスプライト
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;

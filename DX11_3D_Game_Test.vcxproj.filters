@@ -175,6 +175,9 @@
     <Filter Include="ソース ファイル\Editor\Hierarchy\Editors">
       <UniqueIdentifier>{ae09f345-facf-4075-b687-0d3da926457b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL\Shadow">
+      <UniqueIdentifier>{177728a2-120a-419f-9cb5-4b5ee0105b8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -779,10 +782,10 @@
       <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap.hlsl">
-      <Filter>HLSL\PS\PostEffect</Filter>
+      <Filter>HLSL\Shadow</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap_Skinned.hlsl">
-      <Filter>HLSL\PS\PostEffect</Filter>
+      <Filter>HLSL\Shadow</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

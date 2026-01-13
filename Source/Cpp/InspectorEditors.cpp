@@ -55,7 +55,7 @@ void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_DragVec3("##Scale", &scl, m_SlideAccuRate, -100000.0f, 100000.0f);
 
-        Master::m_pDebugger->DG_SliderFloat(U8ToChar(u8"スライド精度"), 1, &m_SlideAccuRate, 0.01f, 30.0f);
+        Master::m_pDebugger->DG_SliderFloat(U8ToChar(u8"編集スライド精度"), 1, &m_SlideAccuRate, 0.001f, 8.0f);
 
         Master::m_pDebugger->DG_TreePop();
     }
@@ -241,6 +241,10 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
     float angle_H = pComp->get_Angle_H();
     float angle_V = pComp->get_Angle_V();
+    float fov = pComp->get_Fov();
+    float nearClip = pComp->get_Near();
+    float farClip = pComp->get_Far();
+    std::string focusObjTag = pComp->get_FocusObjectTag();
     VEC3 focusPoint = pComp->get_FocusPoint();
     VEC3 posOffset = pComp->get_PosOffset();
     VEC3 focusOffset = pComp->get_FocusOffset();
@@ -249,6 +253,17 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"3Dカメラ")))
     {
         Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"視野"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##Fov", 1, &fov, 0.1f, 180.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"手前クリップ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##NearClip", 1, &nearClip, 0.0f, 600.0f);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"奥側クリップ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##FarClip", 1, &farClip,  0.0f, 30000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"水平アングル"));
         Master::m_pDebugger->DG_SameLine();
@@ -261,6 +276,10 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_DragVec3("##Focus:", &focusPoint, 0.1f, -10000.0f, 10000.0f);
 
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォーカスしているオブジェクトのタグ："));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_Text(focusObjTag.c_str());
+
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"オフセット座標"));
         Master::m_pDebugger->DG_DragVec3("##ofsP", &posOffset, 1.0f, 10.0f, 1000.0f);
 
@@ -270,10 +289,18 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_TreePop();
     }
 
+    if (fov < 0.0f)
+    {
+        fov = 0.1f;
+    }
+
     // 反映
     pComp->set_Angle_H(angle_H);
     pComp->set_Angle_V(angle_V);
     pComp->set_FocusPoint(focusPoint);
     pComp->set_PosOffset(posOffset);
     pComp->set_FocusOffset(focusOffset);
+    pComp->set_Fov(fov);
+    pComp->set_Near(nearClip);
+    pComp->set_Far(farClip);
 }

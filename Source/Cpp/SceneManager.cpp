@@ -193,21 +193,18 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
-            auto obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
-            obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
-            obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, -100.0);
-            obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
-            model.ObjTag = "Ant2";
-            obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
-            obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, -100.0);
-            obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 90, 0.0);
-            obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-            obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            for (int i = 0; i < 5; i++)
+            {
+                model.ObjTag = "Ant_" + std::to_string(i + 1);   // タグ
 
+                m_pAnt[i] = MeshFactory::CreateModel(model);
+                m_pAnt[i]->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
+                m_pAnt[i]->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
+                m_pAnt[i]->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0);
+                m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+                m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            }
         }
 
         /* B-2 モデルの生成 */
@@ -231,10 +228,12 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-            auto obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(0.15f, 0.15f, 0.15f);
-            obj->get_Component<Transform>()->set_Pos(0.0f, 150.0f, 0.0f);
-            obj->set_LayerRank(0);
+            for (int i = 0; i < 3; i++)
+            {
+                model.ObjTag = "B-2_" + std::to_string(i + 1);
+                m_pBomber[i] = MeshFactory::CreateModel(model);
+                m_pBomber[i]->get_Component<Transform>()->set_Scale(0.05f, 0.05f, 0.05f);
+            }
         }
 
         /* クレイモア モデルの生成 */
@@ -447,18 +446,78 @@ void SceneManager::Update(RendererEngine& renderer)
     //    m_CrntSceneState = newState;
     //}
 
+    
+    static float counter = 0.0f;
+    counter += 0.01f;
+
+    for (int i = 0; i < 5; i++)
+    {
+        auto antTransform = m_pAnt[i]->get_Transform().lock();
+        if (antTransform)
+        {
+            VEC3 pos = VEC3();
+            pos.x = cos(counter) * 50.0f;
+            pos.y = 15.0f;
+
+            if (i % 2 == 0) {
+                pos.z = sin(counter) * 50.0f;
+            }
+
+            antTransform->set_Pos(pos);
+        }
+    }
+
+
+    static VEC3 B2PrevPos[3]{};
+    VEC3 center = VEC3(0.0f, 0.0f, 0.0f);
+    float radius = 700.0f;
+
+    for (int i = 0; i < 3; i++)
+    {
+        auto B2Transform = m_pBomber[i]->get_Transform().lock();
+        if (B2Transform)
+        {
+            float intervalDist = 200.0f * i;
+
+            VEC3 pos = VEC3(0.0f, 0.0f, 0.0f);
+            pos.x = center.x + (radius - intervalDist) * cos(counter);
+            pos.y = 300.0f + i * 100.0f;
+            pos.z = center.z + (radius - intervalDist) * sin(counter);
+
+            // 速度 = 今の座標 - 前の座標
+            VEC3 velocity = pos - B2PrevPos[i];
+
+            // 移動ベクトルから、Y軸周りの回転角度を求める
+            float targetAngle = atan2(velocity.x, velocity.z);
+            targetAngle -= 3.14f/ 2;
+
+            // 前の座標として保持
+            B2PrevPos[i] = pos;
+
+            B2Transform->set_Pos(pos);
+            B2Transform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+        }
+    }
+
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
-    
+
     // カメラ更新
     auto viewMatrix = m_pCamera->get_Component<Camera3D>()->get_ViewMatrix();
 
-    // ビュー変換
+    // ビュー変換し定数バッファへ送る
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
 
     Master::m_pEditorManager->Update(renderer);
+
+    float farClip = m_pCamera->get_Component<Camera3D>()->get_Far();
+    float nearClip = m_pCamera->get_Component<Camera3D>()->get_Near();
+    float fov = m_pCamera->get_Component<Camera3D>()->get_Fov();
+
+    // プロジェクション変換行列の設定 一回でいい
+    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), farClip, nearClip, fov);
 }
 
 
@@ -470,6 +529,13 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
+    float farClip = m_pCamera->get_Component<Camera3D>()->get_Far();
+    float nearClip = m_pCamera->get_Component<Camera3D>()->get_Near();
+    float fov = m_pCamera->get_Component<Camera3D>()->get_Fov();
+
+    // プロジェクション変換行列の設定 一回でいい
+    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), fov, nearClip, farClip);
+
     // レンダリングパイプラインの実行
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
 

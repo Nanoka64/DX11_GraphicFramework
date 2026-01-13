@@ -124,7 +124,7 @@ void PlayerController::Update(RendererEngine& renderer)
 		//!***********************************
 		float targetAngle = 0.0f;      //目標角度
 		VEC3 Ca;
-		Ca = camFocusPoint - camPos;
+		Ca = camFocusPoint - camPos;	// 目標 - 現在
 		
 		//目標の方向ベクトルから角度値を算出c
 		targetAngle = atan2(Ca.x, Ca.z); 

@@ -273,12 +273,11 @@ int DXApp::MainLoop()
                 Master::m_pDebugger->DG_TextValue("Difference : %f.3", difference);
                 Master::m_pDebugger->EndDebugWindow();
 
+                // 入力更新
+                InputManager::GetInstance().Update();
 
                 // ゲーム更新
                 m_pGameManager->Update(*m_pRenderer);
-
-                // 入力更新
-                InputManager::GetInstance().Update();
 
                 // 描画の開始
                 m_pRenderer->BeginRender();

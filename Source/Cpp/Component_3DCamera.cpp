@@ -26,7 +26,10 @@ Camera3D::Camera3D(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponen
 m_FocusPoint({ 0.0f,0.0f,0.0f }),
 m_UpVec({ 0.0f,1.0f,0.0f }),
 m_Angle_H(1.57f),
-m_Angle_V(0.f)
+m_Angle_V(0.f),
+m_Fov(100.0f),
+m_NearClipDist(1.0f),
+m_FarClipDist(50000.0f)
 {
 	this->set_Tag("Camera3D"); 
 	m_PosOffset.x = CAMERA_POS_OFFSET;
@@ -141,6 +144,7 @@ XMMATRIX Camera3D::get_ViewMatrix()const
 	XMFLOAT3 foucus = m_FocusPoint;
 	XMFLOAT3 upVec = m_UpVec;
 
+	// ÉrÉÖÅ[çsóÒÇÃçÏê¨
 	XMMATRIX viewMat = XMMatrixLookAtLH(
 		XMLoadFloat3(&eye),
 		XMLoadFloat3(&foucus),
@@ -163,6 +167,11 @@ void Camera3D::set_FocusPoint(const VECTOR3::VEC3& focus)
 void Camera3D::set_FocusObject(std::weak_ptr<class GameObject> pObj)
 {
 	m_pFocusObject = pObj;
+}
+
+std::string  Camera3D::get_FocusObjectTag()const
+{
+	return m_pFocusObject.lock()->get_Tag();
 }
 
 VECTOR3::VEC3 Camera3D::get_UpVec()const

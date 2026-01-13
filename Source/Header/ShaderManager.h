@@ -57,27 +57,12 @@ enum class SHADER_TYPE
     POST_SHADOWMAP,                     // シャドウマップ
     POST_SHADOWMAP_SKINNED,             // シャドウマップスキニング用
     POST_DEPTH_OF_FILED,                // 被写界深度
-
-    /* AIにそれっぽいもの出してもらった
-    FOWARD_UI_TEXT,   // テキスト UI用
-    FOWARD_UI_IMAGE,  // イメージ UI用
-    FOWARD_UI_SLIDER, // スライダー UI用
-    FOWARD_UI_BUTTON, // ボタン UI用
-    FOWARD_UI_CHECKBOX, // チェックボックス UI用
-    FOWARD_UI_RADIOBUTTON, // ラジオボタン UI用
-    FOWARD_UI_PANEL, // パネル UI用
-    FOWARD_UI_SCROLLBAR, // スクロールバー UI用
-    FOWARD_UI_INPUTFIELD, // インプットフィールド UI用
-    FOWARD_UI_DROPDOWN, // ドロップダウン UI用
-    FOWARD_UI_TOGGLE, // トグル UI用
-    */
     
     /* 旧仕様 */
     //SIMPLE,     // 単純な3Dオブジェクト表示用
     //MODEL,      // 3Dモデルの表示用
     //SPRITE,     // スプライト
     //DEFFERD,    // ディファードシェーディング
-    //BILLBOARD,  // ビルボード
 
     NUM,
 };

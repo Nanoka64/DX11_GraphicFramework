@@ -14,6 +14,8 @@
 using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
+using namespace Tool;
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -28,7 +30,8 @@ RenderPipeline::RenderPipeline() :
     m_pShadowMap_RT(nullptr),
     m_GaussWeights(),
     m_pDoF_GaussianBlur(nullptr),
-    m_pBloomGaussianBlur(nullptr)
+    m_pBloomGaussianBlur(nullptr),
+    m_DoF_BlurIncensity(2.0f)
 {
 }
 
@@ -85,63 +88,65 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void RenderPipeline::Execute(RendererEngine &renderer)
 {
-    // ポストエフェクトデバッグ
-    {
-        // ブラー強度
-        Master::m_pDebugger->BeginDebugWindow("PostEffect");
-        Master::m_pDebugger->DG_TextValue("weight0:%f.2", m_GaussWeights[0]);
-        Master::m_pDebugger->DG_TextValue("weight1:%f.2", m_GaussWeights[1]);
-        Master::m_pDebugger->DG_TextValue("weight2:%f.2", m_GaussWeights[2]);
-        Master::m_pDebugger->DG_TextValue("weight3:%f.2", m_GaussWeights[3]);
-        Master::m_pDebugger->DG_TextValue("weight4:%f.2", m_GaussWeights[4]);
-        Master::m_pDebugger->DG_TextValue("weight5:%f.2", m_GaussWeights[5]);
-        Master::m_pDebugger->DG_TextValue("weight6:%f.2", m_GaussWeights[6]);
-        Master::m_pDebugger->DG_TextValue("weight7:%f.2", m_GaussWeights[7]);
-        Master::m_pDebugger->EndDebugWindow();
-    }
 
     // レンダーターゲットデバッグ
     {
-        Master::m_pDebugger->BeginDebugWindow("RenderTarget");
+        Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"レンダーターゲット"));
 
-        Master::m_pDebugger->DG_BulletText("Albed");
-        Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), VEC2(400, 200));
+        if (Master::m_pDebugger->DG_TreeNode("G-Buffer"))
+        {
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"アルベド"));
+            Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"法線"));
+            Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ"));
+            Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"深度"));
+            Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_TreePop();// G-Buffer終了
+        }
         Master::m_pDebugger->DG_Separator();
 
-        Master::m_pDebugger->DG_BulletText("Normal");
-        Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(), VEC2(400, 200));
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ポストエフェクト")))
+        {
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"輝度抽出"));
+            Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度ブラー"));
+            Master::m_pDebugger->DG_SliderFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 32.0f);
+            Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"強度"));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_TreePop();  // ポストエフェクト終了
+        }
         Master::m_pDebugger->DG_Separator();
 
-        Master::m_pDebugger->DG_BulletText("Specular");
-        Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"シャドウ")))
+        {
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シャドウマップ"));
+            Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
+            Master::m_pDebugger->DG_TreePop();  // シャドウマップ終了
+        }
         Master::m_pDebugger->DG_Separator();
 
-        Master::m_pDebugger->DG_BulletText("m_pDepth_RT");
-        Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
-        Master::m_pDebugger->DG_Separator();
-
-        Master::m_pDebugger->DG_BulletText("Luminance");
-        Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
-        Master::m_pDebugger->DG_Separator();
-
-        Master::m_pDebugger->DG_BulletText("Final");
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最終合成"));
         Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
-        Master::m_pDebugger->DG_Separator();
-        
-        Master::m_pDebugger->DG_BulletText("ShadowMap");
-        Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
-        Master::m_pDebugger->DG_Separator();        
-
-        Master::m_pDebugger->DG_BulletText("DofBlur");
-        Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
         Master::m_pDebugger->EndDebugWindow();
     }
-
-    // プロジェクション変換行列の設定
-    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
-
 
     /* シャドウパス */
     Shadow_PathRender(renderer);
@@ -160,8 +165,6 @@ void RenderPipeline::Execute(RendererEngine &renderer)
 
     /* 最終パス（フレームバッファにコピー） */
     CopyToFrameBuffer_PathRender(renderer);
-
-
 }
 
 //*---------------------------------------------------------------------------------------
@@ -352,7 +355,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // ************************************************************************
 
     // 被写界深度用ガウスブラー実行
-    m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, 2.0f);
+    m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, m_DoF_BlurIncensity);
    
     // 加算モード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
@@ -373,12 +376,6 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
-
-    Master::m_pDebugger->BeginDebugWindow("RenderTarget");
-    Master::m_pDebugger->DG_BulletText("DoF Blur");
-    Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
-    Master::m_pDebugger->DG_Separator();
-    Master::m_pDebugger->EndDebugWindow();
 
     // ************************************************************************
     // 

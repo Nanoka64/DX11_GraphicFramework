@@ -35,16 +35,10 @@ RendererEngine::RendererEngine() :
     m_pDepthTestDisabled_DSS(nullptr),
     m_pRendererPipeline(nullptr),
     m_CrntRenderPass(RENDER_PASS::MAIN),
-    //m_pBlendStateAlpha(nullptr),
-    //m_pBlendStateAdd(nullptr),
-    //m_pBlendStateSub(nullptr),
     m_ScreenWidht(0),
     m_Screenheight(0),
     m_hWnd(0),
     m_StartTime(0ul),
-    m_NearClipDist(0.1f),
-    m_FarClipDist(1000.f),
-    m_Fov(XMConvertToRadians(30.0f)),
     m_Proj(XMMatrixIdentity()),
     m_View(XMMatrixIdentity())
 {
@@ -89,12 +83,6 @@ bool RendererEngine::Init(HWND hWnd)
     //m_pBlendStateAdd   = NULL;           // 加算合成用
     //m_pBlendStateSub   = NULL;           // 減算合成用
 
-    // ガクつくときはここを大きくするとよい
-    m_NearClipDist = 1.0f;
-    m_FarClipDist  = 50000.0f;
-    m_Fov = XMConvertToRadians(100.0f);
-
-
     m_hWnd = hWnd;  // ウインドウハンドル受け取る
 
     RECT rc;
@@ -115,7 +103,7 @@ bool RendererEngine::Init(HWND hWnd)
     m_StartTime = timeGetTime();    // 開始時間取得
 
     // 投影変換行列の設定
-    SetupProjectionTransform(m_ScreenWidht, m_Screenheight);
+    SetupProjectionTransform(m_ScreenWidht, m_Screenheight, 100.0f, 1.0f, 10000.0f);
 
 
 
@@ -690,21 +678,26 @@ void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type)
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
-//*【?】透視投影変換計算
-//* 引数：なし
+//*【?】透視投影変換計算  ※カメラ処理に組み込んだ方が良さそう
+//* 引数：
+//* _w      : 横幅
+//* _h      : 縦幅
+//* _fovDeg : 視野（中でラジアン化しているのでデグリーでいい） 
+//* _near   : 手前クリップ
+//* _far    : 奥クリップ
 //* 戻値：成功したか
 //*----------------------------------------------------------------------------------------
-bool RendererEngine::SetupProjectionTransform(float _w, float _h)
+bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far)
 {
     auto pDeviceContext = get_DeviceContext();
 
     // 遠近投影マトリクス作成 https://learn.microsoft.com/ja-jp/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh
     XMMATRIX mat = XMMatrixPerspectiveFovLH(
-        m_Fov,
+        XMConvertToRadians(_fovDeg),
         static_cast<float>(_w) / static_cast<float>(_h), // アスペクト比
-        m_NearClipDist,
-        m_FarClipDist
-    );    
+        _near,
+        _far
+    );
 
     // 保持
     m_Proj = mat;

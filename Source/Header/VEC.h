@@ -61,6 +61,24 @@ namespace VECTOR3
 			return *this;
 		};
 
+		// •¡‡‘ã“ü Š|‚¯ŽZ
+		VEC3& operator*=(const VEC3& vec) {
+			this->x *= vec.x;
+			this->y *= vec.y;
+			this->z *= vec.z;
+
+			return *this;
+		};
+		
+		// •¡‡‘ã“ü Š„‚èŽZ
+		VEC3& operator/=(const VEC3& vec) {
+			this->x /= vec.x;
+			this->y /= vec.y;
+			this->z /= vec.z;
+
+			return *this;
+		};
+
 
 		// ‘ã“ü‰‰ŽZŽq float[4]
 		template<size_t N>

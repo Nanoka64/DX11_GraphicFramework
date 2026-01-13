@@ -25,6 +25,9 @@ private:
 	// ステートマシン
 	StateMachine<SceneManager> m_StateMachine;
 
+	std::shared_ptr<GameObject> m_pAnt[5];
+	std::shared_ptr<GameObject> m_pBomber[3];
+
 public:
 	SceneManager();
 	~SceneManager();

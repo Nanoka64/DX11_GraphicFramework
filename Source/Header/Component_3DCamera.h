@@ -19,6 +19,10 @@ private:
 	float m_Angle_H;	// 水平方向アングル
 	float m_Angle_V;	// 垂直方向アングル
 
+	float m_Fov;			// デグリー
+	float m_NearClipDist;	// 手前クリップ
+	float m_FarClipDist;	// 奥クリップ
+
 	std::weak_ptr<class GameObject> m_pFocusObject;		// フォーカス対象
 	VECTOR3::VEC3 m_PosOffset;							// 対象からどのくらい離れて球面移動するか
 	VECTOR3::VEC3 m_FocusOffset;						// フォーカス位置のオフセット
@@ -30,23 +34,33 @@ public:
 	void Update(RendererEngine& renderer) override;		// 更新処理
 	void Draw(RendererEngine& renderer)override;		// 描画処理
 
-	void set_UpVec(const VECTOR3::VEC3& upVec);
-	void set_FocusPoint(const VECTOR3::VEC3& focus);
-	void set_FocusObject(std::weak_ptr<class GameObject> pObj);
+	void set_UpVec(const VECTOR3::VEC3& upVec);					// 上方向ベクトルの設定
+	void set_FocusPoint(const VECTOR3::VEC3& focus);			// 注視点の設定
+	void set_FocusObject(std::weak_ptr<class GameObject> pObj);	// 注視点オブジェクトの設定
+	std::string get_FocusObjectTag()const;
 
-	VECTOR3::VEC3 get_UpVec()const;
-	VECTOR3::VEC3 get_FocusPoint()const;
+	VECTOR3::VEC3 get_UpVec()const;			// 上方向ベクトル取得
+	VECTOR3::VEC3 get_FocusPoint()const;	// 注視点取得
 
-    float get_Angle_H()const { return m_Angle_H; }
-    float get_Angle_V()const { return m_Angle_V; }
-    void set_Angle_H(float angle) { m_Angle_H = angle; }
-    void set_Angle_V(float angle) { m_Angle_V = angle; }
+    float get_Angle_H()const { return m_Angle_H; }			// 水平アングル取得	
+	float get_Angle_V()const { return m_Angle_V; }			// 垂直アングル取得
+    void set_Angle_H(float angle) { m_Angle_H = angle; }	// 水平アングル設定	
+    void set_Angle_V(float angle) { m_Angle_V = angle; }	// 垂直アングル設定
 
 	/* オフセット関連 */
-    void set_PosOffset(const VECTOR3::VEC3 &offset);
-    VECTOR3::VEC3 get_PosOffset()const;
-    void set_FocusOffset(const VECTOR3::VEC3 &offset);
-    VECTOR3::VEC3 get_FocusOffset()const;
+    void set_PosOffset(const VECTOR3::VEC3 &offset);	// 座標オフセット設定
+    VECTOR3::VEC3 get_PosOffset()const;					// 座標オフセット取得
+    void set_FocusOffset(const VECTOR3::VEC3 &offset);	// 注視点オフセットの設定
+    VECTOR3::VEC3 get_FocusOffset()const;				// 注視点オフセットの取得
+
+
+	void set_Fov(float _fov) { m_Fov = _fov; };				// 視野の設定
+	void set_Near(float _near) { m_NearClipDist = _near; }; // 手前クリップの設定
+	void set_Far(float _far) { m_FarClipDist = _far; };		// 奥クリップの設定
+
+	float get_Fov()const { return m_Fov; };				    // 視野の設定
+	float get_Near()const { return m_NearClipDist; };	    // 手前クリップの設定
+	float get_Far()const { return m_FarClipDist; };		    // 奥クリップの設定
 
 	/// <summary>
 	/// ビュー変換行列の取得

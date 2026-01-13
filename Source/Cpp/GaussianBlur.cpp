@@ -84,12 +84,6 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // ガウシアンブラー用の重みテーブルを計算する
     CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, blurPow);
 
-    Master::m_pDebugger->BeginDebugWindow("PostEffect");
-    Master::m_pDebugger->DG_BulletText("Horizontal");
-    Master::m_pDebugger->DG_Image(m_pHorizontalBlur->get_SRV(), VECTOR2::VEC2(600, 300));
-    Master::m_pDebugger->DG_BulletText("Vertical");
-    Master::m_pDebugger->DG_Image(m_pVerticalBlur->get_SRV(),VECTOR2::VEC2(600,300));
-    Master::m_pDebugger->EndDebugWindow();
     // ************************************************************************
     // 
     // 水平ブラー
