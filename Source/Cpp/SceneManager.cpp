@@ -42,10 +42,7 @@ using namespace GIGA_Engine;
 SceneManager::SceneManager():
     m_pPlayer(),
     m_StateMachine(this),
-    m_CrntSceneState(0),
-    m_PointLightRange(0),
-    m_LightDir({ 0,0,0 }),
-    m_LightPos({ 0,1,0 })
+    m_CrntSceneState(0)
 {
 
 }
@@ -142,56 +139,14 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             auto light = obj->add_Component<DirectionalLight>();
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            light->set_Intensity(0.1f);
+            light->set_Intensity(4.0f);
             light->set_Player(m_pPlayer);
             light->Init(renderer);
 
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(10.0, 10.0, 15.0));
-            obj->get_Transform().lock()->set_RotateToRad(VEC3(0.0f, -0.0f, 0.0f));
+            obj->get_Transform().lock()->set_RotateToRad(VEC3(0.7f, 1.6f, 0.0f));
         }
-
-        /* ポイントライトの生成 (Cubuで分かりやすく)*/
-        {
-            Material* mat = new Material;
-            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
-            mat->m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
-            mat->m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat->m_SpecularPower = 20.0f;
-
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::CUBU;
-            mesh.MatNum = 1;
-            mesh.MaterialData = new InputMaterial();
-            mesh.MaterialData->pMat = mat;
-            mesh.IsActive = true;
-            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-            mesh.IsNormalMap = true;
-
-            for (int i = 0; i < 30; i++)
-            {
-                VEC3 pt;
-                pt.x = static_cast<float>(rand() % 1000) - 500.0f;
-                pt.y = 50.0f;
-                pt.z = static_cast<float>(rand() % 1000) - 500.0f;
-                VEC3 col;
-                col.x = static_cast<float>(rand() % 255) / 255.0f;
-                col.y = static_cast<float>(rand() % 255) / 255.0f;
-                col.z = static_cast<float>(rand() % 255) / 255.0f;
-
-                auto obj = MeshFactory::CreateUtilityMesh(mesh);
-                obj->get_Transform().lock()->set_Pos(pt);
-                obj->get_Transform().lock()->set_Scale(VEC3(10, 10, 10));
-                obj->set_Tag("PointLight" + std::to_string(i));
-                auto light = obj->add_Component<PointLight>();
-                light->set_LightColor(col);
-                light->set_Range(100.0f);
-                light->set_Intensity(10.0f);
-                light->Init(renderer);
-            }
-        }        
 
         /* 壁 */
         {
@@ -268,14 +223,14 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
-            model.Path = "Resource/Model/b-2/test_b-2.fbx";
+            model.Path = "Resource/Model/b-2/B-2_NonBone.fbx";
             model.ObjTag = "B-2";
             model.IsAnim = false;
             model.MatNum = 1;
             model.MaterialData = new InputMaterial();
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
-            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             auto obj = MeshFactory::CreateModel(model);
             obj->get_Component<Transform>()->set_Scale(0.15f, 0.15f, 0.15f);
             obj->get_Component<Transform>()->set_Pos(0.0f, 150.0f, 0.0f);
@@ -417,6 +372,49 @@ bool SceneManager::Init(RendererEngine &renderer)
                 obj->set_Tag("Billboard" + std::to_string(i));
             }
         }
+
+        /* ポイントライトの生成 (Cubuで分かりやすく)*/
+        {
+            Material *mat = new Material;
+            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+            mat->m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
+            mat->m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat->m_SpecularPower = 20.0f;
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::CUBU;
+            mesh.MatNum = 1;
+            mesh.MaterialData = new InputMaterial();
+            mesh.MaterialData->pMat = mat;
+            mesh.IsActive = true;
+            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            mesh.IsNormalMap = true;
+
+            for (int i = 0; i < 30; i++)
+            {
+                VEC3 pt;
+                pt.x = static_cast<float>(rand() % 1000) - 500.0f;
+                pt.y = 50.0f;
+                pt.z = static_cast<float>(rand() % 1000) - 500.0f;
+                VEC3 col;
+                col.x = static_cast<float>(rand() % 255) / 255.0f;
+                col.y = static_cast<float>(rand() % 255) / 255.0f;
+                col.z = static_cast<float>(rand() % 255) / 255.0f;
+
+                auto obj = MeshFactory::CreateUtilityMesh(mesh);
+                obj->get_Transform().lock()->set_Pos(pt);
+                obj->get_Transform().lock()->set_Scale(VEC3(10, 10, 10));
+                obj->set_Tag("PointLight" + std::to_string(i));
+                auto light = obj->add_Component<PointLight>();
+                light->set_LightColor(col);
+                light->set_Range(100.0f);
+                light->set_Intensity(10.0f);
+                light->Init(renderer);
+            }
+        }
+
     }
 
     // ライトにカメラのTransformを持たせる
@@ -449,53 +447,6 @@ void SceneManager::Update(RendererEngine& renderer)
     //    m_CrntSceneState = newState;
     //}
 
-    static float a = 0.f;
-    a += 0.01f;
-
-    // 光強度
-    static float intensity = 0.1f;
-
-    static VEC3 pLigPos{ 0,0,0 };
-    static VEC3 ligCol{ 1,1,1 };
-    static float pointIntensity = 10.0f;
-
-    // ライトのデバッグ ******************************************************
-    auto lig = Master::m_pGameObjectManager->get_ObjectByTag("PointLight0");
-    lig->get_Component<Transform>()->set_Pos(pLigPos);
-    lig->get_Component<PointLight>()->set_Range(m_PointLightRange);
-    lig->get_Component<PointLight>()->set_Intensity(pointIntensity);
-    lig->get_Component<PointLight>()->set_LightColor(ligCol);
-
-    auto dlig = Master::m_pGameObjectManager->get_ObjectByTag("DirLight");
-    auto rad = dlig->get_Component<Transform>();
-    rad->set_RotateToRad(m_LightDir);
-    rad->set_Pos(m_LightPos);
-    dlig->get_Component<DirectionalLight>()->set_Intensity(intensity);
-
-    auto b_2Obj = Master::m_pGameObjectManager->get_ObjectByTag("B-2");
-    rad = b_2Obj->get_Component<Transform>();
-    rad->set_RotateToRad(0.0, 0.0, sin(a) * 0.5f);
-
-    // ライトのデバッグ
-
-    Master::m_pDebugger->BeginDebugWindow(  U8ToChar(u8"ライトの設定"));
-    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ディレクションライト")))
-    {
-        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"位置"), &m_LightPos, 1.0f, -3000.0f, 3000.0f);
-        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"方向"), &m_LightDir, 0.005f, -3.0f, 3.0f);
-        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"強度"), 1, &intensity, 0.0f, 100.0f);
-        Master::m_pDebugger->DG_TreePop();
-    }
-    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ポイントライト")))
-    {
-        Master::m_pDebugger->DG_DragVec3(       U8ToChar(u8"位置"), &pLigPos, 1.0f, -10000.0f, 10000.0f);
-        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"範囲"), 1, &m_PointLightRange, 0.0f, 10000.0f);
-        Master::m_pDebugger->DG_SliderFloat(    U8ToChar(u8"強度"), 1, &pointIntensity, 0.0f, 1000.0f);
-        Master::m_pDebugger->DG_ColorEdit3(     U8ToChar(u8"カラー"), &ligCol);
-        Master::m_pDebugger->DG_TreePop();
-    }
-    Master::m_pDebugger->EndDebugWindow();
-
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
     
@@ -506,6 +457,8 @@ void SceneManager::Update(RendererEngine& renderer)
     if (!renderer.SetupViewTransform(viewMatrix)) {
         return;
     };
+
+    Master::m_pEditorManager->Update(renderer);
 }
 
 
@@ -517,8 +470,6 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
-    static float blurIntensity = 1.0f;
-
     // レンダリングパイプラインの実行
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
 
@@ -535,7 +486,6 @@ void SceneManager::Draw(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Term(RendererEngine &renderer)
 {
-
     //SAFE_DELETE(m_pGaussianBlur);
 }
 

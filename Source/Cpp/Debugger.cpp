@@ -89,7 +89,7 @@ void Debugger::EndFrame()
 //      * Debugger Class - デバッグウインドウ - *
 // 引数：ラベル名
 //=======================================================================================
-bool Debugger::BeginDebugWindow(std::string label)
+bool Debugger::BeginDebugWindow(const std::string &label)
 {
     return ImGui::Begin(label.c_str());
 }
@@ -127,12 +127,12 @@ void Debugger::DG_SameLine(float offsetStart_X)
 //      2.カラーの格納先
 //=======================================================================================
 /****** RGB ******/
-void Debugger::DG_ColorPicker3(std::string label, float col[])
+void Debugger::DG_ColorPicker3(const std::string &label, float col[])
 {
     ImGui::ColorPicker3(label.c_str(), col);
 }
 
-void Debugger::DG_ColorPicker3(std::string label, VECTOR3::VEC3* col3V)
+void Debugger::DG_ColorPicker3(const std::string &label, VECTOR3::VEC3* col3V)
 {
     float col[3] = { col3V->x, col3V->y, col3V->z };
 
@@ -141,12 +141,12 @@ void Debugger::DG_ColorPicker3(std::string label, VECTOR3::VEC3* col3V)
 }
 
 /****** RGBA ******/
-void Debugger::DG_ColorPicker4(std::string label, float col[])
+void Debugger::DG_ColorPicker4(const std::string &label, float col[])
 {
     ImGui::ColorPicker4(label.c_str(), col);
 }
 
-void Debugger::DG_ColorPicker4(std::string label, VECTOR4::VEC4* col4V)
+void Debugger::DG_ColorPicker4(const std::string &label, VECTOR4::VEC4* col4V)
 {
     float col[4] = { col4V->x, col4V->y, col4V->z,col4V->w };
 
@@ -161,30 +161,30 @@ void Debugger::DG_ColorPicker4(std::string label, VECTOR4::VEC4* col4V)
 //      2.カラーの格納先
 //=======================================================================================
 /****** RGB ******/
-void Debugger::DG_ColorEdit3(std::string label, float col[])
+void Debugger::DG_ColorEdit3(const std::string &label, float col[])
 {
-    ImGui::ColorPicker3(label.c_str(), col);
+    ImGui::ColorEdit3(label.c_str(), col);
 }
 
-void Debugger::DG_ColorEdit3(std::string label, VECTOR3::VEC3* col3V)
+void Debugger::DG_ColorEdit3(const std::string &label, VECTOR3::VEC3* col3V)
 {
     float col[3] = { col3V->x, col3V->y, col3V->z };
 
-    ImGui::ColorPicker3(label.c_str(), col);
+    ImGui::ColorEdit3(label.c_str(), col);
     *col3V = col;
 }
 
 /****** RGBA ******/
-void Debugger::DG_ColorEdit4(std::string label, float col[])
+void Debugger::DG_ColorEdit4(const std::string &label, float col[])
 {
-    ImGui::ColorPicker4(label.c_str(), col);
+    ImGui::ColorEdit4(label.c_str(), col);
 }
 
-void Debugger::DG_ColorEdit4(std::string label, VECTOR4::VEC4* col4V)
+void Debugger::DG_ColorEdit4(const std::string &label, VECTOR4::VEC4* col4V)
 {
     float col[4] = { col4V->x, col4V->y, col4V->z,col4V->w };
 
-    ImGui::ColorPicker4(label.c_str(), col);
+    ImGui::ColorEdit4(label.c_str(), col);
     *col4V = col;
 }
 
@@ -197,7 +197,7 @@ void Debugger::DG_ColorEdit4(std::string label, VECTOR4::VEC4* col4V)
 //      5.最小値
 //      6.最大値
 //=======================================================================================
-void Debugger::DG_DragInt(std::string label, int valNum, int* val, float slideSpeed, int _min, int _max)
+void Debugger::DG_DragInt(const std::string &label, int valNum, int* val, float slideSpeed, int _min, int _max)
 {
     switch (valNum)
     {
@@ -224,7 +224,7 @@ void Debugger::DG_DragInt(std::string label, int valNum, int* val, float slideSp
 //      5.最小値
 //      6.最大値
 //=======================================================================================
-void Debugger::DG_DragFloat(std::string label, int valNum, float* val, float slideSpeed, float _min, float _max)
+void Debugger::DG_DragFloat(const std::string &label, int valNum, float* val, float slideSpeed, float _min, float _max)
 {
     switch (valNum)
     {
@@ -251,7 +251,7 @@ void Debugger::DG_DragFloat(std::string label, int valNum, float* val, float sli
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_DragVec3(std::string label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max)
+void Debugger::DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max)
 {
     float temp[3] = { val->x, val->y,  val->z };
     if (ImGui::DragFloat3(label.c_str(), temp, slideSpeed, _min, _max))
@@ -272,7 +272,7 @@ void Debugger::DG_DragVec3(std::string label, VECTOR3::VEC3* val, float slideSpe
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderInt(std::string label, int valNum, int* val, int _min, int _max)
+void Debugger::DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max)
 {
     switch (valNum)
     {
@@ -301,7 +301,7 @@ void Debugger::DG_SliderInt(std::string label, int valNum, int* val, int _min, i
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderFloat(std::string label, int valNum, float* val, float _min, float _max)
+void Debugger::DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max)
 {
     switch (valNum)
     {
@@ -330,7 +330,7 @@ void Debugger::DG_SliderFloat(std::string label, int valNum, float* val, float _
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderFloat(std::string label, VECTOR3::VEC3* val, float _min, float _max)
+void Debugger::DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max)
 {
     float temp[3] = { val->x,val->y,val->z };
 
@@ -349,7 +349,7 @@ void Debugger::DG_SliderFloat(std::string label, VECTOR3::VEC3* val, float _min,
 // 
 // 返り値：押されたかどうか
 //=======================================================================================
-bool Debugger::DG_Button(std::string label, VECTOR2::VEC2 size)
+bool Debugger::DG_Button(const std::string &label, VECTOR2::VEC2 size)
 {
     return ImGui::Button(label.c_str(), { size.x,size.y });
 }
@@ -362,19 +362,19 @@ bool Debugger::DG_Button(std::string label, VECTOR2::VEC2 size)
 // 
 // 返り値：アクティブ状態かどうか 
 //=======================================================================================
-bool Debugger::DG_RadioButton(std::string label, bool active)
+bool Debugger::DG_RadioButton(const std::string &label, bool active)
 {
     return ImGui::RadioButton(label.c_str(), active);
 }
 
 //**************************************************************************************
-//      * Debugger Class - ラジオボタン 丸い奴 - *
+//      * Debugger Class - チェックボックス - *
 // 引数 1.ラベル名
 //      2.アクティブフラグ 参照
 // 
 // 返り値：アクティブ状態かどうか 
 //=======================================================================================
-bool Debugger::DG_CheckBox(std::string label, bool* active)
+bool Debugger::DG_CheckBox(const std::string &label, bool* active)
 {
     return ImGui::Checkbox(label.c_str(), active);
 }
@@ -474,6 +474,19 @@ bool Debugger::DG_TreeNode(const std::string& label)
 void Debugger::DG_TreePop()
 {
     ImGui::TreePop();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】
+//*     
+//*
+//* [引数]
+//* なし
+//*----------------------------------------------------------------------------------------
+bool Debugger::DG_Selectable(const std::string &_label, bool _selected, ImGuiSelectableFlags _flag, VECTOR2::VEC2 _size)
+{
+    ImVec2 size = ImVec2(_size.x, _size.y);
+    return ImGui::Selectable(_label.c_str(), &_selected, _flag, size);
 }
 
 

@@ -114,18 +114,6 @@ void Camera3D::Update(RendererEngine& renderer)
 	m_pOwner.lock()->get_Transform().lock()->set_Pos(lookDir + m_FocusPoint);
 
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
-
-	// Imgui デバッグ
-	static float debugSpeed = 5.1f;
-	Master::m_pDebugger->BeginDebugWindow("CameraInfo");
-	Master::m_pDebugger->DG_TextValue("Angle_H: %f.1", m_Angle_H);
-	Master::m_pDebugger->DG_TextValue("Angle_V: %f.1", m_Angle_V);
-	Master::m_pDebugger->DG_DragVec3("Pos:", &pos, 0.1f, -10000.0f, 10000.0f);
-	Master::m_pDebugger->DG_DragVec3("Focus:", &m_FocusPoint, 0.1f, -10000.0f, 10000.0f);
-	Master::m_pDebugger->DG_DragVec3("ofs",&m_PosOffset,1.0f,10.0f,1000.0f);
-	Master::m_pDebugger->DG_DragVec3("ofsY",&m_FocusOffset,1.0f,-1000.0f,1000.0f);
-	Master::m_pDebugger->EndDebugWindow();
-
 }
 
 
@@ -185,4 +173,24 @@ VECTOR3::VEC3 Camera3D::get_UpVec()const
 VECTOR3::VEC3 Camera3D::get_FocusPoint()const
 {
 	return m_FocusPoint;
+}
+
+void Camera3D::set_PosOffset(const VECTOR3::VEC3& offset)
+{
+	m_PosOffset = offset;
+}
+
+VECTOR3::VEC3 Camera3D::get_PosOffset()const
+{
+	return m_PosOffset;
+}
+
+void Camera3D::set_FocusOffset(const VECTOR3::VEC3& offset)
+{
+	m_FocusOffset = offset;
+}
+
+VECTOR3::VEC3 Camera3D::get_FocusOffset()const
+{
+	return m_FocusOffset;
 }

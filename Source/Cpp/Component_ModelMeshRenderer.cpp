@@ -165,11 +165,11 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     // シャドウパス **********************************************************
     else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
         if (pScene->HasAnimations()){
+            Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED);
         }
         else{
             Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
         }
-            Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED);
         // トランスフォーム用定数バッファのセット
         pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
 

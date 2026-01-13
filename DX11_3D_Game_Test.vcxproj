@@ -187,9 +187,15 @@
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
+    <ClInclude Include="Source\Header\EditorBase.h" />
+    <ClInclude Include="Source\Header\EditorManager.h" />
+    <ClInclude Include="Source\Header\EditWindowBase.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
+    <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
     <ClInclude Include="Source\Header\IChildSceneState.h" />
+    <ClInclude Include="Source\Header\InspectorEditors.h" />
+    <ClInclude Include="Source\Header\InspectorWindow.h" />
     <ClInclude Include="Source\Header\LightManager.h" />
     <ClInclude Include="Source\Header\Master.h" />
     <ClInclude Include="Source\Header\Material.h" />
@@ -197,6 +203,7 @@
     <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
     <ClInclude Include="Source\Header\DX_RenderTarget.h" />
+    <ClInclude Include="Source\Header\ObjectSelect.h" />
     <ClInclude Include="Source\Header\RenderPipeline.h" />
     <ClInclude Include="Source\Header\RootSceneState.h" />
     <ClInclude Include="Source\Header\IState.h" />
@@ -279,9 +286,15 @@
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
+    <ClCompile Include="Source\Cpp\EditorBase.cpp" />
+    <ClCompile Include="Source\Cpp\EditorManager.cpp" />
+    <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
+    <ClCompile Include="Source\Cpp\HierarchyWindow.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
     <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
+    <ClCompile Include="Source\Cpp\InspectorEditors.cpp" />
+    <ClCompile Include="Source\Cpp\InspectorWindow.cpp" />
     <ClCompile Include="Source\Cpp\LightManager.cpp" />
     <ClCompile Include="Source\Cpp\Material.cpp" />
     <ClCompile Include="Source\Cpp\ModelData.cpp">
@@ -291,6 +304,7 @@
     <ClCompile Include="Source\Cpp\MeshFactory.cpp" />
     <ClCompile Include="Source\Cpp\Component_PointLight.cpp" />
     <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp" />
+    <ClCompile Include="Source\Cpp\ObjectSelect.cpp" />
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp" />
     <ClCompile Include="Source\Cpp\RootSceneState.cpp" />
     <ClCompile Include="Source\Cpp\IState.cpp" />

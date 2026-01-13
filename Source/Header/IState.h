@@ -16,7 +16,7 @@ template<typename Owner>
 class IState
 {
 protected:
-	RendererEngine *m_pRenderer;
+	RendererEngine *m_pRenderer = nullptr;
 
 public:
 	IState() = default;

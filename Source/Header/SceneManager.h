@@ -25,10 +25,6 @@ private:
 	// ステートマシン
 	StateMachine<SceneManager> m_StateMachine;
 
-	float m_PointLightRange;
-	VECTOR3::VEC3 m_LightDir;
-	VECTOR3::VEC3 m_LightPos = { 0,1,0 };
-
 public:
 	SceneManager();
 	~SceneManager();

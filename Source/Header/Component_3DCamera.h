@@ -37,6 +37,17 @@ public:
 	VECTOR3::VEC3 get_UpVec()const;
 	VECTOR3::VEC3 get_FocusPoint()const;
 
+    float get_Angle_H()const { return m_Angle_H; }
+    float get_Angle_V()const { return m_Angle_V; }
+    void set_Angle_H(float angle) { m_Angle_H = angle; }
+    void set_Angle_V(float angle) { m_Angle_V = angle; }
+
+	/* オフセット関連 */
+    void set_PosOffset(const VECTOR3::VEC3 &offset);
+    VECTOR3::VEC3 get_PosOffset()const;
+    void set_FocusOffset(const VECTOR3::VEC3 &offset);
+    VECTOR3::VEC3 get_FocusOffset()const;
+
 	/// <summary>
 	/// ビュー変換行列の取得
 	/// </summary>

@@ -57,15 +57,16 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
     // aiProcess_FlipUVs ＵＶ値をdirect3Dに合うようにしてくれる (Ｖ軸の反転)
     // 他のフラグもあったほうがいいやつらしい https://qiita.com/dpals39/items/1681d9101e58b5aefa27
     u_int flag = 
-        aiProcess_Triangulate |
-        aiProcess_CalcTangentSpace |
-        aiProcess_GenNormals |
-        aiProcess_MakeLeftHanded |
-        aiProcess_FlipWindingOrder |
-        aiProcess_FlipUVs |
-        aiProcess_Triangulate |
-        aiPrimitiveType_LINE |
-        aiPrimitiveType_POINT;
+        aiProcess_CalcTangentSpace |      // タンジェント空間パラメータの計算
+        aiProcess_GenNormals |            // 法線の生成（すでにある場合は無視される）
+        aiProcess_MakeLeftHanded |        // 左手座標系に変換
+        aiProcess_FlipWindingOrder |      // 頂点の順番を反転
+        aiProcess_FlipUVs |               // UV反転
+        aiProcess_OptimizeMeshes |        // メッシュの最適化
+        aiProcess_Triangulate |           // 三角形化
+        aiProcess_JoinIdenticalVertices | // 重複頂点の結合
+        aiPrimitiveType_LINE |            // 線分も読み込む
+        aiPrimitiveType_POINT;            // 点も読み込む
 
     // 不要なノードを勝手に追加しないようにする https://qiita.com/24ban/items/3cdb37188b74bcf1028c
     m_Importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);

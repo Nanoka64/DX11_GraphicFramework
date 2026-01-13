@@ -163,6 +163,18 @@
     <Filter Include="ソース ファイル\Editor">
       <UniqueIdentifier>{5d9de550-829d-4bc9-b7ac-2c892411e2e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Editor\Base">
+      <UniqueIdentifier>{4cd08c0b-e04a-49bf-9a70-19657a71d48a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor\Inspector">
+      <UniqueIdentifier>{5ca47c66-02af-4005-af24-e6a245cf2226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor\Hierarchy">
+      <UniqueIdentifier>{698e1ccf-eb65-4f87-851b-c32aed704bca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor\Hierarchy\Editors">
+      <UniqueIdentifier>{ae09f345-facf-4075-b687-0d3da926457b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -386,6 +398,27 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Material.cpp">
       <Filter>ソース ファイル\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EditorManager.cpp">
+      <Filter>ソース ファイル\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EditorBase.cpp">
+      <Filter>ソース ファイル\Editor\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EditWindowBase.cpp">
+      <Filter>ソース ファイル\Editor\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\InspectorWindow.cpp">
+      <Filter>ソース ファイル\Editor\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\ObjectSelect.cpp">
+      <Filter>ソース ファイル\Editor\Hierarchy\Editors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\HierarchyWindow.cpp">
+      <Filter>ソース ファイル\Editor\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\InspectorEditors.cpp">
+      <Filter>ソース ファイル\Editor\Inspector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -643,6 +676,27 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Material.h">
       <Filter>ソース ファイル\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EditorManager.h">
+      <Filter>ソース ファイル\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EditorBase.h">
+      <Filter>ソース ファイル\Editor\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EditWindowBase.h">
+      <Filter>ソース ファイル\Editor\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\InspectorWindow.h">
+      <Filter>ソース ファイル\Editor\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ObjectSelect.h">
+      <Filter>ソース ファイル\Editor\Hierarchy\Editors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\HierarchyWindow.h">
+      <Filter>ソース ファイル\Editor\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\InspectorEditors.h">
+      <Filter>ソース ファイル\Editor\Inspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -158,7 +158,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
         // シャドウマップから深度値をサンプリング
         // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
         shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
-            g_sShadowSampler, shadowMapUV, zInLVP - 0.0005f
+            g_sShadowSampler, shadowMapUV, zInLVP - 0.0009f
         );
 
         // 1.0 = 光が当たっている, 0.0 = 影

@@ -27,6 +27,7 @@ RenderPipeline::RenderPipeline() :
     m_pLuminance_RT(nullptr),
     m_pShadowMap_RT(nullptr),
     m_GaussWeights(),
+    m_pDoF_GaussianBlur(nullptr),
     m_pBloomGaussianBlur(nullptr)
 {
 }
@@ -140,6 +141,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
 
     // プロジェクション変換行列の設定
     renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+
 
     /* シャドウパス */
     Shadow_PathRender(renderer);

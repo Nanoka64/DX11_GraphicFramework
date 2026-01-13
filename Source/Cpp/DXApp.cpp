@@ -25,6 +25,7 @@ BlendManager            *Master::m_pBlendManager        = nullptr;  // ƒuƒŒƒ“ƒhŠ
 DirectWriteManager      *Master::m_pDirectWriteManager  = nullptr;  // •¶šŠÇ— 
 GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // ƒIƒuƒWƒFƒNƒgŠÇ—
 ResourceManager         *Master::m_pResourceManager     = nullptr;  // ƒŠƒ\[ƒXŠÇ—
+EditorManager           *Master::m_pEditorManager     = nullptr;    // ƒGƒfƒBƒ^ŠÇ—
 
 
 //*---------------------------------------------------------------------------------------
@@ -74,13 +75,14 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     m_pGameManager = new GameManager();
     m_pRenderer = std::make_shared<RendererEngine>();
 
-    Master::m_pDebugger             = new Debugger();              // ImGui‹@”\ƒ‰ƒbƒv 
-    Master::m_pShaderManager        = new ShaderManager();         // ƒVƒF[ƒ_ŠÇ—
-    Master::m_pLightManager         = new LightManager();          // ƒ‰ƒCƒgŠÇ—
-    Master::m_pBlendManager         = new BlendManager();          // ƒuƒŒƒ“ƒhŠÇ—
-    Master::m_pDirectWriteManager   = new DirectWriteManager();    // •¶šŠÇ— 
-    Master::m_pGameObjectManager    = new GameObjectManager();     // ƒIƒuƒWƒFƒNƒgŠÇ—
+    Master::m_pDebugger             = new Debugger();               // ImGui‹@”\ƒ‰ƒbƒv 
+    Master::m_pShaderManager        = new ShaderManager();          // ƒVƒF[ƒ_ŠÇ—
+    Master::m_pLightManager         = new LightManager();           // ƒ‰ƒCƒgŠÇ—
+    Master::m_pBlendManager         = new BlendManager();           // ƒuƒŒƒ“ƒhŠÇ—
+    Master::m_pDirectWriteManager   = new DirectWriteManager();     // •¶šŠÇ— 
+    Master::m_pGameObjectManager    = new GameObjectManager();      // ƒIƒuƒWƒFƒNƒgŠÇ—
     Master::m_pResourceManager      = new ResourceManager();        // ƒŠƒ\[ƒXŠÇ—
+    Master::m_pEditorManager        = new EditorManager();          // ƒGƒfƒBƒ^ŠÇ—
 
     // *************************************************************************************************
     /**  ƒEƒCƒ“ƒhƒE‚Ì‰Šú‰» **/
@@ -190,6 +192,12 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     /**  “ü—Íƒ}ƒl[ƒWƒƒ[‰Šú‰» **/
     // *************************************************************************************************
     if (!InputManager::GetInstance().Init(m_hWnd))
+    {
+        assert(false);
+        return false;
+    }
+
+    if (!Master::m_pEditorManager->Init(*m_pRenderer))
     {
         assert(false);
         return false;

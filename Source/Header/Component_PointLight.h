@@ -30,5 +30,7 @@ public:
 	/// </summary>
 	/// <param name="r"></param>
 	void set_Range(float r) { m_Range = r; }
+
+    float get_Range() const { return m_Range; }
 };
 

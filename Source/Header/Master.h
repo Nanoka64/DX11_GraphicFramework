@@ -6,6 +6,7 @@
 #include "DirectWriteManager.h"
 #include "GameObjectManager.h"
 #include "Debugger.h"
+#include "EditorManager.h"
 
 class Master
 {
@@ -17,4 +18,5 @@ public:
 	static BlendManager			* m_pBlendManager;		// ブレンド管理
 	static GameObjectManager	* m_pGameObjectManager;	// オブジェクト管理
 	static ResourceManager		* m_pResourceManager;	// リソース管理
+	static EditorManager		* m_pEditorManager;		// エディタ管理
 };

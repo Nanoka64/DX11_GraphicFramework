@@ -12,8 +12,9 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 
 using namespace DirectX;
+using namespace Tool;
 
-#define PLAYER_MOVE_SPEED  5.0f		// プレイヤーの移動スピード
+#define PLAYER_MOVE_SPEED  10.0f		// プレイヤーの移動スピード
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -22,7 +23,10 @@ using namespace DirectX;
 //*	updateRank : 更新順番
 //*----------------------------------------------------------------------------------------
 PlayerController::PlayerController(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
-m_pCameraComp()
+m_pCameraComp(),
+m_StateMachine(this),
+m_IsAnim(false),
+m_MoveSpeed(PLAYER_MOVE_SPEED)
 {
 	this->set_Tag("PlayerController");
 }
@@ -55,6 +59,8 @@ void PlayerController::Init(RendererEngine& renderer)
 	}
 	
 	m_pCameraComp = obj->get_Component<Camera3D>();
+
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -92,15 +98,20 @@ void PlayerController::Update(RendererEngine& renderer)
 	if (GetInput(CONFIG_INPUT::JUMP))   moveDir = moveDir + upVec;
 	if (GetInput(CONFIG_INPUT::C))		moveDir = moveDir - upVec;
 
+
+	if (GetInput(CONFIG_INPUT::JUMP))
+	{
+
+	}
+
 	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();;
 
 	static float debugSpeed = 1.5f;
 	m_IsAnim = false;
 	if (moveDir.Length() > 0.001) {
 		moveDir = moveDir.Normalize();
-		float speed = PLAYER_MOVE_SPEED * debugSpeed;
 		VEC3 crntPos = pTransform->get_VEC3ToPos();
-		VEC3 setPos = (crntPos + (moveDir * speed));
+		VEC3 setPos = (crntPos + (moveDir * m_MoveSpeed));
 
 		// 移動ベクトルを加算
 		pTransform->set_Pos(setPos);
@@ -121,14 +132,14 @@ void PlayerController::Update(RendererEngine& renderer)
 		pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
 	}
 
-	pOwner->get_Component<SkinnedMeshAnimator>()->set_IsAnim(m_IsAnim);
-
+	auto animComp = pOwner->get_Component<SkinnedMeshAnimator>();
+	animComp->set_IsAnim(m_IsAnim);
+	animComp->set_AnimIndex(37);
 
 	// Imgui デバッグ
-	Master::m_pDebugger->BeginDebugWindow("PlayerInfo");
+	Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"プレイヤー改造"));
 	Master::m_pDebugger->DG_SliderFloat("AccelerationSpeed:", 1, &debugSpeed, 0.1f, 8.0f);
-	Master::m_pDebugger->DG_TextValue("CrntMoveSpeed: %f.1", (PLAYER_MOVE_SPEED * debugSpeed));
-	Master::m_pDebugger->DG_DragVec3("Pos:", &pos, 5.1f, -10000.0f, 10000.0f);
+	Master::m_pDebugger->DG_TextValue(U8ToChar(u8"現在の速度 %f.1"), (PLAYER_MOVE_SPEED * debugSpeed));
 	Master::m_pDebugger->EndDebugWindow();
 }
 

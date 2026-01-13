@@ -15,8 +15,7 @@ class Light : public IComponent
 protected:
     std::weak_ptr<class Transform> m_pOwnerTransform;   // オーナーの方向を保持（ライトの方向に使うため）
     VECTOR3::VEC3 m_LightColor;                         // ライトカラー
-    float m_Intensity;   // ディフューズ強度
-    float m_SpecularIntensity;  // スペキュラ強度
+    float m_Intensity;   // 強度
 
     VECTOR3::VEC3 m_FocusPoint;
     VECTOR3::VEC3 m_UpVec;
@@ -32,11 +31,18 @@ public:
     /// <param name="col"></param>
     void set_LightColor(const VECTOR3::VEC3& col);
 
-
     /// <summary>
-    /// 光の強さ設定
+    /// ディフューズ光の強さ設定
     /// </summary>
     /// <param name="ins"></param>
     void set_Intensity(float ins);
+
+    float get_Intensity() const {
+        return m_Intensity;
+    }
+
+    VECTOR3::VEC3 get_LightColor() const {
+        return m_LightColor;
+    }
 };
 
