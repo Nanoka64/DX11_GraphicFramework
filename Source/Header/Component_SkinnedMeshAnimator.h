@@ -36,6 +36,7 @@ private:
 	std::vector<AnimationData *>m_Animations;			 // 読み取ったアニメーション
 
 	double m_AnimationTime = 0.0;						 // 現在のアニメーション時間(ticks)
+	int m_PrevAnimIndex = -1;							 // 一つ前のアニメーションインデックス
 	int m_CurrentAnimIndex = -1;						 // 現在のアニメーションインデックス
 	bool m_IsAnimationFlag;	// アニメーションさせるかどうか（とりまデバッグ用）
 	float m_AnimProcTime;	// 更新用カウンタ
@@ -49,15 +50,16 @@ public:
 	//void Update(RendererEngine& renderer)override;
 	void Draw(RendererEngine& renderer)override;
 
-	void BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds);	// ボーンの更新
+	void BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds, int animIdx);	// ボーンの更新
 	void set_MeshResource(std::weak_ptr<class ModelMeshResource> meshResource);	// リソースの設定
 
-	void set_AnimTime(float t) { m_AnimationTime = t; };		// アニメーション再生時間の設定
-	void set_AnimIndex(int idx) { m_CurrentAnimIndex = idx; };	// アニメーションインデックスの設定
-	void set_IsAnim(bool f) { m_IsAnimationFlag = f; };			// アニメーションフラグ
+	void set_AnimTime(float t) { m_AnimationTime = t; };			// アニメーション再生時間の設定
+	void set_AnimIndex(int idx) { m_CurrentAnimIndex = idx; };		// アニメーションインデックスの設定
+	void set_PrevAnimIndex(int idx) { m_PrevAnimIndex = idx; };		// 前のアニメーションインデックスとして設定
+	void set_IsAnim(bool f) { m_IsAnimationFlag = f; };				// アニメーションフラグ
 
 private:
-	void TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent); // ボーン変換行列の更新
+	void TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent, int animIdx); // ボーン変換行列の更新
 	const NodeAnimChannel *FindNodeAnim(const AnimationData *pAnim, const std::string &nodeName);	// アニメーションがあるか確認
 	UINT FindPosition(float animTimeTicks, const NodeAnimChannel *pNodeAnimChannel);		// 対応するPosキーのインデックスを探す
 	UINT FindRotation(float animTimeTicks, const NodeAnimChannel *pNodeAnimChannel);		// 対応するRotキーのインデックスを探す

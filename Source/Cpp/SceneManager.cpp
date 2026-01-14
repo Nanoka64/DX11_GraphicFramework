@@ -79,6 +79,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             if (m_pCamera == nullptr) return false;
             m_pCamera->Init(renderer);
             m_pCamera->set_Tag("Camera");
+            m_pCamera->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             m_pCamera->add_Component<Camera3D>();
             m_pCamera->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
             m_pCamera->set_LayerRank(100);
@@ -111,7 +112,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
             m_pPlayer->add_Component<PlayerController>(1);
             m_pPlayer->get_Component<PlayerController>()->Init(renderer);
-            m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, -50.0f);
+            m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
             // カメラのフォーカスオブジェクトに設定
@@ -169,9 +170,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             mesh.ObjTag = "Wall";
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Scale(30.0f, 30.0f, 30.0f);
-            obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, -10.0f);
-            obj->get_Transform().lock()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
+            obj->get_Transform().lock()->set_Scale(100.0f, 100.0f, 100.0f);
+            obj->get_Transform().lock()->set_Pos(-300.0f, 80.0f, 600.0f);
+            obj->get_Transform().lock()->set_RotateToDeg(-60.0f, 0.0f, 0.0f);
         }
 
         /* アリ モデルの生成 */
@@ -185,7 +186,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             CreateModelInfo model;
             model.pRenderer = &renderer;
-            model.Path = "Resource/Model/Enemy/trader_ant_lowpoly.fbx";
+            model.Path = "Resource/Model/Enemy/ant_lowpoly.fbx";
             model.ObjTag = "Ant1";
             model.IsAnim = true;
             model.MatNum = 1;
@@ -194,7 +195,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 2; i++)
             {
                 model.ObjTag = "Ant_" + std::to_string(i + 1);   // タグ
 
@@ -258,8 +259,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             auto obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(1.0f, 1.0f, 1.0f);
-            obj->get_Component<Transform>()->set_Pos(0.0f, 00.0f, 10.0f);
+            obj->get_Component<Transform>()->set_Scale(2.0f, 2.0f, 2.0f);
+            obj->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 400.0f);
         }      
         
         /* 建物 モデルの生成 */
@@ -281,10 +282,10 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.MaterialData->MatIndex = 0;
             model.MaterialData->pMat = mat;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-            auto obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(100.0f, 100.0f, 50.0f);
-            obj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
-            obj->get_Component<Transform>()->set_RotateToDeg(90.0f, 0.0f, 0.0f);
+            m_pTempObj = MeshFactory::CreateModel(model);
+            m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
+            m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
 
         /* 地面の生成 */
@@ -416,6 +417,9 @@ bool SceneManager::Init(RendererEngine &renderer)
 
     }
 
+    m_pCamera->get_Component<Camera3D>()->Update(renderer);
+
+
     // ライトにカメラのTransformを持たせる
     Master::m_pLightManager->set_CameraTransform(m_pCamera->get_Transform());
 
@@ -450,28 +454,48 @@ void SceneManager::Update(RendererEngine& renderer)
     static float counter = 0.0f;
     counter += 0.01f;
 
-    for (int i = 0; i < 5; i++)
+
+    // オブジェクト更新
+    Master::m_pGameObjectManager->ObjectUpdate(renderer);
+
+    //-----------------------------------------------------------------------------
+    // ■ アリの移動処理
+    //-----------------------------------------------------------------------------
+    for (int i = 0; i < 2; i++)
     {
         auto antTransform = m_pAnt[i]->get_Transform().lock();
         if (antTransform)
         {
             VEC3 pos = VEC3();
-            pos.x = cos(counter) * 50.0f;
             pos.y = 15.0f;
+            VEC3 crntPos = antTransform->get_VEC3ToPos();
+            VEC3 crntRot = antTransform->get_VEC3ToRotateToRad();
 
             if (i % 2 == 0) {
-                pos.z = sin(counter) * 50.0f;
+                pos.z = sin(counter) * 300.0f;
+            }
+            else{
+                pos.x = cos(counter) * 300.0f;
             }
 
+            VEC3 velocity = pos - crntPos;
+
+            // 移動ベクトルから、Y軸周りの回転角度を求める
+            float targetAngle = atan2(velocity.x, velocity.z);
+
+            targetAngle = Lerp(crntRot.y, targetAngle, 0.1f);
+
             antTransform->set_Pos(pos);
+            antTransform->set_RotateToRad(0, targetAngle, 0);
         }
     }
-
-
+    
+    //-----------------------------------------------------------------------------
+    // ■ 爆撃機の移動処理
+    //-----------------------------------------------------------------------------
     static VEC3 B2PrevPos[3]{};
     VEC3 center = VEC3(0.0f, 0.0f, 0.0f);
     float radius = 700.0f;
-
     for (int i = 0; i < 3; i++)
     {
         auto B2Transform = m_pBomber[i]->get_Transform().lock();
@@ -489,18 +513,21 @@ void SceneManager::Update(RendererEngine& renderer)
 
             // 移動ベクトルから、Y軸周りの回転角度を求める
             float targetAngle = atan2(velocity.x, velocity.z);
-            targetAngle -= 3.14f/ 2;
 
             // 前の座標として保持
             B2PrevPos[i] = pos;
 
-            B2Transform->set_Pos(pos);
-            B2Transform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+            VEC3 ppp;
+            ppp.x = ((cosf(counter) * 2) - 1.0f) * 200.0f;
+            ppp.y = 0.0f;
+            ppp.z = ((sinf(counter) * 2) - 1.0f) * 200.0f;
+
+            B2Transform->set_Pos(ppp);
+            B2Transform->set_RotateToRad(0.0f, (sinf(counter) * 2) - 1.0f, 0.0f);
         }
     }
 
-    // オブジェクト更新
-    Master::m_pGameObjectManager->ObjectUpdate(renderer);
+    m_pCamera->get_Component<Camera3D>()->Update(renderer);
 
     // カメラ更新
     auto viewMatrix = m_pCamera->get_Component<Camera3D>()->get_ViewMatrix();
@@ -512,9 +539,10 @@ void SceneManager::Update(RendererEngine& renderer)
 
     Master::m_pEditorManager->Update(renderer);
 
-    float farClip = m_pCamera->get_Component<Camera3D>()->get_Far();
-    float nearClip = m_pCamera->get_Component<Camera3D>()->get_Near();
-    float fov = m_pCamera->get_Component<Camera3D>()->get_Fov();
+    auto camCom = m_pCamera->get_Component<Camera3D>();
+    float farClip = camCom->get_Far();
+    float nearClip = camCom->get_Near();
+    float fov = camCom->get_Fov();
 
     // プロジェクション変換行列の設定 一回でいい
     renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), farClip, nearClip, fov);
@@ -529,11 +557,12 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
-    float farClip = m_pCamera->get_Component<Camera3D>()->get_Far();
-    float nearClip = m_pCamera->get_Component<Camera3D>()->get_Near();
-    float fov = m_pCamera->get_Component<Camera3D>()->get_Fov();
+    auto camCom = m_pCamera->get_Component<Camera3D>();
+    float farClip   = camCom->get_Far();
+    float nearClip  = camCom->get_Near();
+    float fov       = camCom->get_Fov();
 
-    // プロジェクション変換行列の設定 一回でいい
+    // プロジェクション変換行列の設定 一回でいいけど、今回はfovなど編集できるようにしているので...
     renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), fov, nearClip, farClip);
 
     // レンダリングパイプラインの実行

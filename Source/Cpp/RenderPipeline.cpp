@@ -122,9 +122,9 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_Separator();
 
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度ブラー"));
-            Master::m_pDebugger->DG_SliderFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 32.0f);
             Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"強度"));
+            Master::m_pDebugger->DG_SliderFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 32.0f);
             Master::m_pDebugger->DG_Separator();
 
             Master::m_pDebugger->DG_TreePop();  // ポストエフェクト終了

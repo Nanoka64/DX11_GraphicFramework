@@ -96,7 +96,6 @@ void LightManager::DirectionLight_SetCBuffer()
 	//		 カメラを完全に分離するか…
 	m_pCBDirectionLightSet->Data[0].EyePos = m_pCameraTransform.lock()->get_VEC3ToPos();
 
-
 	// GPUメモリにアクセス
 	m_pContext->Map(m_pCBDirectionLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 

@@ -182,22 +182,22 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     }
 
     // ImGUI
-    Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());
-    Master::m_pDebugger->DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
-    for (size_t i = 0; i < std::min<size_t>(vertexNum, m_DebugDrawBoneNum); i++)
-    {
-        for (size_t j = 0; j < 4; j++)
-        {
-            if (vertices[i].boneIDs[j] == 0)
-            {
-                Master::m_pDebugger->DG_TextValue("Vertex%d============================", i);
+    //Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag());
+    //Master::m_pDebugger->DG_SliderInt("DrawBoneNum", 1, &m_DebugDrawBoneNum, 10, vertexNum);
+    //for (size_t i = 0; i < std::min<size_t>(vertexNum, m_DebugDrawBoneNum); i++)
+    //{
+    //    for (size_t j = 0; j < 4; j++)
+    //    {
+    //        if (vertices[i].boneIDs[j] == 0)
+    //        {
+    //            Master::m_pDebugger->DG_TextValue("Vertex%d============================", i);
 
-                Master::m_pDebugger->DG_TextValue("BoneIds : %d", vertices[i].boneIDs[j]);
-                Master::m_pDebugger->DG_TextValue("Weight  : %f.2", vertices[i].boneWeights[j]);
-            }
-        }
-    }
-    Master::m_pDebugger->EndDebugWindow();
+    //            Master::m_pDebugger->DG_TextValue("BoneIds : %d", vertices[i].boneIDs[j]);
+    //            Master::m_pDebugger->DG_TextValue("Weight  : %f.2", vertices[i].boneWeights[j]);
+    //        }
+    //    }
+    //}
+    //Master::m_pDebugger->EndDebugWindow();
 }
 
 

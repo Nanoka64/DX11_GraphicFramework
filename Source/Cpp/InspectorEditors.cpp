@@ -195,7 +195,12 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
     }
 
     // beginはInspectorWindowで行っている
-    float moveSpeed = pComp->get_MoveSpeed();
+    float moveSpeed             = pComp->get_MoveSpeed();
+    PLAYER_ANIMATION_ID animId  = pComp->get_AnimID();
+    VEC3 moveVelocity           = pComp->get_MoveVelocity();
+    bool isJump                 = pComp->get_IsJump();
+    float jumpFoce              = pComp->get_JumpFoce();
+    float gravity               = pComp->get_Gravity();
 
     // ノード
     if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"プレイヤーコントローラー")))
@@ -206,11 +211,36 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_SliderFloat("##MoveSpeed", 1, &moveSpeed, 0.0f, 100.0f);
 
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"速度ベクトル"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragVec3("##Velocity", &moveVelocity, 0.0f, -10000, 10000);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"再生中のアニメーション"));
+        Master::m_pDebugger->DG_TextValue("ID : %d",static_cast<int>(animId));
+        Master::m_pDebugger->DG_TextValue(U8ToChar(u8"名前 : %s"), g_PlayerAnimationNames[static_cast<int>(animId) + 1].c_str());
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ジャンプフラグ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_RadioButton("##JumpFlag", isJump);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ジャンプ力"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##JumpFoce", 1, &jumpFoce,0.01f, 0.0f, 100.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"重力"));
+        Master::m_pDebugger->DG_Spacing();
+        Master::m_pDebugger->DG_Spacing();
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Gravity", 1, &gravity, 0.01f, 0.0f, 10.0f);
+
         Master::m_pDebugger->DG_TreePop();
     }
 
     // 反映
     pComp->set_MoveSpeed(moveSpeed);
+    pComp->set_AnimID(animId);
+    pComp->set_JumpFoce(jumpFoce);
+    pComp->set_Gravity(gravity);
 }
 
 
@@ -289,9 +319,20 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_TreePop();
     }
 
+    /*
+    * 補正
+    */
+    if (nearClip < 0.0f)
+    {
+        nearClip = 1.0f;
+    }
+    if (farClip < nearClip)
+    {
+        farClip = nearClip + 200.0f;    // 同じだとダメなので補正値足す
+    }
     if (fov < 0.0f)
     {
-        fov = 0.1f;
+        fov = 1.0f;
     }
 
     // 反映

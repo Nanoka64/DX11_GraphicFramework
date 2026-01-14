@@ -111,12 +111,10 @@ void Camera3D::Update(RendererEngine& renderer)
 	VEC3 lookDir;
 	lookDir.x = m_PosOffset.x * cosf(m_Angle_V) * cosf(m_Angle_H);
 	lookDir.y = m_PosOffset.y * sinf(m_Angle_V);
-	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sin(m_Angle_H);
+	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sinf(m_Angle_H);
 
 	// ƒJƒƒ‰‚ÌˆÊ’u
 	m_pOwner.lock()->get_Transform().lock()->set_Pos(lookDir + m_FocusPoint);
-
-	VEC3 pos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 }
 
 

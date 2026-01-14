@@ -55,25 +55,27 @@ void SkinnedMeshAnimator::Init(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
 {
+    //Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
+    //Master::m_pDebugger->DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
+    //Master::m_pDebugger->DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
+    //Master::m_pDebugger->DG_TextValue("AnimNum: %d", m_Animations.size());  // アニメーション数
+    //Master::m_pDebugger->DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
+    //Master::m_pDebugger->DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
+    //Master::m_pDebugger->EndDebugWindow();
 
-    Master::m_pDebugger->BeginDebugWindow(m_pOwner.lock()->get_Tag() + " ---AnimInfo");
-    Master::m_pDebugger->DG_TextValue("BoneNum: %d", m_BoneList.size());    // ボーン数
-    Master::m_pDebugger->DG_TextValue("NodeNum: %d", m_NodeList.size());    // ノード数
-    Master::m_pDebugger->DG_TextValue("AnimNum: %d", m_Animations.size());  // アニメーション数
-    Master::m_pDebugger->DG_CheckBox("IsAnimation##" + m_pOwner.lock()->get_Tag(), &m_IsAnimationFlag);    // アニメーション再生するか
-    Master::m_pDebugger->DG_SliderInt("AnimationIndex##" + m_pOwner.lock()->get_Tag(), 1, &m_CurrentAnimIndex, 0, m_Animations.size() - 1);    // アニメーションインデックス
-    Master::m_pDebugger->EndDebugWindow();
-
-    // シャドウパス時
+    // メインパス
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN)
     {
+        if (m_CurrentAnimIndex == -1)return;
         m_AnimProcTime += 0.023f;
-        BoneTransformsUpdate(renderer, m_AnimProcTime);
+        BoneTransformsUpdate(renderer, m_AnimProcTime, m_CurrentAnimIndex);
     }
+    // シャドウパス
     else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW)
     {
+        if (m_CurrentAnimIndex == -1)return;
         m_ShadowAnimProcTime += 0.023f;
-        BoneTransformsUpdate(renderer, m_ShadowAnimProcTime);
+        BoneTransformsUpdate(renderer, m_ShadowAnimProcTime, m_CurrentAnimIndex);
     }
 }
 
@@ -98,7 +100,7 @@ void SkinnedMeshAnimator::set_MeshResource(std::weak_ptr<class ModelMeshResource
 //* 引数：2.秒単位の時間
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds)
+void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds, int animIdx)
 {
     float tickPerSecond = 0.0f;
     float timeInTicks = 0.0f;
@@ -108,8 +110,8 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
     if (!m_Animations.empty()) {
         tickPerSecond =
             static_cast<float>(
-                m_Animations[m_CurrentAnimIndex]->TicksPerSecond != 0 ?     // ティック数が0じゃないならそのまま代入
-                m_Animations[m_CurrentAnimIndex]->TicksPerSecond : 25.0f    // 0なら25.0を仮として入れる
+                m_Animations[animIdx]->TicksPerSecond != 0 ?     // ティック数が0じゃないならそのまま代入
+                m_Animations[animIdx]->TicksPerSecond : 25.0f    // 0なら25.0を仮として入れる
                 );
 
         // ティック単位の時間を求める
@@ -119,12 +121,12 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
 
         // アニメーションの現在の再生時間を剰余演算で求める
         /* 現在の再生時間 ＝ ティック単位時間 ％ アニメーションの持続時間 */
-        animTimeTicks = static_cast<float>(fmod(timeInTicks, m_Animations[m_CurrentAnimIndex]->Duration));
+        animTimeTicks = static_cast<float>(fmod(timeInTicks, m_Animations[animIdx]->Duration));
     }
 
     if (m_IsAnimationFlag) {
         // ボーン変換
-        TransformBone(animTimeTicks, 0, XMMatrixIdentity());
+        TransformBone(animTimeTicks, 0, XMMatrixIdentity(), animIdx);
     }
 
     auto pContext = renderer.get_DeviceContext();
@@ -163,7 +165,7 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
 //* 引数：3.親ボーンのワールド変換行列
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent)
+void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent, int animIdx)
 {
     XMMATRIX localTransformMtx = XMMatrixIdentity(); // ローカル行列
     XMMATRIX worldTransformMtx = XMMatrixIdentity(); // ボーンの最終ワールド座標変換行列
@@ -172,7 +174,7 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
 
     // アニメーションがあるなら
     if (!m_Animations.empty()) {
-        const AnimationData *pAnim = m_Animations[m_CurrentAnimIndex];
+        const AnimationData *pAnim = m_Animations[animIdx];
 
         const NodeAnimChannel *pNodeAnim = FindNodeAnim(pAnim, nodeName);  // アニメーション確認
 
@@ -224,7 +226,7 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
     for (size_t i = 0; i < m_NodeList[nodeIdx]->ChildrenIndices.size(); i++)
     {
         UINT childIndex = m_NodeList[nodeIdx]->ChildrenIndices[i];
-        TransformBone(animTimeTicks, childIndex, worldTransformMtx);
+        TransformBone(animTimeTicks, childIndex, worldTransformMtx, animIdx);
     }
 }
 
