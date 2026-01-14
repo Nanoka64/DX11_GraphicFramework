@@ -819,7 +819,7 @@ XMMATRIX RendererEngine::get_ViewProjectionMatrix() const
 //* à¯êîÅFÇ»Çµ
 //* ñﬂílÅFXMFLOAT4X4
 //*----------------------------------------------------------------------------------------
-XMFLOAT4X4 RendererEngine::get_ViewProjectionInvMatrix()
+XMFLOAT4X4 RendererEngine::get_ViewProjectionInvMatrix()const
 {
     XMMATRIX vp = get_ViewProjectionMatrix();
     XMFLOAT4X4 res{};

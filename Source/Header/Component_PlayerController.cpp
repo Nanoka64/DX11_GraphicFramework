@@ -28,7 +28,8 @@ m_StateMachine(this),
 m_IsAnim(false),
 m_IsJump(false),
 m_MoveVelocity(VEC3()),
-m_MoveSpeed(PLAYER_MOVE_SPEED)
+m_MoveSpeed(PLAYER_MOVE_SPEED),
+m_CrntAnimID(PLAYER_ANIMATION_ID::T_POSE)
 {
 	this->set_Tag("PlayerController");
 }
@@ -60,6 +61,7 @@ void PlayerController::Init(RendererEngine& renderer)
 		assert(false);
 	}
 	
+	// カメラコンポーネント
 	m_pCameraComp = obj->get_Component<Camera3D>();
 
 	// アニメーションコンポーネントの取得
@@ -124,10 +126,10 @@ void PlayerController::Update(RendererEngine &renderer)
 	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
 	//if (GetInput(CONFIG_INPUT::C))		velocity = velocity - upVec;
 
-	float flightDuration = (m_JumpForce * 2) / -m_Gravity;	// 滞空時間
+	//float flightDuration = (m_JumpForce * 2) / -m_Gravity;	// 滞空時間
 
 	//-----------------------------------------------------------------------------
-	// ■ ジャンプ入力受付
+	// ■ ジャンプ入力受付 / ジャンプ中処理
 	//-----------------------------------------------------------------------------
 	if (m_IsJump == false)
 	{
@@ -140,7 +142,8 @@ void PlayerController::Update(RendererEngine &renderer)
 			ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_START);
 		}
 	}
-	if (m_IsJump) {
+	else
+	{
 		// ジャンプ中アニメーション
 		ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_LOOP);
 		m_MoveVelocity.y -= m_Gravity;	// 重力
@@ -151,20 +154,23 @@ void PlayerController::Update(RendererEngine &renderer)
 	//-----------------------------------------------------------------------------
 	// ■ velocityをもとに実際に移動させ、回転も計算する
 	//-----------------------------------------------------------------------------
-	if (m_MoveVelocity.Length() > 0.001)
+	if (m_MoveVelocity.Length() > 0.001f)
 	{
 		//m_MoveVelocity = m_MoveVelocity.Normalize();
 
 		// 移動計算
 		newPos = (crntPos + (m_MoveVelocity * m_MoveSpeed));
 
-		// 地面判定
-		if (newPos.y < 0.0f)
+		if (m_IsJump)
 		{
-			newPos.y = 0.0f;
-			m_MoveVelocity.y = 0.0f;
-			m_IsJump = false;
-			ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_LAND);
+			// 地面判定
+			if (newPos.y < 0.0f)
+			{
+				newPos.y = 0.0f;
+				m_MoveVelocity.y = 0.0f;
+				m_IsJump = false;
+				ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_LAND);
+			}
 		}
 
 		// 移動ベクトルを加算
@@ -172,7 +178,11 @@ void PlayerController::Update(RendererEngine &renderer)
 
 		// 動いているならアニメーション
 		m_IsAnim = true;
-
+		
+		/*
+		// 移動ベクトルに合わせてY軸のみ回転させる
+		// ジャンプ時に回転しないよう、X/Zのみ考慮
+		*/
 		VEC2 velocityXZ = VEC2(m_MoveVelocity.x, m_MoveVelocity.z);
 		if (velocityXZ.Length() > 0.001f)
 		{
@@ -211,7 +221,7 @@ void PlayerController::Update(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void PlayerController::Draw(RendererEngine& renderer)
 {
-
+	return;
 }
 
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)

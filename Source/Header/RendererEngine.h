@@ -246,7 +246,7 @@ public:
     /// ビュープロジェクション行列の逆行列取得
     /// </summary>
     /// <returns></returns>
-    XMFLOAT4X4 get_ViewProjectionInvMatrix();
+    XMFLOAT4X4 get_ViewProjectionInvMatrix()const;
 
     /// <summary>
     /// ビュー行列の取得

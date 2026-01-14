@@ -83,7 +83,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pCamera->add_Component<Camera3D>();
             m_pCamera->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
             m_pCamera->set_LayerRank(100);
-            m_pCamera->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            //m_pCamera->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
         }
 
         /* プレイヤー モデルの生成 */
@@ -110,6 +110,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pPlayer->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
             m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+
             m_pPlayer->add_Component<PlayerController>(1);
             m_pPlayer->get_Component<PlayerController>()->Init(renderer);
             m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
@@ -140,13 +141,13 @@ bool SceneManager::Init(RendererEngine &renderer)
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             auto light = obj->add_Component<DirectionalLight>();
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            light->set_Intensity(4.0f);
+            light->set_Intensity(3.0f);
             light->set_Player(m_pPlayer);
             light->Init(renderer);
 
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
-            obj->get_Transform().lock()->set_Scale(VEC3(10.0, 10.0, 15.0));
-            obj->get_Transform().lock()->set_RotateToRad(VEC3(0.7f, 1.6f, 0.0f));
+            obj->get_Transform().lock()->set_Scale(VEC3(30.0, 30.0, 80.0));
+            obj->get_Transform().lock()->set_RotateToRad(VEC3(0.85f, 1.6f, 0.0f));
         }
 
         /* 壁 */
@@ -333,7 +334,6 @@ bool SceneManager::Init(RendererEngine &renderer)
 
         /* ビルボードの生成 */
         {
-
             Material* mat = new Material;
             mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Flame3_1.png");
             mat->m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -366,10 +366,11 @@ bool SceneManager::Init(RendererEngine &renderer)
 
                 mat->m_DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
                 billboard.MaterialData->pMat = mat;
-                auto obj = MeshFactory::CreateBillboard(billboard);
+                /*auto obj = MeshFactory::CreateBillboard(billboard);
                 obj->get_Transform().lock()->set_Pos(pos);
                 obj->get_Transform().lock()->set_Scale(50, 50, 50);
                 obj->set_Tag("Billboard" + std::to_string(i));
+            */
             }
         }
 
@@ -517,13 +518,8 @@ void SceneManager::Update(RendererEngine& renderer)
             // 前の座標として保持
             B2PrevPos[i] = pos;
 
-            VEC3 ppp;
-            ppp.x = ((cosf(counter) * 2) - 1.0f) * 200.0f;
-            ppp.y = 0.0f;
-            ppp.z = ((sinf(counter) * 2) - 1.0f) * 200.0f;
-
-            B2Transform->set_Pos(ppp);
-            B2Transform->set_RotateToRad(0.0f, (sinf(counter) * 2) - 1.0f, 0.0f);
+            B2Transform->set_Pos(pos);
+            B2Transform->set_RotateToRad(0.0f, targetAngle, 0.0f);
         }
     }
 
@@ -581,6 +577,5 @@ void SceneManager::Draw(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Term(RendererEngine &renderer)
 {
-    //SAFE_DELETE(m_pGaussianBlur);
 }
 

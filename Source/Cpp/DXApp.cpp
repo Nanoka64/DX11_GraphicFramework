@@ -271,16 +271,24 @@ int DXApp::MainLoop()
                 Master::m_pDebugger->DG_TextValue("CrntTime : %d", crntTime);
                 Master::m_pDebugger->DG_TextValue("LastTime : %d", lastTime);
                 Master::m_pDebugger->DG_TextValue("Difference : %f.3", difference);
+                Master::m_pDebugger->EndDebugWindow(); 
+                
+                using namespace Tool;
+
+                // 操作ガイド
+                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"操作ガイド"));
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"WASD : 移動\n 矢印キー：視点操作\n Space：ジャンプ\n"));
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ImGUIウインドウから各オブジェクトの\n一部パラメータ等が見れたりいじれるようになっています。"));
                 Master::m_pDebugger->EndDebugWindow();
 
                 // 入力更新
                 InputManager::GetInstance().Update();
+                
+                // 描画の開始
+                m_pRenderer->BeginRender();
 
                 // ゲーム更新
                 m_pGameManager->Update(*m_pRenderer);
-
-                // 描画の開始
-                m_pRenderer->BeginRender();
 
                 // ゲーム描画
                 m_pGameManager->Draw(*m_pRenderer);

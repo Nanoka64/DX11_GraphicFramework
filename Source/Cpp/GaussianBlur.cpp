@@ -89,8 +89,11 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // 水平ブラー
     // 
     // ************************************************************************
+    UINT vpWidth = static_cast<UINT>(m_pTexture.lock()->get_Width() / 2.0f);
+    UINT vpHeight = static_cast<UINT>(m_pTexture.lock()->get_Height());
+    
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, m_pTexture.lock()->get_Width() / 2.0f, m_pTexture.lock()->get_Height());
+    renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
 
     // 水平ブラー用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pHorizontalBlur->get_RTV(), nullptr);
@@ -108,8 +111,11 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // 垂直ブラー
     // 
     // ************************************************************************
+    vpWidth  = static_cast<UINT>(m_pTexture.lock()->get_Width() / 2.0f);
+    vpHeight = static_cast<UINT>(m_pTexture.lock()->get_Height() / 2.0f);
+     
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, m_pTexture.lock()->get_Width() / 2.0f, m_pTexture.lock()->get_Height() / 2.0f);
+    renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
     // 垂直ブラー用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pVerticalBlur->get_RTV(), nullptr);
     renderer.ClearRenderTargetView(m_pVerticalBlur);

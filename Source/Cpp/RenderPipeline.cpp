@@ -325,11 +325,11 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // カリングなし
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
-    for (int i = 0; i < 30; i++)
-    {
-        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
-        //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
-    }
+    //for (int i = 0; i < 30; i++)
+    //{
+    //    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
+    //    billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    //}
 
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);

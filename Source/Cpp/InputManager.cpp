@@ -85,7 +85,7 @@ void InputManager::Update()
         }
     }
 
-    if (m_InputStopTime < 0)
+    if (m_InputStopTime <= 0)
     {
         m_InputStopTime = 0;
         m_InputStopFlag = false;
