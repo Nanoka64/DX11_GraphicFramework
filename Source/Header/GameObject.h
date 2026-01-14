@@ -26,10 +26,8 @@ private:
 	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
     std::shared_ptr<class Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
-
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
-    
 public:
     GameObject();
     virtual ~GameObject();

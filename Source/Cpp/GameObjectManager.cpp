@@ -82,7 +82,9 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
 {
     int id = 0;
-    Master::m_pDebugger->BeginDebugWindow("GameObject");
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"コンポーネント確認"));
+    Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"こちらでは追加されている\nすべてのコンポーネントを確認できます。"));
+    Master::m_pDebugger->DG_Separator();
     Master::m_pDebugger->DG_BulletText("Count : %d", m_pObjectList.size());
 
     // 描画

@@ -10,10 +10,10 @@ using namespace VECTOR2;
 
 using namespace DirectX;
 
-#define CAMERA_ANGLE_SPEED		0.1f		// カメラの方向転換スピード
-#define CAMERA_MOVE_FACTOR		0.5f		// カメラの移動スピード
-#define CAMERA_POS_OFFSET		10.0f		// カメラの移動スピード
-#define CAMERA_FOCUS_Y_OFFSET	18.0f		// カメラの移動スピード
+#define CAMERA_ANGLE_SPEED		0.05f		// カメラの方向転換スピード
+#define CAMERA_MOVE_FACTOR		0.5f		// 
+#define CAMERA_POS_OFFSET		10.0f		// 
+#define CAMERA_FOCUS_Y_OFFSET	18.0f		// 
 
 
 //*---------------------------------------------------------------------------------------

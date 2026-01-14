@@ -14,7 +14,7 @@ using namespace VECTOR2;
 using namespace DirectX;
 using namespace Tool;
 
-#define PLAYER_MOVE_SPEED  10.0f		// プレイヤーの移動スピード
+#define PLAYER_MOVE_SPEED  5.0f		// プレイヤーの移動スピード
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ

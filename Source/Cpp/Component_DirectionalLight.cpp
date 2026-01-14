@@ -105,17 +105,17 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	XMMATRIX viewProj = viewMat * projMat;
 	XMStoreFloat4x4(&dirData.LightViewProj, XMMatrixTranspose(viewProj));
 
-	Master::m_pDebugger->BeginDebugWindow("DirectionLight");
-	Master::m_pDebugger->DG_BulletText("Forward");
-	Master::m_pDebugger->DG_TextValue("X : %f.1", forward.x);
-	Master::m_pDebugger->DG_TextValue("Y : %f.1", forward.y);
-	Master::m_pDebugger->DG_TextValue("Z : %f.1", forward.z);
+	//Master::m_pDebugger->BeginDebugWindow("DirectionLight");
+	//Master::m_pDebugger->DG_BulletText("Forward");
+	//Master::m_pDebugger->DG_TextValue("X : %f.1", forward.x);
+	//Master::m_pDebugger->DG_TextValue("Y : %f.1", forward.y);
+	//Master::m_pDebugger->DG_TextValue("Z : %f.1", forward.z);
 
-	Master::m_pDebugger->DG_BulletText("FocusPoint");
-	Master::m_pDebugger->DG_TextValue("X : %f.1", m_FocusPoint.x);
-	Master::m_pDebugger->DG_TextValue("Y : %f.1", m_FocusPoint.y);
-	Master::m_pDebugger->DG_TextValue("Z : %f.1", m_FocusPoint.z);
-	Master::m_pDebugger->EndDebugWindow();
+	//Master::m_pDebugger->DG_BulletText("FocusPoint");
+	//Master::m_pDebugger->DG_TextValue("X : %f.1", m_FocusPoint.x);
+	//Master::m_pDebugger->DG_TextValue("Y : %f.1", m_FocusPoint.y);
+	//Master::m_pDebugger->DG_TextValue("Z : %f.1", m_FocusPoint.z);
+	//Master::m_pDebugger->EndDebugWindow();
 
 	// î•ñ‚ðÝ’è
 	Master::m_pLightManager->set_DirectionLightData(dirData);
