@@ -556,7 +556,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        DXGI_FORMAT_R11G11B10_FLOAT,    // 輝度はそこまで精度を気にする必要なさそう（多分）
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
@@ -604,6 +604,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pLuminance_RT->get_SRV_ComPtr(),
             m_pLuminance_RT->get_Width(),
             m_pLuminance_RT->get_Height()),
+            DXGI_FORMAT_R11G11B10_FLOAT,
         0
     );
     if (!result)return false;
@@ -616,6 +617,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pBloomGaussianBlur[0].get_AfterBlurTexture(),
             m_pLuminance_RT->get_Width() / 2,
             m_pLuminance_RT->get_Height() / 2),
+            DXGI_FORMAT_R11G11B10_FLOAT,
         1
     );
     if (!result)return false;
@@ -628,6 +630,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pBloomGaussianBlur[1].get_AfterBlurTexture(),
             m_pLuminance_RT->get_Width() / 4,
             m_pLuminance_RT->get_Height() / 4),
+            DXGI_FORMAT_R11G11B10_FLOAT,
         2
     );
     if (!result)return false;
@@ -640,6 +643,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pBloomGaussianBlur[2].get_AfterBlurTexture(),
             m_pLuminance_RT->get_Width() / 8,
             m_pLuminance_RT->get_Height() / 8),
+            DXGI_FORMAT_R11G11B10_FLOAT,
         3
     );
     if (!result)return false;
@@ -657,6 +661,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pSceneFinal_RT->get_Width(),
             m_pSceneFinal_RT->get_Height()
         ),
+        DXGI_FORMAT_R11G11B10_FLOAT,
         4
     );
     if (!result)return false;

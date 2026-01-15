@@ -31,7 +31,7 @@ public:
 	/// </summary>
 	/// <param name="pTex">ブラーを掛けるテクスチャ</param>
 	/// <returns></returns>
-	bool Setup(RendererEngine& renderer, std::shared_ptr<class Texture> pTex, int id);
+	bool Setup(RendererEngine& renderer, std::shared_ptr<class Texture> pTex, DXGI_FORMAT format, int id);
 	void Term();
 
 	void ExcuteOnGPU(RendererEngine& renderer, float blurPow);
@@ -46,7 +46,7 @@ private:
 	/// <summary>
 	/// レンダリングターゲットを初期化。
 	/// </summary>
-	bool InitRenderTargets(RendererEngine& renderer);
+	bool InitRenderTargets(RendererEngine& renderer, DXGI_FORMAT format);
 
 	/// <summary>
 	/// スプライトを初期化。

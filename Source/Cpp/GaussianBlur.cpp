@@ -55,7 +55,7 @@ GaussianBlur::~GaussianBlur()
 {
 }
 
-bool GaussianBlur::Setup(RendererEngine& renderer, std::shared_ptr<Texture> pTex, int id)
+bool GaussianBlur::Setup(RendererEngine& renderer, std::shared_ptr<Texture> pTex, DXGI_FORMAT format, int id)
 {
     if (pTex == nullptr){
         return false;
@@ -64,7 +64,7 @@ bool GaussianBlur::Setup(RendererEngine& renderer, std::shared_ptr<Texture> pTex
 	m_pTexture = pTex;
 
     // RT‚Ì‰Šú‰»
-	if (!InitRenderTargets(renderer)) {
+	if (!InitRenderTargets(renderer, format)) {
 		return false;
 	}
 
@@ -135,7 +135,7 @@ void GaussianBlur::Term()
     SAFE_DELETE(m_pVerticalBlur);
 }
 
-bool GaussianBlur::InitRenderTargets(RendererEngine& renderer)
+bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format)
 {
     bool result = true;
 
@@ -149,7 +149,7 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer)
         m_pTexture.lock()->get_Height(),
         1,
         1,
-        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        format,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
@@ -164,7 +164,7 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer)
         m_pTexture.lock()->get_Height() / 2.0f,
         1,
         1,
-        DXGI_FORMAT_R32G32B32A32_FLOAT,
+        format,
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
