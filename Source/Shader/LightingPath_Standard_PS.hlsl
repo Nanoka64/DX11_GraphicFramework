@@ -149,17 +149,18 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float zInLVP = posInLVP.z;
     float shadowFactor = 1.0f;
     
-    
     //return float4(shadowMapUV, 0, 1);
     // シャドウマップの範囲内か
     if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
         shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
     {
+        float bias = 0.005f; // アクネ対策の
+        
         // シャドウマップから深度値をサンプリング
         // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
         shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
-            g_sShadowSampler, shadowMapUV, zInLVP - 0.0005f
-        );
+                g_sShadowSampler, shadowMapUV, zInLVP
+            );
 
         // 1.0 = 光が当たっている, 0.0 = 影
         dirDiffuse *= shadowFactor;

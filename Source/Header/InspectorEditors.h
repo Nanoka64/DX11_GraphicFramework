@@ -141,3 +141,29 @@ public:
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 
 };
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:SkinnedMeshAnimator Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】スキンメッシュアニメーション編集用エディタ
+//
+// ***************************************************************************************
+class SkinnedMeshAnimatorEditor : public EditorBase
+{
+private:
+
+public:
+    SkinnedMeshAnimatorEditor()
+        : EditorBase()
+    {
+    };
+    ~SkinnedMeshAnimatorEditor()
+    {
+    };
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+
+};

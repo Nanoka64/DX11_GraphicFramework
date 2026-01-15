@@ -237,7 +237,9 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
 
     // シャドウパス
     renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
-    renderer.RegisterCullMode(CULL_MODE::FRONT);     // 表カリング
+
+    // 表カリング 影が浮いているような感じ（ピーターパン現象）を防ぐため
+    renderer.RegisterCullMode(CULL_MODE::FRONT);     
 
     // ライトの更新
     Master::m_pLightManager->Update();
@@ -414,13 +416,13 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // 加算モード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ADD);
 
-    // 最終合成用レンダリングターゲットに変更
+    // ブルーム合成用レンダリングターゲットに変更
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);    // 深度テストなし
 
-    // ブラー合成
-    m_pSceneFinal_Sprite->Draw(renderer);
+    // ブルームスプライト
+    m_pBloom_Sprite->Draw(renderer);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -444,8 +446,8 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
 
-    // シーンのテクスチャを表示する
-    m_pCopyToFrameBuffer_Sprite->Draw(renderer);
+    // トーンマッピングを適用する
+    m_pFinalSceneToneMappingFilter_Sprite->Draw(renderer);
 }
 
 
@@ -661,7 +663,7 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
             m_pSceneFinal_RT->get_Width(),
             m_pSceneFinal_RT->get_Height()
         ),
-        DXGI_FORMAT_R11G11B10_FLOAT,
+            DXGI_FORMAT_R11G11B10_FLOAT,
         4
     );
     if (!result)return false;
@@ -788,47 +790,31 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     m_pLuminance_Sprite = MeshFactory::CreateSprite(luminanceSprite)->get_Component<SpriteRenderer>();
 
     /*************************************************************************
-    * フレームバッファにコピーする用のスプライト
+    * ブルーム用スプライト
     *************************************************************************/
-    CreateSpriteInfo copyToFrameBufferSprite;
-    copyToFrameBufferSprite.pRenderer = &renderer;
-    copyToFrameBufferSprite.IsActive = false;
-    copyToFrameBufferSprite.ObjTag = "CopyToFrameBufferSprite";
-    copyToFrameBufferSprite.Width = 1.0f;
-    copyToFrameBufferSprite.Height = 1.0f;
-    copyToFrameBufferSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT_SceneFinal");
-    copyToFrameBufferSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    copyToFrameBufferSprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
-
-    // スプライト取得
-    m_pCopyToFrameBuffer_Sprite = MeshFactory::CreateSprite(copyToFrameBufferSprite)->get_Component<SpriteRenderer>();
-
-    /*************************************************************************
-    * 最終合成用スプライト
-    *************************************************************************/
-    CreateSpriteInfo finalSprite;
-    finalSprite.pRenderer = &renderer;
-    finalSprite.IsActive = false;
-    finalSprite.ObjTag = "FinalSprite";
-    finalSprite.Width = 1.0f;
-    finalSprite.Height = 1.0f;
-    finalSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture(
+    CreateSpriteInfo bloomSprite;
+    bloomSprite.pRenderer = &renderer;
+    bloomSprite.IsActive = false;
+    bloomSprite.ObjTag = "bloomSprite";
+    bloomSprite.Width = 1.0f;
+    bloomSprite.Height = 1.0f;
+    bloomSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture(
         "RT_Luminance"
     );
-    finalSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture(
+    bloomSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture(
         "DownBlur1"
     );
-    finalSprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture(
+    bloomSprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture(
         "DownBlur2"
     );
-    finalSprite.pTextureMap[3] = Master::m_pResourceManager->Convert_SRVToTexture(
+    bloomSprite.pTextureMap[3] = Master::m_pResourceManager->Convert_SRVToTexture(
         "DownBlur3"
     );
-    finalSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
-    finalSprite.ShaderType = SHADER_TYPE::POST_KAWASE_FILTER;
+    bloomSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    bloomSprite.ShaderType = SHADER_TYPE::POST_KAWASE_FILTER;
 
     // スプライト取得
-    m_pSceneFinal_Sprite = MeshFactory::CreateSprite(finalSprite)->get_Component<SpriteRenderer>();
+    m_pBloom_Sprite = MeshFactory::CreateSprite(bloomSprite)->get_Component<SpriteRenderer>();
 
 
     /*************************************************************************
@@ -854,6 +840,23 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
 
     // スプライト取得
     m_pDoF_Sprite = MeshFactory::CreateSprite(depthOfFieldSprite)->get_Component<SpriteRenderer>();
+
+
+    /*************************************************************************
+    * トーンマッピング用スプライト （これをそのままフレームバッファに表示する）
+    *************************************************************************/
+    CreateSpriteInfo toneMappingSprite;
+    toneMappingSprite.pRenderer = &renderer;
+    toneMappingSprite.IsActive = false;
+    toneMappingSprite.ObjTag = "ToneMappingSprite";
+    toneMappingSprite.Width = 1.0f;
+    toneMappingSprite.Height = 1.0f;
+    toneMappingSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    toneMappingSprite.ShaderType = SHADER_TYPE::POST_TONEMAPPING;   // トーンマッピング
+    toneMappingSprite.pTextureMap[0] = 
+        Master::m_pResourceManager->Convert_SRVToTexture("RT_SceneFinal");
+    // スプライト取得
+    m_pFinalSceneToneMappingFilter_Sprite = MeshFactory::CreateSprite(toneMappingSprite)->get_Component<SpriteRenderer>();
 
     return true;
 }

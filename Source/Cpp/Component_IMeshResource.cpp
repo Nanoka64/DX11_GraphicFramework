@@ -42,13 +42,6 @@ IMeshResource::~IMeshResource()
 		delete m_pCBMaterialDataSet;
 		m_pCBMaterialDataSet = nullptr;
 	}
-
-
-	// ƒ}ƒeƒŠƒAƒ‹‚Ì‰ð•ú
-	if (m_pMeshData->pMaterials) {
-		delete m_pMeshData->pMaterials;
-		m_pMeshData->pMaterials = nullptr;
-	}
 }
 
 // ----------------------------------------------------------------------------------------------------------------------

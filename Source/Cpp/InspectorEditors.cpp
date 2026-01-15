@@ -7,6 +7,7 @@
 #include "Component_PointLight.h"
 #include "Component_PlayerController.h"
 #include "Component_3DCamera.h"
+#include "Component_SkinnedMeshAnimator.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -322,15 +323,15 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     /*
     * 補正
     */
-    if (nearClip < 0.0f)
+    if (nearClip <= 0.0f)
     {
         nearClip = 1.0f;
     }
-    if (farClip < nearClip)
+    if (farClip <= nearClip)
     {
         farClip = nearClip + 200.0f;    // 同じだとダメなので補正値足す
     }
-    if (fov < 0.0f)
+    if (fov <= 0.0f)
     {
         fov = 1.0f;
     }
@@ -344,4 +345,69 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     pComp->set_Fov(fov);
     pComp->set_Near(nearClip);
     pComp->set_Far(farClip);
+}
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:SkinnedMeshAnimatorEditor Class --- */
+//
+// ***************************************************************************************
+bool SkinnedMeshAnimatorEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void SkinnedMeshAnimatorEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    using namespace VECTOR3;
+    using namespace Tool;
+
+    // ディレクショナルライトコンポーネントの取得
+    auto pComp = pObj.get_Component<SkinnedMeshAnimator>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    float animTime = pComp->get_AnimProcTime();
+    int animIdx = pComp->getAnimIndex();
+    int prebAnimIdx = pComp->get_PrevAnimIndex();
+    bool isAnim = pComp->get_IsAnim();
+    std::vector<AnimationData *>animDataList = pComp->get_AnimationDataList();
+
+    // beginはInspectorWindowで行っている
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"スキニングアニメーター")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"アニメーション時間：%f"), animTime);
+        Master::m_pDebugger->DG_RadioButton(U8ToChar(u8"再生中か"), isAnim);
+
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"アニメーション情報")))
+        {
+            for (auto &anim : animDataList)
+            {
+                anim->Duration;
+                anim->Name;
+                anim->TicksPerSecond;
+
+                if (Master::m_pDebugger->DG_TreeNode(anim->Name))
+                {
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"総時間：%f"), anim->Duration);
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ティックパーセカンド：%f"), anim->TicksPerSecond);
+                    Master::m_pDebugger->DG_TreePop();
+                }
+            }
+            Master::m_pDebugger->DG_TreePop();
+        }
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+    /*
+    * 補正
+    */
+
+    // 反映
 }

@@ -35,5 +35,7 @@ public:
 
     };
 
-    ~Material() = default;
+    ~Material()
+    {
+    }
 };

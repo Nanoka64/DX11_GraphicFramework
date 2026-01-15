@@ -787,6 +787,9 @@
     <FxCompile Include="Source\Shader\ShadowMap_Skinned.hlsl">
       <Filter>HLSL\Shadow</Filter>
     </FxCompile>
+    <FxCompile Include="Source\Shader\ToneMappingFilter_PS.hlsl">
+      <Filter>HLSL\PS\PostEffect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Source\Lib\DirectXTex\DirectXTex.lib">

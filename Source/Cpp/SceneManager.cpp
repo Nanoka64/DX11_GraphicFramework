@@ -153,7 +153,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* 壁 */
         {
             Material* mat = new Material;
-            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Magic2.png");
             mat->m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
             mat->m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -161,7 +161,7 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             CreateUtilityMeshInfo mesh;
             mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::PLANE;
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
             mesh.MatNum = 1;
             mesh.MaterialData = new InputMaterial();
             mesh.MaterialData->pMat = mat;
@@ -288,12 +288,38 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
             m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
+        
+        /* クモ モデルの生成 */
+        {
+            Material mat[1];
+            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/Spinnen_Bein_tex.jpg");
+            mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/haar_detail_NRM.jpg");
+            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularPower = 150.0f;
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/fbx/Spider_3.fbx";
+            model.ObjTag = "Spider";
+            model.IsAnim = true;
+            model.MatNum = 1;
+            model.MaterialData = new InputMaterial();
+            model.MaterialData->MatIndex = 0;
+            model.MaterialData->pMat = mat;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
+            m_pTempObj = MeshFactory::CreateModel(model);
+            m_pTempObj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
+            m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            m_pTempObj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0f);
+            m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        }
 
         /* 地面の生成 */
         {
             Material* mat = new Material;
-            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
-            mat->m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
+            mat->m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/coast_sand_rocks_02_diff_8k.png");
+            mat->m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/coast_sand_rocks_02_nor_dx_8k.png");
             mat->m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat->m_SpecularPower = 50.0f;
 

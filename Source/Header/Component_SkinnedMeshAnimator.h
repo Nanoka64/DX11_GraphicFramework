@@ -33,14 +33,14 @@ private:
 	std::vector<BoneInfo> m_BoneList;				     // ボーンリスト
 	std::vector<NodeInfo *> m_NodeList;					 // Nodeツリー情報
 	std::unordered_map<std::string, int> m_BoneIndexMap; // Node名からBoneListのインデックスを引くためのマップ
-	std::vector<AnimationData *>m_Animations;			 // 読み取ったアニメーション
+	std::vector<AnimationData*> m_Animations;			 // 読み取ったアニメーション
 
 	double m_AnimationTime = 0.0;						 // 現在のアニメーション時間(ticks)
 	int m_PrevAnimIndex = -1;							 // 一つ前のアニメーションインデックス
 	int m_CurrentAnimIndex = -1;						 // 現在のアニメーションインデックス
-	bool m_IsAnimationFlag;	// アニメーションさせるかどうか（とりまデバッグ用）
-	float m_AnimProcTime;	// 更新用カウンタ
-	float m_ShadowAnimProcTime;	// シャドウ用更新カウンタ
+	bool m_IsAnimationFlag;								 // アニメーションさせるかどうか（とりまデバッグ用）
+	float m_AnimProcTime;								 // 更新用カウンタ
+	float m_ShadowAnimProcTime;							 // シャドウ用更新カウンタ
 
 public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
@@ -57,6 +57,14 @@ public:
 	void set_AnimIndex(int idx) { m_CurrentAnimIndex = idx; };		// アニメーションインデックスの設定
 	void set_PrevAnimIndex(int idx) { m_PrevAnimIndex = idx; };		// 前のアニメーションインデックスとして設定
 	void set_IsAnim(bool f) { m_IsAnimationFlag = f; };				// アニメーションフラグ
+
+	float get_AnimProcTime()const { return m_AnimProcTime; }
+	float get_ShadowAnimProcTime()const { return m_ShadowAnimProcTime; }
+	int getAnimIndex()const { return m_CurrentAnimIndex; }
+	int get_PrevAnimIndex()const { return m_PrevAnimIndex; }
+	bool get_IsAnim()const { return m_IsAnimationFlag; };
+
+	std::vector<AnimationData *> get_AnimationDataList()const { return m_Animations; }
 
 private:
 	void TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent, int animIdx); // ボーン変換行列の更新

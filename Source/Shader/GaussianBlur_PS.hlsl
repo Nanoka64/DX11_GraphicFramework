@@ -35,7 +35,7 @@ float4 PSMain(PS_BLUR_IN input) : SV_TARGET
     float4 finalColor;
 
     // 基準テクセルからプラス方向に8テクセル、重み付きでサンプリング
-    finalColor  = cb_BlurWeights[0].x  * g_tTexture.Sample(g_sSampler, input.tex0.xy);
+    finalColor  = cb_BlurWeights[0].x * g_tTexture.Sample(g_sSampler, input.tex0.xy);
     finalColor += cb_BlurWeights[0].y * g_tTexture.Sample(g_sSampler, input.tex1.xy);
     finalColor += cb_BlurWeights[0].z * g_tTexture.Sample(g_sSampler, input.tex2.xy);
     finalColor += cb_BlurWeights[0].w * g_tTexture.Sample(g_sSampler, input.tex3.xy);

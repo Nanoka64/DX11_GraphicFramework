@@ -51,12 +51,12 @@ enum class SHADER_TYPE
     POST_GAUSSIAN_BLUR_HORIZONTAL,      // ガウシアン水平ブラー 
     POST_GAUSSIAN_BLUR_VERTICAL,        // ガウシアン垂直ブラー 
     POST_SKYBOX,                        // スカイボックス用
-    POST_EFFECT,                        // ◆ ポストエフェクト用
     POST_LUMINANCE_FILTER,              // 輝度抽出用
     POST_KAWASE_FILTER,                 // 川瀬式ブルーム（ダウンサンプリングしたガウス適用後のテクスチャをぼかす）
     POST_SHADOWMAP,                     // シャドウマップ
     POST_SHADOWMAP_SKINNED,             // シャドウマップスキニング用
     POST_DEPTH_OF_FILED,                // 被写界深度
+    POST_TONEMAPPING,                   // トーンマッピング（ACES使用）
     
     /* 旧仕様 */
     //SIMPLE,     // 単純な3Dオブジェクト表示用
@@ -147,6 +147,8 @@ public:
     /// 頂点・ピクセル両方にnull設定
     /// </summary>
     void NullSetAllShader();
+
+    void Term();
 
 private:
     // コピー禁止

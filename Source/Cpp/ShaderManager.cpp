@@ -180,6 +180,12 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         },
+        {
+            /* トーンマッピング */
+            SHADER_TYPE::POST_TONEMAPPING,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        },
 
     };
 
@@ -255,6 +261,13 @@ void ShaderManager::NullSetAllShader()
     pContext->VSSetShader(nullptr, nullptr, 0);
     pContext->PSSetShader(nullptr, nullptr, 0);
 }
+
+void ShaderManager::Term()
+{
+    m_ShaderList.clear();
+    m_InputLayoutSetupDataList.clear();
+}
+
 
 
 
@@ -449,6 +462,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::POST_DEPTH_OF_FILED:                         // 被写界深度
             hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;     
+        case SHADER_TYPE::POST_TONEMAPPING:                         // トーンマッピング
+            hr = this->CompileShader(HLSL__Sprite_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;     
         default:
             MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
@@ -533,6 +549,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             this->LoadCSOFile(HLSL_CSO__ShadowMap_Skinned_PATH.c_str(), &csoByteCode);
             break;       
         case SHADER_TYPE::POST_DEPTH_OF_FILED:                          // 被写界深度
+            this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_TONEMAPPING:                          // トーンマッピング
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
             break;     
         default:
@@ -654,6 +673,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::POST_DEPTH_OF_FILED:                         // 被写界深度
             hr = this->CompileShader(HLSL__DoF_Filter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
+        case SHADER_TYPE::POST_TONEMAPPING:                         // トーンマッピング
+            hr = this->CompileShader(HLSL__ToneMappingFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;    
 
 
         default:
@@ -733,6 +755,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;       
         case SHADER_TYPE::POST_DEPTH_OF_FILED:
             this->LoadCSOFile(HLSL_CSO__DoF_Filter_PS_PATH.c_str(), &csoByteCode);
+            break;     
+        case SHADER_TYPE::POST_TONEMAPPING:
+            this->LoadCSOFile(HLSL_CSO__ToneMappingFilter_PS_PATH.c_str(), &csoByteCode);
             break;     
         
         default:

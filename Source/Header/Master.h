@@ -4,6 +4,7 @@
 #include "ShaderManager.h"
 #include "LightManager.h"
 #include "DirectWriteManager.h"
+#include "InputManager.h"
 #include "GameObjectManager.h"
 #include "Debugger.h"
 #include "EditorManager.h"
@@ -19,4 +20,5 @@ public:
 	static GameObjectManager	* m_pGameObjectManager;	// オブジェクト管理
 	static ResourceManager		* m_pResourceManager;	// リソース管理
 	static EditorManager		* m_pEditorManager;		// エディタ管理
+	static InputManager			* m_pInputManager;		// 入力管理
 };

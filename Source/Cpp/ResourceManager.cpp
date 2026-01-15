@@ -14,7 +14,6 @@ using namespace DirectX;
 
 ResourceManager::~ResourceManager()
 {
-    Release();
 }
 
 //--------------------------------------------------------------------------------------
@@ -34,16 +33,10 @@ bool ResourceManager::Init(std::shared_ptr<RendererEngine> renderer)
 //--------------------------------------------------------------------------------------
 void ResourceManager::Term()
 {
-    Release();
-}
-
-
-//--------------------------------------------------------------------------------------
-//      * ResourceManager  - ‰ð•ú - *
-//--------------------------------------------------------------------------------------
-void ResourceManager::Release()
-{
-    m_TexturesMap.clear();
+    //m_TexturesMap.clear();
+    //m_RTTextureMap.clear();
+    //m_ModelsMap.clear();
+    //m_pMaterialMap.clear();
 }
 
 

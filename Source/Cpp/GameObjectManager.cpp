@@ -146,6 +146,7 @@ void GameObjectManager::ObjectShadowRenderPass(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 bool GameObjectManager::Term(RendererEngine &renderer)
 {
+    m_pObjectList.clear();
     return true;
 }
 

@@ -453,8 +453,8 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面
     rd.DepthBias             = 0;       // 深度バイアス
-    rd.DepthBiasClamp        = 0;
-    rd.SlopeScaledDepthBias  = 0;
+    rd.DepthBiasClamp        = 0.0f;
+    rd.SlopeScaledDepthBias  = 0.0f;
     rd.DepthClipEnable       = TRUE;    // 0.0より小さい1.0より大きい場合計算しない(カメラのnarとfarのやつ)
     rd.ScissorEnable         = FALSE;   // シザー矩形なし
     rd.AntialiasedLineEnable = FALSE;   // ライン・アンチエイリアシングなし
@@ -464,6 +464,8 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
 
     // 表カリングステート作成 **********************************************************
     rd.CullMode = D3D11_CULL_FRONT;
+    rd.DepthBias            = 5000.0f; // 深度バイアス
+    rd.SlopeScaledDepthBias = 1.0f;
     m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState_FrontCull);
 
     // 裏カリングステート作成 **********************************************************

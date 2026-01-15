@@ -20,10 +20,10 @@ namespace Tool
     //-----------------------------------------
 
     /* 指定範囲の乱数取得（rand()なので精度は...ね） */
-    inline float RandRange(float min, float max)
+    inline float RandRange(float _min, float _max)
     {
         float r = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        return min + r * (max - min);
+        return _min + r * (_max - _min);
     }
 
     //-----------------------------------------
@@ -161,6 +161,16 @@ namespace Tool
             bool hitBottom = false;
             bool Hit = false;
         };
+
+
+
+
+
+
+
+
+
+
 
         // bounding circle : 境界円
         inline bool HitCheckBC(VECTOR2::VEC2 src_pos, float src_r, VECTOR2::VEC2 dst_pos, float dst_r)

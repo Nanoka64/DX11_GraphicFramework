@@ -40,7 +40,6 @@ public:
 
     bool Init(std::shared_ptr<class RendererEngine> renderer);   // ‰Šú‰»
     void Term();                            // I—¹
-    void Release();                         // ‘SŠJ•ú
 
 
 

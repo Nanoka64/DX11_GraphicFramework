@@ -32,7 +32,6 @@ private:
     class GaussianBlur *m_pDoF_GaussianBlur; // 被写界深度用ガウスブラー
     float m_DoF_BlurIncensity;  // DOFブラーの強さ
 
-
     // レンダーターゲットのスプライト
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pNormal_Sprite;
@@ -40,9 +39,9 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pDepth_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pDefferdLighting_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pLuminance_Sprite;
-    std::shared_ptr<class SpriteRenderer> m_pCopyToFrameBuffer_Sprite;
-    std::shared_ptr<class SpriteRenderer> m_pSceneFinal_Sprite;
+    std::shared_ptr<class SpriteRenderer> m_pBloom_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pDoF_Sprite;
+    std::shared_ptr<class SpriteRenderer> m_pFinalSceneToneMappingFilter_Sprite;
 public:
     RenderPipeline();
     ~RenderPipeline();

@@ -34,16 +34,12 @@ private:
     LPDIRECTINPUTDEVICE8 m_pKeyDevice = nullptr;
 
 public:
-    static InputManager& GetInstance() {
-        static InputManager instance;
-        return instance;
-    }
-
+    InputManager() = default;
     ~InputManager();
 
     bool Init(HWND hWnd);
     void Update();
-    void Release();
+    void Term();
 
     void GetHitInputStateAll();   // 全ての入力の押下状態を調べる
 
@@ -58,5 +54,12 @@ public:
     void InitDefaultKeyConfig();            // コンフィグデフォルト設定
 
     void ClearInput();  // シーン遷移などの際には必ず呼ぶ
+
+private:
+    // コピー禁止
+    InputManager(const InputManager &) = delete;
+    InputManager &operator=(const InputManager &) = delete;
+    // ------------------------------------------------------
+
 };
 

@@ -8,10 +8,10 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 SamplerState g_sSampler : register(s0);
-Texture2D g_tTexture0 : register(t0); // ディフューズ
-Texture2D g_tTexture1 : register(t1); // ディフューズ
-Texture2D g_tTexture2 : register(t2); // ディフューズ
-Texture2D g_tTexture3 : register(t3); // ディフューズ
+Texture2D g_tTexture0 : register(t0); // 高輝度にブラーをかけたテクスチャ
+Texture2D g_tTexture1 : register(t1); 
+Texture2D g_tTexture2 : register(t2); 
+Texture2D g_tTexture3 : register(t3); 
 
 
 /* =========================================================================

@@ -44,6 +44,10 @@ bool BlendManager::Init(std::shared_ptr<RendererEngine> renderer)
     return true;
 }
 
+void BlendManager::Term()
+{
+}
+
 //*---------------------------------------------------------------------------------------
 //* @:BlendManager Class 
 //*【?】ブレンドステートを設定する

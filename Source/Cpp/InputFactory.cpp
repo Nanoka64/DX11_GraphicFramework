@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "InputFactory.h"
-#include "InputManager.h"// “ü—Íˆ—
 
 /*
 * 
@@ -17,7 +16,7 @@
 /// <returns></returns>
 bool Input::GetInputHold(CONFIG_INPUT key, int repeatFrame)
 {
-	return InputManager::GetInstance().GetInputHold(key, repeatFrame);
+	return Master::m_pInputManager->GetInputHold(key, repeatFrame);
 }
 
 /// <summary>
@@ -31,7 +30,7 @@ bool Input::GetInputHold(CONFIG_INPUT key, int repeatFrame)
 /// <returns></returns>
 bool Input::GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
 {
-	return InputManager::GetInstance().GetInputHoldRepeat(key, waitFrame, repeatFrame);
+	return Master::m_pInputManager->GetInputHoldRepeat(key, waitFrame, repeatFrame);
 }
 
 /// <summary>
@@ -41,7 +40,7 @@ bool Input::GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
 /// <returns></returns>
 bool Input::GetInputUp(CONFIG_INPUT key)
 {
-	return InputManager::GetInstance().GetInputUp(key);
+	return Master::m_pInputManager->GetInputUp(key);
 }
 
 /// <summary>
@@ -51,7 +50,7 @@ bool Input::GetInputUp(CONFIG_INPUT key)
 /// <returns></returns>
 bool Input::GetInputDown(CONFIG_INPUT key)
 {
-	return InputManager::GetInstance().GetInputDown(key);
+	return Master::m_pInputManager->GetInputDown(key);
 }
 
 /// <summary>
@@ -61,5 +60,5 @@ bool Input::GetInputDown(CONFIG_INPUT key)
 /// <returns></returns>
 bool Input::GetInput(CONFIG_INPUT key)
 {
-	return InputManager::GetInstance().GetInput(key);
+	return Master::m_pInputManager->GetInput(key);
 }

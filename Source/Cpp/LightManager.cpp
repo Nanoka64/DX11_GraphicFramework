@@ -71,6 +71,15 @@ void LightManager::Update()
 	PointLight_SetCBuffer();
 }
 
+void LightManager::Term()
+{
+	SAFE_DELETE(m_pCBPointLightSet);
+	SAFE_DELETE(m_pCBDirectionLightSet);
+	m_TemporaryPointLightData.clear();
+	m_TemporaryDirectionLightData.clear();
+
+}
+
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライトを定数バッファにセット
 //*

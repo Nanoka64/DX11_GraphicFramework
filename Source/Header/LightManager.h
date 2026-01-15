@@ -28,6 +28,7 @@ public:
 
 	bool Init(std::shared_ptr<RendererEngine> pRenderer);
 	void Update();
+	void Term();
 
 	/// <summary>
 	/// カメラのトランスフォームセット

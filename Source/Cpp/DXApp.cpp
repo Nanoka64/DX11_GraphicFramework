@@ -25,7 +25,8 @@ BlendManager            *Master::m_pBlendManager        = nullptr;  // ƒuƒŒƒ“ƒhŠ
 DirectWriteManager      *Master::m_pDirectWriteManager  = nullptr;  // •¶šŠÇ— 
 GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // ƒIƒuƒWƒFƒNƒgŠÇ—
 ResourceManager         *Master::m_pResourceManager     = nullptr;  // ƒŠƒ\[ƒXŠÇ—
-EditorManager           *Master::m_pEditorManager     = nullptr;    // ƒGƒfƒBƒ^ŠÇ—
+EditorManager           *Master::m_pEditorManager       = nullptr;  // ƒGƒfƒBƒ^ŠÇ—
+InputManager            *Master::m_pInputManager       = nullptr;   // “ü—ÍŠÇ—
 
 
 //*---------------------------------------------------------------------------------------
@@ -83,6 +84,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pGameObjectManager    = new GameObjectManager();      // ƒIƒuƒWƒFƒNƒgŠÇ—
     Master::m_pResourceManager      = new ResourceManager();        // ƒŠƒ\[ƒXŠÇ—
     Master::m_pEditorManager        = new EditorManager();          // ƒGƒfƒBƒ^ŠÇ—
+    Master::m_pInputManager         = new InputManager();           // “ü—ÍŠÇ—
 
     // *************************************************************************************************
     /**  ƒEƒCƒ“ƒhƒE‚Ì‰Šú‰» **/
@@ -138,7 +140,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOWMAP,                SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED,        SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_DEPTH_OF_FILED,           SHADER_CREATE_TYPE::CSO))return false;
-
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_TONEMAPPING,              SHADER_CREATE_TYPE::CSO))return false;
 
     // *************************************************************************************************
     //** ƒŠƒ\[ƒXŠÇ—‚Ì‰Šú‰» **/
@@ -191,7 +193,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // *************************************************************************************************
     /**  “ü—Íƒ}ƒl[ƒWƒƒ[‰Šú‰» **/
     // *************************************************************************************************
-    if (!InputManager::GetInstance().Init(m_hWnd))
+    if (!Master::m_pInputManager->Init(m_hWnd))
     {
         assert(false);
         return false;
@@ -227,7 +229,13 @@ void DXApp::Term()
 {
     m_pGameManager->Term(*m_pRenderer);
 
-    InputManager::GetInstance().Release();
+    Master::m_pShaderManager->Term();
+    Master::m_pLightManager->Term();
+    Master::m_pDirectWriteManager->Term();
+    Master::m_pBlendManager->Term();
+    Master::m_pGameObjectManager->Term(*m_pRenderer);
+    Master::m_pResourceManager->Term();
+    Master::m_pInputManager->Term();
 }
 
 
@@ -276,7 +284,7 @@ int DXApp::MainLoop()
                 using namespace Tool;
 
                 // ‘€ìƒKƒCƒh
-                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"‘€ìƒKƒCƒh"));
+                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"‰R‚¾II"));
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"WASD : ˆÚ“®\n –îˆóƒL[F‹“_‘€ì\n SpaceFƒWƒƒƒ“ƒv\n"));
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(
@@ -288,7 +296,7 @@ int DXApp::MainLoop()
                 Master::m_pDebugger->EndDebugWindow();
 
                 // “ü—ÍXV
-                InputManager::GetInstance().Update();
+                Master::m_pInputManager->Update();
                 
                 // •`‰æ‚ÌŠJn
                 m_pRenderer->BeginRender();

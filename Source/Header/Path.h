@@ -30,6 +30,7 @@ namespace Path
     const std::wstring HLSL__HighLuminanceFilter_PS_PATH = std::wstring(Shader)     + L"HighLuminanceFilter_PS.hlsl";
     const std::wstring HLSL__KawaseFilter_PS_PATH = std::wstring(Shader)            + L"KawaseFilter_PS.hlsl";
     const std::wstring HLSL__DoF_Filter_PS_PATH = std::wstring(Shader)              + L"DoF_Filter_PS.hlsl";
+    const std::wstring HLSL__ToneMappingFilter_PS_PATH = std::wstring(Shader)       + L"ToneMappingFilter_PS.hlsl";
 
     // VS
     const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
@@ -55,6 +56,7 @@ namespace Path
     const std::wstring HLSL_CSO__HighLuminanceFilter_PS_PATH = std::wstring(CSO)    + L"HighLuminanceFilter_PS.cso";
     const std::wstring HLSL_CSO__KawaseFilter_PS_PATH = std::wstring(CSO)           + L"KawaseFilter_PS.cso";
     const std::wstring HLSL_CSO__DoF_Filter_PS_PATH = std::wstring(CSO)             + L"DoF_Filter_PS.cso";
+    const std::wstring HLSL_CSO__ToneMappingFilter_PS_PATH = std::wstring(CSO)      + L"ToneMappingFilter_PS.cso";
 
     // VS
     const std::wstring HLSL_CSO__Skinned_VS_PATH = std::wstring(CSO)                + L"Skinned_VS.cso";

@@ -33,6 +33,11 @@ public:
     bool Init(std::shared_ptr<class RendererEngine> renderer);
 
     /// <summary>
+    /// 終了処理
+    /// </summary>
+    void Term();
+
+    /// <summary>
     /// ブレンドステートを設定する
     /// </summary>
     /// <param name="type">ブレンド種別</param>
