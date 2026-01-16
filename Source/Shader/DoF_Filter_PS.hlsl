@@ -57,10 +57,10 @@ float4 PSMain(PS_IN input) : SV_TARGET
     const float DOF_MIN_RANGE = 400.0f;     // ぼかしが開始される深度範囲
     
     // ぼかし開始範囲より近い場合はぼかし無し
-    clip(viewDepth - DOF_MIN_RANGE);
+    clip(viewDepth - cb_DoF_MinRange);
     
     // 深度に応じてぼかしの強さを変化させる
-    blurTex.a = min(1.0f, (viewDepth - DOF_MIN_RANGE) / DOF_MAX_RANGE);
+    blurTex.a = min(1.0f, (viewDepth - cb_DoF_MinRange) / cb_DoF_MaxRange);
     
     finalColor = blurTex;
     

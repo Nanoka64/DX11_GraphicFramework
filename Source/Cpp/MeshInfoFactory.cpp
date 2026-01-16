@@ -293,7 +293,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngi
 
 		for (UINT j = 0; j <= sliceCount; ++j)
 		{
-			float theta = (M_PI * 2) * j / sliceCount; // 経度 [0, 2π]
+			float theta = (static_cast<float>(M_PI) * 2.0f) * j / sliceCount; // 経度 [0, 2π]
 
 			float x = radius * sinf(phi) * cosf(theta);
 			float y = radius * cosf(phi);

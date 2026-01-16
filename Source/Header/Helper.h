@@ -380,7 +380,7 @@ namespace Tool
         }
 
         // ëSí∏ì_ê≥ãKâª
-        for (int i = 0; i < vtxNum; i++)
+        for (UINT i = 0; i < vtxNum; i++)
         {
             vertices[i].tangent = vertices[i].tangent.Normalize();
             vertices[i].bitangent = vertices[i].bitangent.Normalize();

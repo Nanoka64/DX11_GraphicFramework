@@ -272,7 +272,10 @@ int DXApp::MainLoop()
                 // 前回時刻を更新
                 lastTime = crntTime;
 
-                Master::m_pDebugger->BeginFrame(m_pRenderer->get_ScreenWidth(), m_pRenderer->get_ScreenHeight());
+                float win_width = static_cast<float>(m_pRenderer->get_ScreenWidth());
+                float win_height = static_cast<float>(m_pRenderer->get_ScreenHeight());
+
+                Master::m_pDebugger->BeginFrame(win_width, win_height);
 
                 // アプリケーション情報
                 Master::m_pDebugger->BeginDebugWindow("Application");

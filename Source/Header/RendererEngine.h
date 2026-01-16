@@ -130,7 +130,7 @@ public:
     /// <param name="_topLeftY"></param>
     /// <param name="_width"></param>
     /// <param name="_height"></param>
-    void set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height);
+    void set_ViewPort(float _topLeftX, float _topLeftY, float _width, float _height);
 
     /// <summary>
     /// Œ»İ‚Ì•`‰æƒpƒX‚ğæ“¾

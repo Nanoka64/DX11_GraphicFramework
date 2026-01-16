@@ -103,7 +103,7 @@ bool RendererEngine::Init(HWND hWnd)
     m_StartTime = timeGetTime();    // 開始時間取得
 
     // 投影変換行列の設定
-    SetupProjectionTransform(m_ScreenWidht, m_Screenheight, 100.0f, 1.0f, 10000.0f);
+    SetupProjectionTransform(static_cast<float>(m_ScreenWidht), static_cast<float>(m_Screenheight), 100.0f, 1.0f, 10000.0f);
 
 
 
@@ -464,8 +464,8 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
 
     // 表カリングステート作成 **********************************************************
     rd.CullMode = D3D11_CULL_FRONT;
-    rd.DepthBias            = 5000.0f; // 深度バイアス
-    rd.SlopeScaledDepthBias = 1.0f;
+    rd.DepthBias            = 0; // 深度バイアス
+    rd.SlopeScaledDepthBias = 0;
     m_pd3dDevice->CreateRasterizerState(&rd, &m_pRasterState_FrontCull);
 
     // 裏カリングステート作成 **********************************************************
@@ -519,7 +519,7 @@ HRESULT RendererEngine::InitDX11_Sampler()
     // シャドウマップ用サンプラー
 
     sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -568,16 +568,16 @@ void RendererEngine::CleanupDX11()
 //* 引数：4.描画範囲の縦幅
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererEngine::set_ViewPort(UINT _topLeftX, UINT _topLeftY, UINT _width, UINT _height)
+void RendererEngine::set_ViewPort(float _topLeftX, float _topLeftY, float _width, float _height)
 {
     D3D11_VIEWPORT vp;
     ZeroMemory(&vp, sizeof(vp));
-    vp.Width = (FLOAT)_width;   // 描画範囲の横幅       
-    vp.Height = (FLOAT)_height; // 描画範囲の縦幅
-    vp.MinDepth = 0.0f;                // Ｚバッファの最小値
-    vp.MaxDepth = 1.0f;                // Ｚバッファの最大値
-    vp.TopLeftX = _topLeftX;                // 描画範囲の左側Ｘ座標
-    vp.TopLeftY = _topLeftY;                // 描画範囲の上部Ｙ座標
+    vp.Width    = (FLOAT)_width;        // 描画範囲の横幅       
+    vp.Height   = (FLOAT)_height;       // 描画範囲の縦幅
+    vp.MinDepth = 0.0f;                 // Ｚバッファの最小値
+    vp.MaxDepth = 1.0f;                 // Ｚバッファの最大値
+    vp.TopLeftX = (FLOAT)_topLeftX;     // 描画範囲の左側Ｘ座標
+    vp.TopLeftY = (FLOAT)_topLeftY;     // 描画範囲の上部Ｙ座標
     m_pImmediateContext->RSSetViewports(1, &vp);
 }
 
@@ -692,11 +692,12 @@ void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type)
 bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far)
 {
     auto pDeviceContext = get_DeviceContext();
+    float aspect = _w / _h; // アスペクト比
 
     // 遠近投影マトリクス作成 https://learn.microsoft.com/ja-jp/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh
     XMMATRIX mat = XMMatrixPerspectiveFovLH(
         XMConvertToRadians(_fovDeg),
-        static_cast<float>(_w) / static_cast<float>(_h), // アスペクト比
+        aspect,
         _near,
         _far
     );

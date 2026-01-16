@@ -60,7 +60,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 
 	VEC3 forward = transform->get_Forward();	// 前方
-	VEC3 playerPos = m_pPlayer.lock()->get_Transform().lock()->get_VEC3ToPos();
+	VEC3 trackingObjPos = m_pLigCamTrackingObj.lock()->get_Transform().lock()->get_VEC3ToPos();
 	
 	// 正規化しないとデカい影が出てしまう！！
 	forward = forward.Normalize();
@@ -75,10 +75,10 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	float shadowDistance = 4000.0f;
 
 	// 注視点（プレイヤーを見るように）
-	m_FocusPoint = playerPos;
+	m_FocusPoint = trackingObjPos;
 
 	// プレイヤーから少し離れた場所
-    VEC3 eyePos = playerPos - (forward * 1000.0f);;
+    VEC3 eyePos = trackingObjPos - (forward * 800.0f);;
 
 	// ライトから見たビュー行列の計算
 	XMFLOAT3 eye	= eyePos;
@@ -93,8 +93,8 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	);
 
 	// 正投影行列を作成する（ディレクションライトの場合こっちじゃないとダメっぽい？）
-	float width  = 800.0f;		// ライトがカバーする横幅 
-	float height = 800.0f;		// ライトがカバーする縦幅
+	float width  = 500.0f;		// ライトがカバーする横幅 
+	float height = 500.0f;		// ライトがカバーする縦幅
 	float nearZ  = 1.0f;		// ライトから見た描画開始距離
 	float farZ   = shadowDistance;  // ライトから見た描画終了距離
 
@@ -133,7 +133,7 @@ void DirectionalLight::Draw(RendererEngine &renderer)
 
 }
 
-void DirectionalLight::set_Player(std::shared_ptr<class GameObject> pObj)
+void DirectionalLight::set_LightCameraTrackingObj(std::shared_ptr<class GameObject> pObj)
 {
-	m_pPlayer = pObj;
+	m_pLigCamTrackingObj = pObj;
 }

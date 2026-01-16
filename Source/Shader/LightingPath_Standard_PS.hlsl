@@ -129,13 +129,18 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // 平行光源のみシャドウの影響を受けるので、一旦別で保持
     float3 dirDiffuse = dirLig.Diffuse + limLig;
     float3 dirSpecular = dirLig.Specular;
-    float3 diffuse  =  + pointLig.Diffuse + hemiLig;
-    float3 specular =  + pointLig.Specular;
+    float3 diffuse = +pointLig.Diffuse + dirDiffuse + hemiLig;
+    float3 specular = +pointLig.Specular + dirSpecular;
+        
+    // 最終色 アルベド * 光度 + スペキュラ
+    finalCol.xyz = albedoTex.xyz * diffuse + specular;
     
     
     //************************************************************************
     // シャドウ
     //************************************************************************
+    float3 shadowColor = float3(0.0f,0.0f,0.0f);
+    
     float4 posInLVP = mul(worldPos, cb_DirLightData[0].LightViewProj);
     
     // ライトビュースクリーン空間（NDC）からUV空間に座標変換
@@ -149,22 +154,30 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float zInLVP = posInLVP.z;
     float shadowFactor = 1.0f;
     
-    //return float4(shadowMapUV, 0, 1);
+    // バイアス参考サイト https://project-asura.com/articles/d3d11/d3d11_008.html
+    // 最大深度傾斜を求める.
+    float maxDepthSlope = max(abs(ddx(zInLVP)), abs(ddy(zInLVP)));
+    float bias = cb_BaseShadowBias; // 固定バイアス
+    float slopeScaledBias = cb_SlopeScaledBias;  // 深度傾斜
+    float depthBiasClamp = cb_DepthBiasClamp;    // バイアスクランプ値
+    float shadowBias = bias + slopeScaledBias * maxDepthSlope;
+    shadowBias = min(shadowBias, depthBiasClamp);   // クランプ
+    
     // シャドウマップの範囲内か
     if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
         shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
     {
-        float bias = 0.005f; // アクネ対策の
-        
         // シャドウマップから深度値をサンプリング
         // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
         shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
-                g_sShadowSampler, shadowMapUV, zInLVP
+                g_sShadowSampler, shadowMapUV, zInLVP - shadowBias
             );
 
-        // 1.0 = 光が当たっている, 0.0 = 影
-        dirDiffuse *= shadowFactor;
-        dirSpecular *= shadowFactor;
+        // 現在のカラーより暗く
+        shadowColor = finalCol.xyz * 0.5f;
+        
+        // shadowFactor : 1.0 = 光が当たっている, 0.0 = 影
+        finalCol.xyz = lerp(finalCol.xyz, shadowColor, shadowFactor);
     }
     
     //return float4(shadowFactor, shadowFactor, shadowFactor, 1.0f);
@@ -172,12 +185,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //************************************************************************
     // 最終調整
     //************************************************************************
-    // シャドウ計算後のディレクションライト加算
-    diffuse += dirDiffuse;
-    specular += dirSpecular;
+
     
-    // 最終色 アルベド * 光度 + スペキュラ
-    finalCol.xyz = albedoTex.xyz * diffuse + specular;
     finalCol.a = 1.0f;
     
     return (finalCol);

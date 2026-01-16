@@ -42,6 +42,25 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pBloom_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pDoF_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pFinalSceneToneMappingFilter_Sprite;
+
+
+    // ”íÊŠE[“xî•ñ
+    struct DoFInfo {
+        float dof_MaxRange; // ‚Ú‚©‚µ‚ÌÅ‘å‹——£
+        float dof_MinRange; // ‚Ú‚©‚µ‚ÌŠJn‹——£
+
+        float pad[2];
+    }m_DofData;
+
+    struct ShadowInfo
+    {
+        float baseShadowBias;
+        float slopeScaledBias;
+        float depthBiasClamp;
+
+        float pad1;
+    }m_ShadowData;
+
 public:
     RenderPipeline();
     ~RenderPipeline();

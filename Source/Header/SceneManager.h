@@ -18,7 +18,8 @@ class SceneManager
 {
 private:
 	std::shared_ptr<GameObject>  m_pPlayer;
-	std::shared_ptr<GameObject>  m_pCamera;
+	std::shared_ptr<GameObject>  m_pCameraObj;
+	std::shared_ptr<class Camera3D>  m_pCameraComp;
 
 	int m_CrntSceneState;	
 

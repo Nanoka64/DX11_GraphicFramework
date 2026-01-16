@@ -145,8 +145,8 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format
     m_pHorizontalBlur = new DX_RenderTarget();
     result = m_pHorizontalBlur->Create(
         renderer,
-        m_pTexture.lock()->get_Width() / 2.0f,
-        m_pTexture.lock()->get_Height(),
+        static_cast<float>(m_pTexture.lock()->get_Width() / 2.0f),
+        static_cast<float>(m_pTexture.lock()->get_Height()),
         1,
         1,
         format,
@@ -160,8 +160,8 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format
     m_pVerticalBlur = new DX_RenderTarget();
     result = m_pVerticalBlur->Create(
         renderer,
-        m_pTexture.lock()->get_Width() / 2.0f,
-        m_pTexture.lock()->get_Height() / 2.0f,
+        static_cast<float>(m_pTexture.lock()->get_Width() / 2.0f),
+        static_cast<float>(m_pTexture.lock()->get_Height() / 2.0f),
         1,
         1,
         format,

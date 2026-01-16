@@ -56,6 +56,15 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
 {
     bool result = true;
 
+    // シャドウバイアスの設定
+    m_ShadowData.baseShadowBias = 0.0005f;
+    m_ShadowData.depthBiasClamp = 0.001f;
+    m_ShadowData.slopeScaledBias = 0.1f;
+
+    // 被写界深度の設定
+    m_DofData.dof_MaxRange = 2800.0f;
+    m_DofData.dof_MinRange = 300.0f;
+
     // レンダリングターゲットの作成
     if (!CreateRenderTargets(renderer))
     {
@@ -71,6 +80,8 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     { 
         return false; 
     }
+
+
 
     return true;
 }
@@ -125,6 +136,12 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"強度"));
             Master::m_pDebugger->DG_SliderFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 32.0f);
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー開始距離"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_SliderFloat("##DofMinRange", 1, &m_DofData.dof_MinRange, 0.1f, 1000.0f);
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー最大位置"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_SliderFloat("##DofMaxRange", 1, &m_DofData.dof_MaxRange, 1.0f, 10000.0f);
             Master::m_pDebugger->DG_Separator();
 
             Master::m_pDebugger->DG_TreePop();  // ポストエフェクト終了
@@ -135,6 +152,18 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         {
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シャドウマップ"));
             Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"バイアス"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##BaseBias", 1, &m_ShadowData.baseShadowBias,   0.0001f, 0.0f,   0.1f);
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"傾斜バイアス"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##SlopeBias", 1, &m_ShadowData.slopeScaledBias, 0.0001f, 0.0f,   1.0);
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最大バイアス"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##ClampBias", 1, &m_ShadowData.depthBiasClamp,  0.0001f, 0.01f,  0.1f);
+
+
+
             Master::m_pDebugger->DG_Separator();
 
             Master::m_pDebugger->DG_TreePop();  // シャドウマップ終了
@@ -272,6 +301,7 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 
     // ディファードスプライト
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+    m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
     m_pDefferdLighting_Sprite->Draw(renderer);
 
     // レンダリングターゲット解除
@@ -327,11 +357,11 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // カリングなし
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
-    //for (int i = 0; i < 30; i++)
-    //{
-    //    auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
-    //    billboard->get_Component<BillboardRenderer>()->Draw(renderer);
-    //}
+    for (int i = 0; i < 30; i++)
+    {
+        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
+        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+    }
 
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);
@@ -370,6 +400,9 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
 
     // 被写界深度用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);
+
+    // 定数バッファに送信
+    m_pDoF_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_DofData);
 
     // 被写界深度用スプライト
     m_pDoF_Sprite->Draw(renderer);
@@ -750,6 +783,12 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.ObjTag = "DefferdLightingSprite";
     sprite.Width = 1.0f;
     sprite.Height = 1.0f;
+    sprite.PSConstBufferNum = 1;
+    sprite.pPSConstantBuffers =  new ExpandConstantBufferInfo();
+    sprite.pPSConstantBuffers->SetSlot = 9;
+    sprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_ShadowData);
+    sprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_ShadowData;
+
     sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT1");
     sprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT2");
     sprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture("RT3");
@@ -837,6 +876,12 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
         );
     // 深度テクスチャ設定
     depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT4");
+
+    depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
+    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;               // スロット7にセット
+    depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_DofData;
+    depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_DofData);
+    depthOfFieldSprite.PSConstBufferNum = 1;
 
     // スプライト取得
     m_pDoF_Sprite = MeshFactory::CreateSprite(depthOfFieldSprite)->get_Component<SpriteRenderer>();

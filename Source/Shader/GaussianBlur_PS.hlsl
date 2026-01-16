@@ -54,5 +54,6 @@ float4 PSMain(PS_BLUR_IN input) : SV_TARGET
     finalColor += cb_BlurWeights[1].z * g_tTexture.Sample(g_sSampler, input.tex6.zw);
     finalColor += cb_BlurWeights[1].w * g_tTexture.Sample(g_sSampler, input.tex7.zw);
     
+    finalColor.a = 1.0f;
     return float4(finalColor);
 }

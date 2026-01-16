@@ -65,11 +65,13 @@ void Camera3D::Init(RendererEngine& renderer)
 
 //*---------------------------------------------------------------------------------------
 //* @:Camera3D Class 
-//*【?】更新処理
-//* 引数：1.RendererEngine
+//*【?】カメラの操作など
+//*		Updateに書くと更新順で不都合が出る可能性があるので、
+//*		明示的にこれを呼び出す。
+//* 引数：なし
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::Update(RendererEngine& renderer)
+void Camera3D::ViewProcessUpdate()
 {
 	if (GetInput(CONFIG_INPUT::DOWN))	// 上
 	{
@@ -106,7 +108,7 @@ void Camera3D::Update(RendererEngine& renderer)
 	// 注視点を設定
 	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, CAMERA_MOVE_FACTOR);	// ガタガタする
 	m_FocusPoint = focusObjPos;
-	
+
 	// 方向ベクトルを作る
 	VEC3 lookDir;
 	lookDir.x = m_PosOffset.x * cosf(m_Angle_V) * cosf(m_Angle_H);
@@ -115,18 +117,6 @@ void Camera3D::Update(RendererEngine& renderer)
 
 	// カメラの位置
 	m_pOwner.lock()->get_Transform().lock()->set_Pos(lookDir + m_FocusPoint);
-}
-
-
-//*---------------------------------------------------------------------------------------
-//* @:Camera3D Class 
-//*【?】描画処理
-//* 引数：1.RendererEngine
-//* 返値：void
-//*----------------------------------------------------------------------------------------
-void Camera3D::Draw(RendererEngine& renderer)
-{
-
 }
 
 

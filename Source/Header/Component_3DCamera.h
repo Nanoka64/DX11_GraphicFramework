@@ -31,8 +31,8 @@ public:
 	~Camera3D();
 
 	void Init(RendererEngine& renderer) override;		// 初期化
-	void Update(RendererEngine& renderer) override;		// 更新処理
-	void Draw(RendererEngine& renderer)override;		// 描画処理
+
+	void ViewProcessUpdate();	// カメラの操作など
 
 	void set_UpVec(const VECTOR3::VEC3& upVec);					// 上方向ベクトルの設定
 	void set_FocusPoint(const VECTOR3::VEC3& focus);			// 注視点の設定

@@ -75,15 +75,13 @@ bool SceneManager::Init(RendererEngine &renderer)
     {
         /* カメラの作成 */
         {
-            m_pCamera = Instantiate(std::move(std::make_shared<GameObject>()));
-            if (m_pCamera == nullptr) return false;
-            m_pCamera->Init(renderer);
-            m_pCamera->set_Tag("Camera");
-            m_pCamera->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
-            m_pCamera->add_Component<Camera3D>();
-            m_pCamera->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
-            m_pCamera->set_LayerRank(100);
-            //m_pCamera->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            m_pCameraObj = Instantiate(std::move(std::make_shared<GameObject>()));
+            if (m_pCameraObj == nullptr) return false;
+            m_pCameraObj->Init(renderer);
+            m_pCameraObj->set_Tag("Camera");
+            m_pCameraObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            m_pCameraObj->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
+            m_pCameraComp = m_pCameraObj->add_Component<Camera3D>(); // カメラコンポーネントの追加
         }
 
         /* プレイヤー モデルの生成 */
@@ -117,7 +115,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
             // カメラのフォーカスオブジェクトに設定
-            m_pCamera->get_Component<Camera3D>()->set_FocusObject(m_pPlayer);
+            m_pCameraComp->set_FocusObject(m_pPlayer);
         }
 
         /* ディレクションライトの生成(Cubuで分かりやすく) */
@@ -142,7 +140,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             auto light = obj->add_Component<DirectionalLight>();
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
             light->set_Intensity(3.0f);
-            light->set_Player(m_pPlayer);
+            light->set_LightCameraTrackingObj(m_pCameraObj);
             light->Init(renderer);
 
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
@@ -390,13 +388,13 @@ bool SceneManager::Init(RendererEngine &renderer)
                 col.y = static_cast<float>(rand() % 255) / 255.0f;
                 col.z = static_cast<float>(rand() % 255) / 255.0f;
 
-                mat->m_DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
+                //mat->m_DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
                 billboard.MaterialData->pMat = mat;
-                /*auto obj = MeshFactory::CreateBillboard(billboard);
+                auto obj = MeshFactory::CreateBillboard(billboard);
                 obj->get_Transform().lock()->set_Pos(pos);
                 obj->get_Transform().lock()->set_Scale(50, 50, 50);
                 obj->set_Tag("Billboard" + std::to_string(i));
-            */
+            
             }
         }
 
@@ -437,18 +435,14 @@ bool SceneManager::Init(RendererEngine &renderer)
                 auto light = obj->add_Component<PointLight>();
                 light->set_LightColor(col);
                 light->set_Range(100.0f);
-                light->set_Intensity(10.0f);
+                light->set_Intensity(20.0f);
                 light->Init(renderer);
             }
         }
-
     }
 
-    m_pCamera->get_Component<Camera3D>()->Update(renderer);
-
-
     // ライトにカメラのTransformを持たせる
-    Master::m_pLightManager->set_CameraTransform(m_pCamera->get_Transform());
+    Master::m_pLightManager->set_CameraTransform(m_pCameraComp->get_OwnerObj().lock()->get_Transform());
 
     // パイプラインの作成
     if (!renderer.CreateRenerererPipeline(RENDER_PIPELINE_STATE::DEFAULT))
@@ -549,10 +543,11 @@ void SceneManager::Update(RendererEngine& renderer)
         }
     }
 
-    m_pCamera->get_Component<Camera3D>()->Update(renderer);
+    // カメラ操作の更新
+    m_pCameraComp->ViewProcessUpdate();
 
     // カメラ更新
-    auto viewMatrix = m_pCamera->get_Component<Camera3D>()->get_ViewMatrix();
+    auto viewMatrix = m_pCameraComp->get_ViewMatrix();
 
     // ビュー変換し定数バッファへ送る
     if (!renderer.SetupViewTransform(viewMatrix)) {
@@ -560,14 +555,6 @@ void SceneManager::Update(RendererEngine& renderer)
     };
 
     Master::m_pEditorManager->Update(renderer);
-
-    auto camCom = m_pCamera->get_Component<Camera3D>();
-    float farClip = camCom->get_Far();
-    float nearClip = camCom->get_Near();
-    float fov = camCom->get_Fov();
-
-    // プロジェクション変換行列の設定 一回でいい
-    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), farClip, nearClip, fov);
 }
 
 
@@ -579,13 +566,15 @@ void SceneManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Draw(RendererEngine& renderer)
 {
-    auto camCom = m_pCamera->get_Component<Camera3D>();
-    float farClip   = camCom->get_Far();
-    float nearClip  = camCom->get_Near();
-    float fov       = camCom->get_Fov();
+    float farClip   = m_pCameraComp->get_Far();
+    float nearClip  = m_pCameraComp->get_Near();
+    float fov       = m_pCameraComp->get_Fov();
+
+    float screen_width = static_cast<float>(renderer.get_ScreenWidth());
+    float screen_height = static_cast<float>(renderer.get_ScreenHeight());
 
     // プロジェクション変換行列の設定 一回でいいけど、今回はfovなど編集できるようにしているので...
-    renderer.SetupProjectionTransform(renderer.get_ScreenWidth(), renderer.get_ScreenHeight(), fov, nearClip, farClip);
+    renderer.SetupProjectionTransform(screen_width, screen_height, fov, nearClip, farClip);
 
     // レンダリングパイプラインの実行
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
