@@ -15,7 +15,7 @@ using namespace Tool::UV;
 //*----------------------------------------------------------------------------------------
 SkinnedMeshAnimator::SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
 m_AnimationTime(0.0),
-m_CurrentAnimIndex(0),
+m_CurrentAnimIndex(-1),
 m_IsAnimationFlag(false),
 m_AnimProcTime(0.0),
 m_ShadowAnimProcTime(0.0),
@@ -66,15 +66,21 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
     // メインパス
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN)
     {
-        if (m_CurrentAnimIndex == -1)return;
-        m_AnimProcTime += 0.023f;
+        //if (m_CurrentAnimIndex == -1)return;
+        if (m_IsAnimationFlag)
+        {
+            m_AnimProcTime += 0.023f;
+        }
         BoneTransformsUpdate(renderer, m_AnimProcTime, m_CurrentAnimIndex);
     }
     // シャドウパス
     else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW)
     {
-        if (m_CurrentAnimIndex == -1)return;
-        m_ShadowAnimProcTime += 0.023f;
+        //if (m_CurrentAnimIndex == -1)return;
+        if (m_IsAnimationFlag)
+        {
+            m_ShadowAnimProcTime += 0.023f;
+        }
         BoneTransformsUpdate(renderer, m_ShadowAnimProcTime, m_CurrentAnimIndex);
     }
 }
@@ -107,7 +113,7 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
     float animTimeTicks = 0.0f;
 
     // アニメーションがあるなら ***********************************
-    if (!m_Animations.empty()) {
+    if (!m_Animations.empty() && animIdx != -1) {
         tickPerSecond =
             static_cast<float>(
                 m_Animations[animIdx]->TicksPerSecond != 0 ?     // ティック数が0じゃないならそのまま代入
@@ -124,7 +130,8 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
         animTimeTicks = static_cast<float>(fmod(timeInTicks, m_Animations[animIdx]->Duration));
     }
 
-    if (m_IsAnimationFlag) {
+    //if (m_IsAnimationFlag) 
+    {
         // ボーン変換
         TransformBone(animTimeTicks, 0, XMMatrixIdentity(), animIdx);
     }
@@ -173,10 +180,10 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
     std::string nodeName = m_NodeList[nodeIdx]->Name;
 
     // アニメーションがあるなら
-    if (!m_Animations.empty()) {
-        const AnimationData *pAnim = m_Animations[animIdx];
+    if (!m_Animations.empty() && animIdx != -1) {
+        const AnimationData* pAnim = m_Animations[animIdx];
 
-        const NodeAnimChannel *pNodeAnim = FindNodeAnim(pAnim, nodeName);  // アニメーション確認
+        const NodeAnimChannel* pNodeAnim = FindNodeAnim(pAnim, nodeName);  // アニメーション確認
 
         // アニメーションがあるなら、キーフレーム間の値を補間させる（無かったら初期姿勢のまま）
         if (pNodeAnim != nullptr)
@@ -200,6 +207,7 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
             }
         }
     }
+
 
     /* ローカル変換 x 親のワールド行列 （サイトによって掛ける順番が変わったりする）*/
     // 親の変換行列をかけて、ワールド空間に配置するための変換行列を求める

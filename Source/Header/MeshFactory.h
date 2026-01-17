@@ -6,10 +6,10 @@
 
 
 // 入力マテリアル情報
-struct InputMaterial
+struct SetupMaterialInfo
 {
-    Material* pMat; // マテリアル（MatNum分）
-    int MatIndex;   // マテリアル番号
+    std::shared_ptr<Material> pMaterialData;  // マテリアル
+    int Index;              // マテリアル番号
 };
 
 /// <summary>
@@ -36,8 +36,8 @@ struct CreateModelInfo
     SHADER_TYPE ShaderType;         // 使用するシェーダの種類
     SHADER_TYPE Shadow_ShaderType;  // シャドウマップ生成に使用するシェーダの種類
 
-    InputMaterial* MaterialData;    // マテリアル情報
-    UINT MatNum;                    // マテリアル数
+    SetupMaterialInfo* SetupMaterial;    // マテリアル情報
+    UINT MatNum;                        // マテリアル数
 
     // コンストラクタ
     CreateModelInfo() :
@@ -45,7 +45,7 @@ struct CreateModelInfo
         IsActive(true),
         IsAnim(false),
         InitAnimIndex(0),
-        MaterialData(nullptr),
+        SetupMaterial(nullptr),
         MatNum(0),
         ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC),
         Shadow_ShaderType(SHADER_TYPE::POST_SHADOWMAP)
@@ -68,7 +68,7 @@ struct CreateUtilityMeshInfo
     std::string ObjTag;          // オブジェクトのタグ
     bool IsActive;               // 生成時にオブジェクトをアクティブにするか
 
-    InputMaterial* MaterialData; // マテリアル情報
+    SetupMaterialInfo* MaterialData; // マテリアル情報
     UINT MatNum;                 // マテリアル数
 
     // コンストラクタ
@@ -135,7 +135,7 @@ struct CreateBillboradInfo
     std::string ObjTag;           // オブジェクトのタグ
     bool IsActive;                // 生成時にオブジェクトをアクティブにするか
     
-    InputMaterial* MaterialData;  // マテリアル情報
+    SetupMaterialInfo* MaterialData;  // マテリアル情報
     UINT MatNum;                  // マテリアル数
 
     // コンストラクタ
@@ -159,7 +159,7 @@ struct CreateSkyboxInfo
     SHADER_TYPE ShaderType;      // 使用するシェーダの種類
     std::string ObjTag;          // オブジェクトのタグ
     bool IsActive;               // 生成時にオブジェクトをアクティブにするか
-    InputMaterial* MaterialData; // マテリアル情報
+    SetupMaterialInfo* MaterialData; // マテリアル情報
     UINT MatNum;                 // マテリアル数
 
     // コンストラクタ

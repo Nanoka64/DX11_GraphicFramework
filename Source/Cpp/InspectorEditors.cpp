@@ -8,6 +8,7 @@
 #include "Component_PlayerController.h"
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
+#include "Component_ModelMeshResource.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -95,6 +96,10 @@ void DirectionLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pOb
     // beginはInspectorWindowで行っている
     float intensity = pDirectionLig->get_Intensity();
     VEC3 lightColor = pDirectionLig->get_LightColor();
+    float shadowDist = pDirectionLig->get_ShadowDistance();
+    float shadowFocusOfsDist = pDirectionLig->get_ShadowFocusOffsetDistance();;
+    float orthogriphicWidth = pDirectionLig->get_OrthographicWidth();
+    float orthogriphicHeight = pDirectionLig->get_OrthographicHeight();
 
     // ノード
     if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ディレクションライト")))
@@ -108,12 +113,35 @@ void DirectionLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pOb
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_ColorEdit3("##DirLigColor", &lightColor);
 
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シャドウ"));
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"距離"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##ShadowDist", 1, &shadowDist,         10.0f, 10000.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"追従オブジェクトからのオフセット距離"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##FocusOfs",   1, &shadowFocusOfsDist, 10.0f, 2000.0f);
+        
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"横幅"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##Width",      1, &orthogriphicWidth,  1.0f, 2000.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"縦幅"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_SliderFloat("##Height",     1, &orthogriphicHeight, 1.0f, 2000.0f);
+
         Master::m_pDebugger->DG_TreePop();
     }
 
     // 反映
     pDirectionLig->set_Intensity(intensity);
     pDirectionLig->set_LightColor(lightColor);
+
+    pDirectionLig->set_ShadowDistance(shadowDist);
+    pDirectionLig->set_ShadowFocusOffsetDistance(shadowFocusOfsDist);
+    pDirectionLig->set_OrthographicWidth(orthogriphicWidth);
+    pDirectionLig->set_OrthographicHeight(orthogriphicHeight);
 }
 
 
@@ -132,7 +160,7 @@ void PointLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     using namespace VECTOR3;
     using namespace Tool;
 
-    // ディレクショナルライトコンポーネントの取得
+    // ポイントライトコンポーネントの取得
     auto pPointLig = pObj.get_Component<PointLight>();
 
     if (pPointLig == nullptr)
@@ -287,7 +315,7 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"視野"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_SliderFloat("##Fov", 1, &fov, 0.1f, 180.0f);
+        Master::m_pDebugger->DG_SliderFloat("##Fov", 1, &fov, 0.1f, 179.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"手前クリップ"));
         Master::m_pDebugger->DG_SameLine();
@@ -312,7 +340,7 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_Text(focusObjTag.c_str());
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"オフセット座標"));
-        Master::m_pDebugger->DG_DragVec3("##ofsP", &posOffset, 1.0f, 10.0f, 1000.0f);
+        Master::m_pDebugger->DG_DragVec3("##ofsP", &posOffset, 1.0f, 0.0f, 1000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"オフセット注視点"));
         Master::m_pDebugger->DG_DragVec3("##ofsF", &focusOffset, 1.0f, -1000.0f, 1000.0f);
@@ -402,6 +430,140 @@ void SkinnedMeshAnimatorEditor::OnEditorGUI(RendererEngine &renderer, GameObject
             }
             Master::m_pDebugger->DG_TreePop();
         }
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+    /*
+    * 補正
+    */
+
+    // 反映
+}
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:ModelMeshResourceEditor Class --- */
+//
+// ***************************************************************************************
+bool ModelMeshResourceEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    using namespace VECTOR3;
+    using namespace Tool;
+
+    // ディレクショナルライトコンポーネントの取得
+    auto pComp = pObj.get_Component<ModelMeshResource>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    auto modelData = pComp->get_ModelData().lock();
+    auto meshNum = modelData->get_MeshNum();        // メッシュ数
+    auto vertexNum = modelData->get_VertexNum();    // 頂点数
+    auto indexNum = modelData->get_IndexNum();      // インデックス数
+    auto boneNum = modelData->get_BoneNum();        // ボーン数
+    auto shaderType = modelData->get_ShaderType();  // シェーダ
+    auto matNum = modelData->get_MaterialNum();     // マテリアル数
+    std::vector<std::weak_ptr<Material>> matList = modelData->get_MaterialList();   // マテリアルリスト
+
+    // beginはInspectorWindowで行っている
+
+    using VECTOR4::VEC4;
+    using VECTOR2::VEC2;
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"モデルリソース")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"メッシュ数：%d"), meshNum);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"頂点数：%d"), vertexNum);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"インデックス数：%d"), indexNum);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ボーン数：%d"), boneNum);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"しぇーたの種類数：%d"), static_cast<int>(shaderType));
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"マテリアル数：%d"), matNum);
+
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"マテリアル")))
+        {
+            for (int i = 0; i < matList.size(); i++)
+            {
+                auto mat = matList[i].lock();
+
+                if (mat == nullptr)
+                {
+                    continue;
+                }
+
+                VEC4 diffuseCol     = mat->m_DiffuseColor;
+                VEC4 specCol        = mat->m_SpecularColor;
+                float specPow       = mat->m_SpecularPower;
+                float emissivePow   = mat->m_EmissivePower;
+
+                ID3D11ShaderResourceView* diffSRV = nullptr;
+                ID3D11ShaderResourceView* norSRV = nullptr;
+                ID3D11ShaderResourceView* specSRV = nullptr;
+
+                /* SRVマップ取得 */
+                // ディフューズ
+                if (!mat->m_DiffuseMap.Texture.expired())
+                {
+                    diffSRV = mat->m_DiffuseMap.Texture.lock()->get_SRV();
+                }
+                // ノーマル
+                if (!mat->m_NormalMap.Texture.expired())
+                {
+                    norSRV = mat->m_NormalMap.Texture.lock()->get_SRV();
+                }
+                // スペキュラ
+                if (!mat->m_SpecularMap.Texture.expired())
+                {
+                    specSRV = mat->m_SpecularMap.Texture.lock()->get_SRV();
+                }
+
+
+                Master::m_pDebugger->DG_Separator();    // 区切り線
+
+                if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"マテリアル") + std::to_string(i + 1)))
+                {
+                    Master::m_pDebugger->DG_Separator();    // 区切り線
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ディフューズ"));
+                    Master::m_pDebugger->DG_Image(diffSRV, VEC2(100, 100));
+                    Master::m_pDebugger->DG_ColorEdit4("##Diffuse" + std::to_string(i), &diffuseCol);
+
+
+                    Master::m_pDebugger->DG_Separator();    // 区切り線
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ノーマル"));
+                    Master::m_pDebugger->DG_Image(norSRV, VEC2(100, 100));
+
+
+                    Master::m_pDebugger->DG_Separator();    // 区切り線
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ"));
+                    Master::m_pDebugger->DG_Image(specSRV, VEC2(100, 100));
+                    Master::m_pDebugger->DG_ColorEdit4("##Speular" + std::to_string(i), &specCol);
+
+
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ強度"));
+                    Master::m_pDebugger->DG_SameLine();
+                    Master::m_pDebugger->DG_DragFloat("##SpecularPower" + std::to_string(i), 1, &specPow, 0.01f, 0.0f, 255.0f);
+
+                    
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"エミッシブ"));
+                    Master::m_pDebugger->DG_SameLine();
+                    Master::m_pDebugger->DG_DragFloat("##EmissivePower" + std::to_string(i), 1, &emissivePow, 0.01f, 0.0f, 255.0f);
+
+                    Master::m_pDebugger->DG_TreePop();
+                }
+            }
+            Master::m_pDebugger->DG_Separator();    // 区切り線
+
+            Master::m_pDebugger->DG_TreePop();
+        }
+
         Master::m_pDebugger->DG_TreePop();
     }
 

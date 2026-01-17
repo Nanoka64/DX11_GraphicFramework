@@ -14,7 +14,11 @@ using namespace VECTOR3;
 //* 引数：1.オーナーオブジェクト
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
-DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank)
+DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
+m_FocusOffsetDistance(800.0f),
+m_OrthographicWidth(500.0f),
+m_OrthographicHeigh(500.0f),
+m_ShadowDistance(4000.0f)
 {
 	this->set_Tag("DirectionalLight");
 }
@@ -72,13 +76,13 @@ void DirectionalLight::Update(RendererEngine &renderer)
     dirData.SpecularIntensity = 0.5f;			// つよさ
 
     // シャドウマップの距離
-	float shadowDistance = 4000.0f;
+	float shadowDistance = m_ShadowDistance;
 
 	// 注視点（プレイヤーを見るように）
 	m_FocusPoint = trackingObjPos;
 
 	// プレイヤーから少し離れた場所
-    VEC3 eyePos = trackingObjPos - (forward * 800.0f);;
+    VEC3 eyePos = trackingObjPos - (forward * m_FocusOffsetDistance);;
 
 	// ライトから見たビュー行列の計算
 	XMFLOAT3 eye	= eyePos;
@@ -93,10 +97,10 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	);
 
 	// 正投影行列を作成する（ディレクションライトの場合こっちじゃないとダメっぽい？）
-	float width  = 500.0f;		// ライトがカバーする横幅 
-	float height = 500.0f;		// ライトがカバーする縦幅
-	float nearZ  = 1.0f;		// ライトから見た描画開始距離
-	float farZ   = shadowDistance;  // ライトから見た描画終了距離
+	float width  = m_OrthographicWidth;		// ライトがカバーする横幅 
+	float height = m_OrthographicHeigh;		// ライトがカバーする縦幅
+	float nearZ  = 1.0f;					// ライトから見た描画開始距離
+	float farZ   = shadowDistance;			// ライトから見た描画終了距離
 
 	// 平行投影行列（ディレクションライトはこれがいいらしい）
 	XMMATRIX projMat = XMMatrixOrthographicLH(width, height, nearZ, farZ);

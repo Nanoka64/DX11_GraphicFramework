@@ -99,7 +99,7 @@ MeshInfoFactory::~MeshInfoFactory()
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine& renderer, std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap)
 {
 	auto meshData = std::make_shared<MeshResourceData>();
 	WORD indices[] = { 0, 1, 2, 1, 3, 2 };
@@ -127,7 +127,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine
 
 	// マテリアル情報設定
 	meshData->pMaterials = materials;
-	meshData->NumMaterial = matNum;
 
 	return meshData;
 
@@ -167,7 +166,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine& renderer, std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
@@ -254,7 +253,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine
 	}
 
 	// マテリアルの設定
-	meshData->NumMaterial = matNum;
 	meshData->pMaterials = materials;
 
 	return meshData;
@@ -266,7 +264,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngine& renderer, std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
@@ -338,7 +336,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngi
 
 	// マテリアル設定
 	meshData->pMaterials = materials;
-	meshData->NumMaterial = matNum;
 
 	return meshData;
 }
@@ -348,7 +345,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSphereInfo(RendererEngi
 // 引数 1.マテリアル
 // 		2.マテリアル数
 // ----------------------------------------------------------------------------------------------------------------------
-std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap)
+std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngine& renderer, std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
@@ -400,7 +397,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 
 	// マテリアル情報設定
 	meshData->pMaterials = materials;
-	meshData->NumMaterial = matNum;
 
 	return meshData;
 }
@@ -436,8 +432,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSpriteQuadInfo(Renderer
 	*meshData = CreateMesh(pDevice, vertices, g_SpriteQuadVertexNum, indices, g_SpriteQuadIndexNum);
 
 	// マテリアル情報設定
-	meshData->pMaterials = nullptr;
-	meshData->NumMaterial = 0;
+	meshData->pMaterials;
 
 	return meshData;
 }
@@ -492,8 +487,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, indices, g_RTSpriteQuadIndexNum);
 
 	// マテリアル情報設定
-	meshData->pMaterials = nullptr;
-	meshData->NumMaterial = 0;
+	meshData->pMaterials;
 
 	return meshData;
 }

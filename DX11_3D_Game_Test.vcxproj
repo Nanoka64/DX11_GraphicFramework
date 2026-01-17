@@ -201,6 +201,7 @@
     <ClInclude Include="Source\Header\LightManager.h" />
     <ClInclude Include="Source\Header\Master.h" />
     <ClInclude Include="Source\Header\Material.h" />
+    <ClInclude Include="Source\Header\MaterialFactory.h" />
     <ClInclude Include="Source\Header\ModelData.h" />
     <ClInclude Include="Source\Header\MeshFactory.h" />
     <ClInclude Include="Source\Header\Component_PointLight.h" />
@@ -299,6 +300,7 @@
     <ClCompile Include="Source\Cpp\InspectorWindow.cpp" />
     <ClCompile Include="Source\Cpp\LightManager.cpp" />
     <ClCompile Include="Source\Cpp\Material.cpp" />
+    <ClCompile Include="Source\Cpp\MaterialFactory.cpp" />
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

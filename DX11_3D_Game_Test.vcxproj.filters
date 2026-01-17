@@ -178,6 +178,9 @@
     <Filter Include="HLSL\Shadow">
       <UniqueIdentifier>{177728a2-120a-419f-9cb5-4b5ee0105b8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Graphics\Material">
+      <UniqueIdentifier>{20babb4d-5770-42c0-aaa3-d3ab385ae60f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -399,9 +402,6 @@
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
       <Filter>ソース ファイル\DXLap</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Material.cpp">
-      <Filter>ソース ファイル\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\EditorManager.cpp">
       <Filter>ソース ファイル\Editor</Filter>
     </ClCompile>
@@ -422,6 +422,12 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\InspectorEditors.cpp">
       <Filter>ソース ファイル\Editor\Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Material.cpp">
+      <Filter>ソース ファイル\Graphics\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\MaterialFactory.cpp">
+      <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -677,9 +683,6 @@
     <ClInclude Include="Source\Header\RenderPipeline.h">
       <Filter>ソース ファイル\DXLap</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Material.h">
-      <Filter>ソース ファイル\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\EditorManager.h">
       <Filter>ソース ファイル\Editor</Filter>
     </ClInclude>
@@ -700,6 +703,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\InspectorEditors.h">
       <Filter>ソース ファイル\Editor\Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Material.h">
+      <Filter>ソース ファイル\Graphics\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\MaterialFactory.h">
+      <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

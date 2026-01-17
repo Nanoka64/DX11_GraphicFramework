@@ -73,13 +73,13 @@ bool BillboardResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const
 	case TEXTURE_MAP_NONE:
 		break;
 	case TEXTURE_MAP_DIFFUSE:
-		m_pMeshData->pMaterials[matIndex].m_DiffuseMap.Texture = texture;
-		break;
-	case TEXTURE_MAP_NORMAL:
-		m_pMeshData->pMaterials[matIndex].m_NormalMap.Texture = texture;
-		break;
-	case TEXTURE_MAP_SPECULAR:
-		m_pMeshData->pMaterials[matIndex].m_SpecularMap.Texture = texture;
+		m_pMeshData->pMaterials.lock()->m_DiffuseMap.Texture = texture;
+		break;				   
+	case TEXTURE_MAP_NORMAL:   
+		m_pMeshData->pMaterials.lock()->m_NormalMap.Texture = texture;
+		break;				   
+	case TEXTURE_MAP_SPECULAR: 
+		m_pMeshData->pMaterials.lock()->m_SpecularMap.Texture = texture;
 		break;
 	default:
 		break;
@@ -148,7 +148,7 @@ bool BillboardResource::CreateCBuffer(ID3D11Device* pDevice)
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool BillboardResource::Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE type, Material* materials, UINT materialNum)
+bool BillboardResource::Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE type, std::shared_ptr<Material> pMaterial, UINT materialNum)
 {
 	auto pDevice = renderer.get_Device();
 
@@ -160,7 +160,7 @@ bool BillboardResource::Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE typ
 	{
 	case BILLBOARD_USAGE_TYPE::SIMPLE:
 		// 板ポリでメッシュ作成
-		m_pMeshData = MeshInfoFactory::CreateQuadInfo(renderer,materials, materialNum, false);
+		m_pMeshData = MeshInfoFactory::CreateQuadInfo(renderer, pMaterial, materialNum, false);
 		break;
 	default:
 		break;

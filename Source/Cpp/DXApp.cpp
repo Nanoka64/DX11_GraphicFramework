@@ -26,7 +26,7 @@ DirectWriteManager      *Master::m_pDirectWriteManager  = nullptr;  // 文字管理
 GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // オブジェクト管理
 ResourceManager         *Master::m_pResourceManager     = nullptr;  // リソース管理
 EditorManager           *Master::m_pEditorManager       = nullptr;  // エディタ管理
-InputManager            *Master::m_pInputManager       = nullptr;   // 入力管理
+InputManager            *Master::m_pInputManager        = nullptr;   // 入力管理
 
 
 //*---------------------------------------------------------------------------------------
@@ -227,6 +227,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
 //*----------------------------------------------------------------------------------------
 void DXApp::Term()
 {
+
     m_pGameManager->Term(*m_pRenderer);
 
     Master::m_pShaderManager->Term();
@@ -236,6 +237,7 @@ void DXApp::Term()
     Master::m_pGameObjectManager->Term(*m_pRenderer);
     Master::m_pResourceManager->Term();
     Master::m_pInputManager->Term();
+    m_pRenderer->Term();
 }
 
 
@@ -287,15 +289,15 @@ int DXApp::MainLoop()
                 using namespace Tool;
 
                 // 操作ガイド
-                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"嘘だ！！"));
+                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"操作説明"));
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"WASD : 移動\n 矢印キー：視点操作\n Space：ジャンプ\n"));
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(
-                        u8"オブジェクトリストからオブジェクトを選択し、\nインスペクタで一部パラメータ等が見れたりいじれるようになっています。"));
+                        u8"オブジェクトリストからオブジェクトを選択し、\nインスペクタでコンポーネントの一部パラメータ等が見れたりいじれるようになっています。"));
 
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"対応コンポーネント"));
                 Master::m_pDebugger->DG_Text(U8ToChar(
-                    u8"・トランスフォーム\n・ディレクションライト\n・ポイントライト\n・プレイヤーコントローラー\n・カメラ3D\n"));
+                    u8"・トランスフォーム\n・ディレクションライト\n・ポイントライト\n・プレイヤーコントローラー\n・カメラ3D\nスキンメッシュアニメーター\n"));
                 Master::m_pDebugger->EndDebugWindow();
 
                 // 入力更新

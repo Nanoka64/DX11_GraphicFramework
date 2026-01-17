@@ -41,8 +41,6 @@ public:
     bool Init(std::shared_ptr<class RendererEngine> renderer);   // 初期化
     void Term();                            // 終了
 
-
-
     /// <summary>
     /// WIC対応テクスチャのロード
     /// </summary>
@@ -67,5 +65,16 @@ public:
 
     // SRVからtextureに変換 （Textureはあくまでこのクラスが持つ）
     std::shared_ptr<Texture> Convert_SRVToTexture(const std::string& tag, const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> &pSrv = NULL, UINT w = 0, UINT h = 0);
+
+    /// <summary>
+    /// マテリアルの取得
+    /// 事前に登録したタグを指定しマテリアルを返す
+    /// もし、存在しなければデフォルトのものを返す
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    std::shared_ptr<Material> LoadMaterial(const std::string &tag);
+
+    void RegisterMaterialData(const std::string &tag, const Material &mat);
 };
 

@@ -22,11 +22,15 @@ using namespace GIGA_Engine;
 //* 引数：1.CreateModelInfo&
 //* 返値：std::weak_ptr<GameObject>
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo &info)
+std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo& info)
 {
     // モデルの読み込み
-    std::weak_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.Path.c_str());
-    if (modeldata.lock() == nullptr)return{};
+    std::shared_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.Path.c_str());
+    if (modeldata == nullptr)
+    {
+        MessageBox(NULL, "モデルが読み込めませんでした", "Error", MB_OK);
+        return{};
+    }
 
     // オブジェクトの生成
     std::shared_ptr<GameObject> pModelObj = Instantiate(std::move(std::make_shared<GameObject>()));
@@ -40,24 +44,24 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     }
 
     // メッシュリソースコンポーネントを追加
-    std::weak_ptr<ModelMeshResource> meshResource = pModelObj->add_Component<ModelMeshResource>();
+    std::shared_ptr<ModelMeshResource> meshResource = pModelObj->add_Component<ModelMeshResource>();
 
 
     // マテリアルの設定
     for (size_t i = 0; i < info.MatNum; i++)
     {
-        if (!modeldata.lock()->SetupTextureMap(*info.MaterialData[i].pMat,info.MaterialData[i].MatIndex))
+        if (!modeldata->SetupTextureMap(info.SetupMaterial[i].pMaterialData,info.SetupMaterial[i].Index))
         {
             MessageBox(NULL, "マテリアルが設定できませんでした", "Error", MB_OK);
         }
     }
     
     // 使用するシェーダの設定
-    modeldata.lock()->set_ShaderType(info.ShaderType);
-    modeldata.lock()->set_ShadowShaderType(info.Shadow_ShaderType);
+    modeldata->set_ShaderType(info.ShaderType);
+    modeldata->set_ShadowShaderType(info.Shadow_ShaderType);
 
     // リソースにモデル情報を持たせる
-    meshResource.lock()->set_ModelData(modeldata);
+    meshResource->set_ModelData(modeldata);
 
     // 描画コンポーネント追加
     std::weak_ptr<ModelMeshRenderer> meshRenderer = pModelObj->add_Component<ModelMeshRenderer>();
@@ -105,7 +109,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUti
     auto meshRenderer = pObj->add_Component<MeshRenderer>();
 
     // リソースのセットアップ
-    if (!meshResource->Setup(*info.pRenderer,info.ShaderType, info.Type, info.MaterialData->pMat, info.MatNum, info.IsNormalMap))return {};
+    if (!meshResource->Setup(*info.pRenderer,info.ShaderType, info.Type, info.MaterialData->pMaterialData, info.MatNum, info.IsNormalMap))return {};
     
     // Rendererにリソースを設定
     meshRenderer->set_MeshResource(meshResource);
@@ -165,7 +169,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateBillboard(const CreateBillb
     auto billboardRenderer = pObj->add_Component<BillboardRenderer>();
 
     // リソースのセットアップ
-    if (!billboardResource->Setup(*info.pRenderer, info.Type, info.MaterialData->pMat, info.MatNum))return {};
+    if (!billboardResource->Setup(*info.pRenderer, info.Type, info.MaterialData->pMaterialData, info.MatNum))return {};
 
     // Rendererにリソースを設定
     billboardRenderer->set_BillboardResource(billboardResource);
@@ -197,7 +201,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateSkybox(const CreateSkyboxIn
     auto skyRenderer = pObj->add_Component<SkyRenderer>();
 
     // リソースのセットアップ                                  ↓キューブにする
-    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMat, info.MatNum, false))return {};
+    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMaterialData, info.MatNum, false))return {};
 
     // Rendererにリソースを設定
     skyRenderer->set_MeshResource(meshResource);

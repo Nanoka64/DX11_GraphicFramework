@@ -92,11 +92,14 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
         Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
+        // マテリアル取得
+        auto pMatData = meshInfo->pMaterials.lock();
+
         // マテリアル情報セット ==========================
         CB_MATERIAL mat{};
-        mat.Diffuse = meshInfo->pMaterials[0].m_DiffuseColor;
-        mat.Specular = meshInfo->pMaterials[0].m_SpecularColor;
-        mat.SpecularPower = meshInfo->pMaterials[0].m_SpecularPower;
+        mat.Diffuse = pMatData->m_DiffuseColor;
+        mat.Specular = pMatData->m_SpecularColor;
+        mat.SpecularPower = pMatData->m_SpecularPower;
         cbMatSet->Data = mat;
 
         // 定数バッファに転送
@@ -117,13 +120,13 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         ID3D11ShaderResourceView *diffuseSRV = nullptr;
         ID3D11ShaderResourceView *normalSRV = nullptr;
         ID3D11ShaderResourceView *specularSRV = nullptr;
-        if (auto tex = meshInfo->pMaterials->m_DiffuseMap.Texture.lock()) {
+        if (auto tex = pMatData->m_DiffuseMap.Texture.lock()) {
             diffuseSRV = tex.get()->get_SRV();
         }
-        if (auto tex = meshInfo->pMaterials->m_NormalMap.Texture.lock()) {
+        if (auto tex = pMatData->m_NormalMap.Texture.lock()) {
             normalSRV = tex.get()->get_SRV();
         }
-        if (auto tex = meshInfo->pMaterials->m_SpecularMap.Texture.lock()) {
+        if (auto tex = pMatData->m_SpecularMap.Texture.lock()) {
             specularSRV = tex.get()->get_SRV();
         }
 

@@ -38,6 +38,7 @@ bool InspectorWindow::Init(RendererEngine &renderer)
     m_EditorMap["PlayerController"]     = std::make_unique<PlayerControllerEditor>();
     m_EditorMap["Camera3D"]             = std::make_unique<Camera3DEditor>();
     m_EditorMap["SkinnedMeshAnimator"]  = std::make_unique<SkinnedMeshAnimatorEditor>();
+    m_EditorMap["ModelMeshResource"]    = std::make_unique<ModelMeshResourceEditor>();
 
     return true;
 }
@@ -60,7 +61,6 @@ void InspectorWindow::Update(RendererEngine &renderer)
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"インスペクター"));
 
     // 各エディタの更新
-    // 今はTransformエディタのみ実装
     for (auto &editor : m_EditorMap)
     {
         // 更新対象のオブジェクトが存在しているか

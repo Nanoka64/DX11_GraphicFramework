@@ -46,7 +46,7 @@ public:
 	BillboardResource(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual~BillboardResource();
 
-	bool Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE usageType, Material* materials, UINT materialNum);	// ‰Šú‰»
+	bool Setup(RendererEngine& renderer, BILLBOARD_USAGE_TYPE usageType, std::shared_ptr<Material> pMaterial, UINT materialNum);	// ‰Šú‰»
 
 
 	/// <summary>

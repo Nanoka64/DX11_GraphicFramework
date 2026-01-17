@@ -211,3 +211,50 @@ std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string
     }
     return nullptr;
 }
+
+//*---------------------------------------------------------------------------------------
+//* @:ResourceManager Class 
+//*【?】マテリアルの登録
+//* 引数：1.タグ
+//* 返値：マテリアルデータ
+//*----------------------------------------------------------------------------------------
+std::shared_ptr<Material> ResourceManager::LoadMaterial(const std::string& tag)
+{
+    auto it = m_pMaterialMap.find(tag);
+
+    // 登録済みならそれを返す
+    if (it != m_pMaterialMap.end())
+    {
+        return it->second;
+    }
+
+    // 登録されていないならデフォルトの物を返す
+    MessageBox(NULL, "マテリアルが登録されていません", "Material", MB_OK);
+    return m_pMaterialMap.find("Default")->second;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:ResourceManager Class 
+//*【?】マテリアルの登録
+//* 引数：1.タグ
+//* 引数：2.作成するマテリアルのデータ
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void ResourceManager::RegisterMaterialData(const std::string& tag, const Material& mat)
+{
+    auto it = m_pMaterialMap.find(tag);
+
+    // 既に登録済み
+    if (it != m_pMaterialMap.end())
+    {
+        MessageBox(NULL, "既に登録済みのマテリアルです", "Material", MB_OK);
+        return;
+    }
+
+    // 作成 データを引き継ぐ
+    std::shared_ptr<Material> pMatData = std::make_shared<Material>(mat);
+
+    // 登録
+    m_pMaterialMap[tag] = pMatData;
+}

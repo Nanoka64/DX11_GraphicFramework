@@ -60,19 +60,26 @@ bool IMeshResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std
 		return false;
 	}
 
+	if (m_pMeshData->pMaterials.expired());
+	{
+		assert(false);
+		return false;
+	}
+	auto pMatData = m_pMeshData->pMaterials.lock();
+
 	// 対応したマップにテクスチャを入れる
 	switch (mapType)
 	{
 	case TEXTURE_MAP_NONE:
 		break;
 	case TEXTURE_MAP_DIFFUSE:
-		m_pMeshData->pMaterials[matIndex].m_DiffuseMap.Texture = texture;
+		pMatData->m_DiffuseMap.Texture = texture;
 		break;
 	case TEXTURE_MAP_NORMAL:
-		m_pMeshData->pMaterials[matIndex].m_NormalMap.Texture = texture;
+		pMatData->m_NormalMap.Texture = texture;
 		break;
 	case TEXTURE_MAP_SPECULAR:
-		m_pMeshData->pMaterials[matIndex].m_SpecularMap.Texture = texture;
+		pMatData->m_SpecularMap.Texture = texture;
 		break;
 	default:
 		break;
@@ -141,7 +148,7 @@ bool IMeshResource::CreateCBuffer(ID3D11Device* pDevice)
 //* 引数：4.頂点数
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTILITY_MESH_TYPE type, Material* materials, UINT materialNum, bool isNormalMap)
+bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTILITY_MESH_TYPE type, std::shared_ptr<Material> materials, UINT materialNum, bool isNormalMap)
 {
 	auto pDevice = renderer.get_Device();
 

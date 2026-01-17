@@ -18,7 +18,7 @@ using namespace Tool::UV;
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 ModelMeshRenderer::ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
-m_IsDrawLine(false),
+m_IsDrawWireframe(false),
 m_DebugDrawBoneNum(0)
 {
     this->set_Tag("ModelMeshRenderer");
@@ -70,8 +70,9 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 {
     if (m_pMeshResource.lock() == nullptr) return;
     auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
+    if (modelData == nullptr)return;
     auto pDeviceContext             = renderer.get_DeviceContext();
-    std::vector<Material>matList    = modelData->get_MaterialList();
+    std::vector<std::weak_ptr<Material>>matList    = modelData->get_MaterialList();
     const aiScene *pScene           = modelData->get_Scene();
     ModelMesh *pMeshes              = modelData->get_Meshes();
     UINT meshNum                    = modelData->get_MeshNum();
@@ -84,7 +85,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 
 
     /* デバッグモード指定の場合、ワイヤーフレームで表示 */
-    if (m_IsDrawLine) {
+    if (m_IsDrawWireframe) {
         pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
     }
     else {
@@ -112,10 +113,10 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 
         // マテリアル情報セット ==========================
         CB_MATERIAL mat{};
-        mat.Diffuse = matList[0].m_DiffuseColor;
-        mat.Specular = matList[0].m_SpecularColor;
-        mat.SpecularPower = matList[0].m_SpecularPower;
-        CB_MatSet->Data = mat;
+        mat.Diffuse         = matList[0].lock()->m_DiffuseColor;
+        mat.Specular        = matList[0].lock()->m_SpecularColor;
+        mat.SpecularPower   = matList[0].lock()->m_SpecularPower;
+        CB_MatSet->Data     = mat;
 
         // 定数バッファに転送
         pDeviceContext->UpdateSubresource(
@@ -128,38 +129,47 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
         );
 
         // トランスフォーム用定数バッファのセット
-        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
-        pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);
+        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);    // ワールド行列
+        pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);      // マテリアル
 
         // メッシュの描画
         for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
         {
             aiMesh *mesh = pScene->mMeshes[meshIdx];
-            auto &mat = matList[mesh->mMaterialIndex];
+            auto mat = matList[mesh->mMaterialIndex].lock();
 
-            /* ビューの設定 */
+            /* SRVの設定 */
             {
-                // ディフューズ
-                if (mat.m_DiffuseMap.Texture.lock() != nullptr) {
-                    auto diff = mat.m_DiffuseMap.Texture.lock()->get_SRV();
-                    if (diff != nullptr)
-                        pDeviceContext->PSSetShaderResources(0, 1, &diff);
-                }
+                if (mat != nullptr)
+                {
+                    //ブレンドステート設定 ==========================
+                    Master::m_pBlendManager->DeviceToSetBlendState(mat->m_BlendMode);
 
-                // ノーマル
-                if (mat.m_NormalMap.Texture.lock() != nullptr) {
-                    auto norm = mat.m_NormalMap.Texture.lock()->get_SRV();
-                    if (norm != nullptr)
-                        pDeviceContext->PSSetShaderResources(1, 1, &norm);
-                }
-                // スペキュラ
-                if (mat.m_SpecularMap.Texture.lock() != nullptr) {
-                    auto spec = mat.m_SpecularMap.Texture.lock()->get_SRV();
-                    if (spec != nullptr)
-                        pDeviceContext->PSSetShaderResources(2, 1, &spec);
+                    // ディフューズ
+                    if (mat->m_DiffuseMap.Texture.lock() != nullptr) {
+                        auto diff = mat->m_DiffuseMap.Texture.lock()->get_SRV();
+                        if (diff != nullptr)
+                            pDeviceContext->PSSetShaderResources(0, 1, &diff);
+                    }
+
+                    // ノーマル
+                    if (mat->m_NormalMap.Texture.lock() != nullptr) {
+                        auto norm = mat->m_NormalMap.Texture.lock()->get_SRV();
+                        if (norm != nullptr)
+                            pDeviceContext->PSSetShaderResources(1, 1, &norm);
+                    }
+                    // スペキュラ
+                    if (mat->m_SpecularMap.Texture.lock() != nullptr) {
+                        auto spec = mat->m_SpecularMap.Texture.lock()->get_SRV();
+                        if (spec != nullptr)
+                            pDeviceContext->PSSetShaderResources(2, 1, &spec);
+                    }
                 }
             }
             pMeshes[meshIdx].Draw(renderer);
+
+            // ブレンドオフ
+            Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
         }
     }
     // シャドウパス **********************************************************
@@ -176,7 +186,6 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
         // メッシュの描画 マテリアル等なし
         for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
         {
-            aiMesh *mesh = pScene->mMeshes[meshIdx];
             pMeshes[meshIdx].Draw(renderer);
         }
     }
@@ -207,7 +216,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 //* 引数：1.IMeshResource
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMeshRenderer::set_MeshResource(std::weak_ptr<class ModelMeshResource> meshResource)
+void ModelMeshRenderer::set_MeshResource(std::shared_ptr<class ModelMeshResource> meshResource)
 {
     m_pMeshResource = meshResource;
 }

@@ -14,15 +14,18 @@
 //	UINT NumMaterial;					// マテリアル数
 //};
 
+/// <summary>
+/// メッシュの情報（主にユーティリティメッシュ用）
+/// </summary>
 struct MeshResourceData 
 {
-	ID3D11Buffer* pVertexBuffer;	// 頂点バッファ
-	UINT VertexStride;				// 頂点一つのサイズ（sizeof(VERTEX_Static)など）
-	UINT NumVertex;					// 頂点数
-	ID3D11Buffer* pIndexBuffer;		// インデックスバッファ
-	UINT NumIndex;					// インデックス数
-	Material* pMaterials;			// マテリアル
-	UINT NumMaterial;				// マテリアル数
+	ID3D11Buffer* pVertexBuffer;						// 頂点バッファ
+	UINT VertexStride;									// 頂点一つのサイズ（sizeof(VERTEX_Static)など）
+	UINT NumVertex;										// 頂点数
+	ID3D11Buffer* pIndexBuffer;							// インデックスバッファ
+	UINT NumIndex;										// インデックス数
+	std::weak_ptr<Material> pMaterials;					// マテリアル（基本一つだけ）
+	UINT NumMaterial;
 
 	MeshResourceData() :
 		pVertexBuffer(nullptr),
@@ -30,7 +33,7 @@ struct MeshResourceData
 		NumVertex(0),
 		pIndexBuffer(nullptr),
 		NumIndex(0),
-		pMaterials(nullptr),
+		pMaterials(),
 		NumMaterial(0)
 	{};
 };
@@ -95,10 +98,10 @@ public:
 		return meshData;
 	}
 
-	static std::shared_ptr<MeshResourceData> CreateQuadInfo(RendererEngine& renderer, Material*materials, UINT matNum, bool isNormalMap);
-	static std::shared_ptr<MeshResourceData> CreateCubeInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap);
-	static std::shared_ptr<MeshResourceData> CreateSphereInfo(RendererEngine& renderer,  Material* materials, UINT matNum, bool isNormalMap);
-	static std::shared_ptr<MeshResourceData> CreatePlaneInfo(RendererEngine& renderer, Material* materials, UINT matNum, bool isNormalMap);
+	static std::shared_ptr<MeshResourceData> CreateQuadInfo(RendererEngine& renderer,	std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap);
+	static std::shared_ptr<MeshResourceData> CreateCubeInfo(RendererEngine& renderer,	std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap);
+	static std::shared_ptr<MeshResourceData> CreateSphereInfo(RendererEngine& renderer,	std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap);
+	static std::shared_ptr<MeshResourceData> CreatePlaneInfo(RendererEngine& renderer,	std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap);
 	static std::shared_ptr<MeshResourceData> CreateTriangleInfo(RendererEngine& renderer);
 	static std::shared_ptr<MeshResourceData> CreateCylinderInfo(RendererEngine& renderer);
 	static std::shared_ptr<MeshResourceData> CreateTorusInfo(RendererEngine& renderer);

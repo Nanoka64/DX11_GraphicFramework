@@ -21,9 +21,9 @@ namespace Input
     /// <summary>
     /// 長押しの場合の入力判定を取る
     /// 最初の押し始めは入力判定になる
-    /// その後、の入力判定間隔を指定できる
+    /// その後、の入力判定になる間隔を指定できる
     /// </summary>
-    /// <param name="KEY_INPUT"></param>
+    /// <param name="KEY_INPUT">キー</param>
     /// <param name="waitFrame"></param>
     /// <param name="repeatFrame"></param>
     /// <returns></returns>
@@ -44,7 +44,7 @@ namespace Input
     bool GetInputDown(CONFIG_INPUT key);    // キーが押された瞬間
 
     /// <summary>
-    /// 押されたかどうか
+    /// 押されたかどうか（連続的に判定）
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>

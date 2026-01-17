@@ -504,9 +504,9 @@ HRESULT RendererEngine::InitDX11_Sampler()
     // D3D11_TEXTURE_ADDRESS_CLAMP = 3,      最後のピクセルを繰り返す
     // D3D11_TEXTURE_ADDRESS_BORDER = 4,     自分で色を設定する
     // D3D11_TEXTURE_ADDRESS_MIRROR_ONCE = 5 一回だけ反転させる
-    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_CLAMP;
-    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_CLAMP;
-    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;   // サンプリングされたデータの比較方法
     sampDesc.MinLOD         = 0;
     sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
@@ -517,7 +517,6 @@ HRESULT RendererEngine::InitDX11_Sampler()
     if (FAILED(hr))return hr;
 
     // シャドウマップ用サンプラー
-
     sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
     sampDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -528,7 +527,7 @@ HRESULT RendererEngine::InitDX11_Sampler()
     sampDesc.BorderColor[1] = 1.0f;
     sampDesc.BorderColor[2] = 1.0f;
     sampDesc.BorderColor[3] = 1.0f;
-    sampDesc.MaxAnisotropy = 1;
+    sampDesc.MaxAnisotropy  = 1;
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerShadow);
     if (FAILED(hr))return hr;
 

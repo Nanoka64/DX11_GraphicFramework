@@ -12,6 +12,6 @@ public:
     ~ModelMeshResource();
 
     const std::weak_ptr<class ModelData> get_ModelData()const { return m_pModelData; }
-    void set_ModelData(std::weak_ptr<class ModelData> pData){ m_pModelData = pData; };
+    void set_ModelData(std::shared_ptr<class ModelData> pData){ m_pModelData = pData; };
 };
 

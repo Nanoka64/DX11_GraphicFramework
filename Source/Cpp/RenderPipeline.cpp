@@ -170,7 +170,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         }
         Master::m_pDebugger->DG_Separator();
 
-        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最終合成"));
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最終合成（トーンマッピングなし）"));
         Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 
@@ -360,7 +360,7 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     for (int i = 0; i < 30; i++)
     {
         auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
-        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
+        //billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
 
     // オブジェクトの書き込み後に深度バッファをクリアする

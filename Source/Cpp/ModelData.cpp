@@ -25,10 +25,12 @@ ModelData::ModelData() :
     m_pConstanrBufferBonesData(nullptr),
     m_pCBTransformSet(nullptr),
     m_pCBMaterialDataSet(nullptr),
-    m_pMeshes(nullptr)
+    m_pMeshes(nullptr),
+    m_ShaderType(SHADER_TYPE::NONE),
+    m_ShadowShaderType(SHADER_TYPE::NONE)
 {
     m_BoneList.clear();
-    m_MaterialList.clear();
+    m_pMaterialList.clear();
     m_BoneIndexMap.clear();
     m_pNodeList.clear();
     m_pAnimations.clear();
@@ -107,11 +109,15 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
             if (m_pMeshes[meshIdx].Setup(renderer, pMeshData) == false) {
                 return false;
             }
+
+            m_VertexNum += pMeshData->mNumVertices;
+            m_BoneNum += pMeshData->mNumBones;
         }
     }
 
+    m_AnimNum = m_pScene->mNumAnimations;
 
-    m_MaterialList.resize(m_pScene->mNumMaterials);
+    m_pMaterialList.resize(m_pScene->mNumMaterials);
 
     // ボーン変換用定数バッファの作成
     if (CreateBonesCBuffer(renderer) == false)
@@ -147,7 +153,7 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 //* 引数：3.ファイルパス
 //* 返値：bool
 //*----------------------------------------------------------------------------------------
-bool ModelData::SetupTextureMap(Material matData, int matIndex)
+bool ModelData::SetupTextureMap(std::shared_ptr<Material> pMatData, int matIndex)
 {
     Material mat{};
 
@@ -158,12 +164,11 @@ bool ModelData::SetupTextureMap(Material matData, int matIndex)
     //}
 
     // 範囲外アクセスチェック
-    if (m_MaterialList.size() <= matIndex) {
+    if (m_pMaterialList.size() <= matIndex) {
         return false;
     }
 
-    m_MaterialList[matIndex] = matData;
-
+    m_pMaterialList[matIndex] = pMatData;
 
     //// 対応したマップにテクスチャを入れる
     //switch (mapType)

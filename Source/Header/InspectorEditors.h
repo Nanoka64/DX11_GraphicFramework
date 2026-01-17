@@ -167,3 +167,29 @@ public:
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 
 };
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:ModelMeshResourceEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】スキンメッシュアニメーション編集用エディタ
+//
+// ***************************************************************************************
+class ModelMeshResourceEditor : public EditorBase
+{
+private:
+
+public:
+    ModelMeshResourceEditor()
+        : EditorBase()
+    {
+    };
+    ~ModelMeshResourceEditor()
+    {
+    };
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+
+};
