@@ -19,7 +19,7 @@ private:
 public:
     TransformEditor() 
         : EditorBase(),
-        m_SlideAccuRate(1.0f) 
+        m_SlideAccuRate(0.001f) 
     {};
     ~TransformEditor()
     {

@@ -289,15 +289,16 @@ int DXApp::MainLoop()
                 using namespace Tool;
 
                 // 操作ガイド
-                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"操作説明"));
-                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"WASD : 移動\n 矢印キー：視点操作\n Space：ジャンプ\n"));
+                Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"説明"));
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"操作方法"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD : 移動\n 矢印キー：視点操作\n Space：ジャンプ\n"));
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(
                         u8"オブジェクトリストからオブジェクトを選択し、\nインスペクタでコンポーネントの一部パラメータ等が見れたりいじれるようになっています。"));
 
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"対応コンポーネント"));
                 Master::m_pDebugger->DG_Text(U8ToChar(
-                    u8"・トランスフォーム\n・ディレクションライト\n・ポイントライト\n・プレイヤーコントローラー\n・カメラ3D\nスキンメッシュアニメーター\n"));
+                    u8"・トランスフォーム\n・ディレクションライト\n・ポイントライト\n・プレイヤーコントローラー\n・カメラ3D\n・モデルリソース\n・スキンメッシュアニメーター\n"));
                 Master::m_pDebugger->EndDebugWindow();
 
                 // 入力更新

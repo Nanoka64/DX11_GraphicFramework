@@ -156,6 +156,8 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshData->NumIndex, 0, 0);
+
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 }
 
 

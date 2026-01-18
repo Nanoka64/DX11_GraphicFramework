@@ -86,7 +86,6 @@ float3 PhongSpecularLightCalc(float3 _ligDir, float3 _eyePos, float3 _spcCol, fl
     // ※11/28 追記
     // 結論、y座標が床と同じだったから変な感じに見えてる説が濃厚
     // もうそういうもんだと思うことにする。
-    // TBDRに行く！さらば(@^^)/~~~
     
     // ※12/1 追記
     // https://shadered.org/app?fork=qtAFNPvHIE

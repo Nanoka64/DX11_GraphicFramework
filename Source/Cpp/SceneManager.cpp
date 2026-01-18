@@ -69,8 +69,6 @@ bool SceneManager::Init(RendererEngine& renderer)
     // ステートマシンの作成
     SceneFactory::Create(m_StateMachine, renderer);
 
-    std::vector<std::weak_ptr<GameObject>> objectList;
-
     // マテリアルの作成 (今後CSVで読み込むようにする)
     {
         /* プレイヤー */
@@ -87,7 +85,7 @@ bool SceneManager::Init(RendererEngine& renderer)
         }
         /* 兵士 */
         {
-            Material mat[3];
+            Material mat[2];
             mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_diffuse.png");
             mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_normal.png");
             mat[0].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_specular.png");
@@ -96,8 +94,8 @@ bool SceneManager::Init(RendererEngine& renderer)
             mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 
             // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("soldier_body", mat[0]); 
-            
+            Master::m_pResourceManager->RegisterMaterialData("soldier_body", mat[0]);
+
             mat[1].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_diffuse.png");
             mat[1].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_normal.png");
             mat[1].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_specular.png");
@@ -239,8 +237,9 @@ bool SceneManager::Init(RendererEngine& renderer)
         /* ビルボード */
         {
             Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Flame3_1.png");
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Weak_1024.png");
+            mat.m_DiffuseColor = VEC4(0.1f, 0.1f, 0.1f, 1.0f);
+            mat.m_SpecularColor = VEC4(0.1f, 0.1f, 0.1f, 1.0f);
             mat.m_SpecularPower = 100.0f;
             mat.m_BlendMode = BLEND_MODE::ALPHA;
 
@@ -261,12 +260,17 @@ bool SceneManager::Init(RendererEngine& renderer)
         }
     }
 
+    {}
+
     // オブジェクトの生成
     {
         /* カメラの作成 */
         {
             m_pCameraObj = Instantiate(std::move(std::make_shared<GameObject>()));
-            if (m_pCameraObj == nullptr) return false;
+            if (m_pCameraObj == nullptr)
+            {
+                return false;
+            }
             m_pCameraObj->Init(renderer);
             m_pCameraObj->set_Tag("Camera");
             m_pCameraObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
@@ -365,7 +369,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             obj->get_Transform().lock()->set_RotateToRad(VEC3(0.85f, 1.6f, 0.0f));
         }
 
-        /* 壁 */
+        /* スフィア */
         {
             // マテリアル取得
             auto matPtr = Master::m_pResourceManager->LoadMaterial("Wall");
@@ -382,7 +386,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             mesh.IsActive = true;
             mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             mesh.IsNormalMap = true;
-            mesh.ObjTag = "Wall";
+            mesh.ObjTag = "Sphere";
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj->get_Transform().lock()->set_Scale(100.0f, 100.0f, 100.0f);
@@ -515,6 +519,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             model.ObjTag = "Spider";
             model.IsAnim = true;
             model.MatNum = 4;
+            model.IsActive = false;
 
             model.SetupMaterial = matInfo;
 
@@ -588,9 +593,9 @@ bool SceneManager::Init(RendererEngine& renderer)
             billboard.ShaderType = SHADER_TYPE::FORWARD_UNLIT_STATIC;
             billboard.IsActive = false;
             billboard.MatNum = 1;
-            billboard.MaterialData = new SetupMaterialInfo();
+            billboard.MaterialData = matInfo;
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 10; i++)
             {
                 VEC3 pos;
                 pos.x = static_cast<float>(rand() % 2000) - 1000.0f;
@@ -612,7 +617,6 @@ bool SceneManager::Init(RendererEngine& renderer)
                 obj->get_Transform().lock()->set_Pos(pos);
                 obj->get_Transform().lock()->set_Scale(50, 50, 50);
                 obj->set_Tag("Billboard" + std::to_string(i));
-
             }
         }
 
@@ -652,7 +656,7 @@ bool SceneManager::Init(RendererEngine& renderer)
                 auto light = obj->add_Component<PointLight>();
                 light->set_LightColor(col);
                 light->set_Range(100.0f);
-                light->set_Intensity(20.0f);
+                light->set_Intensity(25.0f);
                 light->Init(renderer);
             }
         }
