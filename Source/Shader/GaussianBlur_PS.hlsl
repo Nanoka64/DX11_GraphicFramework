@@ -7,7 +7,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include "ConstantBuffers_H.hlsli"
-SamplerState g_sSampler : register(s0);
+SamplerState g_sClampSampler : register(s2);
 Texture2D g_tTexture : register(t0); 
 
 
@@ -35,24 +35,24 @@ float4 PSMain(PS_BLUR_IN input) : SV_TARGET
     float4 finalColor;
 
     // 基準テクセルからプラス方向に8テクセル、重み付きでサンプリング
-    finalColor  = cb_BlurWeights[0].x * g_tTexture.Sample(g_sSampler, input.tex0.xy);
-    finalColor += cb_BlurWeights[0].y * g_tTexture.Sample(g_sSampler, input.tex1.xy);
-    finalColor += cb_BlurWeights[0].z * g_tTexture.Sample(g_sSampler, input.tex2.xy);
-    finalColor += cb_BlurWeights[0].w * g_tTexture.Sample(g_sSampler, input.tex3.xy);
-    finalColor += cb_BlurWeights[1].x * g_tTexture.Sample(g_sSampler, input.tex4.xy);
-    finalColor += cb_BlurWeights[1].y * g_tTexture.Sample(g_sSampler, input.tex5.xy);
-    finalColor += cb_BlurWeights[1].z * g_tTexture.Sample(g_sSampler, input.tex6.xy);
-    finalColor += cb_BlurWeights[1].w * g_tTexture.Sample(g_sSampler, input.tex7.xy);
+    finalColor  = cb_BlurWeights[0].x * g_tTexture.Sample(g_sClampSampler, input.tex0.xy);
+    finalColor += cb_BlurWeights[0].y * g_tTexture.Sample(g_sClampSampler, input.tex1.xy);
+    finalColor += cb_BlurWeights[0].z * g_tTexture.Sample(g_sClampSampler, input.tex2.xy);
+    finalColor += cb_BlurWeights[0].w * g_tTexture.Sample(g_sClampSampler, input.tex3.xy);
+    finalColor += cb_BlurWeights[1].x * g_tTexture.Sample(g_sClampSampler, input.tex4.xy);
+    finalColor += cb_BlurWeights[1].y * g_tTexture.Sample(g_sClampSampler, input.tex5.xy);
+    finalColor += cb_BlurWeights[1].z * g_tTexture.Sample(g_sClampSampler, input.tex6.xy);
+    finalColor += cb_BlurWeights[1].w * g_tTexture.Sample(g_sClampSampler, input.tex7.xy);
 
     // 基準テクセルにマイナス方向に8テクセル、重み付きでサンプリング
-    finalColor += cb_BlurWeights[0].x * g_tTexture.Sample(g_sSampler, input.tex0.zw);
-    finalColor += cb_BlurWeights[0].y * g_tTexture.Sample(g_sSampler, input.tex1.zw);
-    finalColor += cb_BlurWeights[0].z * g_tTexture.Sample(g_sSampler, input.tex2.zw);
-    finalColor += cb_BlurWeights[0].w * g_tTexture.Sample(g_sSampler, input.tex3.zw);
-    finalColor += cb_BlurWeights[1].x * g_tTexture.Sample(g_sSampler, input.tex4.zw);
-    finalColor += cb_BlurWeights[1].y * g_tTexture.Sample(g_sSampler, input.tex5.zw);
-    finalColor += cb_BlurWeights[1].z * g_tTexture.Sample(g_sSampler, input.tex6.zw);
-    finalColor += cb_BlurWeights[1].w * g_tTexture.Sample(g_sSampler, input.tex7.zw);
+    finalColor += cb_BlurWeights[0].x * g_tTexture.Sample(g_sClampSampler, input.tex0.zw);
+    finalColor += cb_BlurWeights[0].y * g_tTexture.Sample(g_sClampSampler, input.tex1.zw);
+    finalColor += cb_BlurWeights[0].z * g_tTexture.Sample(g_sClampSampler, input.tex2.zw);
+    finalColor += cb_BlurWeights[0].w * g_tTexture.Sample(g_sClampSampler, input.tex3.zw);
+    finalColor += cb_BlurWeights[1].x * g_tTexture.Sample(g_sClampSampler, input.tex4.zw);
+    finalColor += cb_BlurWeights[1].y * g_tTexture.Sample(g_sClampSampler, input.tex5.zw);
+    finalColor += cb_BlurWeights[1].z * g_tTexture.Sample(g_sClampSampler, input.tex6.zw);
+    finalColor += cb_BlurWeights[1].w * g_tTexture.Sample(g_sClampSampler, input.tex7.zw);
     
     finalColor.a = 1.0f;
     return float4(finalColor);

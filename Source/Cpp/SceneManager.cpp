@@ -8,7 +8,6 @@
 #include "Cubu.h"
 #include "Quad.h"
 #include "SceneFactory.h"
-#include "Camera.h"
 #include "Component_3DCamera.h"
 #include "Component_PlayerController.h"
 #include "Component_SkinnedMeshAnimator.h"
@@ -21,6 +20,7 @@
 #include "Component_SpriteRenderer.h"
 #include "Component_BillboardRenderer.h"
 #include "Component_SkyRenderer.h"
+#include "Component_AssultRifle.h"
 
 
 using namespace VECTOR4;
@@ -105,6 +105,16 @@ bool SceneManager::Init(RendererEngine& renderer)
 
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("soldier_head", mat[1]);
+        }
+        /* アサルトライフル*/
+        {
+            Material mat;
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W030.jpg");
+            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat.m_SpecularPower = 100.0f;
+
+            // マテリアル登録
+            Master::m_pResourceManager->RegisterMaterialData("AssultRifle", mat);
         }
         /* ディレクションライト*/
         {
@@ -237,9 +247,9 @@ bool SceneManager::Init(RendererEngine& renderer)
         /* ビルボード */
         {
             Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Weak_1024.png");
-            mat.m_DiffuseColor = VEC4(0.1f, 0.1f, 0.1f, 1.0f);
-            mat.m_SpecularColor = VEC4(0.1f, 0.1f, 0.1f, 1.0f);
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/0191.png");
+            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat.m_SpecularPower = 100.0f;
             mat.m_BlendMode = BLEND_MODE::ALPHA;
 
@@ -259,8 +269,9 @@ bool SceneManager::Init(RendererEngine& renderer)
             Master::m_pResourceManager->RegisterMaterialData("PointLight", mat);
         }
     }
-
-    {}
+    
+    {
+    }
 
     // オブジェクトの生成
     {
@@ -338,6 +349,59 @@ bool SceneManager::Init(RendererEngine& renderer)
             obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(-1);
         }
 
+        std::shared_ptr<GameObject> sphireObj;
+
+        /* スフィア */
+        {
+            // マテリアル取得
+            auto matPtr = Master::m_pResourceManager->LoadMaterial("Wall");
+
+            SetupMaterialInfo matInfo[1];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr;
+
+            CreateUtilityMeshInfo mesh;
+            mesh.pRenderer = &renderer;
+            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
+            mesh.MatNum = 1;
+            mesh.MaterialData = matInfo;
+            mesh.IsActive = true;
+            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            mesh.IsNormalMap = true;
+            mesh.ObjTag = "Sphere";
+
+            sphireObj = MeshFactory::CreateUtilityMesh(mesh);
+            sphireObj->get_Transform().lock()->set_Scale(100.0f, 100.0f, 100.0f);
+            sphireObj->get_Transform().lock()->set_Pos(-300.0f, 80.0f, 600.0f);
+            sphireObj->get_Transform().lock()->set_RotateToDeg(-60.0f, 0.0f, 0.0f);
+        }
+        /* アサルトライフル */
+        {
+            // マテリアル取得
+            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("AssultRifle");
+
+            SetupMaterialInfo matInfo[1];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr1; // 体
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Weapon/M4A1.fbx";
+            model.ObjTag = "AssultRifle";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.SetupMaterial = matInfo;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            auto obj = MeshFactory::CreateModel(model);
+
+            obj->add_Component<AssultRifle>();
+            obj->get_Component<AssultRifle>()->Init(renderer);
+            obj->get_Component<AssultRifle>()->set_BulletObject(sphireObj);
+
+            // プレイヤーを親に設定
+            obj->get_Transform().lock()->set_Parent(m_pPlayer->get_Transform());
+        }
+
         /* ディレクションライトの生成(Cubuで分かりやすく) */
         {
             // マテリアル取得
@@ -367,31 +431,6 @@ bool SceneManager::Init(RendererEngine& renderer)
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(30.0, 30.0, 80.0));
             obj->get_Transform().lock()->set_RotateToRad(VEC3(0.85f, 1.6f, 0.0f));
-        }
-
-        /* スフィア */
-        {
-            // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Wall");
-
-            SetupMaterialInfo matInfo[1];
-            matInfo[0].Index = 0;
-            matInfo[0].pMaterialData = matPtr;
-
-            CreateUtilityMeshInfo mesh;
-            mesh.pRenderer = &renderer;
-            mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-            mesh.MatNum = 1;
-            mesh.MaterialData = matInfo;
-            mesh.IsActive = true;
-            mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-            mesh.IsNormalMap = true;
-            mesh.ObjTag = "Sphere";
-
-            auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Scale(100.0f, 100.0f, 100.0f);
-            obj->get_Transform().lock()->set_Pos(-300.0f, 80.0f, 600.0f);
-            obj->get_Transform().lock()->set_RotateToDeg(-60.0f, 0.0f, 0.0f);
         }
 
         /* アリ モデルの生成 */
@@ -599,7 +638,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             {
                 VEC3 pos;
                 pos.x = static_cast<float>(rand() % 2000) - 1000.0f;
-                pos.y = static_cast<float>(rand() % 100) - 50.0f;;
+                pos.y = static_cast<float>(rand() % 200) - 100.0f;;
                 pos.z = static_cast<float>(rand() % 2000) - 1000.0f;
 
                 VEC3 scl;
@@ -671,6 +710,10 @@ bool SceneManager::Init(RendererEngine& renderer)
         return false;
     }
 
+    m_V1 = VEC3(1, 0, 0);
+    m_V2 = VEC3(0, 1, 0);
+    m_V3 = VEC3(0, 0, 0);
+
     return true;
 }
 
@@ -692,7 +735,14 @@ void SceneManager::Update(RendererEngine& renderer)
     //    m_CrntSceneState = newState;
     //}
 
-    
+    m_V3 = VEC3::Cross(m_V1.Normalize(), m_V2.Normalize());
+
+    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"数学"));
+    Master::m_pDebugger->DG_DragVec3("##Cross1", &m_V1, 0.01f, -1000.0f, 1000.0f);
+    Master::m_pDebugger->DG_DragVec3("##Cross2", &m_V2, 0.01f, -1000.0f, 1000.0f);
+    Master::m_pDebugger->DG_DragVec3("##Cross3", &m_V3, 0.01f, -1000.0f, 1000.0f);
+    Master::m_pDebugger->EndDebugWindow();
+
     static float counter = 0.0f;
     counter += 0.01f;
 

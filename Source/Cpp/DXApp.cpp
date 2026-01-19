@@ -389,16 +389,18 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     if (!RegisterClassEx(&wcex))                // この設定でウインドウズにお願いする
         return E_FAIL;
 
+    DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX;
+
     // windowの作成
     // Create window
     m_hInst = hInstance;
     RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  WND_RECT_RIGHT, WND_RECT_BOTTOM };      // 矩形を設定する
-    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);   // ウインドウの形を整える
+    int res = AdjustWindowRect(&rc, dwStyle, FALSE);   // ウインドウの形を整える
+
     m_hWnd = CreateWindowW(
         g_WindowClassNameW,                              // 上で設定した名前と合わせる
         g_WindowTitle,                                   // ウインドウタイトル
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |        // ウインドウスタイル
-        WS_MAXIMIZEBOX | WS_MINIMIZEBOX,
+        dwStyle,                                         // ウインドウスタイル
         /*WS_OVERLAPPEDWINDOW | WS_POPUP,*/              // 基本ウインドウ、タイトルバー表示、Xボタンなど、サイズ変更、全画面
         CW_USEDEFAULT,
         CW_USEDEFAULT,

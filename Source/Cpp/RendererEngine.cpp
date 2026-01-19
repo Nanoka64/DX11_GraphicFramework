@@ -85,10 +85,14 @@ bool RendererEngine::Init(HWND hWnd)
 
     m_hWnd = hWnd;  // ウインドウハンドル受け取る
 
-    RECT rc;
-    GetClientRect(m_hWnd, &rc); // ウインドウの黒い部分の大きさを返す
-    m_ScreenWidht = rc.right - rc.left;
-    m_Screenheight = rc.bottom - rc.top;
+    RECT client_rc;
+    // ウインドウの黒い部分の大きさを返す
+    if (GetClientRect(m_hWnd, &client_rc) == false)
+    {
+        return false;
+    }
+    m_ScreenWidht = client_rc.right - client_rc.left;
+    m_Screenheight = client_rc.bottom - client_rc.top;
 
 
     // 正常に初期化されたか
@@ -135,9 +139,14 @@ void RendererEngine::BeginRender()
     // ラスタライザ設定
     m_pImmediateContext->RSSetState(m_pRasterState_NoneCull);
 
+    ID3D11SamplerState *samplers[] =  {
+        m_pSamplerLinear,
+        m_pSamplerShadow,
+        m_pClampShadow,
+    };
+
     // サンプラー設定
-    m_pImmediateContext->PSSetSamplers(0, 1, &m_pSamplerLinear);
-    m_pImmediateContext->PSSetSamplers(1, 1, &m_pSamplerShadow);
+    m_pImmediateContext->PSSetSamplers(0, ARRAYSIZE(samplers), samplers);
 }
 
 
@@ -514,6 +523,13 @@ HRESULT RendererEngine::InitDX11_Sampler()
     sampDesc.MaxAnisotropy  = 16;
     // 作成
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
+    if (FAILED(hr))return hr;
+
+
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+    hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pClampShadow);
     if (FAILED(hr))return hr;
 
     // シャドウマップ用サンプラー

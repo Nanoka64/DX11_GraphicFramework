@@ -70,22 +70,42 @@ void BillboardRenderer::Update(RendererEngine& renderer)
 void BillboardRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-    auto meshData = m_pResource.lock()->m_pMeshData;
+    std::shared_ptr<MeshResourceData> meshData = m_pResource.lock()->m_pMeshData;
     CB_TRANSFORM_SET* cbTransSet = m_pResource.lock()->m_pCBTransformSet;
     CB_MATERIAL_SET* cbMatSet = m_pResource.lock()->m_pCBMaterialDataSet;
     ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
     ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
 
+    std::shared_ptr<Transform> transform = m_pOwner.lock()->get_Transform().lock();
+
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::FORWARD_UNLIT_STATIC);
 
     /* ========== 定数バッファの更新 ========== */
-    XMMATRIX viewInvMtx = renderer.get_ViewInvMatrix();
+    XMMATRIX viewInvMtx = renderer.get_ViewInvMatrix(); // ビュー逆行列取得
+
+    const XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+    XMVECTOR forward = viewInvMtx.r[2];     // [2]に前方向が入ってる（0:rg1:up2:fw）
+    forward = XMVectorSetY(forward, 0.0f);  // Y成分を0にする
+    forward = XMVector3Normalize(forward);  // 正規化
+
+    XMVECTOR right = XMVector3Cross(up, forward);   // 外積を使って右方向ベクトルを求める
+
+    viewInvMtx.r[0] = right;   // X軸
+    viewInvMtx.r[1] = up;      // Y軸
+    viewInvMtx.r[2] = forward; // Z軸
     viewInvMtx.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);// 平行移動成分をゼロにする
 
     // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_ExcludingRotWorldMtx();
-    worldMtx = XMMatrixMultiply(viewInvMtx,worldMtx ); // ビルボード用にビューの逆行列を掛ける
+
+    // 明示的に行列を設定
+    XMMATRIX worldMtx = 
+        transform->get_WorldMtx(
+            transform->get_MtxScale(), 
+            viewInvMtx, 
+            transform->get_MtxPos()
+        );
+
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
     XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
     
@@ -98,7 +118,6 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
         0,
         0
     );
-
 
     auto pMatData = meshData->pMaterials.lock();
 
@@ -142,7 +161,7 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
 
     pContext->PSSetShaderResources(0, 1, &diffuseSRV);
     //pContext->PSSetShaderResources(1, 1, &normalSRV);
-    pContext->PSSetShaderResources(2, 1, &specularSRV);
+    //pContext->PSSetShaderResources(2, 1, &specularSRV);
 
     // 頂点＆インデックスバッファ設定 ==========================
     UINT stride = sizeof(VERTEX_Static);

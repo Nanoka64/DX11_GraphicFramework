@@ -60,8 +60,10 @@ private:
     ID3D11DepthStencilView                  * m_pDepthStencilView;      // 深度バッファ(ZBuffer)奥行き
     ID3D11DepthStencilState                 * m_pDepthStencilState;     // Z比較をするための設定
     ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS; // Z比較をしないための設定
+
     ID3D11SamplerState                      * m_pSamplerLinear;         // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11SamplerState                      * m_pSamplerShadow;         // シャドウマップ用サンプラー
+    ID3D11SamplerState                      * m_pClampShadow;           // クランプ用サンプラー
 
     // どこを塗るのか決める(実際には塗るのはピクセルシェーダ)
     ID3D11RasterizerState                   * m_pRasterState_NoneCull;           // カリングなし

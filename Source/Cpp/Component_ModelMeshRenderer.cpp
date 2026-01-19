@@ -91,7 +91,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     else {
         pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     }
-
+    
     // ワールド行列更新 ==========================
     XMMATRIX worldMtx = m_pOwner.lock()->get_Component<Transform>()->get_WorldMtx();
     worldMtx = XMMatrixTranspose(worldMtx);

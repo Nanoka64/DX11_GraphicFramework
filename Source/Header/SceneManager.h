@@ -23,6 +23,10 @@ private:
 
 	int m_CrntSceneState;	
 
+	VECTOR3::VEC3 m_V1;
+	VECTOR3::VEC3 m_V2;
+	VECTOR3::VEC3 m_V3;
+
 	// ステートマシン
 	StateMachine<SceneManager> m_StateMachine;
 

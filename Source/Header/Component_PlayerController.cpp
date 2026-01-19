@@ -93,6 +93,7 @@ void PlayerController::Update(RendererEngine &renderer)
 	// 待機アニメーション
 	ChangeAnimation(PLAYER_ANIMATION_ID::IDLE_LOOP);
 
+	
 
 	// 前方向と右方向ベクトルを作る 
 	// 右方向ベクトルは上方向と前方向ベクトルの外積を取ることでできる
@@ -133,7 +134,7 @@ void PlayerController::Update(RendererEngine &renderer)
 	//-----------------------------------------------------------------------------
 	if (m_IsJump == false)
 	{
-		if (GetInput(CONFIG_INPUT::JUMP))
+		if (GetInputDown(CONFIG_INPUT::JUMP))
 		{
 			m_IsJump = true;
 			m_MoveVelocity.y = m_JumpForce;
@@ -150,6 +151,8 @@ void PlayerController::Update(RendererEngine &renderer)
 	}
 
 	m_IsAnim = false;
+
+	float ang = 0.0f;
 
 	//-----------------------------------------------------------------------------
 	// ■ velocityをもとに実際に移動させ、回転も計算する
@@ -202,12 +205,19 @@ void PlayerController::Update(RendererEngine &renderer)
 			targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
 			targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
 
+			ang = targetAngle;
+
 			// 線形補間
 			targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
 
 			pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
 		}
 	}
+
+
+	Master::m_pDebugger->BeginDebugWindow("player");
+	Master::m_pDebugger->DG_TextValue("Ang : %f.1",ang);
+	Master::m_pDebugger->EndDebugWindow();
 }
 
 //*---------------------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include"ConstantBuffers_H.hlsli"
-SamplerState g_sSampler : register(s0);
+SamplerState g_sClampSampler : register(s2);
 Texture2D g_tSceneBlurTexture0 : register(t0);  // メインシーンのぼかしテクスチャ
 Texture2D g_tDepathTexture1 : register(t1);     // 深度テクスチャ
 
@@ -28,8 +28,8 @@ struct PS_IN
 // **************************************************************************
 float4 PSMain(PS_IN input) : SV_TARGET
 {
-    float4 blurTex = g_tSceneBlurTexture0.Sample(g_sSampler, input.UV);
-    float depth = g_tDepathTexture1.Sample(g_sSampler, input.UV).r;
+    float4 blurTex = g_tSceneBlurTexture0.Sample(g_sClampSampler, input.UV);
+    float depth = g_tDepathTexture1.Sample(g_sClampSampler, input.UV).r;
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     
     // 深度が1.0f に近い背景は薄くぼかす
@@ -52,10 +52,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // ビュー空間の深度値
     float viewDepth = ndcPos.z;
     
-    // 400以上からブラーがかかり、4000で最大になる
-    const float DOF_MAX_RANGE = 4000.0f;    // ぼかしが最大になる深度範囲
-    const float DOF_MIN_RANGE = 400.0f;     // ぼかしが開始される深度範囲
-    
+    // cb_DoF_MinRange以上からブラーがかかり、cb_DoF_MaxRangeで最大になる
     // ぼかし開始範囲より近い場合はぼかし無し
     clip(viewDepth - cb_DoF_MinRange);
     

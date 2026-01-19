@@ -241,7 +241,7 @@ float3 HemisphereLightCalc(float3 _norm)
     float3 finalLig     = float3(0, 0, 0);
     float3 groundNorm   = float3(0.0f, 1.0f, 0.0f);
     float3 skyColor     = float3(0.25f, 0.6f, 0.75f);
-    float3 groundColor  = float3(0.6f, 0.3f, 0.3f);
+    float3 groundColor  = float3(0.4f, 0.4f, 0.2f);
     
     float factor = dot(_norm, groundNorm);
     

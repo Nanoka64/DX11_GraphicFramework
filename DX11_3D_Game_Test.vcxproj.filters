@@ -181,6 +181,9 @@
     <Filter Include="ソース ファイル\Graphics\Material">
       <UniqueIdentifier>{20babb4d-5770-42c0-aaa3-d3ab385ae60f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Weapon">
+      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -428,6 +431,12 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\MaterialFactory.cpp">
       <Filter>ソース ファイル\Graphics\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_AssultRifle.cpp">
+      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
+      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -709,6 +718,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\MaterialFactory.h">
       <Filter>ソース ファイル\Graphics\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_AssultRifle.h">
+      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Bullet.h">
+      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

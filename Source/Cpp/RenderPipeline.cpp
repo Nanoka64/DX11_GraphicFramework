@@ -17,6 +17,10 @@ using namespace VECTOR2;
 using namespace Tool;
 
 
+constexpr float DOF_MAX_RANGE = 2800.0f;
+constexpr float DOF_MIN_RANGE = 300.0f;
+
+
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
 //*----------------------------------------------------------------------------------------
@@ -31,7 +35,9 @@ RenderPipeline::RenderPipeline() :
     m_GaussWeights(),
     m_pDoF_GaussianBlur(nullptr),
     m_pBloomGaussianBlur(nullptr),
-    m_DoF_BlurIncensity(2.0f)
+    m_DoF_BlurIncensity(2.0f),
+    m_ShadowData(),
+    m_DofData()
 {
 }
 
@@ -62,8 +68,8 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     m_ShadowData.slopeScaledBias = 0.1f;
 
     // 被写界深度の設定
-    m_DofData.dof_MaxRange = 2800.0f;
-    m_DofData.dof_MinRange = 300.0f;
+    m_DofData.dof_MaxRange = DOF_MAX_RANGE;
+    m_DofData.dof_MinRange = DOF_MIN_RANGE;
 
     // レンダリングターゲットの作成
     if (!CreateRenderTargets(renderer))
@@ -160,9 +166,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_DragFloat("##SlopeBias", 1, &m_ShadowData.slopeScaledBias, 0.0001f, 0.0f,   1.0);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最大バイアス"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##ClampBias", 1, &m_ShadowData.depthBiasClamp,  0.0001f, 0.01f,  0.1f);
-
-
+            Master::m_pDebugger->DG_DragFloat("##ClampBias", 1, &m_ShadowData.depthBiasClamp,  0.0001f, 0.0001f,  0.1f);
 
             Master::m_pDebugger->DG_Separator();
 
@@ -820,6 +824,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
         m_pSceneFinal_RT->get_Width(),
         m_pSceneFinal_RT->get_Height()
     );
+
     // 深度テクスチャ
     luminanceSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT4");
     luminanceSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;

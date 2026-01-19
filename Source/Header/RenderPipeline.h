@@ -52,6 +52,7 @@ private:
         float pad[2];
     }m_DofData;
 
+    // シャドウバイアス情報
     struct ShadowInfo
     {
         float baseShadowBias;

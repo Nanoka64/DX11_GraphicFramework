@@ -179,8 +179,10 @@
     <ClInclude Include="Source\Header\BitFlag.h" />
     <ClInclude Include="Source\Header\BlendManager.h" />
     <ClInclude Include="Source\Header\Component_3DCamera.h" />
+    <ClInclude Include="Source\Header\Component_AssultRifle.h" />
     <ClInclude Include="Source\Header\Component_BillboardRenderer.h" />
     <ClInclude Include="Source\Header\Component_BillboardResource.h" />
+    <ClInclude Include="Source\Header\Component_Bullet.h" />
     <ClInclude Include="Source\Header\Component_MeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h" />
@@ -280,8 +282,10 @@
     <ClCompile Include="Source\Cpp\BitFlag.cpp" />
     <ClCompile Include="Source\Cpp\BlendManager.cpp" />
     <ClCompile Include="Source\Cpp\Component_3DCamera.cpp" />
+    <ClCompile Include="Source\Cpp\Component_AssultRifle.cpp" />
     <ClCompile Include="Source\Cpp\Component_BillboardRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_BillboardResource.cpp" />
+    <ClCompile Include="Source\Cpp\Component_Bullet.cpp" />
     <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp" />

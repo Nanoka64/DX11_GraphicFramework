@@ -34,6 +34,43 @@ Transform::~Transform()
     this->Release();
 }
 
+
+//*---------------------------------------------------------------------------------------
+//*【?】特定の方向に向かせる
+//*     主にターゲットになるオブジェクトへ向かせる場合等に使う 
+//*
+//* [引数]
+//* &target : ターゲットのトランスフォーム
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+XMMATRIX Transform::LookAt(const VECTOR3::VEC3 &target)
+{
+    VEC3 forward;
+    VEC3 right;
+    VEC3 up;
+
+    // 目標方向から前方向ベクトルを作る
+    forward = (target - VEC3::FromXMVECTOR(this->m_Position)).Normalize();
+    
+    // 上方向と前方向ベクトルから横ベクトルを求める
+    right = VEC3::Cross(this->get_Up(), forward).Normalize();
+    
+    // 前と横方向のベクトルの外積を求めて上方向ベクトルにする
+    up = VEC3::Cross(forward, right).Normalize();
+    
+    // 回転行列の作成
+    XMMATRIX mtxRot = XMMatrixIdentity();
+    mtxRot.r[0] = right;
+    mtxRot.r[1] = up;
+    mtxRot.r[2] = forward;
+
+
+    return mtxRot;
+}
+
+
 // ---------------------------------------------------------------------------
 /// <summary>
 /// 解放
@@ -153,10 +190,8 @@ const VEC3 Transform::get_VEC3ToScale() const {
 /// 座標行列取得
 /// </summary>
 XMMATRIX Transform::get_MtxPos()const{
-    return XMMatrixScaling(
-        XMVectorGetX(m_Position),
-        XMVectorGetY(m_Position),
-        XMVectorGetZ(m_Position)
+    return XMMatrixTranslationFromVector(
+        m_Position
     );
 }
 /// <summary>
@@ -174,10 +209,8 @@ XMMATRIX Transform::get_MtxRotate()const{
 /// 拡大縮小行列取得
 /// </summary>
 XMMATRIX Transform::get_MtxScale()const{
-    return XMMatrixScaling(
-        XMVectorGetX(m_Scale),
-        XMVectorGetY(m_Scale),
-        XMVectorGetZ(m_Scale)
+    return XMMatrixScalingFromVector(
+        m_Scale
     );
 }
 
@@ -207,9 +240,25 @@ XMMATRIX Transform::get_WorldMtx()const{
 /// </summary>
 /// <returns></returns>
 // -----------------------------------------------------------------------------
+XMMATRIX Transform::get_WorldMtx(const XMMATRIX &scl, const XMMATRIX &rot, const XMMATRIX &trans)const
+{
+    XMMATRIX localMtx = scl * rot * trans;
+
+    // 親がいるなら自分と親を掛けたものを返す
+    if (m_pParent.lock())
+        return localMtx * m_pParent.lock()->get_WorldMtx();
+    else
+        return localMtx;
+}
+
+// -----------------------------------------------------------------------------
+/// <summary>
+/// 回転を含めないワールド行列
+/// </summary>
+/// <returns></returns>
+// -----------------------------------------------------------------------------
 XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
     XMMATRIX mtxS   = XMMatrixScalingFromVector(m_Scale);
-    XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(m_Rotation);
     XMMATRIX mtxT   = XMMatrixTranslationFromVector(m_Position);
 
     XMMATRIX localMtx = mtxS * mtxT;
@@ -220,6 +269,7 @@ XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
     else
         return localMtx;
 }
+
 
 //*---------------------------------------------------------------------------------------
 //* @:Transform Class 
@@ -254,4 +304,9 @@ VEC3 Transform::get_Up() const
 VEC3 Transform::get_Right() const
 {
     return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(RIGHT, m_Rotation));
+}
+
+std::weak_ptr<Transform> Transform::get_Parent()const
+{
+    return m_pParent;
 }

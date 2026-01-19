@@ -36,6 +36,11 @@ public:
 	Transform(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);
 	virtual~Transform();
 
+    /// <summary>
+    /// 目標方向へ向かせる
+    /// </summary>
+    /// <param name="target"></param>
+    DirectX::XMMATRIX LookAt(const VECTOR3::VEC3 &target);
 
     /****** セッタ ******/
     void set_Pos(float x, float y, float z);            // 位置設定 float 3要素
@@ -65,6 +70,17 @@ public:
 
     DirectX::XMMATRIX get_WorldMtx()const;  // ワールド行列取得
     DirectX::XMMATRIX get_ExcludingRotWorldMtx()const; // 回転を除くワールド行列取得
+
+    std::weak_ptr<Transform> get_Parent()const;
+
+    /// <summary>
+    /// パラメータを個別に設定するver
+    /// </summary>
+    /// <param name="scl"></param>
+    /// <param name="rot"></param>
+    /// <param name="trans"></param>
+    /// <returns></returns>
+    DirectX::XMMATRIX get_WorldMtx(const DirectX::XMMATRIX &scl, const DirectX::XMMATRIX &rot, const DirectX::XMMATRIX &trans)const;
 
     const VECTOR3::VEC3 get_Forward()const;
     VECTOR3::VEC3 get_Up()const;
