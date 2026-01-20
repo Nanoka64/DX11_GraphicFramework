@@ -18,6 +18,8 @@ public:
     float m_SpecularPower;          // スペキュラの絞り強さ
     float m_EmissivePower;          // 自己発光の強さ（ブルーム強度）
 
+    VECTOR3::VEC3 m_EmissiveColor;  // 発光色
+
     // テクスチャマップ==============================================
     DIFFUSE_MAP_DATA m_DiffuseMap;     // ディフューズマップ
     NORMAL_MAP_DATA m_NormalMap;       // ノーマルマップ
@@ -30,7 +32,8 @@ public:
         m_SpecularColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
         m_SpecularPower(0.0f),
         m_BlendMode(BLEND_MODE::NONE),
-        m_EmissivePower(1.0f)
+        m_EmissivePower(0.0f),
+        m_EmissiveColor(VECTOR3::VEC3(0.0f,0.0f,0.0f))
     {
 
     };

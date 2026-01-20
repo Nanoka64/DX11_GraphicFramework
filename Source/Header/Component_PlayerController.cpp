@@ -93,8 +93,6 @@ void PlayerController::Update(RendererEngine &renderer)
 	// 待機アニメーション
 	ChangeAnimation(PLAYER_ANIMATION_ID::IDLE_LOOP);
 
-	
-
 	// 前方向と右方向ベクトルを作る 
 	// 右方向ベクトルは上方向と前方向ベクトルの外積を取ることでできる
 	// カメラ側で「プレイヤー → カメラ」の処理にしているため、

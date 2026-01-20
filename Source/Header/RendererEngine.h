@@ -192,7 +192,7 @@ public:
     /// </summary>
     /// <param name="num"></param>
     /// <param name="renderTargets"></param>
-    void RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[]);
+    void RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[], ID3D11DepthStencilView *pDsv);
     
     /// <summary>
     /// 単一のレンダーターゲットを登録

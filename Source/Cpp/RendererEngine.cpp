@@ -911,11 +911,12 @@ void RendererEngine::ReleaseRenderTargetSetNull()
 //*【?】MRTレンダーターゲットの登録
 //* 引数：1.ターゲットの数
 //* 引数：2.ターゲットの配列
+//* 引数：3.深度ステンシル
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[])
+void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[],ID3D11DepthStencilView* pDsv)
 {
-    ID3D11RenderTargetView *rtv[16]{};
+    ID3D11RenderTargetView *rtv[8]{};
 
     for (UINT i = 0; i < num; i++) {
         if (renderTargets[i]->get_RTV() != nullptr) {
@@ -923,12 +924,11 @@ void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *rend
         }
     }
 
-    if (renderTargets[3]->HasDepthStencilBuffer()) {
-        //深度バッファがある。
-        m_pImmediateContext->OMSetRenderTargets(num, rtv, renderTargets[3]->get_DSV());
+    //深度バッファがある。
+    if (pDsv != nullptr) {
+        m_pImmediateContext->OMSetRenderTargets(num, rtv, pDsv);
     }
     else  {
-        //深度バッファがない。
         m_pImmediateContext->OMSetRenderTargets(num, rtv, nullptr);
     }
 }
@@ -983,12 +983,13 @@ void RendererEngine::RegisterRenderTargetAndViewPort(class DX_RenderTarget* pRT)
 //*----------------------------------------------------------------------------------------
 void RendererEngine::ClearRenderTargetViews(UINT num, class DX_RenderTarget *renderTargets[])
 {
-    if (renderTargets[3]->HasDepthStencilBuffer()) {
+    for (UINT i = 0; i < num; i++) 
+    {
         // デプスステンシルバッファがあるならクリア 
-        m_pImmediateContext->ClearDepthStencilView(renderTargets[3]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
-    }
+        if (renderTargets[i]->HasDepthStencilBuffer()) {
+            m_pImmediateContext->ClearDepthStencilView(renderTargets[i]->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
+        }
 
-    for (UINT i = 0; i < num; i++) {
         if (renderTargets[i]->get_RTV() != nullptr) {
             float col[4] = { 1.0,1.0,1.0,1.0 };
 

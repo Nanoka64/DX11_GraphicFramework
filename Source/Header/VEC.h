@@ -36,7 +36,9 @@ namespace VECTOR3
 
 		// オーバーロード
 		VEC3 operator+(const VEC3& vec)const	{ return { this->x + vec.x,this->y + vec.y,this->z + vec.z }; };
+		VEC3 operator+(const float &scl)const	{ return { this->x + scl,this->y + scl,this->z + scl }; };
 		VEC3 operator-(const VEC3& vec) const	{ return { this->x - vec.x,this->y - vec.y,this->z - vec.z }; };
+		VEC3 operator-(const float& scl) const	{ return { this->x - scl,this->y - scl,this->z - scl }; };
 		VEC3 operator*(float scl) const			{ return { this->x * scl,this->y * scl,this->z * scl }; };
 		VEC3 operator+() const					{ return *this; };
 		VEC3 operator-() const					{ return { -this->x, -this->y, -this->z }; };

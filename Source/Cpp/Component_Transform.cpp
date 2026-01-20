@@ -21,7 +21,11 @@ Transform::Transform(std::weak_ptr<GameObject> pOwner, int updateRank)
 	m_Position(DirectX::XMVectorZero()),
 	m_Rotation(DirectX::XMVectorZero()),
 	m_Scale(DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f)),
-	m_pParent()
+    m_LocalOffset_Position(DirectX::XMVectorZero()),
+    m_LocalOffset_Rotation(DirectX::XMVectorZero()),
+    m_LocalOffset_Scale(DirectX::XMVectorZero()),
+	m_pParent(),
+    m_isDirty(false)
 {
     this->set_Tag("Transform");
 }
@@ -80,6 +84,12 @@ void Transform::Release()
 {
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+//  ◆ワールド空間
+//
+/////////////////////////////////////////////////////////////////////////////////////////
 // *===========================================================================
 // ・セッタ
 // *===========================================================================
@@ -137,6 +147,7 @@ const VEC3 Transform::get_VEC3ToPos() const {
         XMVectorGetZ(m_Position)
     );
 }
+
 /*--------------- Rotate ---------------*/
 /* ラジアン */
 
@@ -186,6 +197,100 @@ const VEC3 Transform::get_VEC3ToScale() const {
     );
 }
 
+/* ワールド座標の取得 */
+const VECTOR3::VEC3 Transform::get_WorldVEC3ToPos()const
+{
+    XMMATRIX mat = get_WorldMtx();
+    return VEC3::FromXMVECTOR(mat.r[3]);
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+//  ◆ローカル空間オフセット
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// *===========================================================================
+// ・セッタ
+// *===========================================================================
+/*--------------- Position ---------------*/
+void Transform::set_VEC3ToLocalOffset_Pos(const VECTOR3::VEC3 &vIn) {
+    m_LocalOffset_Position = vIn;
+}
+/*--------------- Rotate ---------------*/
+/* ラジアン */
+void Transform::set_VEC3ToLocalOffset_RotateToRad(const VECTOR3::VEC3 &vIn) {
+    m_LocalOffset_Rotation = vIn;
+}
+/* デグリー */
+void Transform::set_VEC3ToLocalOffset_RotateToDeg(const VECTOR3::VEC3 &vIn) {
+    VEC3 deg;
+    deg.x = DegToRad(vIn.x);
+    deg.y = DegToRad(vIn.y);
+    deg.z = DegToRad(vIn.z);
+
+    m_LocalOffset_Rotation = deg;
+}
+/*--------------- Scale ---------------*/
+void Transform::set_VEC3ToLocalOffset_Scale(const VECTOR3::VEC3 &vIn) {
+    m_LocalOffset_Scale = vIn;
+}
+
+// *===========================================================================
+// ・ゲッタ
+// *===========================================================================
+/*--------------- Position ---------------*/
+const VEC3 Transform::get_VEC3ToLocalOffset_Pos()const
+{
+    return VEC3(
+        XMVectorGetX(m_LocalOffset_Position),
+        XMVectorGetY(m_LocalOffset_Position),
+        XMVectorGetZ(m_LocalOffset_Position)
+    );
+}
+
+/*--------------- Rotate ---------------*/
+/* ラジアン */
+const VEC3 Transform::get_VEC3ToLocalOffset_RotateToRad()const
+{
+    return VEC3(
+        XMVectorGetX(m_LocalOffset_Rotation),
+        XMVectorGetY(m_LocalOffset_Rotation),
+        XMVectorGetZ(m_LocalOffset_Rotation)
+    );
+}
+/* デグリー */
+const VEC3 Transform::get_VEC3ToLocalOffset_RotateToDeg()const
+{
+    VEC3 res = VEC3(
+        XMVectorGetX(m_LocalOffset_Rotation),
+        XMVectorGetY(m_LocalOffset_Rotation),
+        XMVectorGetZ(m_LocalOffset_Rotation)
+    );
+    res.x = RadToDeg(res.x);
+    res.y = RadToDeg(res.y);
+    res.z = RadToDeg(res.z);
+    return res;
+}
+
+/*--------------- Scale ---------------*/
+const VEC3 Transform::get_VEC3ToLocalOffset_Scale()const
+{
+    return VEC3(
+        XMVectorGetX(m_LocalOffset_Scale),
+        XMVectorGetY(m_LocalOffset_Scale),
+        XMVectorGetZ(m_LocalOffset_Scale)
+    );
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//
+//  ◆行列
+//
+/////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 /// 座標行列取得
 /// </summary>
@@ -198,10 +303,8 @@ XMMATRIX Transform::get_MtxPos()const{
 /// 回転行列取得
 /// </summary>
 XMMATRIX Transform::get_MtxRotate()const{
-    return XMMatrixScaling(
-        XMVectorGetX(m_Rotation),
-        XMVectorGetY(m_Rotation),
-        XMVectorGetZ(m_Rotation)
+    return XMMatrixRotationRollPitchYawFromVector(
+        m_Rotation
     );
 }
 
@@ -220,23 +323,34 @@ XMMATRIX Transform::get_MtxScale()const{
 /// </summary>
 /// <returns></returns>
 // -----------------------------------------------------------------------------
-XMMATRIX Transform::get_WorldMtx()const{
-    XMMATRIX mtxS   = XMMatrixScalingFromVector(m_Scale);
-    XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(m_Rotation);
-    XMMATRIX mtxT   = XMMatrixTranslationFromVector(m_Position);
+XMMATRIX Transform::get_WorldMtx()const {
+
+    // オフセットを加算
+    XMVECTOR scl = m_Scale    + m_LocalOffset_Scale;
+    XMVECTOR rot = m_Rotation + m_LocalOffset_Rotation;
+    XMVECTOR pos = m_Position + m_LocalOffset_Position;
+
+    XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
+    XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(rot);
+    XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
 
     XMMATRIX localMtx = mtxS * mtxRot * mtxT;
 
     // 親がいるなら自分と親を掛けたものを返す
     if (m_pParent.lock())
+    {
         return localMtx * m_pParent.lock()->get_WorldMtx();
+    }
     else
+    {
         return localMtx;
+    }
 }
 
 // -----------------------------------------------------------------------------
 /// <summary>
-/// 回転を含めないワールド行列
+/// ワールド行列取得
+/// パラメータを明示的に指定する
 /// </summary>
 /// <returns></returns>
 // -----------------------------------------------------------------------------
@@ -258,8 +372,13 @@ XMMATRIX Transform::get_WorldMtx(const XMMATRIX &scl, const XMMATRIX &rot, const
 /// <returns></returns>
 // -----------------------------------------------------------------------------
 XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
-    XMMATRIX mtxS   = XMMatrixScalingFromVector(m_Scale);
-    XMMATRIX mtxT   = XMMatrixTranslationFromVector(m_Position);
+    // オフセットを加算
+    // オフセットを加算
+    XMVECTOR scl = m_Scale + m_LocalOffset_Scale;
+    XMVECTOR pos = m_Position + m_LocalOffset_Position;
+
+    XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
+    XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
 
     XMMATRIX localMtx = mtxS * mtxT;
 
@@ -279,7 +398,9 @@ XMMATRIX Transform::get_ExcludingRotWorldMtx()const{
 //*----------------------------------------------------------------------------------------
 const VEC3 Transform::get_Forward() const
 {
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, m_Rotation));
+    // オイラー角からクォータニオンを作成
+    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, quaternion));
 }
 
 
@@ -291,7 +412,9 @@ const VEC3 Transform::get_Forward() const
 //*----------------------------------------------------------------------------------------
 VEC3 Transform::get_Up() const
 {
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(UP, m_Rotation));
+    // オイラー角からクォータニオンを作成
+    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(UP, quaternion));
 }
 
 
@@ -303,7 +426,9 @@ VEC3 Transform::get_Up() const
 //*----------------------------------------------------------------------------------------
 VEC3 Transform::get_Right() const
 {
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(RIGHT, m_Rotation));
+    // オイラー角からクォータニオンを作成
+    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(RIGHT, quaternion));
 }
 
 std::weak_ptr<Transform> Transform::get_Parent()const

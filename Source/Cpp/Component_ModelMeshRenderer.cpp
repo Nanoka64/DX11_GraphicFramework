@@ -116,6 +116,8 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
         mat.Diffuse         = matList[0].lock()->m_DiffuseColor;
         mat.Specular        = matList[0].lock()->m_SpecularColor;
         mat.SpecularPower   = matList[0].lock()->m_SpecularPower;
+        mat.EmissivePower   = matList[0].lock()->m_EmissivePower;
+        mat.EmissiveColor   = matList[0].lock()->m_EmissiveColor;
         CB_MatSet->Data     = mat;
 
         // 定数バッファに転送

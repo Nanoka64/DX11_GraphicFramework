@@ -24,8 +24,15 @@ class Transform : public IComponent
 {
 private:
 	DirectX::XMVECTOR m_Position;	// 位置
-	DirectX::XMVECTOR m_Rotation;	// 回転
+	DirectX::XMVECTOR m_Rotation;	// 回転 ラジアンで保持
 	DirectX::XMVECTOR m_Scale;		// 拡縮
+    
+    DirectX::XMVECTOR m_LocalOffset_Position;	// ローカル空間オフセット位置
+    DirectX::XMVECTOR m_LocalOffset_Rotation;	// ローカル空間オフセット回転 ラジアンで保持
+    DirectX::XMVECTOR m_LocalOffset_Scale;		// ローカル空間オフセット拡縮
+
+    bool m_isDirty; // 座標更新が行われたか
+
 	std::weak_ptr<Transform> m_pParent;	        // 親オブジェクト
 
     void Init(RendererEngine &renderer) override {};	// 初期化
@@ -52,6 +59,11 @@ public:
     void set_RotateToDeg(const VECTOR3::VEC3& vIn);     // 回転設定 - ベクトル指定 デグリー
     void set_Scale(const VECTOR3::VEC3& vIn);           // 拡大設定 - ベクトル指定
 
+    void set_VEC3ToLocalOffset_Pos(const VECTOR3::VEC3 &vIn);        // ローカル空間オフセット位置設定 - ベクトル指定   
+    void set_VEC3ToLocalOffset_RotateToRad(const VECTOR3::VEC3 &vIn);// ローカル空間オフセット回転設定 - ベクトル指定 ラジアン
+    void set_VEC3ToLocalOffset_RotateToDeg(const VECTOR3::VEC3 &vIn);// ローカル空間オフセット回転設定 - ベクトル指定 デグリー
+    void set_VEC3ToLocalOffset_Scale(const VECTOR3::VEC3 &vIn);      // ローカル空間オフセット拡大設定 - ベクトル指定
+
     void set_Parent(std::weak_ptr<Transform> parent) { m_pParent = parent; }  // 親設定
 
     /****** ゲッタ ******/
@@ -64,12 +76,21 @@ public:
     const VECTOR3::VEC3 get_VEC3ToRotateToDeg() const;  // 回転取得 - VEC3  デグリー
     const VECTOR3::VEC3 get_VEC3ToScale() const;        // 拡大取得 - VEC3
 
+    const VECTOR3::VEC3 get_VEC3ToLocalOffset_Pos()const;         // ローカル空間オフセット位置取得 - VEC3 
+    const VECTOR3::VEC3 get_VEC3ToLocalOffset_RotateToRad()const; // ローカル空間オフセット回転取得 - VEC3  ラジアン
+    const VECTOR3::VEC3 get_VEC3ToLocalOffset_RotateToDeg()const; // ローカル空間オフセット回転取得 - VEC3  デグリー
+    const VECTOR3::VEC3 get_VEC3ToLocalOffset_Scale()const;       // ローカル空間オフセット拡大取得 - VEC3
+
+    const VECTOR3::VEC3 get_WorldVEC3ToPos()const;  // ワールド座標の取得
+
     DirectX::XMMATRIX get_MtxPos()const;    // 位置行列取得
     DirectX::XMMATRIX get_MtxRotate()const; // 回転行列取得
     DirectX::XMMATRIX get_MtxScale()const;  // 拡大行列取得
 
     DirectX::XMMATRIX get_WorldMtx()const;  // ワールド行列取得
     DirectX::XMMATRIX get_ExcludingRotWorldMtx()const; // 回転を除くワールド行列取得
+
+
 
     std::weak_ptr<Transform> get_Parent()const;
 

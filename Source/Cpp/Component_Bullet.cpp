@@ -45,7 +45,8 @@ Bullet::~Bullet()
 //*----------------------------------------------------------------------------------------
 void Bullet::Init(RendererEngine &renderer)
 {
-
+    // 開始位置
+    m_StartPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 }
 
 
@@ -60,12 +61,20 @@ void Bullet::Update(RendererEngine &renderer)
 {
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 crntPos = transform->get_VEC3ToPos();
+    VEC3 moveVelocity = VEC3(0.0f,0.0f,0.0f);   // 速度ベクトル
 
-    VEC3 moveVelocity = VEC3(0.0f,0.0f,0.0f);
-    moveVelocity = transform->get_Forward();
-    crntPos += moveVelocity.Normalize();
+    VEC3 forward = transform->get_Forward();    // 前方向ベクトル
+
+    forward = forward.Normalize();
+    moveVelocity -= forward;
+    crntPos += moveVelocity.Normalize() * 20.0f;
 
     transform->set_Pos(crntPos);
+
+    if (VEC3::Distance(crntPos, m_StartPos) > 2000.0f)
+    {
+        m_pOwner.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
+    }
 }
 
 

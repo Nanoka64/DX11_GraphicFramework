@@ -212,8 +212,9 @@ void RenderPipeline::Release()
 {
     SAFE_DELETE(m_pAlbedo_RT);
     SAFE_DELETE(m_pNormal_RT);
-    SAFE_DELETE(m_pDepth_RT);
     SAFE_DELETE(m_pSpecular_RT);
+    SAFE_DELETE(m_pEmissive_RT);
+    SAFE_DELETE(m_pDepth_RT);
     SAFE_DELETE(m_pSceneFinal_RT);
     SAFE_DELETE(m_pLuminance_RT);
     SAFE_DELETE(m_pShadowMap_RT);
@@ -234,7 +235,7 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
         m_pAlbedo_RT ,
         m_pNormal_RT,
         m_pSpecular_RT,
-        m_pDepth_RT
+        m_pEmissive_RT,
     };
 
     // ビューポートの設定
@@ -242,8 +243,9 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::BACK);     // 裏カリング
 
     // レンダリングターゲットの設定とクリア
-    renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer);
+    renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer, m_pDepth_RT->get_DSV());
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
+    renderer.get_DeviceContext()->ClearDepthStencilView(m_pDepth_RT->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
     // メイン描画パス
     renderer.set_CrntRenderPass(RENDER_PASS::MAIN);
@@ -535,7 +537,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_R16G16B16A16_FLOAT,
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
@@ -551,6 +553,21 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         1,
         1,
         DXGI_FORMAT_R8G8B8A8_UNORM,
+        DXGI_FORMAT_UNKNOWN
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // エミッシブ
+    // ****************************************************************
+    m_pEmissive_RT = new DX_RenderTarget();
+    result = m_pEmissive_RT->Create(
+        renderer,
+        renderer.get_ScreenWidth(),
+        renderer.get_ScreenHeight(),
+        1,
+        1,
+        DXGI_FORMAT_R16G16B16A16_FLOAT,
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
@@ -736,10 +753,10 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
     sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
-    sprite.ObjTag = "RenderTarget1";
+    sprite.ObjTag = "GBuffer_A_Sprite";
     sprite.Width = 1.0f;
     sprite.Height = 1.0f;
-    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT1", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(), m_pAlbedo_RT->get_Height());
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_A", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(), m_pAlbedo_RT->get_Height());
     
     // スプライト取得
     m_pAlbed_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
@@ -749,10 +766,10 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     /*************************************************************************
     * 法線用
     *************************************************************************/
-    sprite.ObjTag = "RenderTarget2";
+    sprite.ObjTag = "GBuffer_B_Sprite";
     sprite.Width = 1.0f;
     sprite.Height = 1.0f;
-    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT2", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_B", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
     
     // スプライト取得
     m_pNormal_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
@@ -762,8 +779,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     /*************************************************************************
     * スペキュラ用
     *************************************************************************/
-    sprite.ObjTag = "RenderTarget3";
-    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT3", m_pSpecular_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
+    sprite.ObjTag = "GBuffer_C_Sprite";
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_C", m_pSpecular_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
     
     // スプライト取得
     m_pSpecular_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
@@ -771,10 +788,21 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.pTextureMap.clear();
 
     /*************************************************************************
+    * エミッシブ用
+    *************************************************************************/
+    sprite.ObjTag = "GBuffer_D_Sprite";
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_D", m_pEmissive_RT->get_SRV_ComPtr(), m_pSpecular_RT->get_Width(), m_pSpecular_RT->get_Height());
+    
+    // スプライト取得
+    m_pEmissive_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
+
+    sprite.pTextureMap.clear();
+
+    /*************************************************************************
     * Z値用
     *************************************************************************/
-    sprite.ObjTag = "RenderTarget4";
-    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT4", m_pDepth_RT->get_DepthSRV_ComPtr(), m_pDepth_RT->get_Width(), m_pDepth_RT->get_Height());
+    sprite.ObjTag = "Depth_Sprite";
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("Depth", m_pDepth_RT->get_DepthSRV_ComPtr(), m_pDepth_RT->get_Width(), m_pDepth_RT->get_Height());
     
     // スプライト取得
     m_pDepth_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
@@ -793,11 +821,12 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_ShadowData);
     sprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_ShadowData;
 
-    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT1");
-    sprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT2");
-    sprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture("RT3");
-    sprite.pTextureMap[3] = Master::m_pResourceManager->Convert_SRVToTexture("RT4");
-    sprite.pTextureMap[4] = Master::m_pResourceManager->Convert_SRVToTexture(
+    sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_A");
+    sprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_B");
+    sprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_C");
+    sprite.pTextureMap[3] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_D");
+    sprite.pTextureMap[4] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
+    sprite.pTextureMap[5] = Master::m_pResourceManager->Convert_SRVToTexture(
         "ShadowMap",
         m_pShadowMap_RT->get_DepthSRV_ComPtr(),
         m_pShadowMap_RT->get_Width(),
@@ -826,7 +855,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     );
 
     // 深度テクスチャ
-    luminanceSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT4");
+    luminanceSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
     luminanceSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     luminanceSprite.ShaderType = SHADER_TYPE::POST_LUMINANCE_FILTER;
 
@@ -880,7 +909,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
             m_pSceneFinal_RT->get_Height()
         );
     // 深度テクスチャ設定
-    depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT4");
+    depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
 
     depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
     depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;               // スロット7にセット

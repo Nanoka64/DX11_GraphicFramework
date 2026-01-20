@@ -106,6 +106,19 @@ bool SceneManager::Init(RendererEngine& renderer)
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("soldier_head", mat[1]);
         }
+        /* 銃弾*/
+        {
+            Material mat[1];
+            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
+            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularPower = 200.0f;
+            mat[0].m_EmissivePower = 200.0f;
+            mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f,0.0f);
+
+            // マテリアル登録
+            Master::m_pResourceManager->RegisterMaterialData("Bullet", mat[0]);
+        }
         /* アサルトライフル*/
         {
             Material mat;
@@ -375,6 +388,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             sphireObj->get_Transform().lock()->set_Pos(-300.0f, 80.0f, 600.0f);
             sphireObj->get_Transform().lock()->set_RotateToDeg(-60.0f, 0.0f, 0.0f);
         }
+
         /* アサルトライフル */
         {
             // マテリアル取得
@@ -400,6 +414,9 @@ bool SceneManager::Init(RendererEngine& renderer)
 
             // プレイヤーを親に設定
             obj->get_Transform().lock()->set_Parent(m_pPlayer->get_Transform());
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985, -0.985, -0.985));
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0, 0, 90));
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0, 190, 0));
         }
 
         /* ディレクションライトの生成(Cubuで分かりやすく) */
@@ -424,7 +441,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             auto light = obj->add_Component<DirectionalLight>();
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-            light->set_Intensity(3.0f);
+            light->set_Intensity(2.0f);
             light->set_LightCameraTrackingObj(m_pCameraObj);
             light->Init(renderer);
 

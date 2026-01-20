@@ -59,31 +59,44 @@ void AssultRifle::Update(RendererEngine &renderer)
 {
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 
-	if (GetInputHoldRepeat(CONFIG_INPUT::C,10,20))
+	if (GetInputHoldRepeat(CONFIG_INPUT::C,2,2))
 	{
         // マテリアル取得
-        auto matPtr = Master::m_pResourceManager->LoadMaterial("Wall");
+        auto matPtr1 = Master::m_pResourceManager->LoadMaterial("Bullet");
+
         SetupMaterialInfo matInfo[1];
         matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr;
-        CreateUtilityMeshInfo mesh;
-        mesh.pRenderer = &renderer;
-        mesh.Type = UTILITY_MESH_TYPE::SPHERE;
-        mesh.MatNum = 1;
-        mesh.MaterialData = matInfo;
-        mesh.IsActive = true;
-        mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-        mesh.IsNormalMap = true;
-        mesh.ObjTag = "Bullet";
-        auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        matInfo[0].pMaterialData = matPtr1; // 頭
 
-        obj->add_Component<Bullet>();
-        obj->get_Component<Bullet>()->Init(renderer);
+        CreateModelInfo model;
+        model.pRenderer = &renderer;
+        model.Path = "Resource/Model/Weapon/bullet.fbx";
+        model.ObjTag = "Bullet";
+        model.IsAnim = false;
+        model.MatNum = 1;
+        model.SetupMaterial = matInfo;
+        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        auto obj = MeshFactory::CreateModel(model);
+        if (obj == nullptr)
+        {
+            assert(false);
+            return;
+        }
 
+        // バレットコンポーネントの追加
+        auto bulletComp = obj->add_Component<Bullet>();
+        auto bullet_transform = obj->get_Transform().lock();
+
+        VEC3 pos = transform->get_WorldVEC3ToPos();
+        VEC3 rad = transform->get_Parent().lock()->get_VEC3ToRotateToRad();
+        
         // 親の向きと位置を参照
-        obj->get_Transform().lock()->set_Pos(transform->get_Parent().lock()->get_VEC3ToPos());
-        obj->get_Transform().lock()->set_RotateToRad(transform->get_Parent().lock()->get_VEC3ToRotateToRad());
-        obj->get_Transform().lock()->set_Scale(VEC3(10.0f, 10.0f, 50.0f));
+        bullet_transform->set_Pos(pos);
+        bullet_transform->set_RotateToRad(rad);
+        bullet_transform->set_Scale(VEC3(0.01f, 0.01f, 0.01f));
+
+        // 初期化
+        bulletComp->Init(renderer);
 	}
 }
 

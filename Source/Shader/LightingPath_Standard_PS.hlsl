@@ -18,11 +18,12 @@
 
 SamplerState g_sSampler : register(s0);
 SamplerComparisonState g_sShadowSampler : register(s1); // シャドウマップ用
-Texture2D<float4> g_tAlbedoTexture : register(t0);    // xyzにアルベド
-Texture2D<float4> g_tNormalTexture : register(t1);    // xyzに法線
-Texture2D<float4> g_tSpecularTexture : register(t2);  // xyzにスペキュラ色  wにスペキュラ強度
-Texture2D<float4> g_tDepthTexture : register(t3);     // xに深度値
-Texture2D<float4> g_tShadowMapTexture : register(t4); // シャドウマップ
+Texture2D<float4> g_tAlbedoTexture : register(t0);      // rgbにアルベド aにエミッシブ
+Texture2D<float4> g_tNormalTexture : register(t1);      // rgbに法線
+Texture2D<float4> g_tSpecularTexture : register(t2);    // rgbにスペキュラ色  wにスペキュラ強度
+Texture2D<float4> g_tEmissiveMapTexture : register(t3);   // エミッシブ
+Texture2D<float4> g_tDepthTexture : register(t4);       // rに深度値 gbaにエミッシブカラー
+Texture2D<float4> g_tShadowMapTexture : register(t5);   // シャドウマップ
 
 
 /* =========================================================================
@@ -44,7 +45,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 normalTex = g_tNormalTexture.Sample(g_sSampler, input.UV);
     float4 depthTex = g_tDepthTexture.Sample(g_sSampler, input.UV);
     float4 specularTex = g_tSpecularTexture.Sample(g_sSampler, input.UV);
-    
 
     float4 finalCol = float4(0.0, 0.0, 0.0, 1.0);
     
@@ -67,11 +67,17 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //normal = normalize(normal); // 頂点シェーダですでに正規化済み
     
     // スペキュラ強度・カラー
-    float spcPow = specularTex.a;
     float3 spcColor = specularTex.rgb;
     
     // スペキュラ値を復元
+    float spcPow = specularTex.a;
     spcPow *= 255;
+    
+    // エミッシブ値を復元
+    float3 emissiveColor = depthTex.gba;    // デプスのGBAにエミッシブカラー入れてる
+    float emissivePow = albedoTex.a;
+    emissivePow *= 255;
+    
     
     OUT_DiffAndSpec dirLig;             // ディレクション用
     dirLig.Diffuse = float3(0, 0, 0);
@@ -131,9 +137,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 dirSpecular = dirLig.Specular;
     float3 diffuse = +pointLig.Diffuse + dirDiffuse + hemiLig;
     float3 specular = +pointLig.Specular + dirSpecular;
-        
-    // 最終色 アルベド * 光度 + スペキュラ
-    finalCol.xyz = albedoTex.xyz * diffuse + specular;
+    
+    // 最終色 (アルベド * 光度 + スペキュラ) + エミッシブ
+    finalCol.xyz = (albedoTex.xyz * diffuse + specular);
     
     
     //************************************************************************

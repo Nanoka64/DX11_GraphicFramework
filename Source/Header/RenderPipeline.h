@@ -18,6 +18,7 @@ private:
     class DX_RenderTarget *m_pNormal_RT;        // 法線用
     class DX_RenderTarget *m_pDepth_RT;         // 深度用
     class DX_RenderTarget *m_pSpecular_RT;      // スペキュラ用
+    class DX_RenderTarget *m_pEmissive_RT;      // エミッシブ用
     
     class DX_RenderTarget *m_pSceneFinal_RT;	// シーン最終合成用
     class DX_RenderTarget *m_pLuminance_RT;		// 輝度抽出用
@@ -36,6 +37,7 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pNormal_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pSpecular_Sprite;
+    std::shared_ptr<class SpriteRenderer> m_pEmissive_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pDepth_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pDefferdLighting_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pLuminance_Sprite;

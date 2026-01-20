@@ -100,6 +100,8 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         mat.Diffuse = pMatData->m_DiffuseColor;
         mat.Specular = pMatData->m_SpecularColor;
         mat.SpecularPower = pMatData->m_SpecularPower;
+        mat.EmissivePower = pMatData->m_EmissivePower;
+        mat.EmissiveColor = pMatData->m_EmissiveColor;
         cbMatSet->Data = mat;
 
         // 定数バッファに転送

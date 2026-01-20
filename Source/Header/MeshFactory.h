@@ -36,8 +36,8 @@ struct CreateModelInfo
     SHADER_TYPE ShaderType;         // 使用するシェーダの種類
     SHADER_TYPE Shadow_ShaderType;  // シャドウマップ生成に使用するシェーダの種類
 
-    SetupMaterialInfo* SetupMaterial;    // マテリアル情報
-    UINT MatNum;                        // マテリアル数
+    SetupMaterialInfo* SetupMaterial;    // マテリアル情報（MatNum分）
+    UINT MatNum;                         // マテリアル数
 
     // コンストラクタ
     CreateModelInfo() :

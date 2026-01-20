@@ -43,7 +43,8 @@ struct PS_OUT
     float4 Albedo   : SV_Target0;
     float4 Normal   : SV_Target1;
     float4 Specular : SV_Target2;
-    float4 Depth    : SV_Target3;
+    float4 Emissive : SV_Target3;
+    float4 Depth    : SV_Target4;
 };
 
 
@@ -75,14 +76,17 @@ PS_OUT PSMain(PS_IN input)
 
     // テスト出力
     PS_OUT output;
-    output.Albedo       = finalCol;
-    output.Normal.xyz = (input.Normal.xyz * 0.5f) + 0.5f; // 0～1に収める
-    output.Normal.w     = 1.0f;
-    output.Specular.xyz = cb_SpecularColor.xyz;
-    output.Specular.w   = (cb_SpecularPower) / (255.0f);        // wに反射強度入れる（0～1に)
-    output.Depth = float4(0, 0, 0, 0);
+    output.Albedo.rgb   = finalCol.rgb;
+    output.Albedo.a     = (cb_EmissivePower) / (255.0f); // 発光度合を入れる
+    output.Normal.rgb   = (input.Normal.rgb * 0.5f) + 0.5f; // 0～1に収める
+    output.Normal.a     = 1.0f;
+    output.Specular.rgb = cb_SpecularColor.rgb;
+    output.Specular.a   = (cb_SpecularPower) / (255.0f); // wに反射強度入れる（0～1に)
+    output.Emissive.rgb = cb_EmissiveColor.rgb; // 発光カラー格納
     
-    //output.Depth        = input.WPos;   // ワールド座標そのまま入れる
+    output.Depth.gba;
+    output.Depth.r;
+    
     // 以下のように深度値を手動で入れてもライティングパス時には反映されないよ
     // 理由はDSVをパイプラインにバインドしているので、ハードウェア側が自動で深度値を入れてくれている。
     // output.Depth.x      = 0;

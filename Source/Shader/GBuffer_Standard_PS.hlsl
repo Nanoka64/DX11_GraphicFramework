@@ -32,13 +32,12 @@ struct PS_IN
 //ピクセルシェーダーの出力構造体
 struct PS_OUT
 {
-    float4 Albedo   : SV_Target0;
-    float4 Normal   : SV_Target1;
+    float4 Albedo : SV_Target0;
+    float4 Normal : SV_Target1;
     float4 Specular : SV_Target2;
-    float4 Depth    : SV_Target3;
+    float4 Emissive : SV_Target3;
+    float4 Depth : SV_Target4;
 };
-
-
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
@@ -58,12 +57,15 @@ PS_OUT PSMain(PS_IN input)
     
     // テスト出力
     PS_OUT output;
-    output.Albedo = finalCol;
-    output.Normal.xyz = (normal * 0.5f) + 0.5f;
-    output.Normal.w = 1.0f;
-    output.Depth = float4(0, 0, 0, 0);
-    output.Specular.xyz = specularMap.xyz + cb_SpecularColor.xyz;
-    output.Specular.w = (cb_SpecularPower) / (255.0f); // wに反射強度入れる
+    output.Albedo.rgb   = finalCol.rgb;
+    output.Albedo.a     = (cb_EmissivePower) / (255.0f); // 発光度合を入れる
+    output.Normal.rgb   = (normal * 0.5f) + 0.5f;
+    output.Normal.a     = 1.0f; 
+    output.Specular.rgb = specularMap.rgb + cb_SpecularColor.rgb;
+    output.Specular.a   = (cb_SpecularPower) / (255.0f); // wに反射強度入れる
+    output.Emissive.rgb = cb_EmissiveColor.rgb; // 発光カラー
+    output.Depth.gba;
+    output.Depth.r;
     //output.Specular = input.WPos;
     return output;
 }

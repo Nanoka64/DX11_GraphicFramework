@@ -143,6 +143,9 @@ struct CB_MATERIAL{
     float EmissivePower;          // 自己発光の強さ（ブルーム強度）
     DirectX::XMFLOAT2 OffsetUV;   // UVオフセット（エネルギーの流れる感じとかの表現に使えそう ヘクトルみたいな）
 
+    DirectX::XMFLOAT3 EmissiveColor;    // 発光カラー
+    float pad;
+
 	//float Padding[2];             // パディング(16バイトアラインメント ※詳細はUtilityHeader.hlsli側を見て)
 };
 

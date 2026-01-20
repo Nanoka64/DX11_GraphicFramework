@@ -93,6 +93,9 @@ cbuffer CB_MATERIAL : register(b4)
     float cb_EmissivePower; // エミッシブの強さ
     float2 cb_OffsetUV;     // UVオフセット
     
+    float3 cb_EmissiveColor;// エミッシブカラー
+    float pad0;
+    
     //float2 pad0;
     // 16バイト境界調整（シェーダは16バイトが都合がいいらしい 上のfloatといい感じに合わせるため float3）
     // 追記:HLSLでは定数バッファの値が16の倍数のアドレスに格納されるらしい。
