@@ -45,8 +45,18 @@ Bullet::~Bullet()
 //*----------------------------------------------------------------------------------------
 void Bullet::Init(RendererEngine &renderer)
 {
+    auto transform = m_pOwner.lock()->get_Transform().lock();
+
     // 開始位置
-    m_StartPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
+    m_StartPos = transform->get_VEC3ToPos();
+
+    m_MoveVelocity = transform->get_Forward(); // 前方向ベクトル
+
+    m_MoveVelocity.x += Tool::RandRange(-0.05, 0.05);
+    m_MoveVelocity.y += Tool::RandRange(-0.05, 0.05);
+    m_MoveVelocity.z += Tool::RandRange(-0.05, 0.05);
+
+    m_MoveVelocity = m_MoveVelocity.Normalize();
 }
 
 
@@ -63,11 +73,7 @@ void Bullet::Update(RendererEngine &renderer)
     VEC3 crntPos = transform->get_VEC3ToPos();
     VEC3 moveVelocity = VEC3(0.0f,0.0f,0.0f);   // 速度ベクトル
 
-    VEC3 forward = transform->get_Forward();    // 前方向ベクトル
-
-    forward = forward.Normalize();
-    moveVelocity -= forward;
-    crntPos += moveVelocity.Normalize() * 20.0f;
+    crntPos -= m_MoveVelocity * 20.0f;
 
     transform->set_Pos(crntPos);
 

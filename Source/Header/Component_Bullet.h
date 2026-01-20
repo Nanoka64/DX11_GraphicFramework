@@ -5,6 +5,7 @@ class Bullet : public IComponent
 private:
 	std::shared_ptr<GameObject> m_pBulletObject;	// 弾となるオブジェクト
 	VECTOR3::VEC3 m_StartPos;
+	VECTOR3::VEC3 m_MoveVelocity;
 
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

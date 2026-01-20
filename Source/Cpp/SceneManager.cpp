@@ -113,7 +113,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].m_SpecularPower = 200.0f;
-            mat[0].m_EmissivePower = 200.0f;
+            mat[0].m_EmissivePower = 50.0f;
             mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f,0.0f);
 
             // マテリアル登録
@@ -142,14 +142,16 @@ bool SceneManager::Init(RendererEngine& renderer)
         /* 壁 */
         {
             Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Magic2.png");
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
             mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
             mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 20.0f;
+            mat.m_SpecularPower = 20.0f;        
+            mat.m_EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
+            mat.m_EmissivePower = 200.0f;
 
             // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Wall", mat);
+            Master::m_pResourceManager->RegisterMaterialData("Canonn", mat);
         }
         /* アリ */
         {
@@ -200,6 +202,20 @@ bool SceneManager::Init(RendererEngine& renderer)
 
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("Building", mat);
+        }
+        /* マザーシップ */
+        {
+            Material mat[1];
+            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/metal_plate_02_diff_2k.jpg");
+            mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+            mat[0].m_SpecularPower = 150.0f;
+            mat[0].m_EmissiveColor = VEC3(0.0f, 0.1f, 0.0f);
+            mat[0].m_EmissivePower = 0.2f;
+
+            // マテリアル登録
+            Master::m_pResourceManager->RegisterMaterialData("MotherShip", mat[0]);
         }
         /* クモ */
         {
@@ -367,7 +383,7 @@ bool SceneManager::Init(RendererEngine& renderer)
         /* スフィア */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Wall");
+            auto matPtr = Master::m_pResourceManager->LoadMaterial("Canonn");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -380,13 +396,16 @@ bool SceneManager::Init(RendererEngine& renderer)
             mesh.MaterialData = matInfo;
             mesh.IsActive = true;
             mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-            mesh.IsNormalMap = true;
-            mesh.ObjTag = "Sphere";
+            mesh.IsNormalMap = false;
+            mesh.ObjTag = "Canonn";
 
             sphireObj = MeshFactory::CreateUtilityMesh(mesh);
-            sphireObj->get_Transform().lock()->set_Scale(100.0f, 100.0f, 100.0f);
-            sphireObj->get_Transform().lock()->set_Pos(-300.0f, 80.0f, 600.0f);
-            sphireObj->get_Transform().lock()->set_RotateToDeg(-60.0f, 0.0f, 0.0f);
+            sphireObj->get_Transform().lock()->set_Scale(10.0f, 10.0f, 10.0f);
+            sphireObj->get_Transform().lock()->set_Pos(0.0f, 1000.0f, 0.0f);
+            sphireObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            auto light = sphireObj->add_Component<PointLight>();
+            light->Init(renderer);
         }
 
         /* アサルトライフル */
@@ -548,6 +567,32 @@ bool SceneManager::Init(RendererEngine& renderer)
             m_pTempObj = MeshFactory::CreateModel(model);
             m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
+            m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        }
+
+        /* マザーシップの生成 */
+        {
+            // マテリアル取得
+            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("MotherShip");
+
+            SetupMaterialInfo matInfo[1];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr1;
+
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Enemy/MotherShip.fbx";
+            model.ObjTag = "MotherShip";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.IsActive = true;
+
+            model.SetupMaterial = matInfo;
+
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            m_pTempObj = MeshFactory::CreateModel(model);
+            m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
+            m_pTempObj->get_Component<Transform>()->set_Pos(0.0f, 2000.0f, 0.0f);
             m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         }
 

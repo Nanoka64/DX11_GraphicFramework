@@ -173,7 +173,7 @@ bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTIL
 		break;	
 	case UTILITY_MESH_TYPE::PLANE:
 		m_pMeshData = MeshInfoFactory::CreatePlaneInfo(renderer, materials, materialNum, isNormalMap);
-		break;
+		break;	
 	default:
 		return false;
 		break;

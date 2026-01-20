@@ -104,7 +104,6 @@ public:
 	static std::shared_ptr<MeshResourceData> CreatePlaneInfo(RendererEngine& renderer,	std::weak_ptr<Material> materials, UINT matNum, bool isNormalMap);
 	static std::shared_ptr<MeshResourceData> CreateTriangleInfo(RendererEngine& renderer);
 	static std::shared_ptr<MeshResourceData> CreateCylinderInfo(RendererEngine& renderer);
-	static std::shared_ptr<MeshResourceData> CreateTorusInfo(RendererEngine& renderer);
 	static std::shared_ptr<MeshResourceData> CreateSpriteQuadInfo(RendererEngine& renderer, float w, float h);
 	static std::shared_ptr<MeshResourceData> CreateRTSpriteInfo(RendererEngine& renderer, float w, float h);
 };

@@ -45,6 +45,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 normalTex = g_tNormalTexture.Sample(g_sSampler, input.UV);
     float4 depthTex = g_tDepthTexture.Sample(g_sSampler, input.UV);
     float4 specularTex = g_tSpecularTexture.Sample(g_sSampler, input.UV);
+    float4 emissiveTex = g_tEmissiveMapTexture.Sample(g_sSampler, input.UV);
 
     float4 finalCol = float4(0.0, 0.0, 0.0, 1.0);
     
@@ -74,10 +75,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     spcPow *= 255;
     
     // エミッシブ値を復元
-    float3 emissiveColor = depthTex.gba;    // デプスのGBAにエミッシブカラー入れてる
-    float emissivePow = albedoTex.a;
-    emissivePow *= 255;
-    
+    float3 emissiveColor = emissiveTex.rgb; // デプスのGBAにエミッシブカラー入れてる
     
     OUT_DiffAndSpec dirLig;             // ディレクション用
     dirLig.Diffuse = float3(0, 0, 0);
@@ -139,8 +137,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 specular = +pointLig.Specular + dirSpecular;
     
     // 最終色 (アルベド * 光度 + スペキュラ) + エミッシブ
-    finalCol.xyz = (albedoTex.xyz * diffuse + specular);
-    
+    finalCol.xyz = (albedoTex.xyz * diffuse + specular) + emissiveColor;
     
     //************************************************************************
     // シャドウ

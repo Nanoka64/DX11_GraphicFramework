@@ -336,6 +336,7 @@ XMMATRIX Transform::get_WorldMtx()const {
 
     XMMATRIX localMtx = mtxS * mtxRot * mtxT;
 
+
     // e‚ª‚¢‚é‚È‚ç©•ª‚Æe‚ğŠ|‚¯‚½‚à‚Ì‚ğ•Ô‚·
     if (m_pParent.lock())
     {

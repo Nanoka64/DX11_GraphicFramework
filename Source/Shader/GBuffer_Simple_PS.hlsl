@@ -73,16 +73,16 @@ PS_OUT PSMain(PS_IN input)
     // 閾値が 10 以下のピクセルはピクセルキルする
     //clip(dither - 50);
     
+    float3 emissiveColor = cb_EmissiveColor * cb_EmissivePower;
 
     // テスト出力
     PS_OUT output;
-    output.Albedo.rgb   = finalCol.rgb;
-    output.Albedo.a     = (cb_EmissivePower) / (255.0f); // 発光度合を入れる
+    output.Albedo   = finalCol;
     output.Normal.rgb   = (input.Normal.rgb * 0.5f) + 0.5f; // 0～1に収める
     output.Normal.a     = 1.0f;
     output.Specular.rgb = cb_SpecularColor.rgb;
     output.Specular.a   = (cb_SpecularPower) / (255.0f); // wに反射強度入れる（0～1に)
-    output.Emissive.rgb = cb_EmissiveColor.rgb; // 発光カラー格納
+    output.Emissive.rgb = emissiveColor; // 発光カラー格納
     
     output.Depth.gba;
     output.Depth.r;
