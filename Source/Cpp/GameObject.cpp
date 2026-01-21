@@ -6,7 +6,8 @@
 //*【?】コンストラクタ
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
-GameObject::GameObject()
+GameObject::GameObject():
+	m_IsCalcUpdate(false)
 {
 
 }
@@ -25,14 +26,39 @@ GameObject::~GameObject()
 //*---------------------------------------------------------------------------------------
 //* @:Object Class 
 //*【?】コンポーネントの更新
-//* 引数：なし
+//* 引数：描画エンジンの参照
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
 void GameObject::ComponentUpdate(RendererEngine& renderer)
 {
+	// 初めての更新の場合はコンポーネントのStartメソッドを呼ぶようにする
+	if (m_IsCalcUpdate == false)
+	{
+		for (auto &comp : m_pComponentList)
+		{
+			comp.get()->Start(renderer);
+		}
+	}
+
 	for (auto& comp : m_pComponentList)
 	{
 		comp.get()->Update(renderer);
+	}
+
+	m_IsCalcUpdate = true;
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:Object Class 
+//*【?】コンポーネントの更新後の更新
+//* 引数：描画エンジンの参照
+//* 戻値：void
+//*----------------------------------------------------------------------------------------
+void GameObject::ComponentLateUpdate(RendererEngine& renderer)
+{
+	for (auto& comp : m_pComponentList)
+	{
+		comp.get()->LateUpdate(renderer);
 	}
 }
 
@@ -40,7 +66,7 @@ void GameObject::ComponentUpdate(RendererEngine& renderer)
 //*---------------------------------------------------------------------------------------
 //* @:Object Class 
 //*【?】コンポーネントの描画
-//* 引数：なし
+//* 引数：描画エンジンの参照
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
 void GameObject::ComponentRender(RendererEngine& renderer)

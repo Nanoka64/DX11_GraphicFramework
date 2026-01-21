@@ -39,6 +39,7 @@ bool InspectorWindow::Init(RendererEngine &renderer)
     m_EditorMap["Camera3D"]             = std::make_unique<Camera3DEditor>();
     m_EditorMap["SkinnedMeshAnimator"]  = std::make_unique<SkinnedMeshAnimatorEditor>();
     m_EditorMap["ModelMeshResource"]    = std::make_unique<ModelMeshResourceEditor>();
+    m_EditorMap["BoxCollider"]          = std::make_unique<BoxColliderEditor>();
 
     return true;
 }

@@ -45,7 +45,7 @@ SpriteRenderer::~SpriteRenderer()
 //* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void SpriteRenderer::Init(RendererEngine &renderer)
+void SpriteRenderer::Start(RendererEngine &renderer)
 {
 
 }

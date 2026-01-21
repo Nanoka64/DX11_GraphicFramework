@@ -42,7 +42,7 @@ AssultRifle::~AssultRifle()
 //* &renderer : 描画エンジンの参照
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-void AssultRifle::Init(RendererEngine &renderer)
+void AssultRifle::Start(RendererEngine &renderer)
 {
 
 }
@@ -96,7 +96,7 @@ void AssultRifle::Update(RendererEngine &renderer)
         bullet_transform->set_Scale(VEC3(0.01f, 0.01f, 0.01f));
 
         // 初期化
-        bulletComp->Init(renderer);
+        bulletComp->Start(renderer);
 	}
 }
 

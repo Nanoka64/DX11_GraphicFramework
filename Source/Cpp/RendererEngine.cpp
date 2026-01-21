@@ -914,7 +914,7 @@ void RendererEngine::ReleaseRenderTargetSetNull()
 //* 引数：3.深度ステンシル
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[],ID3D11DepthStencilView* pDsv)
+void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *renderTargets[], ID3D11DepthStencilView *pDsv)
 {
     ID3D11RenderTargetView *rtv[8]{};
 
@@ -923,14 +923,7 @@ void RendererEngine::RegisterRenderTargets(UINT num, class DX_RenderTarget *rend
             rtv[i] = renderTargets[i]->get_RTV();
         }
     }
-
-    //深度バッファがある。
-    if (pDsv != nullptr) {
-        m_pImmediateContext->OMSetRenderTargets(num, rtv, pDsv);
-    }
-    else  {
-        m_pImmediateContext->OMSetRenderTargets(num, rtv, nullptr);
-    }
+    m_pImmediateContext->OMSetRenderTargets(num, rtv, pDsv);
 }
 
 //*---------------------------------------------------------------------------------------

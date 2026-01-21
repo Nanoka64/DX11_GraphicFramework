@@ -9,6 +9,8 @@
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
+#include "Component_BoxCollider.h"
+#include "Component_SphereCollider.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -573,3 +575,68 @@ void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &
 
     // 反映
 }
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:BoxColliderEditor Class --- */
+//
+// ***************************************************************************************
+bool BoxColliderEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    using namespace VECTOR3;
+    using namespace Tool;
+
+    // コンポーネントの取得
+    auto pComp = pObj.get_Component<BoxCollider>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    // beginはInspectorWindowで行っている
+    bool isTrigger = pComp->get_IsTrigger();
+    bool isEnable = pComp->get_IsEnable();
+    VEC3 center = pComp->get_Center();
+    VEC3 size = pComp->get_Size();
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ボックスコライダー")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"使用フラグ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_CheckBox("##IsEnable", &isEnable);
+
+        
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"トリガー"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_CheckBox("##IsTrigger", &isTrigger);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"中心位置"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragVec3("##Center", &center, 0.01f, -10000.0f, 10000.0f);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"サイズ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragVec3("##Size", &size, 0.01f, -1000.0f, 1000.0f);
+
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+    // 反映
+    pComp->set_IsEnable(isEnable);
+    pComp->set_IsTrigger(isTrigger);
+    pComp->set_Center(center);
+    pComp->set_Size(size);
+}
+

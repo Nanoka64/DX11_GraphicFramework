@@ -21,6 +21,7 @@
 #include "Component_BillboardRenderer.h"
 #include "Component_SkyRenderer.h"
 #include "Component_AssultRifle.h"
+#include "Component_BoxCollider.h"
 
 
 using namespace VECTOR4;
@@ -114,7 +115,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat[0].m_SpecularPower = 200.0f;
             mat[0].m_EmissivePower = 50.0f;
-            mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f,0.0f);
+            mat[0].m_EmissiveColor = VEC3(0.0f, 1.0f, 1.0f);
 
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("Bullet", mat[0]);
@@ -313,7 +314,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             }
             m_pCameraObj->Init(renderer);
             m_pCameraObj->set_Tag("Camera");
-            m_pCameraObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            m_pCameraObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             m_pCameraObj->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
             m_pCameraComp = m_pCameraObj->add_Component<Camera3D>(); // カメラコンポーネントの追加
         }
@@ -342,7 +343,8 @@ bool SceneManager::Init(RendererEngine& renderer)
             m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
             m_pPlayer->add_Component<PlayerController>(1);
-            m_pPlayer->get_Component<PlayerController>()->Init(renderer);
+            //m_pPlayer->get_Component<PlayerController>()->Start(renderer);
+            m_pPlayer->add_Component<BoxCollider>();
             m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
@@ -405,7 +407,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             sphireObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
             auto light = sphireObj->add_Component<PointLight>();
-            light->Init(renderer);
+            light->Start(renderer);
         }
 
         /* アサルトライフル */
@@ -428,7 +430,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             auto obj = MeshFactory::CreateModel(model);
 
             obj->add_Component<AssultRifle>();
-            obj->get_Component<AssultRifle>()->Init(renderer);
+            obj->get_Component<AssultRifle>()->Start(renderer);
             obj->get_Component<AssultRifle>()->set_BulletObject(sphireObj);
 
             // プレイヤーを親に設定
@@ -462,7 +464,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
             light->set_Intensity(2.0f);
             light->set_LightCameraTrackingObj(m_pCameraObj);
-            light->Init(renderer);
+            light->Start(renderer);
 
             obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(30.0, 30.0, 80.0));
@@ -758,7 +760,7 @@ bool SceneManager::Init(RendererEngine& renderer)
                 light->set_LightColor(col);
                 light->set_Range(100.0f);
                 light->set_Intensity(25.0f);
-                light->Init(renderer);
+                light->Start(renderer);
             }
         }
     }
@@ -877,7 +879,9 @@ void SceneManager::Update(RendererEngine& renderer)
     }
 
     // カメラ操作の更新
-    m_pCameraComp->ViewProcessUpdate();
+    //m_pCameraComp->ViewProcessUpdate();
+
+    Master::m_pGameObjectManager->ObjectLateUpdate(renderer);
 
     // カメラ更新
     auto viewMatrix = m_pCameraComp->get_ViewMatrix();

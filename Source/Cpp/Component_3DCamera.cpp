@@ -57,7 +57,7 @@ Camera3D::~Camera3D()
 //* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::Init(RendererEngine& renderer)
+void Camera3D::Start(RendererEngine& renderer)
 {
 
 }
@@ -71,7 +71,7 @@ void Camera3D::Init(RendererEngine& renderer)
 //* 引数：なし
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void Camera3D::ViewProcessUpdate()
+void Camera3D::LateUpdate(RendererEngine &renderer)
 {
 	if (GetInput(CONFIG_INPUT::DOWN))	// 上
 	{

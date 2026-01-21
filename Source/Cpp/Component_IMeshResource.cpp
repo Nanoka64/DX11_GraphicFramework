@@ -60,7 +60,7 @@ bool IMeshResource::set_TextureMap(TEXTURE_MAP mapType, UINT matIndex, const std
 		return false;
 	}
 
-	if (m_pMeshData->pMaterials.expired());
+	if (m_pMeshData->pMaterials.expired())
 	{
 		assert(false);
 		return false;

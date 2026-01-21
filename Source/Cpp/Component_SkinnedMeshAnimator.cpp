@@ -37,7 +37,7 @@ SkinnedMeshAnimator::~SkinnedMeshAnimator()
 //* ˆø”F1.RendererEngine 
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void SkinnedMeshAnimator::Init(RendererEngine &renderer)
+void SkinnedMeshAnimator::Start(RendererEngine &renderer)
 {
     m_NodeList      = m_pMeshResource.lock()->get_ModelData().lock()->get_NodeList();
     m_BoneList      = m_pMeshResource.lock()->get_ModelData().lock()->get_BoneList();

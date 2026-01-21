@@ -21,7 +21,7 @@ public:
 	~PointLight();
 
 
-	void Init(RendererEngine &renderer) override;	// ‰Šú‰»
+	void Start(RendererEngine &renderer) override;	// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;// XV
 	void Draw(RendererEngine &renderer) override;	// •`‰æ
 

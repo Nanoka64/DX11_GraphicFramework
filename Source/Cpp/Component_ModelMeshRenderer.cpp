@@ -41,7 +41,7 @@ ModelMeshRenderer::~ModelMeshRenderer()
 //* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
-void ModelMeshRenderer::Init(RendererEngine &renderer)
+void ModelMeshRenderer::Start(RendererEngine &renderer)
 {
     // 初期化時に自身にMeshResourceコンポーネントがあれば設定する
     this->set_MeshResource(m_pOwner.lock()->get_Component<ModelMeshResource>());

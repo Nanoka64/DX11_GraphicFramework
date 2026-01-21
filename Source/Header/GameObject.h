@@ -26,6 +26,8 @@ private:
 	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
     std::shared_ptr<class Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
+	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
+
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
 public:
@@ -47,10 +49,17 @@ public:
 	void ComponentUpdate(RendererEngine& renderer);
 
 	/// <summary>
+	/// 更新後の更新
+	/// </summary>
+	/// <param name="renderer"></param>
+	void ComponentLateUpdate(RendererEngine &renderer);
+
+	/// <summary>
 	/// コンポーネントの描画
 	/// </summary>
 	/// <param name="renderer"></param>
 	void ComponentRender(RendererEngine& renderer);
+
 
 	/// <summary>
 	/// Transformの取得

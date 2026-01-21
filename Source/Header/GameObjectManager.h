@@ -22,6 +22,7 @@ public:
 
 	bool Init(RendererEngine &renderer);					// 初期化
 	void ObjectUpdate(RendererEngine &renderer);			// 更新
+	void ObjectLateUpdate(RendererEngine &renderer);		// 更新
 	void ObjectMainRenderPass(RendererEngine &renderer);	// 通常描画パス
 	void ObjectShadowRenderPass(RendererEngine &renderer);	// シャドウ描画パス
 	bool Term(RendererEngine &renderer);					// 終了処理

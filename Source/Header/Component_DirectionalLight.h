@@ -23,7 +23,7 @@ public:
 	DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank);
 	~DirectionalLight();
 
-	void Init(RendererEngine &renderer) override;	// ‰Šú‰»
+	void Start(RendererEngine &renderer) override;	// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;// XV
 	void Draw(RendererEngine &renderer) override;	// •`‰æ
 

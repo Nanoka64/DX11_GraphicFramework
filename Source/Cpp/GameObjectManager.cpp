@@ -48,7 +48,6 @@ bool GameObjectManager::Init(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 {
-    std::vector<std::shared_ptr<GameObject>> deleteList;       // 削除用
     std::vector<std::shared_ptr<GameObject>> collisionList;    // 衝突判定用
 
     for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
@@ -57,6 +56,26 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
         {
             (*it).get()->Update(renderer);
             (*it).get()->ComponentUpdate(renderer);
+        }
+    }
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】更新後の更新
+//* 引数：1.RendererEngine
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::ObjectLateUpdate(RendererEngine &renderer)
+{
+    std::vector<std::shared_ptr<GameObject>> deleteList;       // 削除用
+
+    for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
+    {
+        if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
+        {
+            (*it).get()->Update(renderer);
+            (*it).get()->ComponentLateUpdate(renderer);
         }
         // 削除フラグが立っていれば削除リストに追加
         if ((*it).get()->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE) == true)

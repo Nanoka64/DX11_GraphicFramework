@@ -16,9 +16,6 @@
     <Filter Include="ソース ファイル\Graphics">
       <UniqueIdentifier>{08e8e6d4-6635-4fdb-8460-3d70d7028a4e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\App">
-      <UniqueIdentifier>{09bad568-1f75-4533-a715-e927b15a5256}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Tool">
       <UniqueIdentifier>{b611cbcb-2a22-4c94-a969-28aa8eee683e}</UniqueIdentifier>
     </Filter>
@@ -183,6 +180,15 @@
     </Filter>
     <Filter Include="ソース ファイル\Component\Game\Weapon">
       <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\App">
+      <UniqueIdentifier>{09bad568-1f75-4533-a715-e927b15a5256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Collision">
+      <UniqueIdentifier>{a8973ed6-677a-4fee-9557-46e33ba05d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Collision">
+      <UniqueIdentifier>{eb954da3-785f-4981-81aa-e631be68c888}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -437,6 +443,21 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
       <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Collider.cpp">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\CollisionInfo.cpp">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_BoxCollider.cpp">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SphereCollider.cpp">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\CollisionManager.cpp">
+      <Filter>ソース ファイル\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -724,6 +745,21 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Bullet.h">
       <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Collider.h">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\CollisionInfo.h">
+      <Filter>ソース ファイル\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_BoxCollider.h">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_SphereCollider.h">
+      <Filter>ソース ファイル\Component\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\CollisionManager.h">
+      <Filter>ソース ファイル\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

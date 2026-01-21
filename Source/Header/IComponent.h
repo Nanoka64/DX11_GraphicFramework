@@ -20,9 +20,15 @@ public:
 	IComponent(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);	// updateRankが低いほど先に更新される
 	virtual ~IComponent();
 
-	virtual void Init(RendererEngine &renderer) {};		// 初期化
-	virtual void Update(RendererEngine& renderer) {};	// 更新処理
-	virtual void Draw(RendererEngine &renderer) {};		// 描画処理
+	virtual void Start(RendererEngine &renderer) {};	 // 初期化
+	virtual void Update(RendererEngine& renderer) {};	 // 更新処理
+	virtual void LateUpdate(RendererEngine &renderer) {};// 更新後の更新
+	virtual void Draw(RendererEngine &renderer) {};		 // 描画処理
+	
+	/* 当たり判定関連 */
+	virtual void OnCollisionEnter(class CollisionInfo &other) {} // 当たった瞬間
+	virtual void OnCollisionStay(class CollisionInfo &other) {}	// 当たっている間
+	virtual void OnCollisionExit(class CollisionInfo &other) {}	// 離れた瞬間
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// 更新の順番取得
 	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };

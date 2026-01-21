@@ -74,7 +74,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
         if (info.IsAnim) {
             // Renderer よりも更新を速めに（シェーダに渡る情報がおかしくなるため）
             pModelObj->add_Component<SkinnedMeshAnimator>(99)->set_MeshResource(meshResource);;
-            pModelObj->get_Component<SkinnedMeshAnimator>()->Init(*info.pRenderer);
+            pModelObj->get_Component<SkinnedMeshAnimator>()->Start(*info.pRenderer);
             pModelObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(info.InitAnimIndex);
         }
     }

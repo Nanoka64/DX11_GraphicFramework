@@ -65,6 +65,7 @@ PS_OUT PSMain(PS_IN input)
     output.Specular.rgb = specularMap.rgb + cb_SpecularColor.rgb;
     output.Specular.a   = (cb_SpecularPower) / (255.0f); // w‚É”½Ë‹­“x“ü‚ê‚é
     output.Emissive.rgb = emissiveColor; // ”­ŒõƒJƒ‰[
+    output.Emissive.a = 1.0f; 
     
     output.Depth.gba;
     output.Depth.r;

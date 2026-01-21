@@ -37,7 +37,7 @@ PointLight::~PointLight()
 //* ˆø”F1.RendererEngine
 //* •Ô’lFbool
 //*----------------------------------------------------------------------------------------
-void PointLight::Init(RendererEngine &renderer)
+void PointLight::Start(RendererEngine &renderer)
 {
     m_pOwnerTransform = m_pOwner.lock()->get_Transform();
 }

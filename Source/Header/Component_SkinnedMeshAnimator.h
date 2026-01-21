@@ -46,7 +46,7 @@ public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SkinnedMeshAnimator();
 
-	void Init(RendererEngine& renderer)override;
+	void Start(RendererEngine& renderer)override;
 	//void Update(RendererEngine& renderer)override;
 	void Draw(RendererEngine& renderer)override;
 

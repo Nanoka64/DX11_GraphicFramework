@@ -38,7 +38,7 @@ MeshRenderer::~MeshRenderer()
 //* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void MeshRenderer::Init(RendererEngine& renderer)
+void MeshRenderer::Start(RendererEngine& renderer)
 {
 
 }

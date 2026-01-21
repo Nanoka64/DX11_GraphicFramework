@@ -37,7 +37,7 @@ BillboardRenderer::~BillboardRenderer()
 //* [•Ô’l]
 //* void
 //*----------------------------------------------------------------------------------------
-void BillboardRenderer::Init(RendererEngine& renderer)
+void BillboardRenderer::Start(RendererEngine& renderer)
 {
 
 }

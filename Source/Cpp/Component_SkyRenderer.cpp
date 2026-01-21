@@ -41,7 +41,7 @@ SkyRenderer::~SkyRenderer()
 //* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
-void SkyRenderer::Init(RendererEngine& renderer)
+void SkyRenderer::Start(RendererEngine& renderer)
 {
 
 }

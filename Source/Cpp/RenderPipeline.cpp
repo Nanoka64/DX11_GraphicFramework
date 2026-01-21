@@ -124,6 +124,10 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), VEC2(400, 200));
             Master::m_pDebugger->DG_Separator();
 
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"エミッシブ"));
+            Master::m_pDebugger->DG_Image(m_pEmissive_RT->get_SRV(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Separator();
+
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"深度"));
             Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_Separator();
@@ -236,6 +240,7 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
         m_pNormal_RT,
         m_pSpecular_RT,
         m_pEmissive_RT,
+        m_pDepth_RT,
     };
 
     // ビューポートの設定
@@ -245,7 +250,6 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
     // レンダリングターゲットの設定とクリア
     renderer.RegisterRenderTargets(ARRAYSIZE(gbuffer), gbuffer, m_pDepth_RT->get_DSV());
     renderer.ClearRenderTargetViews(ARRAYSIZE(gbuffer), gbuffer);
-    renderer.get_DeviceContext()->ClearDepthStencilView(m_pDepth_RT->get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0, 0);
 
     // メイン描画パス
     renderer.set_CrntRenderPass(RENDER_PASS::MAIN);

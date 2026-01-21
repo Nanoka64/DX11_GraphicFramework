@@ -20,7 +20,7 @@ public:
 	BillboardRenderer(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);
 	~BillboardRenderer();
 
-	void Init(RendererEngine& renderer)override;
+	void Start(RendererEngine& renderer)override;
 	void Update(RendererEngine& renderer)override;
 	void Draw(RendererEngine& renderer)override;
 

@@ -14,7 +14,7 @@ public:
 	ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~ModelMeshRenderer();
 
-	void Init(RendererEngine &renderer) override;		// ‰Šú‰»
+	void Start(RendererEngine &renderer) override;		// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;	// XVˆ—
 	void Draw(RendererEngine &renderer) override;		// •`‰æˆ—
 	void set_MeshResource(std::shared_ptr<class ModelMeshResource> meshResource);

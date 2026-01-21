@@ -30,9 +30,9 @@ public:
 	Camera3D(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~Camera3D();
 
-	void Init(RendererEngine& renderer) override;		// 初期化
+	void Start(RendererEngine& renderer) override;		// 初期化
 
-	void ViewProcessUpdate();	// カメラの操作など
+	void LateUpdate(RendererEngine &renderer)override;
 
 	void set_UpVec(const VECTOR3::VEC3& upVec);					// 上方向ベクトルの設定
 	void set_FocusPoint(const VECTOR3::VEC3& focus);			// 注視点の設定

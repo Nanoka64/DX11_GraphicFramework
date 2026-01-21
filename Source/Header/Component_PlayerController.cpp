@@ -51,7 +51,7 @@ PlayerController::~PlayerController()
 //* [返値]
 //* void
 //*----------------------------------------------------------------------------------------
-void PlayerController::Init(RendererEngine& renderer)
+void PlayerController::Start(RendererEngine& renderer)
 {
 	// カメラコンポーネントの取得
 	auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Camera");

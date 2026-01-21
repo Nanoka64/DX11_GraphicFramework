@@ -41,7 +41,7 @@ DirectionalLight::~DirectionalLight()
 //* ˆø”F1.RendererEngine
 //* •Ô’lFbool
 //*----------------------------------------------------------------------------------------
-void DirectionalLight::Init(RendererEngine &renderer)
+void DirectionalLight::Start(RendererEngine &renderer)
 {
     m_pOwnerTransform = m_pOwner.lock()->get_Transform();
 	m_UpVec = VEC3(0, 1, 0);

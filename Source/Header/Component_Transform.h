@@ -35,7 +35,7 @@ private:
 
 	std::weak_ptr<Transform> m_pParent;	        // 親オブジェクト
 
-    void Init(RendererEngine &renderer) override {};	// 初期化
+    void Start(RendererEngine &renderer) override {};	// 初期化
     void Update(RendererEngine &renderer) override {}; 	// 更新処理
     void Draw(RendererEngine &renderer)override {};		// 描画処理
 

@@ -174,7 +174,7 @@ public:
 //
 //  ★継承：EditorBase ★
 //
-// 【?】スキンメッシュアニメーション編集用エディタ
+// 【?】モデルリソースの確認用エディタ
 //
 // ***************************************************************************************
 class ModelMeshResourceEditor : public EditorBase
@@ -187,6 +187,32 @@ public:
     {
     };
     ~ModelMeshResourceEditor()
+    {
+    };
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+
+};
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:BoxColliderEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】ボックスコライダーの編集用エディタ
+//
+// ***************************************************************************************
+class BoxColliderEditor : public EditorBase
+{
+private:
+
+public:
+    BoxColliderEditor()
+        : EditorBase()
+    {
+    };
+    ~BoxColliderEditor()
     {
     };
     bool Init(RendererEngine &renderer) override;
