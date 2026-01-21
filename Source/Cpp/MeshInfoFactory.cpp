@@ -7,23 +7,23 @@ using namespace VERTEX;
 using namespace Tool::UV;
 
 // 頂点数 ***************************************
-constexpr UINT g_QuadVertexNum		   = 4;
-constexpr UINT g_CubeVertexNum		   = 24;
-constexpr UINT g_PlaneVertexNum		   = 4;
-constexpr UINT g_SpriteQuadVertexNum   = 4;
-constexpr UINT g_RTSpriteQuadVertexNum = 4;
+const UINT g_QuadVertexNum		   = 4;
+const UINT g_CubeVertexNum		   = 24;
+const UINT g_PlaneVertexNum		   = 4;
+const UINT g_SpriteQuadVertexNum   = 4;
+const UINT g_RTSpriteQuadVertexNum = 4;
 // インデックス数 *******************************
-constexpr UINT g_QuadIndexNum			= 6;
-constexpr UINT g_CubeIndexNum			= 36;
-constexpr UINT g_PlaneIndexNum			= 6;
-constexpr UINT g_SpriteQuadIndexNum		= 6;
-constexpr UINT g_RTSpriteQuadIndexNum	= 6;
+const UINT g_QuadIndexNum			= 6;
+const UINT g_CubeIndexNum			= 36;
+const UINT g_PlaneIndexNum			= 6;
+const UINT g_SpriteQuadIndexNum		= 6;
+const UINT g_RTSpriteQuadIndexNum	= 6;
 
  
 //* =========================================================================
 //* - @:クアッド（板ポリ） - */
 //* =========================================================================
-VERTEX::VERTEX_Static g_QuadVertices[] = {
+const VERTEX::VERTEX_Static g_QuadVertices[] = {
 	{ VEC3(-1.0f,  1.0f,  0.0f), VEC2(0.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 8 左上
 	{ VEC3( 1.0f,  1.0f,  0.0f), VEC2(1.0f, 0.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 9 右上
 	{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 10左下
@@ -34,7 +34,7 @@ VERTEX::VERTEX_Static g_QuadVertices[] = {
 //* =========================================================================
 //* - @:キューブ（箱） - */
 //* =========================================================================
-VERTEX::VERTEX_Static g_CubeVertices[] = {
+const VERTEX::VERTEX_Static g_CubeVertices[] = {
 	// 座標                       // 法線                  // カラー                      // uv
 	// 正面 1
 	{ VEC3(-1.0f,  1.0f, -1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, -1.0f)},  // 0 左上
@@ -77,7 +77,7 @@ VERTEX::VERTEX_Static g_CubeVertices[] = {
 //* =========================================================================
 //* - @:プレーン（平面） - */
 //* =========================================================================
-VERTEX::VERTEX_Static g_PlaneVertices[] = {
+const VERTEX::VERTEX_Static g_PlaneVertices[] = {
 	// 座標   // uv  // カラー					   // 法線                          
 	{VEC3(-1.0f, 0.0f,  1.0f), VEC2(0.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 8 左上
 	{VEC3( 1.0f, 0.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 9 右上

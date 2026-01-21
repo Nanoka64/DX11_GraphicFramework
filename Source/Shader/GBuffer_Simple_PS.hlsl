@@ -58,7 +58,7 @@ PS_OUT PSMain(PS_IN input)
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
-    finalCol = diffuseMap * cb_DiffuseColor;
+    finalCol = diffuseMap * cb_DiffuseColor + input.Color;
     
     // こっちは法線マップなしver
     //float3 normal = GetNorm(normalMap, float3(1.0, 0.0, 0.0), float3(0.0, 0.0, -1.0), input.Normal);

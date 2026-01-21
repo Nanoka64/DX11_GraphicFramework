@@ -196,6 +196,7 @@
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
+    <ClInclude Include="Source\Header\DebugMesh.h" />
     <ClInclude Include="Source\Header\EditorBase.h" />
     <ClInclude Include="Source\Header\EditorManager.h" />
     <ClInclude Include="Source\Header\EditWindowBase.h" />
@@ -303,6 +304,7 @@
     <ClCompile Include="Source\Cpp\Component_SphereCollider.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
+    <ClCompile Include="Source\Cpp\DebugMesh.cpp" />
     <ClCompile Include="Source\Cpp\EditorBase.cpp" />
     <ClCompile Include="Source\Cpp\EditorManager.cpp" />
     <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />

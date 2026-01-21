@@ -33,5 +33,6 @@ float4 PSMain(PS_SimpleIntput input) : SV_TARGET
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     finalColor = texColor * input.Color;
     finalColor *= cb_DiffuseColor;
+    
     return finalColor;
 }

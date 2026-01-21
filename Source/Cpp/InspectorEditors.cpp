@@ -623,12 +623,12 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"中心位置"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragVec3("##Center", &center, 0.01f, -10000.0f, 10000.0f);
+        Master::m_pDebugger->DG_DragVec3("##Center", &center, 0.1f, -10000.0f, 10000.0f);
 
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"サイズ"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragVec3("##Size", &size, 0.01f, -1000.0f, 1000.0f);
+        Master::m_pDebugger->DG_DragVec3("##Size", &size, 0.1f, -1000.0f, 1000.0f);
 
         Master::m_pDebugger->DG_TreePop();
     }

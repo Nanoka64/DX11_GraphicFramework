@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Component_BoxCollider.h"
 #include "RendererEngine.h"
+#include "DebugMesh.h"
+#include "GameObject.h"
 
 using namespace GIGA_Engine;
 using namespace VECTOR3;
@@ -17,8 +19,6 @@ BoxCollider::BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank)
     this->set_Tag("BoxCollider");
 }
 
-
-
 //*---------------------------------------------------------------------------------------
 //*【?】デストラクタ
 //*----------------------------------------------------------------------------------------
@@ -26,7 +26,6 @@ BoxCollider::~BoxCollider()
 {
 
 }
-
 
 //*---------------------------------------------------------------------------------------
 //*【?】初期化
@@ -37,7 +36,8 @@ BoxCollider::~BoxCollider()
 //*----------------------------------------------------------------------------------------
 void BoxCollider::Start(RendererEngine &renderer)
 {
-
+    m_pBoxMesh = std::make_unique<DebugMesh>();
+    m_pBoxMesh->Setup(renderer,DEBUG_MESHS_TYPE::CUBE);
 }
 
 
@@ -64,6 +64,21 @@ void BoxCollider::Update(RendererEngine &renderer)
 void BoxCollider::Draw(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
+    XMMATRIX localMat = XMMatrixIdentity();
+
+    auto transform = m_pOwner.lock()->get_Transform().lock();
+    VEC3 ownerPos = transform->get_VEC3ToPos();
+
+    XMVECTOR scl = m_Size;
+    XMVECTOR pos = ownerPos + m_Center; // 中心位置のオフセットを足す
+
+    XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
+    XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
+
+    localMat = transform->get_ExcludingRotWorldMtx(mtxS, mtxT);
+
+    // メッシュ表示
+    m_pBoxMesh->Draw(renderer, localMat);
 }
 
 

@@ -20,7 +20,7 @@ enum class COLLIDER_TYPE
 // ***************************************************************************************
 class Collider : public IComponent
 {
-private:
+protected:
 	bool m_IsEnable;		// 使用するかどうか
 	bool m_IsTrigger;		// 衝突判定のみ取るかどうか（falseなら物理も判定をする）
 	VECTOR3::VEC3 m_Center;	// コライダーの中心位置

@@ -102,6 +102,7 @@ public:
     /// <param name="trans"></param>
     /// <returns></returns>
     DirectX::XMMATRIX get_WorldMtx(const DirectX::XMMATRIX &scl, const DirectX::XMMATRIX &rot, const DirectX::XMMATRIX &trans)const;
+    DirectX::XMMATRIX get_ExcludingRotWorldMtx(const DirectX::XMMATRIX &scl, const DirectX::XMMATRIX &trans)const;
 
     const VECTOR3::VEC3 get_Forward()const;
     VECTOR3::VEC3 get_Up()const;

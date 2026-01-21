@@ -459,6 +459,9 @@
     <ClCompile Include="Source\Cpp\CollisionManager.cpp">
       <Filter>ソース ファイル\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\DebugMesh.cpp">
+      <Filter>ソース ファイル\Graphics\Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -760,6 +763,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\CollisionManager.h">
       <Filter>ソース ファイル\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\DebugMesh.h">
+      <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

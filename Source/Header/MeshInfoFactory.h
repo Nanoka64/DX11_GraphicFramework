@@ -1,4 +1,20 @@
 #pragma once
+// 頂点数 ***************************************
+extern const UINT g_QuadVertexNum;
+extern const UINT g_CubeVertexNum;
+extern const UINT g_PlaneVertexNum;
+extern const UINT g_SpriteQuadVertexNum;
+extern const UINT g_RTSpriteQuadVertexNum;
+// インデックス数 *******************************
+extern const UINT g_QuadIndexNum;
+extern const UINT g_CubeIndexNum;
+extern const UINT g_PlaneIndexNum;
+extern const UINT g_SpriteQuadIndexNum;
+extern const UINT g_RTSpriteQuadIndexNum;
+
+extern const VERTEX::VERTEX_Static g_QuadVertices[];
+extern const VERTEX::VERTEX_Static g_CubeVertices[];
+extern const VERTEX::VERTEX_Static g_PlaneVertices[];
 
 /// <summary>
 /// 静的メッシュ用
@@ -86,7 +102,7 @@ public:
 		// インデックスバッファの生成
 		hr = pDevice->CreateBuffer(&bd, &initData, &meshData.pIndexBuffer);
 		if (FAILED(hr)) {
-			// インデックスバッファに失敗したら、作った頂点バッファを逃がさず消す
+			// インデックスバッファに失敗したら、作った頂点バッファを消す
 			if (meshData.pVertexBuffer) {
 				meshData.pVertexBuffer->Release();
 				meshData.pVertexBuffer = nullptr;

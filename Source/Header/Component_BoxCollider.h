@@ -15,6 +15,7 @@ class BoxCollider : public Collider
 {
 private:
 	VECTOR3::VEC3 m_Size;
+	std::unique_ptr<class DebugMesh> m_pBoxMesh;
 
 public:
 	BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
