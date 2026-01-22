@@ -534,7 +534,7 @@ HRESULT RendererEngine::InitDX11_Sampler()
 
     // シャドウマップ用サンプラー
     sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+    sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;

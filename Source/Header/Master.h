@@ -8,6 +8,7 @@
 #include "GameObjectManager.h"
 #include "Debugger.h"
 #include "EditorManager.h"
+#include "CollisionManager.h"
 
 class Master
 {
@@ -21,4 +22,5 @@ public:
 	static ResourceManager		* m_pResourceManager;	// リソース管理
 	static EditorManager		* m_pEditorManager;		// エディタ管理
 	static InputManager			* m_pInputManager;		// 入力管理
+	static CollisionManager		* m_pCollisionManager;	// 衝突管理
 };

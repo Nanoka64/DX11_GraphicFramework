@@ -232,6 +232,11 @@ void PlayerController::Draw(RendererEngine& renderer)
 	return;
 }
 
+void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
+{
+	ChangeAnimation(PLAYER_ANIMATION_ID::DEATH01);
+}
+
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 {
 	// “¯‚¶‚È‚ç•Ô‚·

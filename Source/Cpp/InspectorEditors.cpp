@@ -122,7 +122,6 @@ void DirectionLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pOb
         Master::m_pDebugger->DG_SliderFloat("##ShadowDist", 1, &shadowDist,         10.0f, 10000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"追従オブジェクトからのオフセット距離"));
-        Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_SliderFloat("##FocusOfs",   1, &shadowFocusOfsDist, 10.0f, 2000.0f);
         
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"横幅"));
@@ -603,6 +602,7 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     // beginはInspectorWindowで行っている
     bool isTrigger = pComp->get_IsTrigger();
     bool isEnable = pComp->get_IsEnable();
+    bool isHit = pComp->get_IsHit();
     VEC3 center = pComp->get_Center();
     VEC3 size = pComp->get_Size();
 
@@ -619,6 +619,11 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"トリガー"));
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_CheckBox("##IsTrigger", &isTrigger);
+
+        
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"衝突フラグ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_CheckBox("##IsHit", &isHit);
 
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"中心位置"));

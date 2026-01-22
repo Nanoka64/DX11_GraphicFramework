@@ -14,7 +14,8 @@ using namespace VECTOR3;
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
 BoxCollider::BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank)
-    :Collider(pOwner, updateRank)
+    :Collider(pOwner, updateRank),
+    m_Size(VEC3(10.0f,10.0f,10.0f))
 {
     this->set_Tag("BoxCollider");
 }
@@ -38,6 +39,13 @@ void BoxCollider::Start(RendererEngine &renderer)
 {
     m_pBoxMesh = std::make_unique<DebugMesh>();
     m_pBoxMesh->Setup(renderer,DEBUG_MESHS_TYPE::CUBE);
+
+    m_pTransform = m_pOwner.lock()->get_Transform();
+
+    if (m_pTransform.expired())
+    {
+        MessageBox(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
+    }
 }
 
 

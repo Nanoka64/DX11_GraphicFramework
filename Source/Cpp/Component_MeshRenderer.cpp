@@ -153,6 +153,10 @@ void MeshRenderer::Draw(RendererEngine& renderer)
 
     // 描画コール：インデックス数は（三角形個 × 3頂点） ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
+
+    pContext->PSSetShaderResources(0, 0, nullptr);
+    pContext->PSSetShaderResources(1, 0, nullptr);
+    pContext->PSSetShaderResources(2, 0, nullptr);
 }
 
 

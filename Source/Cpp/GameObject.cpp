@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameObject.h"
+#include "CollisionInfo.h"
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObject3D Class 
@@ -69,14 +70,34 @@ void GameObject::ComponentLateUpdate(RendererEngine& renderer)
 //* 引数：描画エンジンの参照
 //* 戻値：void
 //*----------------------------------------------------------------------------------------
-void GameObject::ComponentRender(RendererEngine& renderer)
+void GameObject::ComponentRender(RendererEngine &renderer)
 {
-	for (auto& comp : m_pComponentList)
+	for (auto &comp : m_pComponentList)
 	{
 		comp.get()->Draw(renderer);
 	}
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】衝突判定を受け取る
+//*
+//* [引数]
+//* &info : 衝突情報
+//*
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void GameObject::OnCollisionEnter(const CollisionInfo &info)
+{
+	// 自身が持っている全てのコンポーネントに対してループ処理を行う
+	for (auto &component : m_pComponentList)
+	{
+		// アクティブなもののみ
+		if (component->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+		{
+			component->OnCollisionEnter(info);
+		}
+	}
+}
 
 //*---------------------------------------------------------------------------------------
 //* @:Object Class 
@@ -99,3 +120,5 @@ std::vector<std::shared_ptr<IComponent>> GameObject::get_ComponentList()const
 {
 	return m_pComponentList;
 }
+
+

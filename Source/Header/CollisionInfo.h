@@ -15,6 +15,8 @@ private:
     VECTOR3::VEC3 m_HitPoint;                               // è’ìÀà íu
     VECTOR3::VEC3 m_HitNormal;                              // è’ìÀñ ÇÃå¸Ç´
     VECTOR3::VEC3 m_RelativeVelocity;                       // è’ìÀÇµÇΩï®ëÃÇÃëäëŒë¨ìx
+
+    float m_PenetrationDepth; // ÇﬂÇËçûÇ›ó 
 public:
     CollisionInfo();
     ~CollisionInfo();
@@ -55,9 +57,12 @@ public:
     //*----------------------------------------------------------------------------------------
     void set_RelativeVelocity(const VECTOR3::VEC3 &_vIn) { m_RelativeVelocity = _vIn; }
     VECTOR3::VEC3 get_RelativeVelocity()const { return m_HitPoint; }
-
-
-
+    
+    //*---------------------------------------------------------------------------------------
+    //*Åy?ÅzÇﬂÇËçûÇ›ê[ìx
+    //*----------------------------------------------------------------------------------------
+    void set_PenetrationDepth(const float &_depth) { m_PenetrationDepth = _depth; }
+    float get_PenetrationDepth()const { return m_PenetrationDepth; }
 
 };
 

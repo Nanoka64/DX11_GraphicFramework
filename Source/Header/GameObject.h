@@ -39,6 +39,10 @@ public:
 	virtual void Draw(RendererEngine& renderer) {};
 	virtual bool Term(RendererEngine& renderer) { return true; };
 
+	void OnCollisionEnter(const class CollisionInfo &info);
+	void OnCollisionStay(const class CollisionInfo &info);
+	void OnCollisionExit(const class CollisionInfo &info);
+
 
 	// ****************************************************************************************************************************************
 	/* コンポーネント関連 */

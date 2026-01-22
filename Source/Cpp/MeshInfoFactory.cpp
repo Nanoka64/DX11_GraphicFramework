@@ -29,7 +29,10 @@ const VERTEX::VERTEX_Static g_QuadVertices[] = {
 	{ VEC3(-1.0f, -1.0f,  0.0f), VEC2(0.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 10左下
 	{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f) }, // 11右下
 };
-
+const WORD g_QuadIndices[] ={
+	 0, 1, 2,
+	 1, 3, 2
+};
 
 //* =========================================================================
 //* - @:キューブ（箱） - */
@@ -72,7 +75,30 @@ const VERTEX::VERTEX_Static g_CubeVertices[] = {
 	{ VEC3(-1.0f,  -1.0f,  1.0f),VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 22 左下
 	{ VEC3(-1.0f,  -1.0f, -1.0f),VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(-1.0f, 0.0f, 0.0f) },  // 23 右下
 };
+const WORD g_CubeIndices[] = {
+		0,1,2,
+		1,3,2,  // 時計回りなら順番は何でもいい
 
+		// 天井
+		4,5,6,
+		5,7,6,
+
+		// 地面
+		8,9,10,
+		9,11,10,
+
+		// 後ろ
+		12,13,14,
+		13,15,14,
+
+		// 右
+		16,17,18,
+		17,19,18,
+
+		// 左
+		20,21,22,
+		21,23,22,
+};
 
 //* =========================================================================
 //* - @:プレーン（平面） - */
@@ -83,6 +109,10 @@ const VERTEX::VERTEX_Static g_PlaneVertices[] = {
 	{VEC3( 1.0f, 0.0f,  1.0f), VEC2(1.0f, 0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 9 右上
 	{VEC3(-1.0f, 0.0f, -1.0f), VEC2(0.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 10左下
 	{VEC3( 1.0f, 0.0f, -1.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 1.0f, 0.0f)}, // 11右下
+};
+const WORD g_PlaneIndices[] = {
+	 0, 1, 2,
+	 1, 3, 2
 };
 
 
@@ -115,14 +145,14 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateQuadInfo(RendererEngine
 			{ VEC3( 1.0f, -1.0f,  0.0f), VEC2(1.0f, 1.0f),  VEC4(1.0f, 1.0f, 1.0f, 1.0f),  VEC3(0.0f, 0.0f, -1.0f), VEC3(),VEC3() }, // 11右下
 		};
 		// 接線・副接線を求める
-		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, g_QuadIndices, g_CubeIndexNum);
 
-		*meshData = CreateMesh(pDevice,vertices, g_QuadVertexNum, indices, g_QuadIndexNum);
+		*meshData = CreateMesh(pDevice,vertices, g_QuadVertexNum, g_QuadIndices, g_QuadIndexNum);
 	}
 	// 法線マップなし
 	else
 	{
-		*meshData = CreateMesh(pDevice, g_QuadVertices, g_QuadVertexNum, indices, g_QuadIndexNum);
+		*meshData = CreateMesh(pDevice, g_QuadVertices, g_QuadVertexNum, g_QuadIndices, g_QuadIndexNum);
 	}
 
 	// マテリアル情報設定
@@ -243,13 +273,13 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateCubeInfo(RendererEngine
 		};
 
 		// 接線・副接線を求める
-		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+		Tool::CalcTangentAndBitangent(vertices, g_CubeVertexNum, g_CubeIndices, g_CubeIndexNum);
 
-		*meshData = CreateMesh(pDevice, vertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+		*meshData = CreateMesh(pDevice, vertices, g_CubeVertexNum, g_CubeIndices, g_CubeIndexNum);
 	}
 	else
 	{
-		*meshData = CreateMesh(pDevice, g_CubeVertices, g_CubeVertexNum, indices, g_CubeIndexNum);
+		*meshData = CreateMesh(pDevice, g_CubeVertices, g_CubeVertexNum, g_CubeIndices, g_CubeIndexNum);
 	}
 
 	// マテリアルの設定
@@ -366,13 +396,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 		VEC2(1.0f, 1.0f),
 	};
 
-	// インデックス情報
-	WORD indices[] = 
-	{ 
-		0, 1, 2, 
-		1, 3, 2 
-	};
-
 	// 法線マップあり
 	if (isNormalMap)
 	{
@@ -385,14 +408,14 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreatePlaneInfo(RendererEngin
 		};
 		
 		// 接線・副接線を求める
-		Tool::CalcTangentAndBitangent(vertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
+		Tool::CalcTangentAndBitangent(vertices, g_PlaneVertexNum, g_PlaneIndices, g_PlaneIndexNum);
 
-		*meshData = CreateMesh(pDevice, vertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
+		*meshData = CreateMesh(pDevice, vertices, g_PlaneVertexNum, g_PlaneIndices, g_PlaneIndexNum);
 	}
 	// 法線マップなし
 	else
 	{
-		*meshData = CreateMesh(pDevice, g_PlaneVertices, g_PlaneVertexNum, indices, g_PlaneIndexNum);
+		*meshData = CreateMesh(pDevice, g_PlaneVertices, g_PlaneVertexNum, g_PlaneIndices, g_PlaneIndexNum);
 	}
 
 	// マテリアル情報設定
@@ -409,12 +432,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSpriteQuadInfo(Renderer
 	auto pDevice = renderer.get_Device();
 	auto meshData = std::make_shared<MeshResourceData>();
 
-	// インデックス情報
-	WORD indices[] = {
-		0,1,2,
-		1,3,2
-	};
-
 	// 中心位置
 	VEC2 centerVec = VEC2(0.0f, 0.0f);
 	float hw  = w * 0.5f;
@@ -429,7 +446,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateSpriteQuadInfo(Renderer
 		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f, 1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)}, //　右下
 	};
 
-	*meshData = CreateMesh(pDevice, vertices, g_SpriteQuadVertexNum, indices, g_SpriteQuadIndexNum);
+	*meshData = CreateMesh(pDevice, vertices, g_SpriteQuadVertexNum, g_QuadIndices, g_SpriteQuadIndexNum);
 
 	// マテリアル情報設定
 	meshData->pMaterials;
@@ -450,12 +467,6 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 	VEC2 centerVec = VEC2(0.0f, 0.0f);
 	float hw = w;
 	float hh = h;
-
-	// インデックス情報
-	WORD indices[] = {
-		0, 1, 2, // 左上 -> 右上 -> 左下
-		1, 3, 2  // 右上 -> 右下 -> 左下
-	};
 
 	/* テクスチャ座標では
 	* 上：0.0
@@ -484,7 +495,7 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右下
 	};
 
-	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, indices, g_RTSpriteQuadIndexNum);
+	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, g_QuadIndices, g_RTSpriteQuadIndexNum);
 
 	// マテリアル情報設定
 	meshData->pMaterials;

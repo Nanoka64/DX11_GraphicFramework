@@ -120,6 +120,12 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 
     // 描画コール：インデックス数は6（三角形2個 × 3頂点） ==========================
     pContext->DrawIndexed(6, 0, 0);
+
+	for (int i = 0; i < m_pTextureMap.size(); i++)
+	{
+		pContext->PSSetShaderResources(i, 0, nullptr);
+		pContext->VSSetShaderResources(i, 0, nullptr);
+	}
 }
 
 

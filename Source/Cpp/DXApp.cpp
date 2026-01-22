@@ -27,6 +27,7 @@ GameObjectManager       *Master::m_pGameObjectManager   = nullptr;  // ƒIƒuƒWƒFƒ
 ResourceManager         *Master::m_pResourceManager     = nullptr;  // ƒŠƒ\[ƒXŠÇ—
 EditorManager           *Master::m_pEditorManager       = nullptr;  // ƒGƒfƒBƒ^ŠÇ—
 InputManager            *Master::m_pInputManager        = nullptr;   // “ü—ÍŠÇ—
+CollisionManager        *Master::m_pCollisionManager    = nullptr;   // Õ“ËŠÇ—
 
 
 //*---------------------------------------------------------------------------------------
@@ -85,6 +86,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pResourceManager      = new ResourceManager();        // ƒŠƒ\[ƒXŠÇ—
     Master::m_pEditorManager        = new EditorManager();          // ƒGƒfƒBƒ^ŠÇ—
     Master::m_pInputManager         = new InputManager();           // “ü—ÍŠÇ—
+    Master::m_pCollisionManager     = new CollisionManager();       // Õ“ËŠÇ—
 
     // *************************************************************************************************
     /**  ƒEƒCƒ“ƒhƒE‚Ì‰Šú‰» **/

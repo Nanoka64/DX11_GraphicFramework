@@ -18,7 +18,10 @@ Collider::Collider(std::weak_ptr<GameObject> pOwner, int updateRank)
     : IComponent(pOwner, updateRank),
     m_IsEnable(true),
     m_IsTrigger(false),
-    m_Center(VEC3())
+    m_IsHit(false),
+    m_IsStatic(false),
+    m_Center(VEC3()),
+    m_ColliderType(COLLIDER_TYPE::BOX)
 {
     this->set_Tag("Collider");
 }

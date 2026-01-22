@@ -49,11 +49,16 @@ public:
     /// </summary>
     void CollisionProcess();
 
+    void RegisterCollider(std::shared_ptr<class Collider> pCol);
+
     /// <summary>
     /// îªíËÇçsÇ§
     /// </summary>
     /// <returns></returns>
     bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, class CollisionInfo* info);
+
+    // î†Ç∆î† ï®óùìIîªíË
+    bool HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst);
 
     // î†Ç∆î†
     bool HitCheck_BoxVsBox(const CollInData_AABB &_src, const CollInData_AABB &_dst);

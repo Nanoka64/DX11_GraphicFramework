@@ -133,6 +133,8 @@ public:
 	void Update(RendererEngine& renderer) override;	// XVˆ—
 	void Draw(RendererEngine& renderer)override;		// •`‰æˆ—
 
+	void OnCollisionEnter(const class CollisionInfo &other)override;
+
 	/* ˆÚ“®‘¬“x */
     float get_MoveSpeed() const { return m_MoveSpeed; }
     void set_MoveSpeed(float speed) { m_MoveSpeed = speed; }

@@ -348,6 +348,9 @@ bool SceneManager::Init(RendererEngine& renderer)
             m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(m_pPlayer->get_Component<BoxCollider>());
+
             // カメラのフォーカスオブジェクトに設定
             m_pCameraComp->set_FocusObject(m_pPlayer);
         }
@@ -567,9 +570,13 @@ bool SceneManager::Init(RendererEngine& renderer)
             model.SetupMaterial = matInfo;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
             m_pTempObj = MeshFactory::CreateModel(model);
+            m_pTempObj->add_Component<BoxCollider>();
             m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
             m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(m_pTempObj->get_Component<BoxCollider>());
         }
 
         /* マザーシップの生成 */
@@ -813,6 +820,8 @@ void SceneManager::Update(RendererEngine& renderer)
 
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
+
+    Master::m_pCollisionManager->CollisionProcess();
 
     //-----------------------------------------------------------------------------
     // ■ アリの移動処理

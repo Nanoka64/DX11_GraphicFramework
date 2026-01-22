@@ -4,6 +4,8 @@
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "CollisionInfo.h"
+#include "Component_Transform.h"
+#include "GameObject.h"
 
 using namespace VECTOR3;
 
@@ -17,6 +19,16 @@ CollisionManager::~CollisionManager()
 
 //*---------------------------------------------------------------------------------------
 //*【?】衝突判定を行う
+//* [引数] pCol : 登録するコライダー
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void CollisionManager::RegisterCollider(std::shared_ptr<class Collider> pCol)
+{
+    m_pCollidersList.push_back(pCol);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】衝突判定を行う
 //* [引数]
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
@@ -24,19 +36,43 @@ void CollisionManager::CollisionProcess()
 {
     for (int i = 0; i < m_pCollidersList.size(); i++)
     {
+        auto &colA = m_pCollidersList[i];
+
+        // 使用フラグチェック
+        if (colA->get_IsEnable() == false)
+        {
+            continue;
+        }
+        
         for (int j = i + 1; j < m_pCollidersList.size(); j++)
         {
-            auto& colA = m_pCollidersList[i];
             auto& colB = m_pCollidersList[j];
+
+            // 両方とも静的なら判定しない
+            if (colA->get_IsStatic() == colB->get_IsStatic())
+            {
+                continue;
+            }
+
+            colA->set_IsHit(false);
+            colB->set_IsHit(false);
+
             CollisionInfo info;
             if (HitCheck(colA, colB, &info))
             {
-                colA->OnCollisionEnter(info);
+                // 衝突
+                colA->set_IsHit(true);
+                colB->set_IsHit(true);
 
-                // Aと衝突したことを伝える
+                // Bと衝突したことをオブジェクト側に伝える
+                info.set_HitObject(colB->get_OwnerObj());
+                info.set_HitCollider(colB);
+                colA->get_OwnerObj().lock()->OnCollisionEnter(info);
+
+                // Aと衝突したことをオブジェクト側に伝える
                 info.set_HitObject(colA->get_OwnerObj());
-
-                colB->OnCollisionEnter(info);
+                info.set_HitCollider(colA);
+                colB->get_OwnerObj().lock()->OnCollisionEnter(info);
             }
         }
     }
@@ -54,13 +90,26 @@ bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shar
         auto boxA = std::static_pointer_cast<BoxCollider>(_colA);
         auto boxB = std::static_pointer_cast<BoxCollider>(_colB);
 
+        std::weak_ptr<Transform> transform_A = boxA->get_Transform();
+        std::weak_ptr<Transform> transform_B = boxB->get_Transform();
+
+        if (transform_A.expired() || transform_B.expired())
+        {
+            MessageBox(NULL, "トランスフォームコンポーネントの期限切れ", "衝突判定", MB_OK);
+            return false;
+        }
+
+        // コライダーの位置と、オブジェクトの位置を合わせる。
+        VEC3 centerA = boxA->get_Center() + transform_A.lock()->get_VEC3ToPos();
+        VEC3 centerB = boxB->get_Center() + transform_B.lock()->get_VEC3ToPos();
+
         CollInData_AABB data_A;
-        data_A._min = boxA->get_Center();
-        data_A._max = boxA->get_Center() + boxA->get_Size();
+        data_A._min = centerA - boxA->get_Size();
+        data_A._max = centerA + boxA->get_Size();
 
         CollInData_AABB data_B;
-        data_B._min = boxB->get_Center();
-        data_B._max = boxB->get_Center() + boxB->get_Size();
+        data_B._min = centerB - boxB->get_Size();
+        data_B._max = centerB + boxB->get_Size();
         if (HitCheck_BoxVsBox(data_A, data_B))
         {
             return true;
@@ -78,9 +127,23 @@ bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shar
         }
     }
 
-    return true;
+    return false;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】ボックスとボックスの物理的な判定
+//*
+//* [引数]
+//* &_src : ボックス 
+//* &_dst : ボックス
+//* [返値]
+//* true : 当たった
+//* false : 当たってない
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst)
+{
+    return true;
+}
 
 //*---------------------------------------------------------------------------------------
 //*【?】ボックスとボックスの判定
@@ -107,7 +170,7 @@ bool CollisionManager::HitCheck_BoxVsBox(const CollInData_AABB &_src, const Coll
     if (_src._min.y > _dst._max.y) return false;
 
     // 奥の判定
-    if (_src._max.z < _dst._min.y) return false;
+    if (_src._max.z < _dst._min.z) return false;
 
     // 手前の判定
     if (_src._min.z > _dst._max.z) return false;

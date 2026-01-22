@@ -15,6 +15,9 @@ extern const UINT g_RTSpriteQuadIndexNum;
 extern const VERTEX::VERTEX_Static g_QuadVertices[];
 extern const VERTEX::VERTEX_Static g_CubeVertices[];
 extern const VERTEX::VERTEX_Static g_PlaneVertices[];
+extern const WORD g_QuadIndices[];
+extern const WORD g_CubeIndices[];
+extern const WORD g_PlaneIndices[];
 
 /// <summary>
 /// 静的メッシュ用
@@ -61,7 +64,7 @@ public:
 	~MeshInfoFactory();
 
 	template<typename TVertex>
-	static MeshResourceData CreateMesh(ID3D11Device* pDevice,TVertex* pVertices, UINT vNum, WORD* pIndices, UINT iNum)
+	static MeshResourceData CreateMesh(ID3D11Device* pDevice,TVertex* pVertices, const UINT vNum,const WORD* pIndices, UINT iNum)
 	{
 		MeshResourceData meshData = {};
 		meshData.VertexStride = sizeof(TVertex); // ここで型のサイズを固定値にする

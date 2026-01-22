@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Component_SphereCollider.h"
+#include "GameObject.h"
 
 using namespace GIGA_Engine;
 using namespace VECTOR3;
@@ -36,7 +37,12 @@ SphereCollider::~SphereCollider()
 //*----------------------------------------------------------------------------------------
 void SphereCollider::Start(RendererEngine &renderer)
 {
+    m_pTransform = m_pOwner.lock()->get_Transform();
 
+    if (m_pTransform.expired())
+    {
+        MessageBox(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
+    }
 }
 
 

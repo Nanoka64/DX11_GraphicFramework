@@ -13,7 +13,7 @@ IComponent::IComponent(std::weak_ptr<GameObject> pOwner, int updateRank ):
     m_pOwner(pOwner),
     m_UpdateRank(updateRank)
 {
-
+    this->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 }
 
 
