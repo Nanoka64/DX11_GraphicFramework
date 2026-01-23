@@ -310,7 +310,7 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
     // ディファードスプライト
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+    //Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
     m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
     m_pDefferdLighting_Sprite->Draw(renderer);
 
@@ -627,8 +627,8 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
     m_pShadowMap_RT = new DX_RenderTarget();
     result = m_pShadowMap_RT->Create(
         renderer,
-        2048,       // 影の品質は何も対策しなければ解像度依存
-        2048,
+        8096,       // 影の品質は何も対策しなければ解像度依存
+        8096,
         1,
         1,
         DXGI_FORMAT_UNKNOWN,

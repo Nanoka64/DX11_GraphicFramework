@@ -1,6 +1,12 @@
 #pragma once
 #include "Component_Collider.h"
 
+enum class COLLISION_JUDGMENT : unsigned char
+{
+	AABB,
+	OBB
+};
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -16,7 +22,7 @@ class BoxCollider : public Collider
 private:
 	VECTOR3::VEC3 m_Size;
 	std::unique_ptr<class DebugMesh> m_pBoxMesh;
-
+	COLLISION_JUDGMENT m_CollisionJudgmentType;
 public:
 	BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~BoxCollider();
@@ -30,5 +36,9 @@ public:
 	// ‘å‚«‚³
 	void set_Size(const VECTOR3::VEC3 &_vIn) { m_Size = _vIn; }
 	VECTOR3::VEC3 get_Size()const { return m_Size; }
+
+	// OBBƒtƒ‰ƒO
+	COLLISION_JUDGMENT get_CollisionJudgmentType()const { return m_CollisionJudgmentType; }
+	void set_CollisionJudgmentType(COLLISION_JUDGMENT _flag) { m_CollisionJudgmentType = _flag; }
 };
 

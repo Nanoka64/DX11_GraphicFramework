@@ -462,6 +462,9 @@
     <ClCompile Include="Source\Cpp\DebugMesh.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\EffectManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -766,6 +769,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\DebugMesh.h">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EffectManager.h">
+      <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

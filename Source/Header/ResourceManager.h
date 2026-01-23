@@ -75,6 +75,11 @@ public:
     /// <returns></returns>
     std::shared_ptr<Material> LoadMaterial(const std::string &tag);
 
+    /// <summary>
+    /// ƒ}ƒeƒŠƒAƒ‹‚Ì“o˜^
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="mat"></param>
     void RegisterMaterialData(const std::string &tag, const Material &mat);
 };
 

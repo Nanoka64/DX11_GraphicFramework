@@ -15,7 +15,8 @@ using namespace VECTOR3;
 //*----------------------------------------------------------------------------------------
 BoxCollider::BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank)
     :Collider(pOwner, updateRank),
-    m_Size(VEC3(10.0f,10.0f,10.0f))
+    m_Size(VEC3(10.0f,10.0f,10.0f)),
+    m_CollisionJudgmentType(COLLISION_JUDGMENT::AABB)
 {
     this->set_Tag("BoxCollider");
 }

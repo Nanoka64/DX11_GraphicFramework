@@ -604,7 +604,7 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
     auto pDevice = renderer.get()->get_Device();
     auto pContext = renderer.get()->get_DeviceContext();
 
-    HRESULT hr = S_OK;
+    HRESULT hr = S_FALSE;
     ID3DBlob* pPSBlob = NULL;                      // ランタイム用
     std::vector<uint8_t> csoByteCode;              // cso読み込み用 
     ComPtr<ID3D11PixelShader> pPixel = nullptr;    // 結果格納用
@@ -661,19 +661,19 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::POST_LUMINANCE_FILTER:             // 輝度抽出
             hr = this->CompileShader(HLSL__HighLuminanceFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;       
-        case SHADER_TYPE::POST_KAWASE_FILTER:               // 川瀬ブルーム用
+        case SHADER_TYPE::POST_KAWASE_FILTER:                // 川瀬ブルーム用
             hr = this->CompileShader(HLSL__KawaseFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::POST_SHADOWMAP:                   // シャドウマップ
+        case SHADER_TYPE::POST_SHADOWMAP:                    // シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
-        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:            // スキニングモデル用シャドウマップ
+        case SHADER_TYPE::POST_SHADOWMAP_SKINNED:             // スキニングモデル用シャドウマップ
             hr = this->CompileShader(HLSL__ShadowMap_Skinned_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;        
-        case SHADER_TYPE::POST_DEPTH_OF_FILED:                         // 被写界深度
+        case SHADER_TYPE::POST_DEPTH_OF_FILED:                // 被写界深度
             hr = this->CompileShader(HLSL__DoF_Filter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
-        case SHADER_TYPE::POST_TONEMAPPING:                         // トーンマッピング
+        case SHADER_TYPE::POST_TONEMAPPING:                   // トーンマッピング
             hr = this->CompileShader(HLSL__ToneMappingFilter_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;    
 
@@ -686,11 +686,15 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
 
         // 失敗
         if (FAILED(hr)) {
-            pPSBlob->Release();
             MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
             return false;
         }
 
+        if (pPSBlob == nullptr)
+        {
+            MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
+            return false;
+        }
         // ピクセルシェーダーの作成
         hr = pDevice->CreatePixelShader(
             pPSBlob->GetBufferPointer(),

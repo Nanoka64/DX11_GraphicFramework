@@ -200,6 +200,7 @@
     <ClInclude Include="Source\Header\EditorBase.h" />
     <ClInclude Include="Source\Header\EditorManager.h" />
     <ClInclude Include="Source\Header\EditWindowBase.h" />
+    <ClInclude Include="Source\Header\EffectManager.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
     <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
@@ -308,6 +309,7 @@
     <ClCompile Include="Source\Cpp\EditorBase.cpp" />
     <ClCompile Include="Source\Cpp\EditorManager.cpp" />
     <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />
+    <ClCompile Include="Source\Cpp\EffectManager.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
     <ClCompile Include="Source\Cpp\HierarchyWindow.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />

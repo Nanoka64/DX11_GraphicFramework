@@ -50,7 +50,7 @@ public:
     //*Åy?Åzè’ìÀñ ÇÃñ@ê¸
     //*----------------------------------------------------------------------------------------
     void set_HitNormal(const VECTOR3::VEC3 &_vIn) { m_HitNormal = _vIn; }
-    VECTOR3::VEC3 get_Normal()const { return m_HitNormal; }
+    VECTOR3::VEC3 get_HitNormal()const { return m_HitNormal; }
     
     //*---------------------------------------------------------------------------------------
     //*Åy?Åzè’ìÀÇµÇΩï®ëÃÇÃëäëŒë¨ìx

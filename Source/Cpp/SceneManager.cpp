@@ -65,7 +65,7 @@ SceneManager::~SceneManager()
 //* 引数：1.RendererEngine
 //* 返値：成功したか
 //*----------------------------------------------------------------------------------------
-bool SceneManager::Init(RendererEngine& renderer)
+bool SceneManager::Init(RendererEngine &renderer)
 {
     // ステートマシンの作成
     SceneFactory::Create(m_StateMachine, renderer);
@@ -147,7 +147,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
             mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
             mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 20.0f;        
+            mat.m_SpecularPower = 20.0f;
             mat.m_EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
             mat.m_EmissivePower = 200.0f;
 
@@ -299,7 +299,7 @@ bool SceneManager::Init(RendererEngine& renderer)
             Master::m_pResourceManager->RegisterMaterialData("PointLight", mat);
         }
     }
-    
+
     {
     }
 
@@ -343,13 +343,16 @@ bool SceneManager::Init(RendererEngine& renderer)
             m_pPlayer->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
             m_pPlayer->add_Component<PlayerController>(1);
-            //m_pPlayer->get_Component<PlayerController>()->Start(renderer);
-            m_pPlayer->add_Component<BoxCollider>();
             m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
+            // コライダーの追加
+            auto collider = m_pPlayer->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(5, 10, 5));
+            collider->set_Center(VEC3(0, 10, 0));
+
             // コライダーの登録
-            Master::m_pCollisionManager->RegisterCollider(m_pPlayer->get_Component<BoxCollider>());
+            Master::m_pCollisionManager->RegisterCollider(collider);
 
             // カメラのフォーカスオブジェクトに設定
             m_pCameraComp->set_FocusObject(m_pPlayer);
@@ -502,6 +505,14 @@ bool SceneManager::Init(RendererEngine& renderer)
                 m_pAnt[i]->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0);
                 m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
                 m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+
+                // コライダーの追加
+                auto collider = m_pAnt[i]->add_Component<BoxCollider>();
+                collider->set_Size(VEC3(50, 15, 10));
+                collider->set_Center(VEC3(0, 10, 0));
+
+                // コライダーの登録
+                Master::m_pCollisionManager->RegisterCollider(collider);
             }
         }
 
@@ -570,10 +581,15 @@ bool SceneManager::Init(RendererEngine& renderer)
             model.SetupMaterial = matInfo;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
             m_pTempObj = MeshFactory::CreateModel(model);
-            m_pTempObj->add_Component<BoxCollider>();
             m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
             m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
             m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // コライダーの追加
+            auto collider = m_pTempObj->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(170.0f, 300.0f, 170.0f));
+            collider->set_Center(VEC3(0.0f, 300.0f, 0.0f));
+            collider->set_IsStatic(true);
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(m_pTempObj->get_Component<BoxCollider>());
@@ -663,6 +679,15 @@ bool SceneManager::Init(RendererEngine& renderer)
             obj->get_Transform().lock()->set_Scale(1000.0f, 500.0f, 1000.0f);
             obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             obj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // コライダーの追加
+            auto collider = obj->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(1000, 1, 1000));
+            collider->set_Center(VEC3(0, 0, 0));
+            collider->set_IsStatic(true);
+
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(collider);
         }
 
         /* スカイボックスの生成 */
@@ -817,11 +842,8 @@ void SceneManager::Update(RendererEngine& renderer)
     static float counter = 0.0f;
     counter += 0.01f;
 
-
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
-
-    Master::m_pCollisionManager->CollisionProcess();
 
     //-----------------------------------------------------------------------------
     // ■ アリの移動処理
@@ -887,19 +909,22 @@ void SceneManager::Update(RendererEngine& renderer)
         }
     }
 
-    // カメラ操作の更新
-    //m_pCameraComp->ViewProcessUpdate();
+    // 衝突判定
+    Master::m_pCollisionManager->CollisionProcess();
 
+    // 遅延更新
     Master::m_pGameObjectManager->ObjectLateUpdate(renderer);
 
-    // カメラ更新
+    // ビュー行列の更新
     auto viewMatrix = m_pCameraComp->get_ViewMatrix();
 
     // ビュー変換し定数バッファへ送る
     if (!renderer.SetupViewTransform(viewMatrix)) {
+        MessageBox(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
         return;
     };
 
+    // エディタの更新
     Master::m_pEditorManager->Update(renderer);
 }
 

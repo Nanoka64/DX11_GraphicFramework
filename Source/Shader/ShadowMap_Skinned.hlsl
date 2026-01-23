@@ -75,7 +75,5 @@ float4 PSMain(PS_INPUT input) : SV_TARGET0
 {
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    finalColor.xyz = 0.1f;
-    
     return finalColor;
 }

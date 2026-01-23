@@ -20,7 +20,7 @@ GameObject::GameObject():
 //*----------------------------------------------------------------------------------------
 GameObject::~GameObject()
 {
-
+	m_pComponentList.clear();	// ‰ð•ú
 }
 
 

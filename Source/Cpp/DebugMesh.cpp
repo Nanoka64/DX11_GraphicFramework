@@ -46,7 +46,11 @@ bool DebugMesh::Setup(RendererEngine& renderer, DEBUG_MESHS_TYPE _type)
 		MessageBox(NULL, "定数バッファが作成できませんでした。", "Error", MB_OK);
 		return false;
 	}
+
+	return true;
 }
+
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】描画

@@ -71,6 +71,7 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
         {
             m_AnimProcTime += 0.023f;
         }
+
         BoneTransformsUpdate(renderer, m_AnimProcTime, m_CurrentAnimIndex);
     }
     // シャドウパス

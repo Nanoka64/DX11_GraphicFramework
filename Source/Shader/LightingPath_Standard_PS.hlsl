@@ -146,7 +146,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     float4 posInLVP = mul(worldPos, cb_DirLightData[0].LightViewProj);
     
-    posInLVP.xyz /= posInLVP.w;
+    //posInLVP.xyz /= posInLVP.w;
     
     // ライトビュースクリーン空間（NDC）からUV空間に座標変換
     // -1.0 ～ 1.0 を 0.0～1.0に
@@ -185,13 +185,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
         finalCol.xyz = lerp(shadowColor, finalCol.xyz, shadowFactor);
     }
     
-    //return float4(shadowFactor, shadowFactor, shadowFactor, 1.0f);
-    
     //************************************************************************
     // 最終調整
     //************************************************************************
-
-    
     finalCol.a = 1.0f;
     
     return (finalCol);

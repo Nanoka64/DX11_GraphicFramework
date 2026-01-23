@@ -27,11 +27,21 @@ struct CollInData_Sphere
     float _radius;
 };
 
+// Axis-Aligned Bounding Box
 struct CollInData_AABB
 {
     VECTOR3::VEC3 _min;
     VECTOR3::VEC3 _max;
 };
+
+// Oriented Bounding Box
+struct CollInData_OBB
+{
+    VECTOR3::VEC3 _center;      // 中心位置
+    VECTOR3::VEC3 _slope[3];    // 各座標軸の傾き
+    VECTOR3::VEC3 _harfLength;  // 各座標軸に沿った長さの半分
+};
+
 
 class CollisionManager
 {
@@ -55,10 +65,10 @@ public:
     /// 判定を行う
     /// </summary>
     /// <returns></returns>
-    bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, class CollisionInfo* info);
+    bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, std::shared_ptr<class Transform> _transA,std::shared_ptr<class Transform> _transB, class CollisionInfo* info);
 
     // 箱と箱 物理的判定
-    bool HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst);
+    bool HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info);
 
     // 箱と箱
     bool HitCheck_BoxVsBox(const CollInData_AABB &_src, const CollInData_AABB &_dst);

@@ -96,3 +96,8 @@ void Bullet::Draw(RendererEngine &renderer)
 
 }
 
+
+void Bullet::OnCollisionEnter(const class CollisionInfo &other)
+{
+    m_pOwner.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
+}

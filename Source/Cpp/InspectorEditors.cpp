@@ -603,6 +603,9 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     bool isTrigger = pComp->get_IsTrigger();
     bool isEnable = pComp->get_IsEnable();
     bool isHit = pComp->get_IsHit();
+    bool isStatic = pComp->get_IsStatic();
+    COLLISION_JUDGMENT judgmentType = pComp->get_CollisionJudgmentType();
+
     VEC3 center = pComp->get_Center();
     VEC3 size = pComp->get_Size();
 
@@ -620,11 +623,33 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_CheckBox("##IsTrigger", &isTrigger);
 
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"静的フラグ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_CheckBox("##IsStatic", &isStatic);
+
         
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"衝突フラグ"));
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_CheckBox("##IsHit", &isHit);
+        
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"判定方法")))
+        {
+            if (Master::m_pDebugger->DG_RadioButton("AABB", judgmentType == COLLISION_JUDGMENT::AABB))
+            {
+                judgmentType = COLLISION_JUDGMENT::AABB;
+            }
 
+            Master::m_pDebugger->DG_SameLine();
+            
+            if (Master::m_pDebugger->DG_RadioButton("OBB", judgmentType == COLLISION_JUDGMENT::OBB))
+            {
+                judgmentType = COLLISION_JUDGMENT::OBB;
+            }
+
+            Master::m_pDebugger->DG_TreePop();
+
+        }
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"中心位置"));
         Master::m_pDebugger->DG_SameLine();
@@ -636,12 +661,15 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_DragVec3("##Size", &size, 0.1f, -1000.0f, 1000.0f);
 
         Master::m_pDebugger->DG_TreePop();
+
     }
 
     // 反映
     pComp->set_IsEnable(isEnable);
     pComp->set_IsTrigger(isTrigger);
+    pComp->set_IsStatic(isStatic);
     pComp->set_Center(center);
     pComp->set_Size(size);
+    pComp->set_CollisionJudgmentType(judgmentType);
 }
 

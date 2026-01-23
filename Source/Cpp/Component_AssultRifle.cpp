@@ -8,6 +8,7 @@
 #include "InputFactory.h"
 #include "MeshFactory.h"
 #include "ResourceManager.h"
+#include "Component_BoxCollider.h"
 
 using namespace GIGA_Engine;
 using namespace Input;
@@ -94,6 +95,15 @@ void AssultRifle::Update(RendererEngine &renderer)
         bullet_transform->set_Pos(pos);
         bullet_transform->set_RotateToRad(rad);
         bullet_transform->set_Scale(VEC3(0.01f, 0.01f, 0.01f));
+
+        // コライダーの追加
+        auto collider = obj->add_Component<BoxCollider>();
+        collider->set_Size(VEC3(2.0f, 2.0f, 2.0f));
+        collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
+
+        // コライダーの登録
+        Master::m_pCollisionManager->RegisterCollider(collider);
+
 
         // 初期化
         bulletComp->Start(renderer);

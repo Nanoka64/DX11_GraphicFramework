@@ -14,6 +14,8 @@ public:
 	void Start(RendererEngine &renderer) override;		// ‰Šú‰»
 	void Update(RendererEngine &renderer) override;		// XVˆ—
 	void Draw(RendererEngine &renderer)override;		// •`‰æˆ—
+	void OnCollisionEnter(const class CollisionInfo &other);
+
 
 	void set_BulletObject(std::shared_ptr<GameObject> pObj);
 };

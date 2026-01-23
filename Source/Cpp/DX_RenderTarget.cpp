@@ -136,7 +136,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT 
     descDepth.ArraySize = 1;                            // 基本的には１(キューブマップとかやる場合は使う)
     descDepth.SampleDesc.Count = 1;                     // MSAA(マルチサンプリングエイリアス)の設定
     descDepth.SampleDesc.Quality = 0;                   // サンプリングのモード切替え(ハードウェア依存) 基本的に 0 
-    descDepth.Format = DXGI_FORMAT_R32_TYPELESS;        // 
+    descDepth.Format = DXGI_FORMAT_R32_TYPELESS;        // TYPELESSにすることで、ビューの作成時にそれぞれの型（D32/R32）と解釈させることができる
 
 
     // D3D11_USAGE_DEFAULT = 0,     // GPUからRead,Write
@@ -158,7 +158,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT 
     // 深度ステンシルビュー作成
     D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
     ZeroMemory(&descDSV, sizeof(descDSV));
-    descDSV.Format              = DXGI_FORMAT_D32_FLOAT;         // 上で設定したものを入れる
+    descDSV.Format              = DXGI_FORMAT_D32_FLOAT;         // 
     descDSV.ViewDimension       = D3D11_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
     descDSV.Texture2D.MipSlice  = 0;
 
@@ -170,7 +170,7 @@ bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT 
     // SRV作成
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
-    srvDesc.Format                    = DXGI_FORMAT_R32_FLOAT;
+    srvDesc.Format                    = DXGI_FORMAT_R32_FLOAT;      // シェーダでは[R]から受け取る
     srvDesc.ViewDimension             = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels       = 1;
     srvDesc.Texture2D.MostDetailedMip = 0;

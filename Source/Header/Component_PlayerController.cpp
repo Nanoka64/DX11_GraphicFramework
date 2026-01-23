@@ -212,7 +212,6 @@ void PlayerController::Update(RendererEngine &renderer)
 		}
 	}
 
-
 	Master::m_pDebugger->BeginDebugWindow("player");
 	Master::m_pDebugger->DG_TextValue("Ang : %f.1",ang);
 	Master::m_pDebugger->EndDebugWindow();
@@ -234,7 +233,7 @@ void PlayerController::Draw(RendererEngine& renderer)
 
 void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 {
-	ChangeAnimation(PLAYER_ANIMATION_ID::DEATH01);
+	//ChangeAnimation(PLAYER_ANIMATION_ID::HIT_HEAD);
 }
 
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)

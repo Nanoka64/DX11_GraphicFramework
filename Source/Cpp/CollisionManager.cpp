@@ -34,9 +34,30 @@ void CollisionManager::RegisterCollider(std::shared_ptr<class Collider> pCol)
 //*----------------------------------------------------------------------------------------
 void CollisionManager::CollisionProcess()
 {
+    // コライダーがないまたは、オブジェクトがない場合は削除
+    m_pCollidersList.erase(
+        std::remove_if(
+            m_pCollidersList.begin(),
+            m_pCollidersList.end(),
+            [](const std::shared_ptr<Collider> pIn)
+            {
+                return (pIn == nullptr || pIn->get_OwnerObj().expired());
+            }),
+        m_pCollidersList.end()
+    );
+
+    // 全てのコライダーのヒットフラグを一旦falseに
+    for (auto &comp : m_pCollidersList)
+    {
+        comp->set_IsHit(false);
+    }
+
+    // 判定ループ処理
     for (int i = 0; i < m_pCollidersList.size(); i++)
     {
         auto &colA = m_pCollidersList[i];
+        bool isStaticA = false;
+        bool isStaticB = false;
 
         // 使用フラグチェック
         if (colA->get_IsEnable() == false)
@@ -48,28 +69,60 @@ void CollisionManager::CollisionProcess()
         {
             auto& colB = m_pCollidersList[j];
 
+            isStaticA = colA->get_IsStatic();
+            isStaticB = colB->get_IsStatic();
+
             // 両方とも静的なら判定しない
-            if (colA->get_IsStatic() == colB->get_IsStatic())
+            if (isStaticA && isStaticB)
             {
                 continue;
             }
 
-            colA->set_IsHit(false);
-            colB->set_IsHit(false);
+            // トランスフォームの取得
+            auto transA = colA->get_OwnerObj().lock()->get_Component<Transform>();
+            auto transB = colB->get_OwnerObj().lock()->get_Component<Transform>();
+
+            if (transA == nullptr || transB == nullptr){
+                MessageBox(NULL, "トランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+                continue;
+            }
 
             CollisionInfo info;
-            if (HitCheck(colA, colB, &info))
+            
+            // 衝突チェック
+            if (HitCheck(colA, colB, transA, transB, &info))
             {
+                VEC3 pushVector;    // 押し出しベクトル
+                VEC3 currentPos;    // 押し出し反映用
+
                 // 衝突
                 colA->set_IsHit(true);
                 colB->set_IsHit(true);
 
-                // Bと衝突したことをオブジェクト側に伝える
+                // 押し出すベクトル = 法線 * めり込み量
+                pushVector = info.get_HitNormal() * info.get_PenetrationDepth();
+
+
+                // 静的オブジェクトの場合は0.0にする（押し出さない）
+                float ratioA = isStaticA ? 0.0f : 1.0f;
+                float ratioB = isStaticB ? 0.0f : 1.0f;
+
+
+                // Aは法線方向に押し出す *******************************************
+                currentPos = transA->get_VEC3ToPos();
+                transA->set_Pos(currentPos + (pushVector * ratioA));
+
+                // Bは衝突された側なので法線とは逆方向に押し出す ********************
+                currentPos = transB->get_VEC3ToPos();
+                transB->set_Pos(currentPos + (-pushVector * ratioB));
+
+                
+                // Bと衝突したことをAオブジェクト側に伝える
                 info.set_HitObject(colB->get_OwnerObj());
                 info.set_HitCollider(colB);
                 colA->get_OwnerObj().lock()->OnCollisionEnter(info);
 
-                // Aと衝突したことをオブジェクト側に伝える
+                // Aと衝突したことをBオブジェクト側に伝える
                 info.set_HitObject(colA->get_OwnerObj());
                 info.set_HitCollider(colA);
                 colB->get_OwnerObj().lock()->OnCollisionEnter(info);
@@ -78,7 +131,28 @@ void CollisionManager::CollisionProcess()
     }
 }
 
-bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shared_ptr<class Collider> _colB, class CollisionInfo *info)
+
+//*---------------------------------------------------------------------------------------
+//*【?】衝突したかどうかを確かめる
+//*     コライダーごとに処理を分ける 
+//*
+//* [引数]
+//* _colA :     コライダーA
+//* _colB :     コライダーB
+//* _transA :   トランスフォームA
+//* _transB :   トランスフォームB
+//* info :      衝突情報の保存先
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck(
+    std::shared_ptr<class Collider> _colA, 
+    std::shared_ptr<class Collider> _colB, 
+    std::shared_ptr<class Transform> _transA, 
+    std::shared_ptr<class Transform> _transB, 
+    class CollisionInfo *info
+)
 {
     COLLIDER_TYPE colA_Type = _colA->get_ColliderType();
     COLLIDER_TYPE colB_Type = _colB->get_ColliderType();
@@ -86,22 +160,13 @@ bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shar
     // ボックス同士 ********************************************************************
     if (colA_Type == COLLIDER_TYPE::BOX && colB_Type == COLLIDER_TYPE::BOX)
     {
-        // 一旦キャストして実装
+        // 一旦キャストして実装（TODO: キャストしないように実装したい）
         auto boxA = std::static_pointer_cast<BoxCollider>(_colA);
         auto boxB = std::static_pointer_cast<BoxCollider>(_colB);
 
-        std::weak_ptr<Transform> transform_A = boxA->get_Transform();
-        std::weak_ptr<Transform> transform_B = boxB->get_Transform();
-
-        if (transform_A.expired() || transform_B.expired())
-        {
-            MessageBox(NULL, "トランスフォームコンポーネントの期限切れ", "衝突判定", MB_OK);
-            return false;
-        }
-
         // コライダーの位置と、オブジェクトの位置を合わせる。
-        VEC3 centerA = boxA->get_Center() + transform_A.lock()->get_VEC3ToPos();
-        VEC3 centerB = boxB->get_Center() + transform_B.lock()->get_VEC3ToPos();
+        VEC3 centerA = boxA->get_Center() + _transA->get_VEC3ToPos();
+        VEC3 centerB = boxB->get_Center() + _transB->get_VEC3ToPos();
 
         CollInData_AABB data_A;
         data_A._min = centerA - boxA->get_Size();
@@ -112,6 +177,31 @@ bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shar
         data_B._max = centerB + boxB->get_Size();
         if (HitCheck_BoxVsBox(data_A, data_B))
         {
+            // 各軸でのオーバーラップ量を計算
+            float overlapX = std::min(data_A._max.x - data_B._min.x, data_B._max.x - data_A._min.x);
+            float overlapY = std::min(data_A._max.y - data_B._min.y, data_B._max.y - data_A._min.y);
+            float overlapZ = std::min(data_A._max.z - data_B._min.z, data_B._max.z - data_A._min.z);
+
+            VEC3 normal = VEC3();
+
+            if (overlapX <= overlapY && overlapX <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapX);
+                normal = (centerA.x < centerB.x) ? VEC3(-1.0f, 0.0f, 0.0f) : VEC3(1.0f, 0.0f, 0.0f);
+            }
+            else if (overlapY <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapY);
+                normal = (centerA.y < centerB.y) ? VEC3(0.0f, -1.0f, 0.0f) : VEC3(0.0f, 1.0f, 0.0f);
+            }
+            else
+            {
+                info->set_PenetrationDepth(overlapZ);
+                normal = (centerA.z < centerB.z) ? VEC3(0.0f, 0.0f, -1.0f) : VEC3(0.0f, 0.0f, 1.0f);
+            }
+
+            info->set_HitNormal(normal);
+
             return true;
         }
     }
@@ -140,8 +230,45 @@ bool CollisionManager::HitCheck(std::shared_ptr<class Collider> _colA, std::shar
 //* true : 当たった
 //* false : 当たってない
 //*----------------------------------------------------------------------------------------
-bool CollisionManager::HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst)
+bool CollisionManager::HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info)
 {
+    // 左側の判定
+    if (_src._max.x > _dst._min.x)
+    {
+
+    };
+
+    // 右側の判定
+    if (_src._min.x < _dst._max.x)
+    {
+
+    };
+
+    // 上側の判定
+    if (_src._max.y > _dst._min.y)
+    {
+
+    };
+
+    // 下側の判定
+    if (_src._min.y < _dst._max.y)
+    {
+
+    };
+
+    // 奥の判定
+    if (_src._max.z > _dst._min.z)
+    {
+
+    };
+
+    // 手前の判定
+    if (_src._min.z < _dst._max.z)
+    {
+
+    };
+
+
     return true;
 }
 
