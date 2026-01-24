@@ -63,7 +63,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 	if (GetInputHoldRepeat(CONFIG_INPUT::C,2,2))
 	{
         // ƒ}ƒeƒŠƒAƒ‹Žæ“¾
-        auto matPtr1 = Master::m_pResourceManager->LoadMaterial("Bullet");
+        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
 
         SetupMaterialInfo matInfo[1];
         matInfo[0].Index = 0;

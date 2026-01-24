@@ -20,9 +20,9 @@ enum class COLLISION_JUDGMENT : unsigned char
 class BoxCollider : public Collider
 {
 private:
-	VECTOR3::VEC3 m_Size;
-	std::unique_ptr<class DebugMesh> m_pBoxMesh;
-	COLLISION_JUDGMENT m_CollisionJudgmentType;
+	VECTOR3::VEC3 m_Size;							// 大きさ
+	std::unique_ptr<class DebugMesh> m_pBoxMesh;	// デバッグ用メッシュ
+	COLLISION_JUDGMENT m_CollisionJudgmentType;		// 衝突判定の種類
 public:
 	BoxCollider(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~BoxCollider();

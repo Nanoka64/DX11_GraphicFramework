@@ -16,9 +16,9 @@ public:
     VECTOR4::VEC4 m_SpecularColor;  // スペキュラ反射光
 
     float m_SpecularPower;          // スペキュラの絞り強さ
-    float m_EmissivePower;          // 自己発光の強さ（ブルーム強度）
 
     VECTOR3::VEC3 m_EmissiveColor;  // 発光色
+    float m_EmissivePower;          // 自己発光の強さ（ブルーム強度）
 
     // テクスチャマップ==============================================
     DIFFUSE_MAP_DATA m_DiffuseMap;     // ディフューズマップ

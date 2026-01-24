@@ -129,6 +129,9 @@ VS_OUTPUT VSMain(VS_INPUT input)
     pos  = skinnedPos; // スキニング後の頂点座標
     norm = skinnedNormal; // スキニング後の法線
     
+    // ワールド空間法線に変換
+    norm = normalize(mul(norm, (float3x3) cb_Transform));
+    
     pos = mul(pos,cb_Transform);       // ワールド変換
     output.WPos = pos;
     pos = mul(pos, cb_View);           // ビュー変換
@@ -139,6 +142,7 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.UV     = input.UV;       // テクスチャ座標
     output.Color  = input.Color; // カラー
 
+    
     // 接ベクトルと従ベクトルをワールド空間に変換する
     output.Tan    = normalize(mul(input.Tan, (float3x3) cb_Transform));
     output.BiNorm = normalize(mul(input.BiNorm, (float3x3) cb_Transform));

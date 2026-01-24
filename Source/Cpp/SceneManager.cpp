@@ -70,6 +70,14 @@ bool SceneManager::Init(RendererEngine &renderer)
     // ステートマシンの作成
     SceneFactory::Create(m_StateMachine, renderer);
 
+    // マテリアルデータの読み込み
+    //if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("MaterialParam.csv"))
+    //{
+    //    assert(false);
+    //    return false;
+    //}
+
+
     // マテリアルの作成 (今後CSVで読み込むようにする)
     {
         /* プレイヤー */
@@ -322,7 +330,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* プレイヤー モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("PlayerModel");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("PlayerModel");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -361,8 +369,8 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* 兵士 */
         {
             // マテリアル取得
-            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("soldier_body");
-            auto matPtr2 = Master::m_pResourceManager->LoadMaterial("soldier_head");
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("soldier_body");
+            auto matPtr2 = Master::m_pResourceManager->FindMaterial("soldier_head");
 
             SetupMaterialInfo matInfo[3];
             matInfo[0].Index = 0;   
@@ -391,7 +399,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* スフィア */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Canonn");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Canonn");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -419,7 +427,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* アサルトライフル */
         {
             // マテリアル取得
-            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("AssultRifle");
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("AssultRifle");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -449,7 +457,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* ディレクションライトの生成(Cubuで分かりやすく) */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("DirLight");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("DirLight");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -480,7 +488,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* アリ モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Ant");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Ant");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -519,7 +527,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* B-2 モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("B_2");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("B_2");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -544,7 +552,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* クレイモア モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Claymore");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Claymore");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -566,7 +574,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* 建物 モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Building");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Building");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -598,7 +606,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* マザーシップの生成 */
         {
             // マテリアル取得
-            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("MotherShip");
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("MotherShip");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -624,10 +632,10 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* クモ モデルの生成 */
         {
             // マテリアル取得
-            auto matPtr1 = Master::m_pResourceManager->LoadMaterial("Spider_1");
-            auto matPtr2 = Master::m_pResourceManager->LoadMaterial("Spider_2");
-            auto matPtr3 = Master::m_pResourceManager->LoadMaterial("Spider_3");
-            auto matPtr4 = Master::m_pResourceManager->LoadMaterial("Spider_4");
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("Spider_1");
+            auto matPtr2 = Master::m_pResourceManager->FindMaterial("Spider_2");
+            auto matPtr3 = Master::m_pResourceManager->FindMaterial("Spider_3");
+            auto matPtr4 = Master::m_pResourceManager->FindMaterial("Spider_4");
 
             SetupMaterialInfo matInfo[4];
             matInfo[0].Index = 0;
@@ -660,7 +668,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* 地面の生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Ground");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Ground");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -693,7 +701,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* スカイボックスの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("SkyBox");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("SkyBox");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -715,7 +723,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* ビルボードの生成 */
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("Billboard");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Billboard");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -758,7 +766,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* ポイントライトの生成 (Cubuで分かりやすく)*/
         {
             // マテリアル取得
-            auto matPtr = Master::m_pResourceManager->LoadMaterial("PointLight");
+            auto matPtr = Master::m_pResourceManager->FindMaterial("PointLight");
 
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
@@ -949,6 +957,9 @@ void SceneManager::Draw(RendererEngine& renderer)
 
     // レンダリングパイプラインの実行
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
+
+
+    Master::m_pDirectWriteManager->DrawString("こんにちは",VEC2(940, 540));
 
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);

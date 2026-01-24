@@ -36,7 +36,7 @@ struct PS_OUT
     float4 Normal : SV_Target1;
     float4 Specular : SV_Target2;
     float4 Emissive : SV_Target3;
-    float4 Depth : SV_Target4;
+    //float4 Depth : SV_Target4;
 };
 // **************************************************************************
 /* - @:エントリーポイント - */
@@ -66,9 +66,7 @@ PS_OUT PSMain(PS_IN input)
     output.Specular.a   = (cb_SpecularPower) / (255.0f); // wに反射強度入れる
     output.Emissive.rgb = emissiveColor; // 発光カラー
     output.Emissive.a = 1.0f; 
-    
-    output.Depth.gba;
-    output.Depth.r;
+
     //output.Specular = input.WPos;
     return output;
 }

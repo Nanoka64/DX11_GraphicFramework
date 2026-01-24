@@ -158,11 +158,11 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // *************************************************************************************************
     /**  directWrire 初期化 **/
     // *************************************************************************************************
-    //if (FAILED(Master::m_pDirectWriteManager->Init(*m_pRenderer)))
-    //{
-    //    assert(false);
-    //    return false;
-    //}
+    if (FAILED(Master::m_pDirectWriteManager->Init(*m_pRenderer)))
+    {
+        assert(false);
+        return false;
+    }
 
     // *************************************************************************************************
     /**  ゲームマネージャー初期化 **/
@@ -207,14 +207,14 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
         return false;
     }
 
-    ///** フォントデータ作成 **/
-    //FONT_DATA *pFontData = new FONT_DATA();
-    //pFontData->fontSize = 20.0f;
-    //pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
-    //pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
+    /** フォントデータ作成 **/
+    FONT_DATA *pFontData = new FONT_DATA();
+    pFontData->fontSize = 20.0f;
+    pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
+    pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
 
-    //// フォントデータをDirectWriteManagerに設定
-    //Master::m_pDirectWriteManager->SetFontData(pFontData);
+    // フォントデータをDirectWriteManagerに設定
+    Master::m_pDirectWriteManager->SetFontData(pFontData);
 
     // 正常終了
     return true;
@@ -315,10 +315,10 @@ int DXApp::MainLoop()
                 // ゲーム描画
                 m_pGameManager->Draw(*m_pRenderer);
 
+                Master::m_pDebugger->EndFrame();
+
                 // 描画の終了
                 m_pRenderer->EndRender();
-
-                Master::m_pDebugger->EndFrame();
 
                 // 画面更新
                 m_pRenderer->Swap();

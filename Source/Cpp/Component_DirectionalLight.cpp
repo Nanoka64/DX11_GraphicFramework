@@ -73,7 +73,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
     dirData.DiffuseColor	  = m_LightColor;	// ディフューズ
 	dirData.DiffuseIntensity  = m_Intensity;	// つよさ
     dirData.SpecularColor	  = m_LightColor;	// スペキュラ
-    dirData.SpecularIntensity = 0.5f;			// つよさ
+    dirData.SpecularIntensity = 1.0f;			// つよさ
 
     // シャドウマップの距離
 	float shadowDistance = m_ShadowDistance;

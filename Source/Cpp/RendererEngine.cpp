@@ -137,7 +137,7 @@ void RendererEngine::BeginRender()
     m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);   
 
     // ラスタライザ設定
-    m_pImmediateContext->RSSetState(m_pRasterState_NoneCull);
+    m_pImmediateContext->RSSetState(m_pRasterState_BackCull);
 
     ID3D11SamplerState *samplers[] =  {
         m_pSamplerLinear,
@@ -159,6 +159,9 @@ void RendererEngine::BeginRender()
 void RendererEngine::EndRender()
 {
     // なにかあれば
+
+    ReleaseRenderTargetSetNull();
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -455,15 +458,15 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
     
     // ※ CullMode
     // D3D11_CULL_NONE  = 1,      // カリングしない(重い)
-    // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回り)
-    // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回り)
+    // D3D11_CULL_FRONT = 2,      // 表はカリング(時計回りのポリゴンが消える)
+    // D3D11_CULL_BACK  = 3       // 裏はカリング(逆時計回りのポリゴンが消える)
     rd.CullMode              = D3D11_CULL_NONE;
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
-    rd.FrontCounterClockwise = FALSE;   // 時計回りが裏面
-    rd.DepthBias             = 0;       // 深度バイアス
-    rd.DepthBiasClamp        = 0.0f;
-    rd.SlopeScaledDepthBias  = 0.0f;
+    rd.FrontCounterClockwise = FALSE;   // 時計回りが表面
+    rd.DepthBias             = 0.0;     // 深度バイアス
+    rd.DepthBiasClamp        = 0.0;
+    rd.SlopeScaledDepthBias  = 0.0;
     rd.DepthClipEnable       = TRUE;    // 0.0より小さい1.0より大きい場合計算しない(カメラのnarとfarのやつ)
     rd.ScissorEnable         = FALSE;   // シザー矩形なし
     rd.AntialiasedLineEnable = FALSE;   // ライン・アンチエイリアシングなし
@@ -524,7 +527,6 @@ HRESULT RendererEngine::InitDX11_Sampler()
     // 作成
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerLinear);
     if (FAILED(hr))return hr;
-
 
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
     sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -954,8 +956,12 @@ void RendererEngine::RegisterRenderTargetAndViewPort(class DX_RenderTarget* pRT)
     if (pRT->HasDepthStencilBuffer()) {
         ID3D11RenderTargetView* rtv = pRT->get_RTV();
         ID3D11DepthStencilView* dsv = pRT->get_DSV();
-
-        m_pImmediateContext->OMSetRenderTargets(1, &rtv, dsv);
+        if (rtv == nullptr) {
+            m_pImmediateContext->OMSetRenderTargets(0, nullptr , dsv);
+        }
+        else {
+            m_pImmediateContext->OMSetRenderTargets(1, &rtv, dsv);
+        }
     }
     // 深度ビューなし
     else

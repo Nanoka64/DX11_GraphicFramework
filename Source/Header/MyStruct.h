@@ -211,7 +211,7 @@ struct NORMAL_MAP_DATA
 //* =========================================================================
 enum class BLEND_MODE
 {
-    NONE,           // âΩÇ‡ÇµÇ»Ç¢
+    NONE = 0,       // âΩÇ‡ÇµÇ»Ç¢
     ALPHA,          // îºìßñæ
     ALPHA_TRANS,    // îºìßñæçáê¨
     ADD,            // â¡éZ

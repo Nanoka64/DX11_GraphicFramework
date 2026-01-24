@@ -13,42 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Graphics">
-      <UniqueIdentifier>{08e8e6d4-6635-4fdb-8460-3d70d7028a4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool">
-      <UniqueIdentifier>{b611cbcb-2a22-4c94-a969-28aa8eee683e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Model">
-      <UniqueIdentifier>{48de53c3-832a-4e02-b0e3-cc93c099469f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game">
-      <UniqueIdentifier>{81caf9d2-367b-46f4-8566-d65a9dfb6fcc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Whrite">
-      <UniqueIdentifier>{cc63a2e9-6ffb-41a1-a853-972f24ea9d86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\KeyInput">
-      <UniqueIdentifier>{a1980733-d51b-4ed1-a9ff-64a6989af973}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\Math">
-      <UniqueIdentifier>{d5ed85c1-c2a3-4c88-b79d-6b51f760cf3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\CBuff">
-      <UniqueIdentifier>{397a2345-101d-4671-bc9c-cd48818a6347}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Texture">
-      <UniqueIdentifier>{fb3439f6-c135-4dcb-a37f-d005e554c0e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\Debug">
-      <UniqueIdentifier>{72429b56-0b56-4e59-a717-5c1b61c0dade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\Debug\ImGui">
-      <UniqueIdentifier>{afbe45dc-d44f-4d67-a9a0-bb54a0bcda0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Obj">
-      <UniqueIdentifier>{940e95da-f705-46e9-a047-358330580596}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HLSL">
       <UniqueIdentifier>{b0d3dcc8-3128-4fdc-8191-45801224cbe9}</UniqueIdentifier>
     </Filter>
@@ -58,15 +22,6 @@
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Scene">
-      <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\State">
-      <UniqueIdentifier>{75ef6144-9f7a-4683-a5e9-1a09cea23061}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\PCH">
-      <UniqueIdentifier>{1b0c2bc8-7ed0-4a39-b5a3-4c8f7308f4e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\NotUsed">
       <UniqueIdentifier>{1c0f11d1-07fb-4aae-8efa-2b848e834433}</UniqueIdentifier>
     </Filter>
@@ -75,30 +30,6 @@
     </Filter>
     <Filter Include="memo">
       <UniqueIdentifier>{c73a07c9-11ad-455c-bdc6-e65eda9d600d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Mesh">
-      <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\DXLap">
-      <UniqueIdentifier>{9d2bcabc-5b85-4ab0-b209-451caf531e8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\DXLap\RT">
-      <UniqueIdentifier>{e9bf896b-0eb7-47a5-b946-b7ef37ba334c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\DXLap\BlendState">
-      <UniqueIdentifier>{5de9c1bd-cbfb-4dcc-a801-0adf59c3b6fa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\DXLap\Shader">
-      <UniqueIdentifier>{cea0957e-fb00-4b9e-9786-dfc048c57a74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\DXLap\Buffers">
-      <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Graphics\Light">
-      <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Tool\BIt">
-      <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
     </Filter>
     <Filter Include="HLSL\VS">
       <UniqueIdentifier>{d20d67e4-bcff-4977-b334-fce00d2d227b}</UniqueIdentifier>
@@ -118,8 +49,35 @@
     <Filter Include="HLSL\PS\Foward">
       <UniqueIdentifier>{fb9ba330-0d8e-4dce-9581-e1729ec3b250}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Graphics\PostEffect">
-      <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
+    <Filter Include="HLSL\PS\PostEffect">
+      <UniqueIdentifier>{f62cc94b-ba6b-483e-99c1-30e861c2fda3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL\Shadow">
+      <UniqueIdentifier>{177728a2-120a-419f-9cb5-4b5ee0105b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool">
+      <UniqueIdentifier>{b611cbcb-2a22-4c94-a969-28aa8eee683e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool\KeyInput">
+      <UniqueIdentifier>{a1980733-d51b-4ed1-a9ff-64a6989af973}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool\Math">
+      <UniqueIdentifier>{d5ed85c1-c2a3-4c88-b79d-6b51f760cf3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool\CBuff">
+      <UniqueIdentifier>{397a2345-101d-4671-bc9c-cd48818a6347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool\Debug">
+      <UniqueIdentifier>{72429b56-0b56-4e59-a717-5c1b61c0dade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Tool\BIt">
+      <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\App">
+      <UniqueIdentifier>{09bad568-1f75-4533-a715-e927b15a5256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Collision">
+      <UniqueIdentifier>{eb954da3-785f-4981-81aa-e631be68c888}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Component">
       <UniqueIdentifier>{3b7d2d54-5de9-4946-863e-76d7b31b612a}</UniqueIdentifier>
@@ -154,8 +112,11 @@
     <Filter Include="ソース ファイル\Component\Game">
       <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSL\PS\PostEffect">
-      <UniqueIdentifier>{f62cc94b-ba6b-483e-99c1-30e861c2fda3}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Component\Game\Weapon">
+      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Collision">
+      <UniqueIdentifier>{a8973ed6-677a-4fee-9557-46e33ba05d2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Editor">
       <UniqueIdentifier>{5d9de550-829d-4bc9-b7ac-2c892411e2e0}</UniqueIdentifier>
@@ -172,28 +133,70 @@
     <Filter Include="ソース ファイル\Editor\Hierarchy\Editors">
       <UniqueIdentifier>{ae09f345-facf-4075-b687-0d3da926457b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSL\Shadow">
-      <UniqueIdentifier>{177728a2-120a-419f-9cb5-4b5ee0105b8a}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Game">
+      <UniqueIdentifier>{81caf9d2-367b-46f4-8566-d65a9dfb6fcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics">
+      <UniqueIdentifier>{08e8e6d4-6635-4fdb-8460-3d70d7028a4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Model">
+      <UniqueIdentifier>{48de53c3-832a-4e02-b0e3-cc93c099469f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Whrite">
+      <UniqueIdentifier>{cc63a2e9-6ffb-41a1-a853-972f24ea9d86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Texture">
+      <UniqueIdentifier>{fb3439f6-c135-4dcb-a37f-d005e554c0e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Mesh">
+      <UniqueIdentifier>{bafc75b9-3c24-49e3-8770-86b28c29f827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Light">
+      <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\PostEffect">
+      <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Graphics\Material">
       <UniqueIdentifier>{20babb4d-5770-42c0-aaa3-d3ab385ae60f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\Game\Weapon">
-      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Obj">
+      <UniqueIdentifier>{940e95da-f705-46e9-a047-358330580596}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\App">
-      <UniqueIdentifier>{09bad568-1f75-4533-a715-e927b15a5256}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\PCH">
+      <UniqueIdentifier>{1b0c2bc8-7ed0-4a39-b5a3-4c8f7308f4e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\Collision">
-      <UniqueIdentifier>{a8973ed6-677a-4fee-9557-46e33ba05d2b}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\Scene">
+      <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Collision">
-      <UniqueIdentifier>{eb954da3-785f-4981-81aa-e631be68c888}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\State">
+      <UniqueIdentifier>{75ef6144-9f7a-4683-a5e9-1a09cea23061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\BlendState">
+      <UniqueIdentifier>{5de9c1bd-cbfb-4dcc-a801-0adf59c3b6fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Buffers">
+      <UniqueIdentifier>{e08e2b78-9973-4b02-bc64-ef34220503bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\RT">
+      <UniqueIdentifier>{e9bf896b-0eb7-47a5-b946-b7ef37ba334c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\Shader">
+      <UniqueIdentifier>{cea0957e-fb00-4b9e-9786-dfc048c57a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="外部ライブラリ">
+      <UniqueIdentifier>{6cd6a253-815f-4622-83d5-f30285689ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="外部ライブラリ\ImGui">
+      <UniqueIdentifier>{afbe45dc-d44f-4d67-a9a0-bb54a0bcda0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Renderer">
+      <UniqueIdentifier>{c1a71249-2e19-4edc-8667-6e871eb213c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\DXApp.cpp">
       <Filter>ソース ファイル\App</Filter>
@@ -238,25 +241,25 @@
       <Filter>ソース ファイル\Tool\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_win32.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_dx11.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\imgui.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\imgui_demo.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\imgui_draw.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\imgui_tables.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\imgui_widgets.cpp">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\MeshInfoFactory.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
@@ -265,16 +268,16 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ShaderManager.cpp">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\PixelShader.cpp">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\VertexShader.cpp">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\InputLayout.cpp">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GameObject.cpp">
       <Filter>ソース ファイル\Obj</Filter>
@@ -286,16 +289,16 @@
       <Filter>ソース ファイル\Component\Light</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IndexBuffer.cpp">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\VertexBuffer.cpp">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\BufferManeger.cpp">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDXBuffer.cpp">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
       <Filter>ソース ファイル\Obj</Filter>
@@ -358,16 +361,13 @@
       <Filter>ソース ファイル\Component\Mesh\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp">
-      <Filter>ソース ファイル\DXLap\RT</Filter>
+      <Filter>ソース ファイル\Graphics\RT</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp">
-      <Filter>ソース ファイル\DXLap\BlendState</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\IDXResource.cpp">
-      <Filter>ソース ファイル\DXLap</Filter>
+      <Filter>ソース ファイル\Graphics\BlendState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\BlendManager.cpp">
-      <Filter>ソース ファイル\DXLap\BlendState</Filter>
+      <Filter>ソース ファイル\Graphics\BlendState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\LightManager.cpp">
       <Filter>ソース ファイル\Graphics\Light</Filter>
@@ -401,15 +401,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp">
       <Filter>ソース ファイル\Graphics\PostEffect</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Header\Component_PlayerController.cpp">
-      <Filter>ソース ファイル\Component\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
-      <Filter>ソース ファイル\DXLap</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
-      <Filter>ソース ファイル\DXLap</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\EditorManager.cpp">
       <Filter>ソース ファイル\Editor</Filter>
@@ -465,10 +456,22 @@
     <ClCompile Include="Source\Cpp\EffectManager.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\IDXResource.cpp">
+      <Filter>ソース ファイル\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RendererEngine.cpp">
+      <Filter>ソース ファイル\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
+      <Filter>ソース ファイル\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_PlayerController.cpp">
+      <Filter>ソース ファイル\Component\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\DXApp.h">
       <Filter>ソース ファイル\App</Filter>
@@ -490,9 +493,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\ModelMesh.h">
       <Filter>ソース ファイル\Graphics\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Lib\DirectXTex\DirectXTex.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Helper.h">
       <Filter>ソース ファイル\Tool</Filter>
@@ -534,28 +534,28 @@
       <Filter>ソース ファイル\Tool\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_win32.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_dx11.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imconfig.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imgui.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imgui_internal.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imstb_rectpack.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imstb_textedit.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\imstb_truetype.h">
-      <Filter>ソース ファイル\Tool\Debug\ImGui</Filter>
+      <Filter>外部ライブラリ\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\MeshInfoFactory.h">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
@@ -564,16 +564,16 @@
       <Filter>ソース ファイル\Obj</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ShaderManager.h">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\PixelShader.h">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\VertexShader.h">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\InputLayout.h">
-      <Filter>ソース ファイル\DXLap\Shader</Filter>
+      <Filter>ソース ファイル\Graphics\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\GameObject.h">
       <Filter>ソース ファイル\Obj</Filter>
@@ -585,16 +585,16 @@
       <Filter>ソース ファイル\Component\Light</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IndexBuffer.h">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\VertexBuffer.h">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\BufferManeger.h">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IDXBuffer.h">
-      <Filter>ソース ファイル\DXLap\Buffers</Filter>
+      <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\GameObjectManager.h">
       <Filter>ソース ファイル\Obj</Filter>
@@ -638,9 +638,6 @@
     <ClInclude Include="Source\Header\Cubu.h">
       <Filter>ソース ファイル\NotUsed</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\ModelData.h">
       <Filter>ソース ファイル\Graphics\Model</Filter>
     </ClInclude>
@@ -663,16 +660,13 @@
       <Filter>ソース ファイル\Component\Mesh\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\DX_RenderTarget.h">
-      <Filter>ソース ファイル\DXLap\RT</Filter>
+      <Filter>ソース ファイル\Graphics\RT</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IDX_BlendState.h">
-      <Filter>ソース ファイル\DXLap\BlendState</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\IDXResource.h">
-      <Filter>ソース ファイル\DXLap</Filter>
+      <Filter>ソース ファイル\Graphics\BlendState</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\BlendManager.h">
-      <Filter>ソース ファイル\DXLap\BlendState</Filter>
+      <Filter>ソース ファイル\Graphics\BlendState</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\LightManager.h">
       <Filter>ソース ファイル\Graphics\Light</Filter>
@@ -712,12 +706,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_PlayerController.h">
       <Filter>ソース ファイル\Component\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\RendererEngine.h">
-      <Filter>ソース ファイル\DXLap</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\RenderPipeline.h">
-      <Filter>ソース ファイル\DXLap</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\EditorManager.h">
       <Filter>ソース ファイル\Editor</Filter>
@@ -773,15 +761,24 @@
     <ClInclude Include="Source\Header\EffectManager.h">
       <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\IDXResource.h">
+      <Filter>ソース ファイル\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lib\DirectXTex\DirectXTex.h">
+      <Filter>外部ライブラリ</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RendererEngine.h">
+      <Filter>ソース ファイル\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RenderPipeline.h">
+      <Filter>ソース ファイル\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Source\Lib\DirectXTex\DirectXTex.inl">
-      <Filter>ヘッダー ファイル</Filter>
-    </None>
-    <None Include="Source\Lib\DirectXTex\DirectXTex.pdb">
-      <Filter>ヘッダー ファイル</Filter>
-    </None>
     <None Include="Source\Shader\ConstantBuffers_H.hlsli">
       <Filter>HLSL\HEAD</Filter>
     </None>
@@ -799,6 +796,12 @@
     </None>
     <None Include="Source\Shader\IO_VS_Struct_H.hlsli">
       <Filter>HLSL\HEAD</Filter>
+    </None>
+    <None Include="Source\Lib\DirectXTex\DirectXTex.inl">
+      <Filter>外部ライブラリ</Filter>
+    </None>
+    <None Include="Source\Lib\DirectXTex\DirectXTex.pdb">
+      <Filter>外部ライブラリ</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -864,11 +867,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Source\Lib\DirectXTex\DirectXTex.lib">
-      <Filter>ヘッダー ファイル</Filter>
-    </Library>
     <Library Include="Source\Lib\DirectXTex\DirectXTexd.lib">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>外部ライブラリ</Filter>
+    </Library>
+    <Library Include="Source\Lib\DirectXTex\DirectXTex.lib">
+      <Filter>外部ライブラリ</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>

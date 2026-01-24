@@ -9,7 +9,7 @@
 struct SetupMaterialInfo
 {
     std::shared_ptr<Material> pMaterialData;  // マテリアル
-    int Index;              // マテリアル番号
+    int Index = 0;              // マテリアル番号
 };
 
 /// <summary>

@@ -60,14 +60,18 @@ void CollisionManager::CollisionProcess()
         bool isStaticB = false;
 
         // 使用フラグチェック
-        if (colA->get_IsEnable() == false)
-        {
+        if (colA->get_IsEnable() == false) {
             continue;
         }
         
         for (int j = i + 1; j < m_pCollidersList.size(); j++)
         {
             auto& colB = m_pCollidersList[j];
+
+            // 使用フラグチェック
+            if (colB->get_IsEnable() == false){
+                continue;
+            }
 
             isStaticA = colA->get_IsStatic();
             isStaticB = colB->get_IsStatic();
@@ -87,7 +91,7 @@ void CollisionManager::CollisionProcess()
                 continue;
             }
 
-            CollisionInfo info;
+            CollisionInfo info; // 衝突情報格納用
             
             // 衝突チェック
             if (HitCheck(colA, colB, transA, transB, &info))
@@ -135,7 +139,8 @@ void CollisionManager::CollisionProcess()
 //*---------------------------------------------------------------------------------------
 //*【?】衝突したかどうかを確かめる
 //*     コライダーごとに処理を分ける 
-//*
+//*     参考サイト：https://qiita.com/Aqua-218/items/a432cf0410bff57202c5
+// 
 //* [引数]
 //* _colA :     コライダーA
 //* _colB :     コライダーB
@@ -168,6 +173,7 @@ bool CollisionManager::HitCheck(
         VEC3 centerA = boxA->get_Center() + _transA->get_VEC3ToPos();
         VEC3 centerB = boxB->get_Center() + _transB->get_VEC3ToPos();
 
+        // サイズを反映させる
         CollInData_AABB data_A;
         data_A._min = centerA - boxA->get_Size();
         data_A._max = centerA + boxA->get_Size();
@@ -175,8 +181,12 @@ bool CollisionManager::HitCheck(
         CollInData_AABB data_B;
         data_B._min = centerB - boxB->get_Size();
         data_B._max = centerB + boxB->get_Size();
+
+        // BoxとBoxの判定を行う
         if (HitCheck_BoxVsBox(data_A, data_B))
         {
+            // 参考サイト
+
             // 各軸でのオーバーラップ量を計算
             float overlapX = std::min(data_A._max.x - data_B._min.x, data_B._max.x - data_A._min.x);
             float overlapY = std::min(data_A._max.y - data_B._min.y, data_B._max.y - data_A._min.y);

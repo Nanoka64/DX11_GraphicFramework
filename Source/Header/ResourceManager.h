@@ -73,10 +73,20 @@ public:
     /// </summary>
     /// <param name="tag"></param>
     /// <returns></returns>
-    std::shared_ptr<Material> LoadMaterial(const std::string &tag);
+    std::shared_ptr<Material> FindMaterial(const std::string &tag);
+    
+    /// <summary>
+    /// CSVから全てのマテリアルデータのリストを読み込む
+    /// 最初に一括で読み込んで、あとはLoadMaterialで個々に取得させる
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    bool ImportCSV_AllMaterialData(const std::string &_path);
 
     /// <summary>
     /// マテリアルの登録
+    /// コード内で定義する関数
+    /// ※ この関数を使うよりCSVの方に書いた方が良いよ
     /// </summary>
     /// <param name="tag"></param>
     /// <param name="mat"></param>

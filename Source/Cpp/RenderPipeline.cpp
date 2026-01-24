@@ -187,16 +187,24 @@ void RenderPipeline::Execute(RendererEngine &renderer)
 
     /* シャドウパス */
     Shadow_PathRender(renderer);
+    // パス終了時にSRVを解除する
+    ID3D11ShaderResourceView* nullSRVs[8] = { nullptr };
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
+    renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
 
     /* ジオメトリパス */
     Geometry_PathRender(renderer);
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
+    renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
 
     /* ディファードライティングパス */
     Lighting_PathRender(renderer);
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
+    renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
 
     /* フォワードパス */
     Forward_PathRender(renderer);
-
+ 
     /* ポストエフェクトパス */
     PostEffect_PathRender(renderer);
 

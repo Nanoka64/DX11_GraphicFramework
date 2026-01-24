@@ -9,14 +9,13 @@
 class CollisionInfo
 {
 private:
-    std::weak_ptr<class GameObject> m_pHitObject;         // 衝突相手
-    std::weak_ptr<class Transform> m_pHitTransform;       // 衝突相手のトランスフォーム
-    std::weak_ptr<class Collider> m_pHitCollider;         // 衝突相手のコライダー
-    VECTOR3::VEC3 m_HitPoint;                               // 衝突位置
-    VECTOR3::VEC3 m_HitNormal;                              // 衝突面の向き
-    VECTOR3::VEC3 m_RelativeVelocity;                       // 衝突した物体の相対速度
-
-    float m_PenetrationDepth; // めり込み量
+    std::weak_ptr<class GameObject> m_pHitObject;  // 衝突相手
+    std::weak_ptr<class Transform> m_pHitTransform;// 衝突相手のトランスフォーム
+    std::weak_ptr<class Collider> m_pHitCollider;  // 衝突相手のコライダー
+    VECTOR3::VEC3 m_HitPoint;                      // 衝突位置
+    VECTOR3::VEC3 m_HitNormal;                     // 衝突面の向き
+    VECTOR3::VEC3 m_RelativeVelocity;              // 衝突した物体の相対速度
+    float m_PenetrationDepth;                      // めり込み量
 public:
     CollisionInfo();
     ~CollisionInfo();
@@ -32,7 +31,6 @@ public:
     //*----------------------------------------------------------------------------------------
     void set_HitTransform(std::weak_ptr<Transform> _pTrans) { m_pHitTransform = _pTrans; }
     std::weak_ptr<Transform> get_HitTransform()const { return m_pHitTransform; };
-    
 
     //*---------------------------------------------------------------------------------------
     //*【?】衝突したコライダー

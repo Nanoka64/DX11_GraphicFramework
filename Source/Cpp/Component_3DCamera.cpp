@@ -27,9 +27,9 @@ m_FocusPoint({ 0.0f,0.0f,0.0f }),
 m_UpVec({ 0.0f,1.0f,0.0f }),
 m_Angle_H(1.57f),
 m_Angle_V(0.f),
-m_Fov(100.0f),
+m_Fov(90.0f),
 m_NearClipDist(1.0f),
-m_FarClipDist(50000.0f)
+m_FarClipDist(8000.0f)
 {
 	this->set_Tag("Camera3D"); 
 	m_PosOffset.x = CAMERA_POS_OFFSET;

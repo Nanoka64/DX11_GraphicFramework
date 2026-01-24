@@ -7,8 +7,12 @@
 #include "Texture.h"
 #include "ModelData.h"
 #include <DirectXTex.h>
-#include <locale>
-#include <codecvt>
+//#include <locale>
+//#include <codecvt>
+
+// CSV読み込み用
+#include <fstream>
+#include <sstream>
 
 using namespace DirectX;
 
@@ -218,7 +222,7 @@ std::shared_ptr<Texture> ResourceManager::Convert_SRVToTexture(const std::string
 //* 引数：1.タグ
 //* 返値：マテリアルデータ
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<Material> ResourceManager::LoadMaterial(const std::string& tag)
+std::shared_ptr<Material> ResourceManager::FindMaterial(const std::string& tag)
 {
     auto it = m_pMaterialMap.find(tag);
 
@@ -232,6 +236,97 @@ std::shared_ptr<Material> ResourceManager::LoadMaterial(const std::string& tag)
     MessageBox(NULL, "マテリアルが登録されていません", "Material", MB_OK);
     return m_pMaterialMap.find("Default")->second;
 }
+
+
+bool ResourceManager::ImportCSV_AllMaterialData(const std::string& _path)
+{
+    std::ifstream file(_path);
+    std::string line;           // 行を格納する変数
+
+    if (file.is_open())
+    {
+        std::getline(file, line);   // ヘッダ行飛ばす
+
+        while (std::getline(file, line)) // 1行ずつ読み込む
+        {
+            std::stringstream ss(line); // 行をストリームに変換
+            Material data;
+            std::string toStr;
+            std::string tag;    // キーになるタグ
+            std::string path;
+
+            // パラメータの取得↓↓↓
+
+            /* タグ */
+            std::getline(ss, tag, ',');
+
+            /* ディフューズカラー */
+            std::getline(ss, toStr, ',');
+            data.m_DiffuseColor.x = std::stof(toStr); //x
+            std::getline(ss, toStr, ',');
+            data.m_DiffuseColor.y = std::stof(toStr); //y
+            std::getline(ss, toStr, ',');
+            data.m_DiffuseColor.z = std::stof(toStr); //z
+            std::getline(ss, toStr, ',');
+            data.m_DiffuseColor.w = std::stof(toStr); //w
+            
+            /* スペキュラカラー*/
+            std::getline(ss, toStr, ',');
+            data.m_SpecularColor.x = std::stof(toStr); //x
+            std::getline(ss, toStr, ',');
+            data.m_SpecularColor.y = std::stof(toStr); //y
+            std::getline(ss, toStr, ',');
+            data.m_SpecularColor.z = std::stof(toStr); //z
+            std::getline(ss, toStr, ',');
+            data.m_SpecularColor.w = std::stof(toStr); //w
+
+            /* スペキュラ強度 */
+            std::getline(ss, toStr, ',');
+            data.m_SpecularPower = std::stof(toStr);
+
+            /* エミッシブカラー */
+            std::getline(ss, toStr, ',');
+            data.m_EmissiveColor.x = std::stof(toStr); //x
+            std::getline(ss, toStr, ',');
+            data.m_EmissiveColor.y = std::stof(toStr); //y
+            std::getline(ss, toStr, ',');
+            data.m_EmissiveColor.z = std::stof(toStr); //z
+
+            /* エミッシブ強度 */
+            std::getline(ss, toStr, ',');
+            data.m_EmissivePower = std::stof(toStr);
+
+            /* ディフューズマップ */
+            std::getline(ss, path, ',');
+            data.m_DiffuseMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+
+            /* ノーマルマップ */
+            std::getline(ss, path, ',');
+            data.m_NormalMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+
+            /* スペキュラマップ */
+            std::getline(ss, path, ',');
+            data.m_SpecularMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+
+            /* ブレンドモード */
+            std::getline(ss, toStr, ',');
+            data.m_BlendMode = static_cast<BLEND_MODE>(std::stoi(toStr));
+
+            // 登録
+            m_pMaterialMap[tag] = std::make_shared<Material>(data);
+        }
+
+        file.close();   // ファイル閉じる
+    }
+    else
+    {
+        MessageBox(NULL, "CSVが読み込めませんでした", "Load Error", MB_OK);
+        return false;
+    }
+
+    return true;
+}
+
 
 
 //*---------------------------------------------------------------------------------------
