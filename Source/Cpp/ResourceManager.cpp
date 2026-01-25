@@ -298,15 +298,21 @@ bool ResourceManager::ImportCSV_AllMaterialData(const std::string& _path)
 
             /* ディフューズマップ */
             std::getline(ss, path, ',');
-            data.m_DiffuseMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            if (path != "-1") {
+                data.m_DiffuseMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            }
 
             /* ノーマルマップ */
             std::getline(ss, path, ',');
-            data.m_NormalMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            if (path != "-1") {
+                data.m_NormalMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            }
 
             /* スペキュラマップ */
             std::getline(ss, path, ',');
-            data.m_SpecularMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            if (path != "-1") {
+                data.m_SpecularMap.Texture = LoadWIC_Texture(Tool::StringToWstring(path));
+            }
 
             /* ブレンドモード */
             std::getline(ss, toStr, ',');

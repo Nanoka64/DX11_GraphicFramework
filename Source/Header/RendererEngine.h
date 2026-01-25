@@ -157,7 +157,7 @@ public:
     /// レンダリングパイプラインのセットアップ
     /// </summary>
     /// <returns></returns>
-    bool CreateRenerererPipeline(RENDER_PIPELINE_STATE type);
+    bool CreateRendererPipeline(RENDER_PIPELINE_STATE type);
 
     /// <summary>
     /// デフォルトのレンダリングパイプラインを実行

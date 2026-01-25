@@ -84,6 +84,8 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // ガウシアンブラー用の重みテーブルを計算する
     CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, blurPow);
 
+    renderer.RegisterCullMode(CULL_MODE::BACK);
+
     // ************************************************************************
     // 
     // 水平ブラー
@@ -98,6 +100,7 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // 水平ブラー用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pHorizontalBlur->get_RTV(), nullptr);
     renderer.ClearRenderTargetView(m_pHorizontalBlur);
+
     // 水平ブラー
     auto horizontalBlurSprite = m_pHorizontalBlurSprite.lock()->get_Component<SpriteRenderer>();
     horizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);

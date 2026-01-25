@@ -33,6 +33,8 @@ private:
     class GaussianBlur *m_pDoF_GaussianBlur; // 被写界深度用ガウスブラー
     float m_DoF_BlurIncensity;  // DOFブラーの強さ
 
+    class GaussianBlur *m_pShadowGaussianBlur; // シャドウのVSM用ガウスブラー
+
     // レンダーターゲットのスプライト
     std::shared_ptr<class SpriteRenderer> m_pAlbed_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pNormal_Sprite;

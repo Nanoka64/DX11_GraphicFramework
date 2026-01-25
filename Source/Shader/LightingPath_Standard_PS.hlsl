@@ -17,7 +17,8 @@
 // 追記：CSOファイル読み込みにすればデバッグ可能
 
 SamplerState g_sSampler : register(s0);
-SamplerComparisonState g_sShadowSampler : register(s1); // シャドウマップ用
+//SamplerComparisonState g_sShadowSampler : register(s1); // シャドウマップ用
+SamplerState g_sShadowSampler : register(s1); // シャドウマップ用
 Texture2D<float4> g_tAlbedoTexture : register(t0);      // rgbにアルベド aにエミッシブ
 Texture2D<float4> g_tNormalTexture : register(t1);      // rgbに法線
 Texture2D<float4> g_tSpecularTexture : register(t2);    // rgbにスペキュラ色  wにスペキュラ強度
@@ -168,21 +169,43 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float shadowBias = bias + slopeScaledBias * maxDepthSlope;
     shadowBias = min(shadowBias, depthBiasClamp);   // クランプ
     
-    // シャドウマップの範囲内か
-    if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
-        shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
+    // シャドウマップから値をサンプリング
+    float2 shadow = g_tShadowMapTexture.Sample(g_sShadowSampler, shadowMapUV);
+    
+    if (zInLVP > shadow.r && zInLVP <= 1.0f)
     {
-        // シャドウマップから深度値をサンプリング
-        // zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
-        shadowFactor = g_tShadowMapTexture.SampleCmpLevelZero(
-                g_sShadowSampler, shadowMapUV, zInLVP - bias
-            ).r;
-
+        //チェビシェフの不等式を利用して光が当たる確率を求める
+        float depth_sq = shadow.r * shadow.r;
+        
+        // 分散具合を求める
+        // 分散が大きいほど、varianceも大きくなる
+        float variance = min(max(shadow.g - depth_sq, 0.0001f), 1.0f);
+        
+        // このピクセルのライトから見た深度値とシャドウマップの平均の深度値との差を求める
+        float md = zInLVP - shadow.r;
+        
+        // 光が届く確率を求める
+        float lit_Factor = variance / (variance + md * md);
+        
         // 現在のカラーより暗く
         shadowColor = finalCol.xyz * 0.5f;
-        // shadowFactor : 1.0 = 光が当たっている, 0.0 = 影
-        finalCol.xyz = lerp(shadowColor, finalCol.xyz, shadowFactor);
+        
+        // 通常カラーとシャドウカラーで線形補間
+        finalCol.xyz = lerp(shadowColor, finalCol.xyz, lit_Factor);
     }
+    
+    // シャドウマップの範囲内か
+    //if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
+    //shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
+    //{
+    //// シャドウマップから深度値をサンプリング
+    //// zinLVP : この値が比較するテクセルより大きければ1.0、小さければ0.0
+
+    //// 現在のカラーより暗く
+    //    shadowColor = finalCol.xyz * 0.5f;
+    //// shadowFactor : 1.0 = 光が当たっている, 0.0 = 影
+    //    finalCol.xyz = lerp(shadowColor, finalCol.xyz, shadowFactor);
+        //}
     
     //************************************************************************
     // 最終調整

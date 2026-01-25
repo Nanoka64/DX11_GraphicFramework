@@ -83,6 +83,9 @@ void DirectionalLight::Update(RendererEngine &renderer)
 
 	// プレイヤーから少し離れた場所
     VEC3 eyePos = trackingObjPos - (forward * m_FocusOffsetDistance);;
+	
+	//dirData.LightPos = eyePos;	// シャドウマップVSM用
+
 
 	// ライトから見たビュー行列の計算
 	XMFLOAT3 eye	= eyePos;

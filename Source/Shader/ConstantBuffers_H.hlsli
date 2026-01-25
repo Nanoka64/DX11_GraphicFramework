@@ -24,6 +24,9 @@ struct DirectionalLight
     float3 SpecularColor;       // スペキュラ
     float SpecularIntensity;    // スペキュラ強度
     
+    //float3 LightPos;            // ライトの位置（シャドウマップVSM用）
+    //float pad1;
+    
     float4x4 LightViewProj;     // ライトから見た画面座標
 };
 

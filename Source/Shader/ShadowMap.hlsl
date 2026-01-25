@@ -27,6 +27,7 @@ struct PS_INPUT
 {
     float4 Pos : SV_Position;
     float2 UV : TEXCOORD0;
+    float Depth : TEXCOORD1;   // x : ライトから見た深度値 y : その2乗
 };
 
 // **************************************************************************
@@ -39,12 +40,16 @@ PS_INPUT VSMain(VS_INPUT input)
     float2 uv = input.UV;
     
     pos = mul(pos, cb_Transform);   // ワールド変換（ワールド空間）
+    float3 worldPos = pos.xyz;
     
     // ライトのビュープロジェクション行列でライトから見た座標に変換     
     pos = mul(pos, cb_DirLightData[0].LightViewProj); 
     
     output.Pos = pos;           // 画面空間の頂点座標
     output.UV = input.UV;       // テクスチャ座標
+    
+    // ライトから見た深度値
+    output.Depth = pos.z / pos.w;
     
     return output;
 }
@@ -56,5 +61,11 @@ float4 PSMain(PS_INPUT input) : SV_TARGET0
 {
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
+    float depth = input.Depth;
+    
+    // 深度値出力
+    finalColor.x = depth;
+    finalColor.y = depth * depth;
+   
     return finalColor;
 }

@@ -49,7 +49,6 @@ void ModelMesh::Draw(RendererEngine& render)
 	uint32_t stride[1] = { sizeof(VERTEX_Skneed) };
 	uint32_t offset[1] = { 0 };
 
-
 	pDeviceContext->UpdateSubresource(m_pVertexBuffer, 0, NULL, m_pVertex, 0, 0);
 
 	// 頂点・インデックスバッファを設定

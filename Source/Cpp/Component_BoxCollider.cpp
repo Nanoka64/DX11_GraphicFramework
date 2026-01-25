@@ -87,7 +87,7 @@ void BoxCollider::Draw(RendererEngine &renderer)
     localMat = transform->get_ExcludingRotWorldMtx(mtxS, mtxT);
 
     // ƒƒbƒVƒ…•\Ž¦
-    m_pBoxMesh->Draw(renderer, localMat);
+    //m_pBoxMesh->Draw(renderer, localMat);
 }
 
 

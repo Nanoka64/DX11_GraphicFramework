@@ -87,8 +87,6 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
         return false; 
     }
 
-
-
     return true;
 }
 
@@ -161,7 +159,9 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"シャドウ")))
         {
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シャドウマップ"));
-            Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_DepthSRV_ComPtr().Get(), VEC2(400, 200));
+            Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_SRV_ComPtr().Get(), VEC2(400, 200));    
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー掛け"));
+            Master::m_pDebugger->DG_Image(m_pShadowGaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"バイアス"));
             Master::m_pDebugger->DG_SameLine();
             Master::m_pDebugger->DG_DragFloat("##BaseBias", 1, &m_ShadowData.baseShadowBias,   0.0001f, 0.0f,   0.1f);
@@ -286,7 +286,7 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
     renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
 
     // 表カリング 影が浮いているような感じ（ピーターパン現象）を防ぐため
-    renderer.RegisterCullMode(CULL_MODE::FRONT);     
+    renderer.RegisterCullMode(CULL_MODE::BACK);     
 
     // ライトの更新
     Master::m_pLightManager->Update();
@@ -296,6 +296,9 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
+
+    // シャドウマップへブラーを掛ける
+    m_pShadowGaussianBlur->ExcuteOnGPU(renderer,16.0f);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -630,16 +633,18 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
     if (result == false)return false;
 
     // ****************************************************************
-    // LVPからの深度値書き込みシャドウマップ
+    // LVPからの深度値書き込みシャドウマップ（VSM）
     // ****************************************************************
     m_pShadowMap_RT = new DX_RenderTarget();
     result = m_pShadowMap_RT->Create(
         renderer,
-        8096,       // 影の品質は何も対策しなければ解像度依存
-        8096,
+        // 影の品質は何も対策しなければ解像度依存
+        4096,       
+        4096,
         1,
         1,
-        DXGI_FORMAT_UNKNOWN,
+        // ・Rにライトから見た深度値 ・Gにライトから見た深度値の二乗をいれる
+        DXGI_FORMAT_R32G32_FLOAT,   
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
@@ -731,6 +736,22 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
         ),
             DXGI_FORMAT_R11G11B10_FLOAT,
         4
+    );
+    if (!result)return false;
+    
+    /*************************************************************************
+    * シャドウのVSM用ブラーの作成
+    *************************************************************************/
+    m_pShadowGaussianBlur = new GaussianBlur();
+    result = m_pShadowGaussianBlur->Setup(renderer,
+        Master::m_pResourceManager->Convert_SRVToTexture(
+            "ShadowMap",
+            m_pShadowMap_RT->get_SRV_ComPtr(),
+            m_pShadowMap_RT->get_Width(),
+            m_pShadowMap_RT->get_Height()
+        ),
+            DXGI_FORMAT_R32G32_FLOAT,
+        5
     );
     if (!result)return false;
 
@@ -839,8 +860,9 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.pTextureMap[3] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_D");
     sprite.pTextureMap[4] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
     sprite.pTextureMap[5] = Master::m_pResourceManager->Convert_SRVToTexture(
-        "ShadowMap",
-        m_pShadowMap_RT->get_DepthSRV_ComPtr(),
+        // ブラーを掛けたシャドウマップを設定
+        "BlurShadowMap",
+        m_pShadowGaussianBlur->get_AfterBlurTexture(),  
         m_pShadowMap_RT->get_Width(),
         m_pShadowMap_RT->get_Height()
     );
@@ -924,7 +946,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
 
     depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
-    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;               // スロット7にセット
+    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;               // スロット8にセット
     depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_DofData;
     depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_DofData);
     depthOfFieldSprite.PSConstBufferNum = 1;

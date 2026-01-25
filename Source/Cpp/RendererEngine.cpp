@@ -535,17 +535,21 @@ HRESULT RendererEngine::InitDX11_Sampler()
     if (FAILED(hr))return hr;
 
     // シャドウマップ用サンプラー
+    //sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+    //sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+    //sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    //sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    //sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    //// 境界線の色を「1.0（一番遠い深度）」に設定する
+    //sampDesc.BorderColor[0] = 1.0f;
+    //sampDesc.BorderColor[1] = 1.0f;
+    //sampDesc.BorderColor[2] = 1.0f;
+    //sampDesc.BorderColor[3] = 1.0f;
+    //sampDesc.MaxAnisotropy  = 1;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    // 境界線の色を「1.0（一番遠い深度）」に設定する
-    sampDesc.BorderColor[0] = 1.0f;
-    sampDesc.BorderColor[1] = 1.0f;
-    sampDesc.BorderColor[2] = 1.0f;
-    sampDesc.BorderColor[3] = 1.0f;
-    sampDesc.MaxAnisotropy  = 1;
     hr = m_pd3dDevice->CreateSamplerState(&sampDesc, &m_pSamplerShadow);
     if (FAILED(hr))return hr;
 
@@ -659,7 +663,7 @@ void RendererEngine::RegisterCullMode(CULL_MODE mode)
 //* 引数：なし
 //* 戻値：成功か
 //*----------------------------------------------------------------------------------------
-bool RendererEngine::CreateRenerererPipeline(RENDER_PIPELINE_STATE type)
+bool RendererEngine::CreateRendererPipeline(RENDER_PIPELINE_STATE type)
 {
     switch (type)
     {

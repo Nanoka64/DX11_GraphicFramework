@@ -71,161 +71,15 @@ bool SceneManager::Init(RendererEngine &renderer)
     SceneFactory::Create(m_StateMachine, renderer);
 
     // マテリアルデータの読み込み
-    //if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("MaterialParam.csv"))
-    //{
-    //    assert(false);
-    //    return false;
-    //}
+    if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
+    {
+        assert(false);
+        return false;
+    }
 
 
     // マテリアルの作成 (今後CSVで読み込むようにする)
     {
-        /* プレイヤー */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁S050.jpg");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-            mat.m_DiffuseColor = VEC4(0.4f, 0.4f, 0.6f, 1.0f);
-            mat.m_SpecularPower = 150.0f;
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("PlayerModel", mat);
-        }
-        /* 兵士 */
-        {
-            Material mat[2];
-            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_diffuse.png");
-            mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_normal.png");
-            mat[0].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_specular.png");
-            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].m_SpecularPower = 50.0f;
-            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("soldier_body", mat[0]);
-
-            mat[1].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_diffuse.png");
-            mat[1].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_normal.png");
-            mat[1].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_specular.png");
-            mat[1].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[1].m_SpecularPower = 50.0f;
-            mat[1].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("soldier_head", mat[1]);
-        }
-        /* 銃弾*/
-        {
-            Material mat[1];
-            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
-            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].m_SpecularPower = 200.0f;
-            mat[0].m_EmissivePower = 50.0f;
-            mat[0].m_EmissiveColor = VEC3(0.0f, 1.0f, 1.0f);
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Bullet", mat[0]);
-        }
-        /* アサルトライフル*/
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W030.jpg");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 100.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("AssultRifle", mat);
-        }
-        /* ディレクションライト*/
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 1.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("DirLight", mat);
-        }
-        /* 壁 */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 20.0f;
-            mat.m_EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
-            mat.m_EmissivePower = 200.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Canonn", mat);
-        }
-        /* アリ */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 100.0f;
-            mat.m_SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Ant", mat);
-        }
-        /* B-2 */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
-            mat.m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jpeg");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 100.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("B_2", mat);
-        }
-        /* クレイモア */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
-            mat.m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Roughness.png");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 200.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Claymore", mat);
-        }
-        /* 建物 */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Building/01/texture/building5-lo.jpg");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 150.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Building", mat);
-        }
-        /* マザーシップ */
-        {
-            Material mat[1];
-            mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/metal_plate_02_diff_2k.jpg");
-            mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
-            mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat[0].m_SpecularPower = 150.0f;
-            mat[0].m_EmissiveColor = VEC3(0.0f, 0.1f, 0.0f);
-            mat[0].m_EmissivePower = 0.2f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("MotherShip", mat[0]);
-        }
         /* クモ */
         {
             Material mat[4];
@@ -263,17 +117,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("Spider_4", mat[3]);
         }
-        /* 地面 */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 50.0f;
 
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Ground", mat);
-        }
         /* スカイボックス */
         {
             Material mat;
@@ -282,33 +126,6 @@ bool SceneManager::Init(RendererEngine &renderer)
             // マテリアル登録
             Master::m_pResourceManager->RegisterMaterialData("SkyBox", mat);
         }
-        /* ビルボード */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/0191.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 100.0f;
-            mat.m_BlendMode = BLEND_MODE::ALPHA;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("Billboard", mat);
-        }
-        /* ポイントライト */
-        {
-            Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
-            mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
-            mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-            mat.m_SpecularPower = 20.0f;
-
-            // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("PointLight", mat);
-        }
-    }
-
-    {
     }
 
     // オブジェクトの生成
@@ -369,8 +186,8 @@ bool SceneManager::Init(RendererEngine &renderer)
         /* 兵士 */
         {
             // マテリアル取得
-            auto matPtr1 = Master::m_pResourceManager->FindMaterial("soldier_body");
-            auto matPtr2 = Master::m_pResourceManager->FindMaterial("soldier_head");
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("Soldier_body");
+            auto matPtr2 = Master::m_pResourceManager->FindMaterial("Soldier_head");
 
             SetupMaterialInfo matInfo[3];
             matInfo[0].Index = 0;   
@@ -809,7 +626,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     Master::m_pLightManager->set_CameraTransform(m_pCameraComp->get_OwnerObj().lock()->get_Transform());
 
     // パイプラインの作成
-    if (!renderer.CreateRenerererPipeline(RENDER_PIPELINE_STATE::DEFAULT))
+    if (!renderer.CreateRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT))
     {
         return false;
     }
@@ -959,7 +776,7 @@ void SceneManager::Draw(RendererEngine& renderer)
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
 
 
-    Master::m_pDirectWriteManager->DrawString("こんにちは",VEC2(940, 540));
+    //Master::m_pDirectWriteManager->DrawString("こんにちは",VEC2(940, 540));
 
     //// シーンの描画
     //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);

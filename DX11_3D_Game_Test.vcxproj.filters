@@ -856,14 +856,14 @@
     <FxCompile Include="Source\Shader\DoF_Filter_PS.hlsl">
       <Filter>HLSL\PS\PostEffect</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shader\ShadowMap.hlsl">
-      <Filter>HLSL\Shadow</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap_Skinned.hlsl">
       <Filter>HLSL\Shadow</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shader\ToneMappingFilter_PS.hlsl">
       <Filter>HLSL\PS\PostEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\ShadowMap.hlsl">
+      <Filter>HLSL\Shadow</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
