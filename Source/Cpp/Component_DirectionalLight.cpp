@@ -16,8 +16,8 @@ using namespace VECTOR3;
 //*----------------------------------------------------------------------------------------
 DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
 m_FocusOffsetDistance(800.0f),
-m_OrthographicWidth(500.0f),
-m_OrthographicHeigh(500.0f),
+m_OrthographicWidth(700.0f),
+m_OrthographicHeigh(700.0f),
 m_ShadowDistance(4000.0f)
 {
 	this->set_Tag("DirectionalLight");
@@ -84,9 +84,6 @@ void DirectionalLight::Update(RendererEngine &renderer)
 	// プレイヤーから少し離れた場所
     VEC3 eyePos = trackingObjPos - (forward * m_FocusOffsetDistance);;
 	
-	//dirData.LightPos = eyePos;	// シャドウマップVSM用
-
-
 	// ライトから見たビュー行列の計算
 	XMFLOAT3 eye	= eyePos;
 	XMFLOAT3 foucus = m_FocusPoint;

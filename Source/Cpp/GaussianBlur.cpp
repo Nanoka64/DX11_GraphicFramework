@@ -102,9 +102,8 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     renderer.ClearRenderTargetView(m_pHorizontalBlur);
 
     // 水平ブラー
-    auto horizontalBlurSprite = m_pHorizontalBlurSprite.lock()->get_Component<SpriteRenderer>();
-    horizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
-    horizontalBlurSprite->Draw(renderer);
+    m_pHorizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    m_pHorizontalBlurSprite->Draw(renderer);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -124,9 +123,8 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     renderer.ClearRenderTargetView(m_pVerticalBlur);
 
     // 垂直ブラー
-    auto verticalBlurSprite = m_pVerticalBlurSprite.lock()->get_Component<SpriteRenderer>();
-    verticalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
-    verticalBlurSprite->Draw(renderer);
+    m_pVerticalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    m_pVerticalBlurSprite->Draw(renderer);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -194,8 +192,8 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     horizontalBlurSprite.pTextureMap[0] = m_pTexture;
     horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     horizontalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL;
-    m_pHorizontalBlurSprite = MeshFactory::CreateSprite(horizontalBlurSprite);
-
+    auto obj = MeshFactory::CreateSprite(horizontalBlurSprite);
+    m_pHorizontalBlurSprite = obj->get_Component<SpriteRenderer>();
 
     /*************************************
     * 垂直ブラー用スプライト
@@ -214,7 +212,8 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     verticalBlurSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT_HorizontalBlur" + std::to_string(m_Id), m_pHorizontalBlur->get_SRV_ComPtr());
     verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;
-    m_pVerticalBlurSprite = MeshFactory::CreateSprite(verticalBlurSprite);
+    obj = MeshFactory::CreateSprite(verticalBlurSprite);
+    m_pVerticalBlurSprite = obj->get_Component<SpriteRenderer>();
 
     return true;
 }

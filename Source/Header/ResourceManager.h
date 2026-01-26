@@ -86,7 +86,7 @@ public:
     /// <summary>
     /// マテリアルの登録
     /// コード内で定義する関数
-    /// ※ この関数を使うよりCSVの方に書いた方が良いよ
+    /// ※ 個別に登録する必要があるもの以外はCSVに書いてね
     /// </summary>
     /// <param name="tag"></param>
     /// <param name="mat"></param>

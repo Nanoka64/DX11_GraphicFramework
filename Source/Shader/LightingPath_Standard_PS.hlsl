@@ -172,14 +172,14 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // シャドウマップから値をサンプリング
     float2 shadow = g_tShadowMapTexture.Sample(g_sShadowSampler, shadowMapUV);
     
-    if (zInLVP > shadow.r && zInLVP <= 1.0f)
+    //if (zInLVP > shadow.r && zInLVP <= 1.0f)
     {
         //チェビシェフの不等式を利用して光が当たる確率を求める
         float depth_sq = shadow.r * shadow.r;
         
         // 分散具合を求める
         // 分散が大きいほど、varianceも大きくなる
-        float variance = min(max(shadow.g - depth_sq, 0.0001f), 1.0f);
+        float variance = min(max(shadow.g - depth_sq, 0.0000001f), 1.0f);
         
         // このピクセルのライトから見た深度値とシャドウマップの平均の深度値との差を求める
         float md = zInLVP - shadow.r;
@@ -187,8 +187,17 @@ float4 PSMain(PS_IN input) : SV_TARGET
         // 光が届く確率を求める
         float lit_Factor = variance / (variance + md * md);
         
+        //（UV 0.0～1.0）の端でフェードさせる
+        // 端から指定範囲の領域で滑らかに影を薄くする
+        // 今は端から30%ぐらいのところからフェードさせている
+        float2 edge = smoothstep(0.0, 0.3, shadowMapUV) * smoothstep(1.0, 0.7, shadowMapUV);
+        float vignette = edge.x * edge.y;
+        
+        // 範囲外ではvignetteが0になるので、1.0で明るくなる
+        lit_Factor = lerp(1.0f, lit_Factor, vignette);
+        
         // 現在のカラーより暗く
-        shadowColor = finalCol.xyz * 0.5f;
+        shadowColor = finalCol.xyz * 0.3f;
         
         // 通常カラーとシャドウカラーで線形補間
         finalCol.xyz = lerp(shadowColor, finalCol.xyz, lit_Factor);

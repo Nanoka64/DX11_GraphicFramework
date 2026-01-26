@@ -70,7 +70,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     // ステートマシンの作成
     SceneFactory::Create(m_StateMachine, renderer);
 
-    // マテリアルデータの読み込み
+    // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
     {
         assert(false);
@@ -435,7 +435,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.ObjTag = "MotherShip";
             model.IsAnim = false;
             model.MatNum = 1;
-            model.IsActive = true;
+            model.IsActive = false;
 
             model.SetupMaterial = matInfo;
 
@@ -631,10 +631,6 @@ bool SceneManager::Init(RendererEngine &renderer)
         return false;
     }
 
-    m_V1 = VEC3(1, 0, 0);
-    m_V2 = VEC3(0, 1, 0);
-    m_V3 = VEC3(0, 0, 0);
-
     return true;
 }
 
@@ -655,14 +651,6 @@ void SceneManager::Update(RendererEngine& renderer)
     //{
     //    m_CrntSceneState = newState;
     //}
-
-    m_V3 = VEC3::Cross(m_V1.Normalize(), m_V2.Normalize());
-
-    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"数学"));
-    Master::m_pDebugger->DG_DragVec3("##Cross1", &m_V1, 0.01f, -1000.0f, 1000.0f);
-    Master::m_pDebugger->DG_DragVec3("##Cross2", &m_V2, 0.01f, -1000.0f, 1000.0f);
-    Master::m_pDebugger->DG_DragVec3("##Cross3", &m_V3, 0.01f, -1000.0f, 1000.0f);
-    Master::m_pDebugger->EndDebugWindow();
 
     static float counter = 0.0f;
     counter += 0.01f;

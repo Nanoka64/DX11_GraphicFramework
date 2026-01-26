@@ -16,6 +16,7 @@
 //      InputFactory.h using namespace Input
 //                                      から取る
 //           このクラスからは呼ばない
+// 参考サイト：https://yttm-work.jp/directx/directx_0028.html
 // =======================================================================================
 
 class InputManager
@@ -31,7 +32,13 @@ private:
 
     // DirectInput用
     LPDIRECTINPUT8   m_pDInput = nullptr;
-    LPDIRECTINPUTDEVICE8 m_pKeyDevice = nullptr;
+
+    // 入力デバイスへのアクセスに使う用らしい
+    LPDIRECTINPUTDEVICE8 m_pKeyDevice = nullptr;    // キーボード用
+    LPDIRECTINPUTDEVICE8 m_pMouseDevice = nullptr;  // マウス用
+
+    POINT m_MousePos;   // マウス座標
+
 
 public:
     InputManager() = default;
@@ -60,6 +67,10 @@ private:
     InputManager(const InputManager &) = delete;
     InputManager &operator=(const InputManager &) = delete;
     // ------------------------------------------------------
+
+    bool SetupKeyDevice(HWND hWnd);
+    bool SetupMouseDevice(HWND hWnd);
+    bool SetupPadDevice(HWND hWnd);  // 追加予定
 
 };
 

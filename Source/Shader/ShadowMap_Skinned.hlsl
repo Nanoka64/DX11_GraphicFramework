@@ -32,7 +32,6 @@ struct PS_INPUT
 {
     float4 Pos : SV_Position;
     float2 UV : TEXCOORD0;
-    float Depth : TEXCOORD1; // x : ライトから見た深度値 y : その2乗
 };
 
 // **************************************************************************
@@ -67,9 +66,6 @@ PS_INPUT VSMain(VS_INPUT input)
     output.Pos = pos; // 画面空間の頂点座標
     output.UV = input.UV; // テクスチャ座標
     
-    // ライトから見た深度値
-    output.Depth = pos.z / pos.w;
-    
     return output;
 }
 
@@ -80,10 +76,11 @@ float4 PSMain(PS_INPUT input) : SV_TARGET0
 {
     float4 finalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
         
-    float depth = input.Depth;
+    float depth = input.Pos.z;
     
     // 深度値出力
     finalColor.x = depth;
     finalColor.y = depth * depth;
+   
     return finalColor;
 }

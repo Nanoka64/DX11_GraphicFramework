@@ -298,7 +298,7 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 
     // シャドウマップへブラーを掛ける
-    m_pShadowGaussianBlur->ExcuteOnGPU(renderer,16.0f);
+    m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 0.8f);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -754,6 +754,9 @@ bool RenderPipeline::CreatePostEffect(RendererEngine &renderer)
         5
     );
     if (!result)return false;
+
+    // シャドウマップへブラーを掛ける
+   // m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 4.0f);
 
     return true;
 }

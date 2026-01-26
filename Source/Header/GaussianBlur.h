@@ -18,9 +18,13 @@ private:
 	std::weak_ptr<class Texture> m_pTexture;	// ブラー処理をするテクスチャ
 	class DX_RenderTarget* m_pHorizontalBlur;   // 水平ブラー
 	class DX_RenderTarget* m_pVerticalBlur;		// 垂直ブラー
-	std::weak_ptr<class GameObject> m_pHorizontalBlurSprite;// 水平ブラースプライト
-	std::weak_ptr<class GameObject> m_pVerticalBlurSprite;	// 垂直ブラースプライト
+	//std::weak_ptr<class GameObject> m_pHorizontalBlurSprite;// 水平ブラースプライト
+	//std::weak_ptr<class GameObject> m_pVerticalBlurSprite;	// 垂直ブラースプライト
 	int m_Id;	// タグ被りしてしまうため識別番号を持たせる
+
+	std::shared_ptr<class SpriteRenderer> m_pHorizontalBlurSprite;// 水平ブラースプライト
+	std::shared_ptr<class SpriteRenderer> m_pVerticalBlurSprite;  // 垂直ブラースプライト
+
 
 public:
 	GaussianBlur();
