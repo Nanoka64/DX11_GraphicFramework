@@ -14,7 +14,7 @@
 /// <param name="key"></param>
 /// <param name="repeatFrame"></param>
 /// <returns></returns>
-bool Input::GetInputHold(CONFIG_INPUT key, int repeatFrame)
+bool GetInputHold(CONFIG_INPUT key, int repeatFrame)
 {
 	return Master::m_pInputManager->GetInputHold(key, repeatFrame);
 }
@@ -28,7 +28,7 @@ bool Input::GetInputHold(CONFIG_INPUT key, int repeatFrame)
 /// <param name="waitFrame"></param>
 /// <param name="repeatFrame"></param>
 /// <returns></returns>
-bool Input::GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
+bool GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
 {
 	return Master::m_pInputManager->GetInputHoldRepeat(key, waitFrame, repeatFrame);
 }
@@ -38,7 +38,7 @@ bool Input::GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
 /// </summary>
 /// <param name="key"></param>
 /// <returns></returns>
-bool Input::GetInputUp(CONFIG_INPUT key)
+bool GetInputUp(CONFIG_INPUT key)
 {
 	return Master::m_pInputManager->GetInputUp(key);
 }
@@ -48,7 +48,7 @@ bool Input::GetInputUp(CONFIG_INPUT key)
 /// </summary>
 /// <param name="key"></param>
 /// <returns></returns>
-bool Input::GetInputDown(CONFIG_INPUT key)
+bool GetInputDown(CONFIG_INPUT key)
 {
 	return Master::m_pInputManager->GetInputDown(key);
 }
@@ -58,7 +58,7 @@ bool Input::GetInputDown(CONFIG_INPUT key)
 /// </summary>
 /// <param name="key"></param>
 /// <returns></returns>
-bool Input::GetInput(CONFIG_INPUT key)
+bool GetInput(CONFIG_INPUT key)
 {
 	return Master::m_pInputManager->GetInput(key);
 }

@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "InputFactory.h"
 #include "DirectWriteManager.h"
+#include "RendererEngine.h"
 
 using namespace Input;
 using namespace VECTOR3;
@@ -73,6 +74,30 @@ void Camera3D::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void Camera3D::LateUpdate(RendererEngine &renderer)
 {
+	// マウスの移動量の差を取得する
+	LONG lX = Master::m_pInputManager->GetMousePosSlopeX();	
+	LONG lY = Master::m_pInputManager->GetMousePosSlopeY();
+	float semsitivity = 0.004f;
+
+	// マウスの移動量を計算
+	m_Angle_H -= (float)lX * semsitivity;
+	m_Angle_V += (float)lY * semsitivity;
+
+	if (m_Angle_V >= 1.5f)
+	{
+		m_Angle_V = 1.5f;
+	}
+	if (m_Angle_V <= -1.0f)
+	{
+		m_Angle_V = -1.0f;
+	}
+	if (m_Angle_H >= 3.14f) {
+		m_Angle_H -= 6.28f;
+	}
+	if (m_Angle_H <= -3.14f) {
+		m_Angle_H += 6.28f;
+	}
+
 	if (GetInput(CONFIG_INPUT::DOWN))	// 上
 	{
 		m_Angle_V += CAMERA_ANGLE_SPEED;

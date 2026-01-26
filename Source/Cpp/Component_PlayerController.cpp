@@ -120,7 +120,6 @@ void PlayerController::Update(RendererEngine &renderer)
 	if (GetInput(CONFIG_INPUT::MOVE_B)) m_MoveVelocity -= forward;
 	if (GetInput(CONFIG_INPUT::MOVE_R)) m_MoveVelocity += right;
 	if (GetInput(CONFIG_INPUT::MOVE_L)) m_MoveVelocity -= right;
-	//m_MoveVelocity = m_MoveVelocity.Normalize();
 
 	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
 	//if (GetInput(CONFIG_INPUT::C))		velocity = velocity - upVec;
@@ -207,10 +206,11 @@ void PlayerController::Update(RendererEngine &renderer)
 
 			// üŒ`•âŠÔ
 			targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
-
 			pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+
 		}
 	}
+	//pTransform->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
 
 	Master::m_pDebugger->BeginDebugWindow("player");
 	Master::m_pDebugger->DG_TextValue("Ang : %f.1",ang);

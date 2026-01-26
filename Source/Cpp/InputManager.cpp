@@ -42,6 +42,8 @@ bool InputManager::Init(HWND hWnd)
         return false;
     }
 
+    // キー入力
+    m_CrntInputType = INPUT_TYPE::KEYBORAD_AND_MOUSE;
 
     // 正常終了
     return true;
@@ -52,46 +54,35 @@ bool InputManager::Init(HWND hWnd)
 //--------------------------------------------------------------------------------------
 void InputManager::Update()
 {
-    //一時的に保持するキー情報
-    char keyState[KEY_MAX]{};
-    m_pKeyDevice->Acquire();
-    m_pKeyDevice->GetDeviceState(sizeof(keyState), &keyState);
+    HRESULT hr = S_OK;
+
+    // キー処理
+    if (!KeyDeviceProcess())
+    {
+        return;
+    }
+    // マウス処理
+    if (!MouseDeviceProcess())
+    {
+        return;
+    }
 
     // マウス座標取得
     GetCursorPos(&m_MousePos);
 
-    // スクリーン座標からウインドウ座標へ変換
+    // マウス座標をスクリーン座標からウインドウ座標へ変換
     ScreenToClient(FindWindowA(g_WindowClassNameA, nullptr), &m_MousePos);
 
 
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"マウス情報"));
-    Master::m_pDebugger->DG_TextValue("X : %d",m_MousePos.x);
-    Master::m_pDebugger->DG_TextValue("Y : %d",m_MousePos.y);
+    Master::m_pDebugger->DG_TextValue("CrntCount : %d",m_CrntMouseState._count[0]);
+    Master::m_pDebugger->DG_TextValue("PrevCount : %d", m_PrevMouseState._count[0]);
+    Master::m_pDebugger->DG_TextValue("X : %d", m_MousePos.x);
+    Master::m_pDebugger->DG_TextValue("Y : %d", m_MousePos.y);
+    Master::m_pDebugger->DG_TextValue("lX : %d", m_CrntMouseState._state.lX);
+    Master::m_pDebugger->DG_TextValue("lY : %d", m_CrntMouseState._state.lY);   
     Master::m_pDebugger->EndDebugWindow();
 
-
-
-
-    for (int i = 0; i < (int)CONFIG_INPUT::MAX; i++)
-    {
-        CONFIG_INPUT action = (CONFIG_INPUT)i;
-        int keyCode = m_ConfigKeyMap[action];
-
-        //一つ前のキー入力を保存
-        m_PrevKeyState[action] = m_CrntKeyState[action];
-
-        //現在キーが押されているとき
-        if (keyState[keyCode] & 0x80)
-        {
-            //押されている間フレーム数カウントアップ
-            m_CrntKeyState[action]++;
-        }
-        else if (keyState[keyCode] == 0)
-        {
-            //押されていなければゼロに
-            m_CrntKeyState[action] = 0;
-        }
-    }
 
     if (m_InputStopTime <= 0)
     {
@@ -110,7 +101,12 @@ void InputManager::Update()
 //--------------------------------------------------------------------------------------
 void InputManager::Term()
 {
+    // デバイスの制御を停止
+    m_pKeyDevice->Unacquire();
+    m_pMouseDevice->Unacquire();
+
     SAFE_RELEASE(m_pKeyDevice);
+    SAFE_RELEASE(m_pMouseDevice);
     SAFE_RELEASE(m_pDInput);
 }
 
@@ -223,6 +219,51 @@ bool InputManager::GetInputUp(CONFIG_INPUT key)
     return false;
 }
 
+
+bool InputManager::GetMouseClick(MOUSE_BUTTON_STATE _button)
+{
+    if (m_InputStopFlag) return false;
+    if (_button == MOUSE_BUTTON_STATE::NUM)return false;
+
+    // 一フレームでも押されていればtrue
+    if (m_CrntMouseState._count[static_cast<int>(_button)] > 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool InputManager::GetMouseClickUp(MOUSE_BUTTON_STATE _button)
+{
+    if (m_InputStopFlag) return false;
+    if (_button == MOUSE_BUTTON_STATE::NUM)return false;
+
+    //現在キーは押されていない、かつ
+    //一つ前のキーが押されていた
+    if (m_CrntMouseState._count[static_cast<int>(_button)] == 0 &&
+        m_PrevMouseState._count[static_cast<int>(_button)] > 0)
+    {
+        return true;
+    }
+}
+
+bool InputManager::GetMouseClickDown(MOUSE_BUTTON_STATE _button)
+{
+    if (m_InputStopFlag) return false;
+    if (_button == MOUSE_BUTTON_STATE::NUM)return false;
+
+    // 現在は押されている、かつ
+    // 一つ前のが押されていない
+    if (m_CrntMouseState._count[static_cast<int>(_button)] > 0 &&
+        m_PrevMouseState._count[static_cast<int>(_button)] == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+
 void InputManager::ClearInput()
 {
     m_InputStopFlag = true;
@@ -234,16 +275,6 @@ void InputManager::ClearInput()
 //--------------------------------------------------------------------------------------
 void InputManager::InitDefaultKeyConfig()
 {
-    //m_ConfigKeyMap[CONFIG_INPUT::left] = DIK_LEFT;
-    //m_ConfigKeyMap[CONFIG_INPUT::right] = DIK_RIGHT;
-    //m_ConfigKeyMap[CONFIG_INPUT::up] = DIK_UP;
-    //m_ConfigKeyMap[CONFIG_INPUT::down] = DIK_DOWN;
-    //m_ConfigKeyMap[CONFIG_INPUT::shot] = DIK_Z;
-    //m_ConfigKeyMap[CONFIG_INPUT::charge] = DIK_X;
-    //m_ConfigKeyMap[CONFIG_INPUT::bom] = DIK_C;
-    //m_ConfigKeyMap[CONFIG_INPUT::slow] = DIK_LSHIFT;
-    //m_ConfigKeyMap[CONFIG_INPUT::pause] = DIK_ESCAPE;
-
     // TODO: キーの直す 
     m_ConfigKeyMap[CONFIG_INPUT::LEFT] = DIK_LEFT;
     m_ConfigKeyMap[CONFIG_INPUT::RIGHT]= DIK_RIGHT;
@@ -257,6 +288,29 @@ void InputManager::InitDefaultKeyConfig()
     m_ConfigKeyMap[CONFIG_INPUT::C] = DIK_C;
     m_ConfigKeyMap[CONFIG_INPUT::PAUSE] = DIK_ESCAPE;
 
+
+    // ゲームシーンコンフィグ
+    // 移動
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_FORWARD]._key = KEY_STATE::W;               // 前進
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_BACK]._key = KEY_STATE::S;                  // 後退
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_LEFT]._key = KEY_STATE::A;                  // 左
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_RIGHT]._key = KEY_STATE::D;                 // 右
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_JUMP]._key = KEY_STATE::SPACE;              // ジャンプ
+    m_GameConfigKeyMap[GAME_CONFIG::MOVE_DASH]._key = KEY_STATE::LSHIFT;             // ダッシュ
+
+    // 武器
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_FIRE]._key = KEY_STATE::F;                // 発射
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_FIRE]._mouse = MOUSE_BUTTON_STATE::LEFT;  // 発射 マウス
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_RELOAD]._key = KEY_STATE::R;              // リロード
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_CHANGE1]._key = KEY_STATE::D1;            // 武器切り替え１
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_CHANGE2]._key = KEY_STATE::D2;            // 武器切り替え２
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_ZOOM]._key = KEY_STATE::LCTRL;            // ズーム
+    m_GameConfigKeyMap[GAME_CONFIG::WEAPON_ZOOM]._mouse = MOUSE_BUTTON_STATE::RIGHT; // ズーム マウス
+           
+    m_GameConfigKeyMap[GAME_CONFIG::PAUSE]._key = KEY_STATE::ESCAPE;                 // ポーズ画面
+
+    
+
     // キー状態初期化
     for (int i = 0; i < (int)CONFIG_INPUT::MAX; i++) {
         CONFIG_INPUT action = static_cast<CONFIG_INPUT>(i);
@@ -265,56 +319,192 @@ void InputManager::InitDefaultKeyConfig()
     }
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】キーデバイスのセットアップ
+//*
+//* [引数]
+//* hWnd : ウィンドウハンドル
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
 bool InputManager::SetupKeyDevice(HWND hWnd)
 {
     HRESULT hr = S_OK;
     // デバイスの作成
     hr = m_pDInput->CreateDevice(GUID_SysKeyboard, &m_pKeyDevice, nullptr);
     if (FAILED(hr)) {
-        MessageBox(NULL, "CreateDevice", "Error", MB_OK);
+        MessageBox(NULL, "Key CreateDevice", "Error", MB_OK);
         return false;
     }
 
     // フォーマットの設定（どんな情報を受け取るか）
     hr = m_pKeyDevice->SetDataFormat(&c_dfDIKeyboard);
     if (FAILED(hr)) {
-        MessageBox(NULL, "SetDataFormat", "Error", MB_OK);
+        MessageBox(NULL, "Key SetDataFormat", "Error", MB_OK);
         return false;
     }
 
-    // 協調モードの設定（詳しくは https://yttm-work.jp/directx/directx_0028.html を見て）
-    hr = m_pKeyDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+    // 協調モードの設定
+    // （詳しくは
+    // https://yttm-work.jp/directx/directx_0028.html 
+    // http://www.marupeke296.com/DI_InitDirectInput.htmlを見て）
+    // ・入力の権利設定
+    // DISCL_FOREGROUND : ウィンドウがアクティブの時にのみ権利を得ることが出来る（基本こっち）
+    // DISCL_BACKGROUND : 非アクティブ時でも操作を受け付けてしまう
+    
+    // ・入力デバイスの優先権
+    // DISCL_NONEXCLUSIVE : デバイスを共有する（基本こっち）
+    // DISCL_EXCLUSIVE : デバイスを占有する
+    hr = m_pKeyDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
     if (FAILED(hr)) {
-        MessageBox(NULL, "SetCooperativeLevel", "Error", MB_OK);
+        MessageBox(NULL, "Key SetCooperativeLevel", "Error", MB_OK);
         return false;
     }
 
     return true;
 }
 
+
+//*---------------------------------------------------------------------------------------
+//*【?】マウスデバイスのセットアップ
+//*
+//* [引数]
+//* hWnd : ウィンドウハンドル
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
 bool InputManager::SetupMouseDevice(HWND hWnd)
 {
     HRESULT hr = S_OK;
-    // デバイスの作成
-    hr = m_pDInput->CreateDevice(GUID_SysKeyboard, &m_pMouseDevice, nullptr);
+
+    // デバイスの作成（マウス用）
+    hr = m_pDInput->CreateDevice(GUID_SysMouse, &m_pMouseDevice, nullptr);
     if (FAILED(hr)) {
-        MessageBox(NULL, "CreateDevice", "Error", MB_OK);
+        MessageBox(NULL, "Mouse CreateDevice", "Error", MB_OK);
         return false;
     }
 
     // フォーマットの設定（どんな情報を受け取るか）
     hr = m_pMouseDevice->SetDataFormat(&c_dfDIMouse);
     if (FAILED(hr)) {
-        MessageBox(NULL, "SetDataFormat", "Error", MB_OK);
+        MessageBox(NULL, "Mouse SetDataFormat", "Error", MB_OK);
         return false;
     }
 
-    // 協調モードの設定（詳しくは https://yttm-work.jp/directx/directx_0028.html を見て）
-    hr = m_pMouseDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+    // 協調モードの設定（詳しくは SetupKeyDevice の方に書いてある）
+    hr = m_pMouseDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
     if (FAILED(hr)) {
-        MessageBox(NULL, "SetCooperativeLevel", "Error", MB_OK);
+        MessageBox(NULL, "Mouse SetCooperativeLevel", "Error", MB_OK);
+        return false;
+    }
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】キー情報の更新
+//*
+//* [引数]
+//* なし 
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool InputManager::KeyDeviceProcess()
+{
+    HRESULT hr = S_OK;
+
+    //一時的に保持するキー情報
+    char keyState[KEY_MAX]{};
+
+    // **************************************************
+    // キーデバイス状態の取得
+    // **************************************************
+    hr = m_pKeyDevice->Acquire();
+    if (FAILED(hr)) {
+        return false;
+    }
+    // デバイスとの同期を取る
+    hr = m_pKeyDevice->Poll();
+    if (FAILED(hr)) {
+        return false;
+    }
+    hr = m_pKeyDevice->GetDeviceState(sizeof(keyState), keyState);
+    if (FAILED(hr)) {
         return false;
     }
 
+    for (int i = 0; i < static_cast<int>(CONFIG_INPUT::MAX); i++)
+    {
+        CONFIG_INPUT action = (CONFIG_INPUT)i;
+        int keyCode = m_ConfigKeyMap[action];
+
+        //一つ前のキー入力を保存
+        m_PrevKeyState[action] = m_CrntKeyState[action];
+
+        //現在キーが押されているとき
+        if (keyState[keyCode] & 0x80)
+        {
+            //押されている間フレーム数カウントアップ
+            m_CrntKeyState[action]++;
+        }
+        else if (keyState[keyCode] == 0)
+        {
+            //押されていなければゼロに
+            m_CrntKeyState[action] = 0;
+        }
+    }
+
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】マウス情報の更新
+//*
+//* [引数]
+//* なし 
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool InputManager::MouseDeviceProcess()
+{
+    HRESULT hr = S_OK;
+
+    // **************************************************
+    // マウスデバイス状態の取得
+    // **************************************************
+    hr = m_pMouseDevice->Acquire();
+    if (FAILED(hr)) {
+        return false;
+    }
+    // デバイスとの同期を取る
+    hr = m_pMouseDevice->Poll();
+    if (FAILED(hr)) {
+        return false;
+    }
+
+    // 前回の状態として保持
+    m_PrevMouseState = m_CrntMouseState;
+
+    for (int i = 0; i < static_cast<int>(MOUSE_BUTTON_STATE::NUM); i++)
+    {
+        // 押されていればカウントアップ
+        if (m_CrntMouseState._state.rgbButtons[i] & 0x80)
+        {
+            m_CrntMouseState._count[i]++;
+        }
+        else
+        {
+            m_CrntMouseState._count[i] = 0;
+        }
+    }
+
+    //c_dfDIMouseを設定した場合はDIMOUSESTATEを取得する
+    hr = m_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &m_CrntMouseState._state);
+    if (FAILED(hr)) {
+        return false;
+    }
     return true;
 }
