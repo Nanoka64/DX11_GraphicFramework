@@ -49,6 +49,12 @@ enum class GAME_CONFIG
     MOVE_DASH,      // ダッシュ
     MOVE_ROLLING,   // ローリング
 
+    // 視点移動
+    VIEW_UP,        
+    VIEW_DOWN,
+    VIEW_LEFT,
+    VIEW_RIGHT,
+
     // 武器
     WEAPON_FIRE,    // 発射
     WEAPON_RELOAD,  // リロード
@@ -104,12 +110,18 @@ enum class KEY_STATE
 /// </summary>
 enum class MOUSE_BUTTON_STATE
 {
+    NONE = -1,
+
     LEFT,   // 左クリック
     RIGHT,  // 右クリック
     CENTER, // ホイールクリック
 
     // その他
     OTHER01,
+
+    // ホイール
+    WHEEL_UP,   
+    WHEEL_DOWN,
 
     NUM,
 };
@@ -119,6 +131,6 @@ enum class MOUSE_BUTTON_STATE
 /// </summary>
 enum class GAMEPAD_STATE
 {
-
+    NONE = -1,
     NUM,
 };

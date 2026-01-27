@@ -7,6 +7,39 @@
 * 
 */
 
+//-----------------------------------------------------------------------------
+// ■ キー入力
+//-----------------------------------------------------------------------------
+/// <summary>
+/// 押されたかどうか
+/// </summary>
+/// <param name="key"></param>
+/// <returns></returns>
+bool GetInput(GAME_CONFIG key)
+{
+	return Master::m_pInputManager->GetInput(key);
+}
+
+/// <summary>
+/// ボタンが押された瞬間
+/// </summary>
+/// <param name="key"></param>
+/// <returns></returns>
+bool GetInputDown(GAME_CONFIG key)
+{
+	return Master::m_pInputManager->GetInputDown(key);
+}
+
+/// <summary>
+/// ボタンを離した瞬間
+/// </summary>
+/// <param name="key"></param>
+/// <returns></returns>
+bool GetInputUp(GAME_CONFIG key)
+{
+	return Master::m_pInputManager->GetInputUp(key);
+}
+
 /// <summary>
 /// 長押しの場合の入力判定を取る
 /// 指定のフレーム以上になったら押してる判定
@@ -14,7 +47,7 @@
 /// <param name="key"></param>
 /// <param name="repeatFrame"></param>
 /// <returns></returns>
-bool GetInputHold(CONFIG_INPUT key, int repeatFrame)
+bool GetInputHold(GAME_CONFIG key, int repeatFrame)
 {
 	return Master::m_pInputManager->GetInputHold(key, repeatFrame);
 }
@@ -28,37 +61,41 @@ bool GetInputHold(CONFIG_INPUT key, int repeatFrame)
 /// <param name="waitFrame"></param>
 /// <param name="repeatFrame"></param>
 /// <returns></returns>
-bool GetInputHoldRepeat(CONFIG_INPUT key, int waitFrame, int repeatFrame)
+bool GetInputHoldRepeat(GAME_CONFIG key, int waitFrame, int repeatFrame)
 {
 	return Master::m_pInputManager->GetInputHoldRepeat(key, waitFrame, repeatFrame);
 }
 
-/// <summary>
-/// ボタンを離した瞬間
-/// </summary>
-/// <param name="key"></param>
-/// <returns></returns>
-bool GetInputUp(CONFIG_INPUT key)
-{
-	return Master::m_pInputManager->GetInputUp(key);
-}
-
-/// <summary>
-/// ボタンが押された瞬間
-/// </summary>
-/// <param name="key"></param>
-/// <returns></returns>
-bool GetInputDown(CONFIG_INPUT key)
-{
-	return Master::m_pInputManager->GetInputDown(key);
-}
+//-----------------------------------------------------------------------------
+// ■ マウス入力
+//-----------------------------------------------------------------------------
 
 /// <summary>
 /// 押されたかどうか
 /// </summary>
 /// <param name="key"></param>
 /// <returns></returns>
-bool GetInput(CONFIG_INPUT key)
+bool GetMouseClick(MOUSE_BUTTON_STATE key)
 {
-	return Master::m_pInputManager->GetInput(key);
+	return Master::m_pInputManager->GetMouseClick(key);
+}
+
+/// <summary>
+/// 押された瞬間
+/// </summary>
+/// <param name="key"></param>
+/// <returns></returns>
+bool GetMouseClickDown(MOUSE_BUTTON_STATE key)
+{
+	return Master::m_pInputManager->GetMouseClickDown(key);
+}
+
+/// <summary>
+/// 離された瞬間
+/// </summary>
+/// <param name="key"></param>
+/// <returns></returns>
+bool GetMouseClickUp(MOUSE_BUTTON_STATE key)
+{
+	return Master::m_pInputManager->GetMouseClickUp(key);
 }

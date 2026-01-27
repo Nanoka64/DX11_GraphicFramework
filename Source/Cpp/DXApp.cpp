@@ -271,7 +271,7 @@ int DXApp::MainLoop()
             // 現在時刻と前回更新時刻の差分が１６.６６msより大きければゲーム処理を実行する
             if (difference > 1000.0f / g_Fps)
             {
-                if (GetInput(CONFIG_INPUT::PAUSE)) break;   // 終了ボタン
+                if (GetInput(GAME_CONFIG::PAUSE)) break;   // 終了ボタン
 
                 // 前回時刻を更新
                 lastTime = crntTime;

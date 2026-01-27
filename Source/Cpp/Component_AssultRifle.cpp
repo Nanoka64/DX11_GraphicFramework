@@ -61,7 +61,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 
 	//if (GetInputHoldRepeat(CONFIG_INPUT::C,2,2))
-	if(Master::m_pInputManager->GetMouseClick(MOUSE_BUTTON_STATE::LEFT))
+	if(GetMouseClick(MOUSE_BUTTON_STATE::LEFT))
     {
         // ƒ}ƒeƒŠƒAƒ‹Žæ“¾
         auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");

@@ -98,28 +98,28 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 		m_Angle_H += 6.28f;
 	}
 
-	if (GetInput(CONFIG_INPUT::DOWN))	// è„
+	if (GetInput(GAME_CONFIG::VIEW_UP))	// è„
 	{
 		m_Angle_V += CAMERA_ANGLE_SPEED;
 		if (m_Angle_V >= 1.5f) {
 			m_Angle_V = 1.5f;
 		}
 	}
-	if (GetInput(CONFIG_INPUT::UP))		// â∫
+	if (GetInput(GAME_CONFIG::VIEW_DOWN))		// â∫
 	{
 		m_Angle_V -= CAMERA_ANGLE_SPEED;
 		if (m_Angle_V <= -1.0f) {
 			m_Angle_V = -1.0f;
 		}
 	}
-	if (GetInput(CONFIG_INPUT::LEFT))	// âE
+	if (GetInput(GAME_CONFIG::VIEW_LEFT))	// âE
 	{
 		m_Angle_H += CAMERA_ANGLE_SPEED;
 		if (m_Angle_H >= 3.14f) {
 			m_Angle_H -= 6.28f;
 		}
 	}
-	if (GetInput(CONFIG_INPUT::RIGHT))	// ç∂
+	if (GetInput(GAME_CONFIG::VIEW_RIGHT))	// ç∂
 	{
 		m_Angle_H -= CAMERA_ANGLE_SPEED;
 		if (m_Angle_H <= -3.14f) {

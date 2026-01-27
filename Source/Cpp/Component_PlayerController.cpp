@@ -116,10 +116,10 @@ void PlayerController::Update(RendererEngine &renderer)
 	m_MoveVelocity.z = 0.0f;
 
 	// ˆÚ“® 
-	if (GetInput(CONFIG_INPUT::MOVE_F)) m_MoveVelocity += forward;
-	if (GetInput(CONFIG_INPUT::MOVE_B)) m_MoveVelocity -= forward;
-	if (GetInput(CONFIG_INPUT::MOVE_R)) m_MoveVelocity += right;
-	if (GetInput(CONFIG_INPUT::MOVE_L)) m_MoveVelocity -= right;
+	if (GetInput(GAME_CONFIG::MOVE_FORWARD)) m_MoveVelocity += forward;
+	if (GetInput(GAME_CONFIG::MOVE_BACK)) m_MoveVelocity -= forward;
+	if (GetInput(GAME_CONFIG::MOVE_RIGHT)) m_MoveVelocity += right;
+	if (GetInput(GAME_CONFIG::MOVE_LEFT)) m_MoveVelocity -= right;
 
 	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
 	//if (GetInput(CONFIG_INPUT::C))		velocity = velocity - upVec;
@@ -131,7 +131,7 @@ void PlayerController::Update(RendererEngine &renderer)
 	//-----------------------------------------------------------------------------
 	if (m_IsJump == false)
 	{
-		if (GetInputDown(CONFIG_INPUT::JUMP))
+		if (GetInputDown(GAME_CONFIG::MOVE_JUMP))
 		{
 			m_IsJump = true;
 			m_MoveVelocity.y = m_JumpForce;
