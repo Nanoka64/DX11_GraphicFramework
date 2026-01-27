@@ -53,6 +53,10 @@ VS_OUTPUT VSMain(VS_INPUT input)
     pos = mul(pos, cb_View);       // ビュー変換（ビュー空間）
     pos = mul(pos, cb_Projection); // 投影変換（クリッピング空間）
     
+    // UVオフセットを足す
+    // frac : 0以上1未満を返す
+    input.UV = (input.UV + cb_OffsetUV);
+    
     output.Pos    = pos;        // 画面空間の頂点座標
     output.Normal = norm.xyz;   // 法線
     output.UV     = input.UV;   // テクスチャ座標

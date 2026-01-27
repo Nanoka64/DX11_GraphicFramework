@@ -79,6 +79,18 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	// 頂点情報の更新
 	//VertexUpdate(renderer);
 
+	auto transform = m_pOwner.lock()->get_Component<Transform>();
+	XMMATRIX world = transform->get_WorldMtx();
+	world = XMMatrixTranspose(world);	// 転置
+	XMStoreFloat4x4(&m_pCBTransformSet->Data.WorldMtx, world);	
+
+	// バッファの更新
+	pContext->UpdateSubresource(m_pCBTransformSet->pBuff, 0, nullptr, &m_pCBTransformSet->Data, 0, 0);
+	
+	// 頂点シェーダへ送信
+	pContext->VSSetConstantBuffers(0, 1, &m_pCBTransformSet->pBuff);
+
+
     // テクスチャセット ==========================
 	for (auto it = m_pTextureMap.begin(); it != m_pTextureMap.end(); it++)
 	{

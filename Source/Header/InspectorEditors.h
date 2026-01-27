@@ -219,3 +219,29 @@ public:
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 
 };
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:SphereColliderEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】スフィアコライダー編集用エディタ
+//
+// ***************************************************************************************
+class SphereColliderEditor : public EditorBase
+{
+private:
+
+public:
+    SphereColliderEditor()
+        : EditorBase()
+    {
+    };
+    ~SphereColliderEditor()
+    {
+    };
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+
+};

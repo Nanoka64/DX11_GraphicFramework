@@ -108,8 +108,8 @@ void CollisionManager::CollisionProcess()
 
 
                 // 静的オブジェクトの場合は0.0にする（押し出さない）
-                float ratioA = isStaticA ? 0.0f : 1.0f;
-                float ratioB = isStaticB ? 0.0f : 1.0f;
+                float ratioA = isStaticA ? 0.0f : 0.5f;
+                float ratioB = isStaticB ? 0.0f : 0.5f;
 
 
                 // Aは法線方向に押し出す *******************************************
@@ -215,18 +215,129 @@ bool CollisionManager::HitCheck(
             return true;
         }
     }
-    // 球同士 ********************************************************************
+    
+    // スフィア同士 ********************************************************************
     else if (colA_Type == COLLIDER_TYPE::SPHERE && colB_Type == COLLIDER_TYPE::SPHERE)
     {
-        CollInData_Sphere data_A;
-        CollInData_Sphere data_B;
+        // 一旦キャストして実装（TODO: キャストしないように実装したい）
+        auto sphereA = std::static_pointer_cast<SphereCollider>(_colA);
+        auto sphereB = std::static_pointer_cast<SphereCollider>(_colB);
 
+        // コライダーの位置と、オブジェクトの位置を合わせる。
+        VEC3 centerA = sphereA->get_Center() + _transA->get_VEC3ToPos();
+        VEC3 centerB = sphereB->get_Center() + _transB->get_VEC3ToPos();
+
+        // 中心位置と半径を入れる
+        CollInData_Sphere data_A;
+        data_A._pos = centerA;
+        data_A._radius = sphereA->get_Radius();
+
+        CollInData_Sphere data_B;
+        data_B._pos = centerB;
+        data_B._radius = sphereB->get_Radius();
+
+        // 球同士の判定
         if (HitCheck_SphereVsSphere(data_A, data_B))
         {
+            // 中心座標と半径で最大と最小位置を求める
+            VEC3 maxPos_A = data_A._pos + data_A._radius;   
+            VEC3 minPos_A = data_A._pos - data_A._radius;
+            VEC3 maxPos_B = data_B._pos + data_B._radius;
+            VEC3 minPos_B = data_B._pos - data_B._radius;
+
+            // 各軸でのオーバーラップ量を計算
+            float overlapX = std::min(maxPos_A.x - minPos_B.x, maxPos_B.x - minPos_A.x);
+            float overlapY = std::min(maxPos_A.y - minPos_B.y, maxPos_B.y - minPos_A.y);
+            float overlapZ = std::min(maxPos_A.z - minPos_B.z, maxPos_B.z - minPos_A.z);
+
+            VEC3 normal = VEC3();
+
+            if (overlapX <= overlapY && overlapX <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapX);
+                normal = (centerA.x < centerB.x) ? VEC3(-1.0f, 0.0f, 0.0f) : VEC3(1.0f, 0.0f, 0.0f);
+            }
+            else if (overlapY <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapY);
+                normal = (centerA.y < centerB.y) ? VEC3(0.0f, -1.0f, 0.0f) : VEC3(0.0f, 1.0f, 0.0f);
+            }
+            else
+            {
+                info->set_PenetrationDepth(overlapZ);
+                normal = (centerA.z < centerB.z) ? VEC3(0.0f, 0.0f, -1.0f) : VEC3(0.0f, 0.0f, 1.0f);
+            }
+
+            info->set_HitNormal(normal);
+
+
             return true;
         }
     }
+    
+    // ボックスとスフィア ********************************************************************
+    else if (colA_Type == COLLIDER_TYPE::BOX && colB_Type == COLLIDER_TYPE::SPHERE)
+    {
+        // 一旦キャストして実装（TODO: キャストしないように実装したい）
+        auto boxA = std::static_pointer_cast<BoxCollider>(_colA);
+        auto sphereB = std::static_pointer_cast<SphereCollider>(_colB);
 
+        // コライダーの位置と、オブジェクトの位置を合わせる。
+        VEC3 centerA = boxA->get_Center() + _transA->get_VEC3ToPos();
+        VEC3 centerB = sphereB->get_Center() + _transB->get_VEC3ToPos();
+
+        // ボックス
+        CollInData_AABB data_A;
+        data_A._min = centerA - boxA->get_Size();
+        data_A._max = centerA + boxA->get_Size();
+
+        // スフィア
+        CollInData_Sphere data_B;
+        data_B._pos = centerB;
+        data_B._radius = sphereB->get_Radius();
+
+        // 球同士の判定
+        if (HitCheck_BoxVsSphere(data_A, data_B))
+        {
+            // 中心座標と半径で最大と最小位置を求める
+            // ボックスはそのまま
+            VEC3 maxPos_A = data_A._max;
+            VEC3 minPos_A = data_A._min;
+            VEC3 maxPos_B = data_B._pos + data_B._radius;
+            VEC3 minPos_B = data_B._pos - data_B._radius;
+
+            // 各軸でのオーバーラップ量を計算
+            float overlapX = std::min(maxPos_A.x - minPos_B.x, maxPos_B.x - minPos_A.x);
+            float overlapY = std::min(maxPos_A.y - minPos_B.y, maxPos_B.y - minPos_A.y);
+            float overlapZ = std::min(maxPos_A.z - minPos_B.z, maxPos_B.z - minPos_A.z);
+
+            VEC3 normal = VEC3();
+
+            if (overlapX <= overlapY && overlapX <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapX);
+                normal = (centerA.x < centerB.x) ? VEC3(-1.0f, 0.0f, 0.0f) : VEC3(1.0f, 0.0f, 0.0f);
+            }
+            else if (overlapY <= overlapZ)
+            {
+                info->set_PenetrationDepth(overlapY);
+                normal = (centerA.y < centerB.y) ? VEC3(0.0f, -1.0f, 0.0f) : VEC3(0.0f, 1.0f, 0.0f);
+            }
+            else
+            {
+                info->set_PenetrationDepth(overlapZ);
+                normal = (centerA.z < centerB.z) ? VEC3(0.0f, 0.0f, -1.0f) : VEC3(0.0f, 0.0f, 1.0f);
+            }
+
+            info->set_HitNormal(normal);
+
+
+            return true;
+        }
+    }
+    
+    
+    
     return false;
 }
 
@@ -242,41 +353,7 @@ bool CollisionManager::HitCheck(
 //*----------------------------------------------------------------------------------------
 bool CollisionManager::HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info)
 {
-    // 左側の判定
-    if (_src._max.x > _dst._min.x)
-    {
 
-    };
-
-    // 右側の判定
-    if (_src._min.x < _dst._max.x)
-    {
-
-    };
-
-    // 上側の判定
-    if (_src._max.y > _dst._min.y)
-    {
-
-    };
-
-    // 下側の判定
-    if (_src._min.y < _dst._max.y)
-    {
-
-    };
-
-    // 奥の判定
-    if (_src._max.z > _dst._min.z)
-    {
-
-    };
-
-    // 手前の判定
-    if (_src._min.z < _dst._max.z)
-    {
-
-    };
 
 
     return true;
@@ -345,6 +422,7 @@ bool CollisionManager::HitCheck_SphereVsSphere(const CollInData_Sphere &_src, co
 //*---------------------------------------------------------------------------------------
 //*【?】ボックスとスフィアの判定
 //* 参考サイト：https://yutateno.hatenablog.jp/entry/2019/11/27/001801 
+//*           ：https://developer.mozilla.org/ja/docs/Games/Techniques/3D_collision_detection
 //*
 //* [引数]
 //* &_src : 箱 
@@ -355,46 +433,18 @@ bool CollisionManager::HitCheck_SphereVsSphere(const CollInData_Sphere &_src, co
 //*----------------------------------------------------------------------------------------
 bool CollisionManager::HitCheck_BoxVsSphere(const CollInData_AABB &_box, const CollInData_Sphere &_sphere)
 {
-    // 左側
-    if (_box._min.x - _sphere._radius > _sphere._pos.x) return false;
+    // クランプして球の中心からボックスの最も近い点を取得
+    VEC3 P;
+    P.x = std::max(_box._min.x, std::min(_sphere._pos.x, _box._max.x));
+    P.y = std::max(_box._min.y, std::min(_sphere._pos.y, _box._max.y));
+    P.z = std::max(_box._min.z, std::min(_sphere._pos.z, _box._max.z));
 
-    // 右側
-    if (_box._max.x + _sphere._radius < _sphere._pos.x) return false;
+    float distance = (P.x - _sphere._pos.x) * (P.x - _sphere._pos.x) +
+                     (P.y - _sphere._pos.y) * (P.y - _sphere._pos.y) +
+                     (P.z - _sphere._pos.z) * (P.z - _sphere._pos.z);
 
-    // 下側
-    if (_box._min.y - _sphere._radius > _sphere._pos.y) return false;
-
-    // 上側
-    if (_box._max.y + _sphere._radius < _sphere._pos.y) return false;
-
-    // 手前側
-    if (_box._min.z - _sphere._radius > _sphere._pos.z) return false;
-
-    // 奥側
-    if (_box._max.z + _sphere._radius < _sphere._pos.z) return false;
-
-    float r = _sphere._radius * _sphere._radius;
-
-    // 左
-    if (_sphere._pos.x > _box._min.x)
-    {
-        // 左上
-        if (_sphere._pos.y < _box._max.y)
-        {
-        }
-        else
-        {   // 左下
-            if (_sphere._pos.y > _box._min.y)
-            {
-
-            }
-        }
-    }
-    else
-    {
-
-    }
-    return true;
+    // 距離が球の半径より小さいなら衝突
+    return distance < _sphere._radius;
 }
 
 

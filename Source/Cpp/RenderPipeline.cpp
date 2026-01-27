@@ -35,6 +35,8 @@ RenderPipeline::RenderPipeline() :
     m_GaussWeights(),
     m_pDoF_GaussianBlur(nullptr),
     m_pBloomGaussianBlur(nullptr),
+    m_pShadowGaussianBlur(nullptr),
+    m_pEmissive_RT(nullptr),
     m_DoF_BlurIncensity(2.0f),
     m_ShadowData(),
     m_DofData()
@@ -286,6 +288,7 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
     renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
 
     // 表カリング 影が浮いているような感じ（ピーターパン現象）を防ぐため
+    // ※表カリングにすると影が白くなってしまうので一旦裏カリングに
     renderer.RegisterCullMode(CULL_MODE::BACK);     
 
     // ライトの更新
@@ -298,7 +301,7 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 
     // シャドウマップへブラーを掛ける
-    m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 0.8f);
+    m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 0.5f);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -322,7 +325,7 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 
     // ディファードスプライト
     //Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
-    m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
+    //m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
     m_pDefferdLighting_Sprite->Draw(renderer);
 
     // レンダリングターゲット解除
@@ -383,6 +386,9 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
         auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
         billboard->get_Component<BillboardRenderer>()->Draw(renderer);
     }
+
+    auto sprite = Master::m_pGameObjectManager->get_ObjectByTag("UI");
+    sprite->get_Component<SpriteRenderer>()->Draw(renderer);
 
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);
@@ -552,7 +558,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         renderer.get_ScreenHeight(),
         1,
         1,
-        DXGI_FORMAT_R16G16B16A16_FLOAT,
+        DXGI_FORMAT_R8G8B8A8_UNORM,
         DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
@@ -613,7 +619,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         1,
         1,
         DXGI_FORMAT_R32G32B32A32_FLOAT,
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
 
@@ -628,7 +634,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         1,
         1,
         DXGI_FORMAT_R11G11B10_FLOAT,    // 輝度はそこまで精度を気にする必要なさそう（多分）
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_UNKNOWN
     );
     if (result == false)return false;
 
@@ -639,8 +645,8 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
     result = m_pShadowMap_RT->Create(
         renderer,
         // 影の品質は何も対策しなければ解像度依存
-        4096,       
-        4096,
+        2048,       
+        2048,
         1,
         1,
         // ・Rにライトから見た深度値 ・Gにライトから見た深度値の二乗をいれる

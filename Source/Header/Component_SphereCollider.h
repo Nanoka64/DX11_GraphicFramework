@@ -24,7 +24,7 @@ public:
 	void Draw(RendererEngine &renderer)override;		// •`‰æˆ—
 
 	// ”¼Œa
-	void set_Size(float _r) { m_Radius = _r; }
-	float get_Size()const { return m_Radius; }
+	void set_Radius(float _r) { m_Radius = _r; }
+	float get_Radius()const { return m_Radius; }
 };
 

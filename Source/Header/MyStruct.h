@@ -14,6 +14,7 @@ struct CB_PROJECTION
 {
     DirectX::XMFLOAT4X4 Projection;	    // “§‹“Š‰es—ñ
     DirectX::XMFLOAT4X4 InvProjection;  // ‹ts—ñ
+    DirectX::XMFLOAT4X4 OrthographicProjection;  // ³Ë“Š‰e
 };
 
 struct CB_PROJECTION_SET

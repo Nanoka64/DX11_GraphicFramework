@@ -712,26 +712,33 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg,
     auto pDeviceContext = get_DeviceContext();
     float aspect = _w / _h; // アスペクト比
 
-    // 遠近投影マトリクス作成 https://learn.microsoft.com/ja-jp/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh
-    XMMATRIX mat = XMMatrixPerspectiveFovLH(
+    // 遠近投影行列作成 https://learn.microsoft.com/ja-jp/windows/win32/api/directxmath/nf-directxmath-xmmatrixperspectivefovlh
+    XMMATRIX psProj = XMMatrixPerspectiveFovLH(
         XMConvertToRadians(_fovDeg),
         aspect,
         _near,
         _far
     );
 
-    // 保持
-    m_Proj = mat;
+    // 透視投影保持
+    m_Proj = psProj;
 
-    mat = XMMatrixTranspose(mat);   // 転置
+    psProj = XMMatrixTranspose(psProj);   // 転置
 
-    // 通常行列
+    // 正射投影行列作成
+    XMMATRIX ohProjMat = XMMatrixOrthographicLH(_w, _h, _near, _far);
+    ohProjMat = XMMatrixTranspose(ohProjMat);   // 転置
+
+    // 透視投影行列
     auto& cb = m_RenderParam.cbProjectionSet;
-    XMStoreFloat4x4(&cb.Data.Projection, mat);
+    XMStoreFloat4x4(&cb.Data.Projection, psProj);
 
-    // 逆行列
-    mat = XMMatrixInverse(NULL, mat);
-    XMStoreFloat4x4(&cb.Data.InvProjection, mat);
+    // 透視投影逆行列
+    XMMATRIX psInvProj = XMMatrixInverse(NULL, psProj);
+    XMStoreFloat4x4(&cb.Data.InvProjection, psInvProj);
+
+    // 正射投影行列
+    XMStoreFloat4x4(&cb.Data.OrthographicProjection, ohProjMat);
 
     // サブリソース
     D3D11_MAPPED_SUBRESOURCE mappedResource;

@@ -94,7 +94,7 @@ void GameObjectManager::ObjectLateUpdate(RendererEngine &renderer)
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
-//*y?z•`‰æ
+//*y?zƒƒCƒ“ƒpƒX•`‰æ
 //* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
@@ -138,21 +138,22 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
-//*y?z•`‰æ
+//*y?zƒVƒƒƒhƒEƒpƒX•`‰æ
 //* ˆø”F1.RendererEngine
 //* •Ô’lFvoid
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::ObjectShadowRenderPass(RendererEngine &renderer)
 {
-    int id = 0;
-
     // •`‰æ
-    for (auto& obj : m_pObjectList)
+    for (auto &obj : m_pObjectList)
     {
-        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) {
-            obj->Draw(renderer);
-            obj->ComponentRender(renderer);
+        if (!obj->get_IsShadow() ||
+            !obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        {
+            continue;
         }
+        //obj->Draw(renderer);
+        obj->ComponentRender(renderer);
     }
 }
 

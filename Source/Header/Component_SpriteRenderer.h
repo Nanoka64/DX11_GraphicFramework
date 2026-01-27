@@ -37,8 +37,8 @@ private:
 	SHADER_TYPE m_ShaderType;	// 使用するシェーダの種類
 
 	CB_USER_EXPAND_SET *m_pVSUserExpandCBuffers;	// VSユーザー拡張用定数バッファ
-	int m_VSUserExpandCBNum;						// VSユーザー拡張用定数バッファ数
 	CB_USER_EXPAND_SET * m_pPSUserExpandCBuffers;	// PSユーザー拡張用定数バッファ
+	int m_VSUserExpandCBNum;						// VSユーザー拡張用定数バッファ数
 	int m_PSUserExpandCBNum;						// PSユーザー拡張用定数バッファ数
 
 public:

@@ -27,6 +27,7 @@ private:
     std::shared_ptr<class Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
+	bool m_IsShadow;		// シャドウをかけるかどうか
 
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
@@ -43,6 +44,8 @@ public:
 	void OnCollisionStay(const class CollisionInfo &info);
 	void OnCollisionExit(const class CollisionInfo &info);
 
+	bool get_IsShadow()const { return m_IsShadow; }
+	void set_IsShadow(bool _flag) { m_IsShadow = _flag; }
 
 	// ****************************************************************************************************************************************
 	/* コンポーネント関連 */

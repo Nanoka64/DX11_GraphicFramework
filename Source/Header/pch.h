@@ -13,7 +13,7 @@
 
 #define DEBUG_MODE false	// 内部的にデバッグモードにするかどうか
 
-#define min NOMINMAX    // min STLとwindows.hのマクロがかぶっているのを回避する
+#define NOMINMAX    // min STLとwindows.hのマクロがかぶっているのを回避する
 
 
 

@@ -36,7 +36,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     std::shared_ptr<GameObject> pModelObj = Instantiate(std::move(std::make_shared<GameObject>()));
     pModelObj->Init(*info.pRenderer);
     pModelObj->set_Tag(info.ObjTag.c_str());
-
+    pModelObj->set_IsShadow(true);  // シャドウをする
 
     // オブジェクトの状態をアクティブにする
     if (info.IsActive) {
@@ -45,7 +45,6 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
 
     // メッシュリソースコンポーネントを追加
     std::shared_ptr<ModelMeshResource> meshResource = pModelObj->add_Component<ModelMeshResource>();
-
 
     // マテリアルの設定
     for (size_t i = 0; i < info.MatNum; i++)
@@ -95,6 +94,8 @@ std::shared_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUti
     std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
+    pObj->set_IsShadow(true);   // シャドウをする
+
 
     // オブジェクトの状態をアクティブにする
     if (info.IsActive) {

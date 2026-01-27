@@ -16,6 +16,7 @@ SphereCollider::SphereCollider(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_Radius(1.0f)
 {
     this->set_Tag("SphereCollider");
+    m_ColliderType = COLLIDER_TYPE::SPHERE;
 }
 
 

@@ -69,8 +69,9 @@ cbuffer CB_VIEW : register(b1)
 //* =========================================================================
 cbuffer CB_PROJECTION : register(b2)         
 {
-    float4x4 cb_Projection;
+    float4x4 cb_Projection; // 透視投影
     float4x4 cb_ProjectionInv;  // 逆行列
+    float4x4 cb_OrthographicProjection; // 正射投影（平行投影）
 };
 
 
@@ -151,7 +152,7 @@ cbuffer CB_POSTEFFECT : register(b8)
 
 
 //* =========================================================================
-//*- @:ポストエフェクト用データ -            >>>>>>>【８】
+//*- @:シャドウ用データ -            >>>>>>>【９】
 //* =========================================================================
 cbuffer CB_SHADOW : register(b9)
 {

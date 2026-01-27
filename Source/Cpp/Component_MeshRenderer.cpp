@@ -92,6 +92,8 @@ void MeshRenderer::Draw(RendererEngine& renderer)
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
         Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
+        m_Counter += 0.005f;
+
         // マテリアル取得
         auto pMatData = meshInfo->pMaterials.lock();
 
@@ -102,6 +104,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         mat.SpecularPower = pMatData->m_SpecularPower;
         mat.EmissivePower = pMatData->m_EmissivePower;
         mat.EmissiveColor = pMatData->m_EmissiveColor;
+        mat.OffsetUV ;
         cbMatSet->Data = mat;
 
         // 定数バッファに転送
@@ -116,6 +119,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
 
         // 定数バッファをセット ==========================
         pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
+        pContext->VSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
         pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
 
         // テクスチャセット ==========================

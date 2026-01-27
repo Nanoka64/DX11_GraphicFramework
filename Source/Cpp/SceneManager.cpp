@@ -22,6 +22,7 @@
 #include "Component_SkyRenderer.h"
 #include "Component_AssultRifle.h"
 #include "Component_BoxCollider.h"
+#include "Component_SphereCollider.h"
 
 
 using namespace VECTOR4;
@@ -435,7 +436,7 @@ bool SceneManager::Init(RendererEngine &renderer)
             model.ObjTag = "MotherShip";
             model.IsAnim = false;
             model.MatNum = 1;
-            model.IsActive = false;
+            model.IsActive = true;
 
             model.SetupMaterial = matInfo;
 
@@ -619,6 +620,22 @@ bool SceneManager::Init(RendererEngine &renderer)
                 light->set_Intensity(25.0f);
                 light->Start(renderer);
             }
+        }
+
+        /* UI�̍쐬 */
+        {
+            auto matPtr = Master::m_pResourceManager->FindMaterial("Billboard");
+
+            CreateSpriteInfo spriteInitData;;
+            spriteInitData.pRenderer = &renderer;
+            spriteInitData.ObjTag = "UI";
+            spriteInitData.Type = SPRITE_USAGE_TYPE::NORMAL;
+            spriteInitData.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+            spriteInitData.IsActive = false;
+            spriteInitData.Width = 0.5f;
+            spriteInitData.Height = 0.5f;
+            spriteInitData.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
+            auto obj = MeshFactory::CreateSprite(spriteInitData);
         }
     }
 

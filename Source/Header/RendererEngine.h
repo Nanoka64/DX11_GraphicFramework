@@ -102,6 +102,7 @@ public:
 	void Term();
     void Swap();    // — •\Ø‚è‘Ö‚¦
     bool SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far); //“§‹“Š‰e•ÏŠ·ŒvZ
+    bool SetupOrthographicProjectionTransform(float _w, float _h,  float _near, float _far); //³Ë“Š‰e•ÏŠ·ŒvZ
 private:
     bool InitDx11();                            // ‚c‚w‚P‚P‚Ì‰Šú‰»
     HRESULT InitDX11_SwapChain();               // ‚c‚w‚P‚P ƒXƒƒbƒvƒ`ƒFƒCƒ“‰Šú‰»

@@ -34,7 +34,6 @@ DebugMesh::~DebugMesh()
 //*----------------------------------------------------------------------------------------
 bool DebugMesh::Setup(RendererEngine& renderer, DEBUG_MESHS_TYPE _type)
 {
-
 	if (!CreateVertexIndexBuffer(renderer, g_CubeVertices, g_CubeVertexNum, g_CubeIndices, g_CubeIndexNum) )
 	{
 		MessageBox(NULL, "頂点バッファの作成に失敗しました。", "Error", MB_OK);

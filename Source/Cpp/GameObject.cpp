@@ -8,7 +8,8 @@
 //* à¯êîÅFÇ»Çµ
 //*----------------------------------------------------------------------------------------
 GameObject::GameObject():
-	m_IsCalcUpdate(false)
+	m_IsCalcUpdate(false),
+	m_IsShadow(false)
 {
 
 }

@@ -15,7 +15,7 @@ class MeshRenderer :public IComponent
 {
 private:
 	std::weak_ptr<class IMeshResource> m_pMeshResource;	// ƒƒbƒVƒ…î•ñ‚ÌQÆ
-
+	float m_Counter = 0.0f;
 
 public:
 	MeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
