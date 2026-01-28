@@ -107,6 +107,12 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             g_Static_Layout,
         },
         //DEFERRED_STD_BILLBOARD
+        {
+            /* 軌跡 */
+            SHADER_TYPE::DEFERRED_STD_TRAIL,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        },
 
         ///////////////////////////////////////////////////
         // フォワードシェーディング
@@ -424,6 +430,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::DEFERRED_STD_SKINNED_N:   // スキニング3Dモデル
             hr = this->CompileShader(HLSL__Skinned_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;
+        case SHADER_TYPE::DEFERRED_STD_TRAIL:       // 軌跡
+            hr = this->CompileShader(HLSL__Trail_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break;
 
         ///////////////////////////////////////////////////
         // フォワードシェーディング
@@ -520,6 +529,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;
         case SHADER_TYPE::DEFERRED_STD_SKINNED_N:           // スキニング3Dモデル
             this->LoadCSOFile(HLSL_CSO__Skinned_VS_PATH.c_str(),&csoByteCode);
+            break;
+        case SHADER_TYPE::DEFERRED_STD_TRAIL:           // スキニング3Dモデル
+            this->LoadCSOFile(HLSL_CSO__Trail_VS_PATH.c_str(),&csoByteCode);
             break;
         case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:          // スプライト 標準 UI用
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
@@ -629,11 +641,14 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::DEFERRED_STD_STATIC:      // 静的簡易3Dオブジェクト(法線マップなし)
             hr = CompileShader(HLSL__GBuffer_Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;      
-        case SHADER_TYPE::DEFERRED_STD_STATIC_N:  // 静的3Dオブジェクト(法線マップあり)
+        case SHADER_TYPE::DEFERRED_STD_STATIC_N:    // 静的3Dオブジェクト(法線マップあり)
             hr = CompileShader(HLSL__GBuffer_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
-        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:     // スキニング3Dモデル
+        case SHADER_TYPE::DEFERRED_STD_SKINNED_N:   // スキニング3Dモデル
             hr = CompileShader(HLSL__GBuffer_Standard_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;
+        case SHADER_TYPE::DEFERRED_STD_TRAIL:       // 軌跡
+            hr = CompileShader(HLSL__GBuffer_Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;
 
         ///////////////////////////////////////////////////
@@ -729,6 +744,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;
         case SHADER_TYPE::DEFERRED_STD_SKINNED_N:
             this->LoadCSOFile(HLSL_CSO__GBuffer_Standard_PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::DEFERRED_STD_TRAIL:       
+            hr = LoadCSOFile(HLSL_CSO__GBuffer_Simple_PS_PATH.c_str(), &csoByteCode);
             break;
         case SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE:
             this->LoadCSOFile(HLSL_CSO__Sprite_PS_PATH.c_str(), &csoByteCode);

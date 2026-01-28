@@ -48,6 +48,50 @@ namespace VERTEX
         VERTEX_Static(const VEC3& _pos, const VEC3& _normal, const VEC4& _color) : pos(_pos), normal(_normal), color(_color), uv(VEC2()) {};
         VERTEX_Static(const VEC3& _pos,const VEC2& _uv, const VEC4& _color, const VEC3& _normal ) : pos(_pos), normal(_normal), color(_color), uv(_uv) {};
 
+        /// <summary>
+        /// 座標の要素に一括セット
+        /// </summary>
+        /// <param name="_v4"></param>
+        void PosAllSet(const float _v3)
+        {
+            this->pos.x = _v3;
+            this->pos.y = _v3;
+            this->pos.z = _v3;
+        }
+
+        /// <summary>
+        /// UV要素に一括セット
+        /// </summary>
+        /// <param name="_v4"></param>
+        void UVAllSet(const float _v2)
+        {
+            this->uv.x = _v2;
+            this->uv.y = _v2;
+        }
+
+        /// <summary>
+        /// カラーの要素に一括セット
+        /// </summary>
+        /// <param name="_v4"></param>
+        void ColorAllSet(const float _v4)
+        {
+            this->color.x = _v4;
+            this->color.y = _v4;
+            this->color.z = _v4;
+            this->color.w = _v4;
+        }
+
+        /// <summary>
+        /// 法線の要素に一括セット
+        /// </summary>
+        /// <param name="_v4"></param>
+        void NormalAllSet(const float _v3)
+        {
+            this->normal.x = _v3;
+            this->normal.y = _v3;
+            this->normal.z = _v3;
+        }
+
         // 正規化
         void Normalize() {
             this->normal = this->normal.Normalize();

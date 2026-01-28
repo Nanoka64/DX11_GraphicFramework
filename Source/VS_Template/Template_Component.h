@@ -3,26 +3,26 @@
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
-/* --- @:AssultRifle Class --- */
+/* --- @:safeitemname Class --- */
 //
 //  ★継承：IComponent ★
 //
-// 【?】アサルトライフル
+// 【?】
 //		
 // ***************************************************************************************
-class AssultRifle : public IComponent
+class $safeitemname$ : public IComponent
 {
 private:
-	std::shared_ptr<GameObject> m_pBulletObject;	// 弾となるオブジェクト
+
 
 public:
-	AssultRifle(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
-	~AssultRifle();
+	$safeitemname$(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
+	~$safeitemname$();
 
 	void Start(RendererEngine &renderer) override;		// 初期化
 	void Update(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer)override;		// 描画処理
 
-	void set_BulletObject(std::shared_ptr<GameObject> pObj);
+
 };
 

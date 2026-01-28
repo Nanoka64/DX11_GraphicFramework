@@ -232,16 +232,28 @@ public:
 class SphereColliderEditor : public EditorBase
 {
 private:
-
 public:
-    SphereColliderEditor()
-        : EditorBase()
-    {
-    };
-    ~SphereColliderEditor()
-    {
-    };
+    SphereColliderEditor() : EditorBase() {};
+    ~SphereColliderEditor() {};
     bool Init(RendererEngine &renderer) override;
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+};
 
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:TrailRendererEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】スフィアコライダー編集用エディタ
+//
+// ***************************************************************************************
+class TrailRendererEditor : public EditorBase
+{
+private:
+public:
+    TrailRendererEditor() : EditorBase() {};
+    ~TrailRendererEditor() {};
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 };

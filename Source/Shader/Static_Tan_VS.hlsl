@@ -29,7 +29,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 Pos      : SV_POSITION;  // 頂点座標(画面空間)
-    float4 WPos     : POSITION;     // ライティング用のワールド座標
+    //float4 WPos     : POSITION;     // ライティング用のワールド座標
     float3 Normal   : NORMAL0;      // 法線
     float4 Color    : COLOR0;       // 頂点色
     float2 UV       : TEXCOORD0;    // テクスチャ座標
@@ -52,7 +52,7 @@ VS_OUTPUT VSMain(VS_INPUT input)
     norm = normalize(mul(norm, (float3x3) cb_Transform));
     
     pos = mul(pos, cb_Transform);   // ワールド変換（ワールド空間）
-    output.WPos = pos;
+    //output.WPos = pos;
     pos = mul(pos, cb_View);        // ビュー変換（ビュー空間）
     pos = mul(pos, cb_Projection);  // 投影変換（クリッピング空間）
     

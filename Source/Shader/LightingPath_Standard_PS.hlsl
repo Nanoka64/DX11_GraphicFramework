@@ -17,14 +17,14 @@
 // 追記：CSOファイル読み込みにすればデバッグ可能
 
 SamplerState g_sSampler : register(s0);
-//SamplerComparisonState g_sShadowSampler : register(s1); // シャドウマップ用
-SamplerState g_sShadowSampler : register(s1); // シャドウマップ用
-Texture2D<float4> g_tAlbedoTexture : register(t0);      // rgbにアルベド aにエミッシブ
-Texture2D<float4> g_tNormalTexture : register(t1);      // rgbに法線
-Texture2D<float4> g_tSpecularTexture : register(t2);    // rgbにスペキュラ色  wにスペキュラ強度
-Texture2D<float4> g_tEmissiveMapTexture : register(t3);   // エミッシブ
-Texture2D<float4> g_tDepthTexture : register(t4);       // rに深度値 gbaにエミッシブカラー
-Texture2D<float4> g_tShadowMapTexture : register(t5);   // シャドウマップ
+//SamplerComparisonState g_sShadowSampler : register(s1);   // シャドウマップ用
+SamplerState g_sShadowSampler : register(s1);               // シャドウマップ用
+Texture2D<float4> g_tAlbedoTexture : register(t0);          // rgbにアルベド aにエミッシブ
+Texture2D<float4> g_tNormalTexture : register(t1);          // rgbに法線
+Texture2D<float4> g_tSpecularTexture : register(t2);        // rgbにスペキュラ色  wにスペキュラ強度
+Texture2D<float4> g_tEmissiveMapTexture : register(t3);     // エミッシブ
+Texture2D<float4> g_tDepthTexture : register(t4);           // rに深度値 gbaにエミッシブカラー
+Texture2D<float4> g_tShadowMapTexture : register(t5);       // シャドウマップ
 
 
 /* =========================================================================
@@ -170,7 +170,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     shadowBias = min(shadowBias, depthBiasClamp);   // クランプ
     
     // シャドウマップから値をサンプリング
-    float2 shadow = g_tShadowMapTexture.Sample(g_sShadowSampler, shadowMapUV);
+    float2 shadow = g_tShadowMapTexture.Sample(g_sShadowSampler, shadowMapUV).rg;
     
     //if (zInLVP > shadow.r && zInLVP <= 1.0f)
     {

@@ -143,6 +143,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_SHADOWMAP_SKINNED,        SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_DEPTH_OF_FILED,           SHADER_CREATE_TYPE::CSO))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_TONEMAPPING,              SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFERRED_STD_TRAIL,            SHADER_CREATE_TYPE::RUNTIME))return false;
 
     // *************************************************************************************************
     //** ƒŠƒ\[ƒXŠÇ—‚Ì‰Šú‰» **/

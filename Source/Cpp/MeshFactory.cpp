@@ -67,7 +67,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     meshRenderer.lock()->set_MeshResource(meshResource);
 
     // スキニングモデルの場合、アニメーションコンポーネントを追加
-    if (info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED_N || info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED)
+    if (info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED_N || info.ShaderType == SHADER_TYPE::_DEFERRED_STD_SKINNED)
     {
         // アニメーションコンポーネント追加
         if (info.IsAnim) {

@@ -125,6 +125,8 @@ public:
     inline UINT get_ScreenWidth()const { return m_ScreenWidht; };
     inline UINT get_ScreenHeight()const { return m_Screenheight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
+    VECTOR3::VEC3 get_CameraPosition()const;
+    void RegisterCamera(std::shared_ptr<class Camera3D> pCam);
 
     /// <summary>
     ///  ビューポート設定

@@ -246,6 +246,8 @@ bool InputManager::GetMouseClickUp(MOUSE_BUTTON_STATE _button)const
     {
         return true;
     }
+
+    return false;
 }
 
 /// <summary>

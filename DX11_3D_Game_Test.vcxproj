@@ -195,6 +195,7 @@
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
+    <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\DebugMesh.h" />
     <ClInclude Include="Source\Header\EditorBase.h" />
@@ -277,8 +278,10 @@
     <ClInclude Include="Source\Lib\Imgui\imstb_rectpack.h" />
     <ClInclude Include="Source\Lib\Imgui\imstb_textedit.h" />
     <ClInclude Include="Source\Lib\Imgui\imstb_truetype.h" />
+    <None Include="Source\VS_Template\Template_Component.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Source\VS_Template\Template_Component.cpp" />
     <Text Include="Schedule.txt" />
     <Text Include="Source\CordingRules\CPP_CommentRule.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -305,6 +308,7 @@
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_SphereCollider.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\DebugMesh.cpp" />
     <ClCompile Include="Source\Cpp\EditorBase.cpp" />
@@ -696,6 +700,16 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Resource\CSO\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Trail_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
     </FxCompile>
     <FxCompile Include="Source\Shader\XBlur_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

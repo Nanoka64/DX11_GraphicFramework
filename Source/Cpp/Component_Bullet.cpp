@@ -52,9 +52,9 @@ void Bullet::Start(RendererEngine &renderer)
 
     m_MoveVelocity = transform->get_Forward(); // 前方向ベクトル
 
-    m_MoveVelocity.x += Tool::RandRange(-0.05, 0.05);
-    m_MoveVelocity.y += Tool::RandRange(-0.05, 0.05);
-    m_MoveVelocity.z += Tool::RandRange(-0.05, 0.05);
+    m_MoveVelocity.x += Tool::RandRange(-0.05f, 0.05f);
+    m_MoveVelocity.y += Tool::RandRange(-0.05f, 0.05f);
+    m_MoveVelocity.z += Tool::RandRange(-0.05f, 0.05f);
 
     m_MoveVelocity = m_MoveVelocity.Normalize();
 }

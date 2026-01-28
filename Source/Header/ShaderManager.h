@@ -24,6 +24,7 @@ enum class SHADER_TYPE
     //* _N    : 法線マップあり
     //* 
     //* ◆    : 未実装
+    //* _     : ...
     //* **********************************************
 
     //スキニング用はボーンが入ってないと動かないよ
@@ -33,17 +34,18 @@ enum class SHADER_TYPE
     // 不透明オブジェクト用
     DEFERRED_STD_STATIC,                // 簡易静的3Dオブジェクト * 法線マップなし        
     DEFERRED_STD_STATIC_N,              // 静的3Dオブジェクト * 法線マップあり
-    DEFERRED_STD_SKINNED,               // ◆ スキニング3Dモデル * 法線マップなし
+    _DEFERRED_STD_SKINNED,              // ◆ スキニング3Dモデル * 法線マップなし
     DEFERRED_STD_SKINNED_N,             // スキニング3Dモデル * 法線マップあり     
     DEFERRED_STD_RT_SPRITE,             // RT描画用スプライト        
-    DEFERRED_STD_BILLBOARD,             // ◆ ビルボード                  
+    _DEFERRED_STD_BILLBOARD,            // ◆ ビルボード                  
+    DEFERRED_STD_TRAIL,                 // 軌跡                  
 
     /////////////////////////////////////////////////////////////////////
     // フォワードシェーディング ****************************************
     // UIやαブレンドがあるオブジェクト用
-    FORWARD_STD_STATIC,                 // ◆ 簡易3Dオブジェクト
+    _FORWARD_STD_STATIC,                // ◆ 簡易3Dオブジェクト
     FORWARD_UNLIT_UI_SPRITE,            // スプライト 標準 UI用  ライティングなし
-    FORWARD_STD_BILLBOARD,              // ◆ ビルボード
+    _FORWARD_STD_BILLBOARD,             // ◆ ビルボード
     FORWARD_UNLIT_STATIC,               // 簡易3Dオブジェクト ライティングなし
 
     /////////////////////////////////////////////////////////////////////

@@ -23,6 +23,7 @@
 #include "Component_AssultRifle.h"
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
+#include "Component_TrailRenderer.h"
 
 
 using namespace VECTOR4;
@@ -171,6 +172,10 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pPlayer->add_Component<PlayerController>(1);
             m_pPlayer->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
             m_pPlayer->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            auto trail = m_pPlayer->add_Component<TrailRenderer>();
+            trail->set_MinVertexDistance(20.0f);
+            trail->set_Width(30.0f);
 
             // コライダーの追加
             auto collider = m_pPlayer->add_Component<BoxCollider>();
@@ -632,8 +637,8 @@ bool SceneManager::Init(RendererEngine &renderer)
             spriteInitData.Type = SPRITE_USAGE_TYPE::NORMAL;
             spriteInitData.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
             spriteInitData.IsActive = false;
-            spriteInitData.Width = 0.5f;
-            spriteInitData.Height = 0.5f;
+            spriteInitData.Width = 0.0f;
+            spriteInitData.Height = 0.0f;
             spriteInitData.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
             auto obj = MeshFactory::CreateSprite(spriteInitData);
         }

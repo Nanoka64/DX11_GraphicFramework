@@ -104,6 +104,14 @@ namespace VECTOR3
 			return VEC3(tmp);
 		}
 
+		// ‘S‚Ä‚Ì—v‘f‚ðˆê‚Å‰Šú‰»
+		void AllOne()
+		{
+			this->x = 1.0f;
+			this->y = 1.0f;
+			this->z = 1.0f;
+		};
+
 		// ’·‚³
 		float Length()   const { return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z); }
 		float LengthSq() const { return this->x * this->x + this->y * this->y + this->z * this->z; };
@@ -189,6 +197,15 @@ namespace VECTOR4
 			return *this;
 		}
 
+		// ‘S‚Ä‚Ì—v‘f‚ð1‚Å‰Šú‰»
+		void AllOne()
+		{
+			this->x = 1.0f;
+			this->y = 1.0f;
+			this->z = 1.0f;
+			this->w = 1.0f;
+		};
+
 
 		// ’·‚³
 		float Length()   const { return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w); }
@@ -254,6 +271,12 @@ namespace VECTOR2
 		VEC2 operator-() const { return { -this->x, -this->y }; };
 		operator DirectX::XMFLOAT2()const { return DirectX::XMFLOAT2(x, y); }    // XMFLOAT2‚É“n‚·Û‚Ì•ÏŠ·
 
+		// ‘S‚Ä‚Ì—v‘f‚ð1‚Å‰Šú‰»
+		void AllOne()
+		{
+			this->x = 1.0f;
+			this->y = 1.0f;
+		}
 
 		// ’·‚³
 		float Length()   const { return std::sqrt(this->x * this->x + this->y * this->y); }

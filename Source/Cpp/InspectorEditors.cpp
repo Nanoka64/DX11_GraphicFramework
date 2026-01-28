@@ -11,6 +11,7 @@
 #include "Component_ModelMeshResource.h"
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
+#include "Component_TrailRenderer.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -751,5 +752,56 @@ void SphereColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pOb
     pComp->set_IsStatic(isStatic);
     pComp->set_Center(center);
     pComp->set_Radius(radius);
+}
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:TrailRendererEditor Class --- */
+//
+// ***************************************************************************************
+bool TrailRendererEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    using namespace VECTOR3;
+    using namespace Tool;
+
+    // コンポーネントの取得
+    auto pComp = pObj.get_Component<TrailRenderer>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    // beginはInspectorWindowで行っている
+    float minDist = pComp->get_MinVertexDistance();
+    float width = pComp->get_Width();
+
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"トレイルレンダラー")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"頂点間の最小距離"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Dist", 1, &minDist, 0.1f, 1.0f, 5000.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"幅"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Radius", 1, &width, 0.1f, 1.0f, 5000.0f);
+
+        Master::m_pDebugger->DG_TreePop();
+
+    }
+
+    // 反映
+    pComp->set_MinVertexDistance(minDist);
+    pComp->set_Width(width);
 }
 

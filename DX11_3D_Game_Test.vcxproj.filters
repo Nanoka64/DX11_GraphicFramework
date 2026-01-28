@@ -193,6 +193,12 @@
     <Filter Include="ソース ファイル\Renderer">
       <UniqueIdentifier>{c1a71249-2e19-4edc-8667-6e871eb213c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Mesh\Trail">
+      <UniqueIdentifier>{5e3f931a-e597-4b35-9b4e-654bb18a44c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="項目テンプレ">
+      <UniqueIdentifier>{b7d6911a-174b-4ae6-876b-054174c67341}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -467,6 +473,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_PlayerController.cpp">
       <Filter>ソース ファイル\Component\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -776,6 +785,9 @@
     <ClInclude Include="Source\Header\RenderPipeline.h">
       <Filter>ソース ファイル\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_TrailRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -802,6 +814,12 @@
     </None>
     <None Include="Source\Lib\DirectXTex\DirectXTex.pdb">
       <Filter>外部ライブラリ</Filter>
+    </None>
+    <None Include="Source\VS_Template\Template_Component.cpp">
+      <Filter>項目テンプレ</Filter>
+    </None>
+    <None Include="Source\VS_Template\Template_Component.h">
+      <Filter>項目テンプレ</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -864,6 +882,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\ShadowMap.hlsl">
       <Filter>HLSL\Shadow</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Trail_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
