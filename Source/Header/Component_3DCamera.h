@@ -62,6 +62,8 @@ public:
 	float get_Near()const { return m_NearClipDist; };	    // 手前クリップの設定
 	float get_Far()const { return m_FarClipDist; };		    // 奥クリップの設定
 
+	VECTOR3::VEC3 get_CameraPos()const;	// 座標取得
+
 	/// <summary>
 	/// ビュー変換行列の取得
 	/// </summary>

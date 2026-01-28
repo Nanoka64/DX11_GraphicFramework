@@ -34,10 +34,13 @@ private:
 	float m_Width;					// 幅
 	float m_MinVertexDistance;		// 頂点同士の距離（大きいほどカクカク）
 	float m_DrawTime;				// 表示時間
-	const UINT MAX_TRAIL_VERTEX_NUM = 524;	// 最大長点数
+	const UINT MAX_TRAIL_VERTEX_NUM = 256;	// 最大長点数
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertesBuffer;// 頂点バッファ
 	bool m_IsView;								// カメラに向くようにするか（ビルボード）
 	CB_MATERIAL_SET *m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
+	std::shared_ptr<class Texture> m_pTex;
+
+
 public:
 	TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~TrailRenderer();
@@ -60,7 +63,7 @@ private:
 	bool CreateVertexBuffer(RendererEngine &renderer);
 	void set_TrailPos(VECTOR3::VEC3 _head,VECTOR3::VEC3 _tail);
 
-	void VertexUpdate(ID3D11DeviceContext* pContext);
+	void VertexUpdate(RendererEngine& renderer);
 	void ConstantBufferUpdate(RendererEngine &renderer);
 
 	/// <summary>
@@ -68,6 +71,12 @@ private:
 	/// </summary>
 	/// <param name="renderer"></param>
 	void CalcTrailSegmentToViewDirection(RendererEngine &renderer);
+
+	/// <summary>
+	/// 向き固定ver
+	/// </summary>
+	/// <param name="renderer"></param>
+	void CalcTrailSegment(RendererEngine& renderer);
 
 };
 

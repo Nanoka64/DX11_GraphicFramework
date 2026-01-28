@@ -8,6 +8,8 @@
 #include "DX_RenderTarget.h"
 #include "BlendManager.h"
 #include "RenderPipeline.h"
+#include "Component_3DCamera.h"
+#include "GameObject.h"
 #include <string>
 
 //*---------------------------------------------------------------------------------------
@@ -173,6 +175,7 @@ void RendererEngine::EndRender()
 void RendererEngine::Term()
 {
     CleanupDX11();  // リソース解放
+    m_pMainCamera.reset();
 }
 
 
@@ -575,6 +578,22 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pRenderTargetView);
     SAFE_RELEASE(m_pSwapChain);
     SAFE_RELEASE(m_pd3dDevice)
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】カメラ座標取得
+//* 戻値：座標
+//*----------------------------------------------------------------------------------------
+VECTOR3::VEC3 RendererEngine::get_CameraPosition()const
+{
+    return m_pMainCamera->get_CameraPos();
+}
+//*---------------------------------------------------------------------------------------
+//*【?】カメラコンポーネントの設定
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_CameraComponent(std::shared_ptr<class Camera3D> pCam)
+{
+    m_pMainCamera = pCam;
 }
 
 //*---------------------------------------------------------------------------------------

@@ -144,6 +144,9 @@ bool SceneManager::Init(RendererEngine &renderer)
             m_pCameraObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
             m_pCameraObj->get_Transform().lock()->set_Pos(0.0f, 800.0f, -1000.0f);
             m_pCameraComp = m_pCameraObj->add_Component<Camera3D>(); // カメラコンポーネントの追加
+            
+            // 描画エンジン側にカメラコンポーネントを渡す
+            renderer.set_CameraComponent(m_pCameraComp);
         }
 
         /* プレイヤー モデルの生成 */

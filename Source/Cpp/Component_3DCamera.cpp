@@ -216,3 +216,8 @@ VECTOR3::VEC3 Camera3D::get_FocusOffset()const
 {
 	return m_FocusOffset;
 }
+
+VECTOR3::VEC3 Camera3D::get_CameraPos()const
+{
+	return m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
+}

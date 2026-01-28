@@ -53,13 +53,13 @@ struct PS_OUT
 PS_OUT PSMain(PS_IN input)
 {
     float4 diffuseMap = g_tDiffuseTex.Sample(g_sSampler, input.UV);
-    float4 normalMap = g_tNormalTex.Sample(g_sSampler, input.UV);
+    //float4 normalMap = g_tNormalTex.Sample(g_sSampler, input.UV);
     
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
     
     finalCol = diffuseMap * cb_DiffuseColor;
     
-    finalCol.xyz = input.Color.xyz;
+    //finalCol.xyz = input.Color.xyz;
     
     // こっちは法線マップなしver
     //float3 normal = GetNorm(normalMap, float3(1.0, 0.0, 0.0), float3(0.0, 0.0, -1.0), input.Normal);

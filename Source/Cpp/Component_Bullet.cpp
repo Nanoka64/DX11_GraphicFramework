@@ -73,7 +73,9 @@ void Bullet::Update(RendererEngine &renderer)
     VEC3 crntPos = transform->get_VEC3ToPos();
     VEC3 moveVelocity = VEC3(0.0f,0.0f,0.0f);   // 速度ベクトル
 
-    crntPos -= m_MoveVelocity * 20.0f;
+    m_Counter += 0.01f;
+
+    crntPos -= m_MoveVelocity * 10.0f;
 
     transform->set_Pos(crntPos);
 

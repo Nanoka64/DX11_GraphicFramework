@@ -92,6 +92,7 @@ private:
 
     class RenderPipeline *m_pRendererPipeline; // 描画パイプラインの実体を持つ
 
+    std::shared_ptr<class Camera3D> m_pMainCamera;  // メインカメラ情報を持つ
 public:
     RendererEngine();
     ~RendererEngine();
@@ -126,7 +127,7 @@ public:
     inline UINT get_ScreenHeight()const { return m_Screenheight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
     VECTOR3::VEC3 get_CameraPosition()const;
-    void RegisterCamera(std::shared_ptr<class Camera3D> pCam);
+    void set_CameraComponent(std::shared_ptr<class Camera3D> pCam);
 
     /// <summary>
     ///  ビューポート設定
