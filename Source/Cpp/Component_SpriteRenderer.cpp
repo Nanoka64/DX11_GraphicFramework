@@ -77,7 +77,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	Master::m_pShaderManager->DeviceToSetShader(m_ShaderType);
 	
 	// ’¸“_î•ñ‚ÌXV
-	//VertexUpdate(renderer);
+	VertexUpdate(renderer);
 
 	auto transform = m_pOwner.lock()->get_Component<Transform>();
 	XMMATRIX world = transform->get_WorldMtx();
@@ -245,10 +245,10 @@ void SpriteRenderer::VertexUpdate(RendererEngine& renderer)
 
 	VERTEX_Static vertices[4];
 
-	vertices[0].pos = VEC3(centerPos.x - hw, centerPos.y - hh,  0.0f);
-	vertices[1].pos = VEC3(centerPos.x + hw, centerPos.y - hh,  0.0f);
-	vertices[2].pos = VEC3(centerPos.x - hw, centerPos.y + hh,  0.0f);
-	vertices[3].pos = VEC3(centerPos.x + hw, centerPos.y + hh,  0.0f);	
+	vertices[0].pos = VEC3(centerPos.x - hw, centerPos.y + hh,  0.0f);
+	vertices[1].pos = VEC3(centerPos.x + hw, centerPos.y + hh,  0.0f);
+	vertices[2].pos = VEC3(centerPos.x - hw, centerPos.y - hh,  0.0f);
+	vertices[3].pos = VEC3(centerPos.x + hw, centerPos.y - hh,  0.0f);	
 	vertices[0].uv = VEC2(0.0f, 0.0f);
 	vertices[1].uv = VEC2(1.0f, 0.0f);
 	vertices[2].uv = VEC2(0.0f, 1.0f);

@@ -41,7 +41,7 @@ VS_OUT VSMain(VS_IN input)
     
     pos = mul(cb_Transform, pos);
     //pos = mul(cb_View, pos);
-    //pos = mul(cb_OrthographicProjection, pos);
+    //pos = mul(cb_Projection, pos);
     
     output.Pos   = pos;
     output.Color = color;

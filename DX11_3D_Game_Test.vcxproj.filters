@@ -495,9 +495,6 @@
     <ClCompile Include="Source\Cpp\c_Title_MissionSelect.cpp">
       <Filter>ソース ファイル\Scene\Title</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Header\Root_GameSceneState.cpp">
-      <Filter>ソース ファイル\Scene\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\c_Game_LoadProcess.cpp">
       <Filter>ソース ファイル\Scene\Game</Filter>
     </ClCompile>
@@ -509,6 +506,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\c_Title_LoadProcess.cpp">
       <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Root_GameSceneState.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

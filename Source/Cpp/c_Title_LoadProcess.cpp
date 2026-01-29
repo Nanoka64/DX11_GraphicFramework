@@ -18,6 +18,11 @@ using namespace SceneStateEnums;
 //*----------------------------------------------------------------------------------------
 void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 {
+	// ‚·‚Å‚Éƒ[ƒh‚³‚ê‚Ä‚¢‚é‚È‚ç•Ô‚·
+	if (m_IsLoad) {
+		return;
+	}
+
 	CreateSpriteInfo sprite;
 	sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Title_Description_01.png");
 	sprite.IsActive = true;
@@ -25,13 +30,15 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 	sprite.pRenderer = m_pRenderer;
 	sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
 	sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-	sprite.Width = 1.0f;
-	sprite.Height = 1.0f;
+	sprite.Width = 0.1f;
+	sprite.Height = 0.1f;
 	sprite.IsActive = false;
 	auto obj = MeshFactory::CreateSprite(sprite);
 	if (obj) {
 		m_pLoadBackSprite = obj->get_Component<SpriteRenderer>();
 	}
+
+	m_IsLoad = true;
 }
 
 
@@ -43,7 +50,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 {
-
+	m_pLoadBackSprite->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 }
 
 

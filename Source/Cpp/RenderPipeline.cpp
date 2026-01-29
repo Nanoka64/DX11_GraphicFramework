@@ -391,8 +391,9 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     sprite->get_Component<SpriteRenderer>()->Draw(renderer);
 
     sprite = Master::m_pGameObjectManager->get_ObjectByTag("TitleLoad_Back_Sp");
-    sprite->get_Component<SpriteRenderer>()->Draw(renderer);
-
+    if (sprite) {
+        sprite->get_Component<SpriteRenderer>()->Draw(renderer);
+    }
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);
 

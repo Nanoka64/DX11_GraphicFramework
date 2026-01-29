@@ -48,6 +48,7 @@ int Root_ResultSceneState::Update(SceneManager *pOwner)
 	// タイトルシーンへ
 	if (newState == c_RESULT::c_GO_TITLE_SCENE)
 	{
+		m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);
 		return SCENE_STATE::SCENE_STATE_TITLE;
 	}
 

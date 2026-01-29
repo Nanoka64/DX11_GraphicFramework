@@ -13,6 +13,7 @@ class c_Title_LoadProcess : public IState<SceneManager>
 {
 private:
 	std::shared_ptr<class SpriteRenderer>m_pLoadBackSprite;
+	bool m_IsLoad;	// Ç∑Ç≈Ç…ÉçÅ[ÉhçœÇ›Ç©
 
 public:
 	void OnEnter(SceneManager *pOwner) override;

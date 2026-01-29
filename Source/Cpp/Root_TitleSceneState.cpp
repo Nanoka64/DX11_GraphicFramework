@@ -47,6 +47,7 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 	// ƒQ[ƒ€ƒV[ƒ“‚Ö
 	if (newState == c_TITLE::c_GO_GAME_SCENE)
 	{
+		m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);
 		return SCENE_STATE::SCENE_STATE_GAME;
 	}
 

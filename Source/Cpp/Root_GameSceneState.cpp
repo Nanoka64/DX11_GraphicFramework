@@ -47,6 +47,7 @@ int Root_GameSceneState::Update(SceneManager *pOwner)
 	// リザルトシーンへ
 	if (newState == c_GAME::c_GO_RESULT_SCENE)
 	{
+		m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);
 		return  SCENE_STATE::SCENE_STATE_RESULT;
 	}
 
