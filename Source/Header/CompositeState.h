@@ -27,7 +27,7 @@ template<typename Owner>
 class CompositeState : public IState<Owner>
 {
 protected:
-    std::map<int, std::unique_ptr<IState<Owner>>> m_pChildStateMap; // 子ステートのリスト
+    std::map<int, std::shared_ptr<IState<Owner>>> m_pChildStateMap; // 子ステートのリスト
     int m_CrntChildStateID;   // 現在の子ステートID
 
 public:
@@ -60,10 +60,20 @@ public:
 	/// </summary>
 	/// <param name="id"> 子ステートのeunm </param>
 	/// <param name="pOwner"></param>
-	void add_Child(const int id, std::unique_ptr<IState<Owner>> pState)override 
+	void add_Child(const int id, std::shared_ptr<IState<Owner>> pState)override 
 	{
-		m_pChildStateMap[id] = std::move(pState);
+		m_pChildStateMap[id] = (pState);
 		m_pChildStateMap[id]->set_Renderer(this->m_pRenderer);
+	}
+
+	/// <summary>
+	/// 最初の子ステートを設定
+	/// </summary>
+	/// <param name="id"></param>
+	void SetInitChildState(Owner *pOwner, const int id)
+	{
+		m_pChildStateMap[id]->OnEnter(pOwner);
+		m_CrntChildStateID = id;
 	}
 
 

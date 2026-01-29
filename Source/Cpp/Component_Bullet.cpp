@@ -75,7 +75,7 @@ void Bullet::Update(RendererEngine &renderer)
 
     m_Counter += 0.01f;
 
-    crntPos -= m_MoveVelocity * 10.0f;
+    crntPos -= m_MoveVelocity * 20.0f;
 
     transform->set_Pos(crntPos);
 

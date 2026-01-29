@@ -390,6 +390,9 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     auto sprite = Master::m_pGameObjectManager->get_ObjectByTag("UI");
     sprite->get_Component<SpriteRenderer>()->Draw(renderer);
 
+    sprite = Master::m_pGameObjectManager->get_ObjectByTag("TitleLoad_Back_Sp");
+    sprite->get_Component<SpriteRenderer>()->Draw(renderer);
+
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);
 

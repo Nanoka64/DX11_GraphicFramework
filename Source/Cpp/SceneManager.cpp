@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SceneManager.h"
+#include "SceneStateEnums.h"
 #include "RendererEngine.h"
 #include "DirectWriteManager.h"
 #include "ResourceManager.h"
@@ -35,7 +36,7 @@ using namespace Input;
 
 using namespace GIGA_Engine;
 
-
+using namespace SceneStateEnums;
 
 //*---------------------------------------------------------------------------------------
 //* @:SceneManager Class 
@@ -69,16 +70,12 @@ SceneManager::~SceneManager()
 //*----------------------------------------------------------------------------------------
 bool SceneManager::Init(RendererEngine &renderer)
 {
-    // ステートマシンの作成
-    SceneFactory::Create(m_StateMachine, renderer);
-
     // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
     {
         assert(false);
         return false;
     }
-
 
     // マテリアルの作成 (今後CSVで読み込むようにする)
     {
@@ -656,6 +653,12 @@ bool SceneManager::Init(RendererEngine &renderer)
         return false;
     }
 
+    // ステートマシンの作成
+    SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_TITLE, renderer);
+    SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_GAME, renderer);
+    SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_RESULT, renderer);
+    m_StateMachine.SetCrntState(SCENE_STATE::SCENE_STATE_TITLE);
+
     return true;
 }
 
@@ -668,17 +671,11 @@ bool SceneManager::Init(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void SceneManager::Update(RendererEngine& renderer)
 {
-    //// シーンの更新
-    //int newState = m_SceneStateMap[m_CrntSceneState]->Update(renderer);
-
-    //// シーン状態が変わったら現在のシーンを終了し、新しいシーンを呼ぶ
-    //if (newState != m_CrntSceneState)
-    //{
-    //    m_CrntSceneState = newState;
-    //}
-
     static float counter = 0.0f;
     counter += 0.01f;
+
+    // シーンステートの実行
+    m_StateMachine.Update();
 
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
@@ -788,11 +785,11 @@ void SceneManager::Draw(RendererEngine& renderer)
     // レンダリングパイプラインの実行
     renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT);
 
+    // シーンステートの描画
+    m_StateMachine.Draw();
+
 
     //Master::m_pDirectWriteManager->DrawString("こんにちは",VEC2(940, 540));
-
-    //// シーンの描画
-    //m_SceneStateMap[m_CrntSceneState]->Draw(renderer);
 }
 
 

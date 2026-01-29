@@ -197,6 +197,12 @@
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
+    <ClInclude Include="Source\Header\c_Game_LoadProcess.h" />
+    <ClInclude Include="Source\Header\c_Result_GetItemCheck.h" />
+    <ClInclude Include="Source\Header\c_Title_Config.h" />
+    <ClInclude Include="Source\Header\c_Title_LoadProcess.h" />
+    <ClInclude Include="Source\Header\c_Title_MissionSelect.h" />
+    <ClInclude Include="Source\Header\c_Title_SoldierSelect.h" />
     <ClInclude Include="Source\Header\DebugMesh.h" />
     <ClInclude Include="Source\Header\EditorBase.h" />
     <ClInclude Include="Source\Header\EditorManager.h" />
@@ -253,6 +259,8 @@
     <ClInclude Include="Source\Header\RendererEngine.h" />
     <ClInclude Include="Source\Header\RenderParam.h" />
     <ClInclude Include="Source\Header\ResourceManager.h" />
+    <ClInclude Include="Source\Header\Root_GameSceneState.h" />
+    <ClInclude Include="Source\Header\Root_ResultSceneState.h" />
     <ClInclude Include="Source\Header\SceneFactory.h" />
     <ClInclude Include="Source\Header\SceneManager.h" />
     <ClInclude Include="Source\Header\SceneStateEnums.h" />
@@ -262,7 +270,7 @@
     <ClInclude Include="Source\Header\Test_ChildState_Start.h" />
     <ClInclude Include="Source\Header\Texture.h" />
     <ClInclude Include="Source\Header\Component_Transform.h" />
-    <ClInclude Include="Source\Header\TitleSceneState.h" />
+    <ClInclude Include="Source\Header\Root_TitleSceneState.h" />
     <ClInclude Include="Source\Header\TRIANGLE.h" />
     <ClInclude Include="Source\Header\VEC.h" />
     <ClInclude Include="Source\Header\VERTEX.h" />
@@ -310,6 +318,12 @@
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
+    <ClCompile Include="Source\Cpp\c_Game_LoadProcess.cpp" />
+    <ClCompile Include="Source\Cpp\c_Result_GetItemCheck.cpp" />
+    <ClCompile Include="Source\Cpp\c_Title_Config.cpp" />
+    <ClCompile Include="Source\Cpp\c_Title_LoadProcess.cpp" />
+    <ClCompile Include="Source\Cpp\c_Title_MissionSelect.cpp" />
+    <ClCompile Include="Source\Cpp\c_Title_SoldierSelect.cpp" />
     <ClCompile Include="Source\Cpp\DebugMesh.cpp" />
     <ClCompile Include="Source\Cpp\EditorBase.cpp" />
     <ClCompile Include="Source\Cpp\EditorManager.cpp" />
@@ -461,6 +475,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Root_ResultSceneState.cpp" />
     <ClCompile Include="Source\Cpp\SceneFactory.cpp" />
     <ClCompile Include="Source\Cpp\SceneManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -489,7 +504,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\TitleSceneState.cpp" />
+    <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp" />
     <ClCompile Include="Source\Cpp\TRIANGLE.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -504,6 +519,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Header\Root_GameSceneState.cpp" />
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

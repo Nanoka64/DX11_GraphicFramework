@@ -18,7 +18,7 @@ private:
 	int m_CrntStateID;    // 現在のステートID
 
 	// 連想配列で管理
-	std::map<int, std::unique_ptr<IState<Owner>>> m_pStateMap;
+	std::map<int, std::shared_ptr<IState<Owner>>> m_pStateMap;
 
 public:
 	/// <summary>
@@ -44,9 +44,9 @@ public:
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="pState"></param>
-	void RegisterState(const int id, std::unique_ptr<IState<Owner>> pState) 
+	void RegisterState(const int id, std::shared_ptr<IState<Owner>> pState)
 	{
-		m_pStateMap[id] = std::move(pState);
+		m_pStateMap[id] = pState;
 	}
 
 
@@ -54,18 +54,17 @@ public:
 	/// 現在のステートを設定
 	/// </summary>
 	/// <param name="id"></param>
-	void SetCrntState(const int id) const
+	void SetCrntState(const int id)
 	{
 		m_CrntStateID = id;
 		m_pStateMap[id]->OnEnter(m_pOwner);
 	}
 
-
 	/// <summary>
 	/// ステートを変更する
 	/// </summary>
 	/// <param name="pState"></param>
-	void ChangeState(const int newId)const
+	void ChangeState(const int newId)
 	{
 		m_pStateMap[m_CrntStateID]->OnExit(m_pOwner);
 		m_pStateMap[newId]->OnEnter(m_pOwner);
@@ -77,8 +76,16 @@ public:
 	/// </summary>
 	void Update()
 	{
+		if (m_CrntStateID == -1)return;
+
 		if (m_pStateMap[m_CrntStateID]) {
-			m_pStateMap[m_CrntStateID]->Update(m_pOwner);
+			int newState = m_pStateMap[m_CrntStateID]->Update(m_pOwner);
+
+			// ステートが変更されていたら切り替え処理を行う
+			if (newState != m_CrntStateID)
+			{
+				ChangeState(newState);
+			}
 		}
 	}
 
@@ -87,6 +94,8 @@ public:
 	/// </summary>
 	void Draw()
 	{
+		if (m_CrntStateID == -1)return ;
+
 		if (m_pStateMap[m_CrntStateID]) {
 			m_pStateMap[m_CrntStateID]->Draw(m_pOwner);
 		}

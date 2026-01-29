@@ -199,6 +199,15 @@
     <Filter Include="項目テンプレ">
       <UniqueIdentifier>{b7d6911a-174b-4ae6-876b-054174c67341}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Scene\Title">
+      <UniqueIdentifier>{e7cf2ee8-ba38-41b7-9550-8d3f6bbfbb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene\Game">
+      <UniqueIdentifier>{893dea6c-ff6d-4704-8ca4-97c1a21ccf37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Scene\Result">
+      <UniqueIdentifier>{cb343d01-e87d-425e-ba78-85e3a10a87e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -329,9 +338,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\RootSceneState.cpp">
       <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\TitleSceneState.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\SceneFactory.cpp">
       <Filter>ソース ファイル\Scene</Filter>
@@ -476,6 +482,33 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Title_Config.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Title_SoldierSelect.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Title_MissionSelect.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Header\Root_GameSceneState.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Game_LoadProcess.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Root_ResultSceneState.cpp">
+      <Filter>ソース ファイル\Scene\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Result_GetItemCheck.cpp">
+      <Filter>ソース ファイル\Scene\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Title_LoadProcess.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -632,9 +665,6 @@
     <ClInclude Include="Source\Header\IChildSceneState.h">
       <Filter>ソース ファイル\NotUsed\TestScene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\TitleSceneState.h">
-      <Filter>ソース ファイル\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\SceneFactory.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
@@ -787,6 +817,33 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_TrailRenderer.h">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Root_TitleSceneState.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Title_Config.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Title_SoldierSelect.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Title_MissionSelect.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Root_GameSceneState.h">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Game_LoadProcess.h">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Root_ResultSceneState.h">
+      <Filter>ソース ファイル\Scene\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Result_GetItemCheck.h">
+      <Filter>ソース ファイル\Scene\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Title_LoadProcess.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

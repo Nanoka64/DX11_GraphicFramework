@@ -17,6 +17,7 @@ class IState
 {
 protected:
 	RendererEngine *m_pRenderer = nullptr;
+	std::weak_ptr<IState<Owner>> m_pParent;
 
 public:
 	IState() = default;
@@ -32,8 +33,17 @@ public:
 	/// </summary>
 	/// <param name="id"> 子ステートのeunm </param>
 	/// <param name="pOwner"></param>
-	virtual void add_Child(const int id, std::unique_ptr<IState<Owner>> pState) {};
+	virtual void add_Child(const int id, std::shared_ptr<IState<Owner>> pState) {};
 
+
+	/// <summary>
+	/// 親ステートを設定
+	/// </summary>
+	/// <param name="pState"></param>
+	virtual void set_Parent(std::shared_ptr<IState<Owner>> pState) 
+	{
+		m_pParent = pState;
+	};
 
 	/// <summary>
 	/// 子ステートを切り替える

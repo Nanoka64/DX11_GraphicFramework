@@ -222,7 +222,15 @@ void CalcTrailSegment(RendererEngine& renderer)
 
 }
 
-
+//*---------------------------------------------------------------------------------------
+//*【?】定数バッファの更新
+//*
+//* [引数]
+//* &renderer : 描画エンジンの参照
+//*
+//* [返値]
+//* なし
+//*----------------------------------------------------------------------------------------
 void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
