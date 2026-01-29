@@ -145,6 +145,11 @@ namespace VECTOR3
 		static float Distance(const VEC3& v1, const VEC3& v2) {
 			return (v2 - v1).Length();
 		}
+		
+		// ‹——£
+		static float DistanceSq(const VEC3& v1, const VEC3& v2) {
+			return (v2 - v1).LengthSq();
+		}
 
 		// ”½ŽË
 		static VEC3 Reflect(const VEC3& inVec, const VEC3& normal) {

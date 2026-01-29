@@ -48,7 +48,7 @@ void HierarchyWindow::Update(RendererEngine &renderer)
     using namespace Tool;
 
     std::shared_ptr<GameObject> selectedObject = nullptr;   // 選択されたオブジェクトのポインタ
-    std::list<std::shared_ptr<GameObject>> objList = Master::m_pGameObjectManager->get_ObjectList();
+    std::list<std::shared_ptr<GameObject>> objList = Master::m_pGameObjectManager->get_Opaque_ObjectList();
     
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"));
     Master::m_pDebugger->DG_BulletText(U8ToChar(u8"数 : %d"), objList.size());

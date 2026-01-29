@@ -467,7 +467,7 @@ HRESULT RendererEngine::InitDX11_Rasterizer()
     rd.FillMode              = D3D11_FILL_SOLID; // どう塗りつぶすか（ここでは普通に描画）
     rd.MultisampleEnable     = FALSE;   // マルチサンプリング時の配慮をするか(ポリゴンの端を滑らかにできるが処理コスト増)
     rd.FrontCounterClockwise = FALSE;   // 時計回りが表面
-    rd.DepthBias             = 0.0;     // 深度バイアス
+    rd.DepthBias             = 0;       // 深度バイアス
     rd.DepthBiasClamp        = 0.0;
     rd.SlopeScaledDepthBias  = 0.0;
     rd.DepthClipEnable       = TRUE;    // 0.0より小さい1.0より大きい場合計算しない(カメラのnarとfarのやつ)

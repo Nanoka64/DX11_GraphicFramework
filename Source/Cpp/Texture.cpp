@@ -46,8 +46,8 @@ HRESULT Texture::Load_WIC(const std::wstring& path, RendererEngine& renderer)
 	);
 	if (FAILED(hr))return hr;
 
-	m_Width = metadata.width;
-	m_Height = metadata.height;
+	m_Width = static_cast<UINT>(metadata.width);
+	m_Height = static_cast<UINT>(metadata.height);
 
 
 	auto device = renderer.get_Device();
@@ -119,7 +119,7 @@ HRESULT Texture::Load_DDS_CubeMap(const std::wstring& path, RendererEngine& rend
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	ZeroMemory(&srvDesc, sizeof(srvDesc));
 	srvDesc.Format = metadata.format;
-	srvDesc.TextureCube.MipLevels = metadata.mipLevels;
+	srvDesc.TextureCube.MipLevels = static_cast<UINT>(metadata.mipLevels);
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;	// キューブマップ用
 

@@ -23,32 +23,43 @@ struct ExpandConstantBufferInfo
 };
 
 /// <summary>
-/// モデルの生成情報
+/// 生成に必要な基本の情報
 /// </summary>
-struct CreateModelInfo
+struct CreateMesh_Base
 {
-    RendererEngine *pRenderer;      // 描画
-    std::string Path;               // モデルパス
+    RendererEngine* pRenderer;      // 描画
     std::string ObjTag;             // オブジェクトのタグ
     bool IsActive;                  // 生成時にオブジェクトをアクティブにするか
-    bool IsAnim;                    // アニメーションするかどうか
-    int InitAnimIndex;              // 最初に再生するアニメーション
     SHADER_TYPE ShaderType;         // 使用するシェーダの種類
     SHADER_TYPE Shadow_ShaderType;  // シャドウマップ生成に使用するシェーダの種類
+    bool IsTransparent;             // 透明度があるか（ある場合はフォワード用のシェーダにしてね）
 
+    CreateMesh_Base() :
+        pRenderer(nullptr),
+        IsActive(true),
+        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC),
+        Shadow_ShaderType(SHADER_TYPE::POST_SHADOWMAP),
+        IsTransparent(false)
+    {};
+};
+
+/// <summary>
+/// モデルの生成情報
+/// </summary>
+struct CreateModelInfo : public CreateMesh_Base
+{
+    std::string Path;               // モデルパス
+    bool IsAnim;                    // アニメーションするかどうか
+    int InitAnimIndex;              // 最初に再生するアニメーション
     SetupMaterialInfo* SetupMaterial;    // マテリアル情報（MatNum分）
     UINT MatNum;                         // マテリアル数
 
     // コンストラクタ
     CreateModelInfo() :
-        pRenderer(nullptr),
-        IsActive(true),
         IsAnim(false),
         InitAnimIndex(0),
         SetupMaterial(nullptr),
-        MatNum(0),
-        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC),
-        Shadow_ShaderType(SHADER_TYPE::POST_SHADOWMAP)
+        MatNum(0)
     {
     }
 };
@@ -57,28 +68,18 @@ struct CreateModelInfo
 /// <summary>
 /// 汎用メッシュ生成情報
 /// </summary>
-struct CreateUtilityMeshInfo
+struct CreateUtilityMeshInfo : public CreateMesh_Base
 {
-    RendererEngine* pRenderer;  // 描画
-    
     UTILITY_MESH_TYPE Type;      // メッシュタイプ
-    SHADER_TYPE ShaderType;      // 使用するシェーダの種類
     bool IsNormalMap;            // 法線マップ使用するかどうか
-
-    std::string ObjTag;          // オブジェクトのタグ
-    bool IsActive;               // 生成時にオブジェクトをアクティブにするか
-
     SetupMaterialInfo* MaterialData; // マテリアル情報
-    UINT MatNum;                 // マテリアル数
+    UINT MatNum;                     // マテリアル数
 
     // コンストラクタ
     CreateUtilityMeshInfo():
-        pRenderer(nullptr),
-        IsActive(true),
         MaterialData(nullptr),
         MatNum(0),
         Type(UTILITY_MESH_TYPE::NONE),
-        ShaderType(SHADER_TYPE::DEFERRED_STD_STATIC), 
         IsNormalMap(false)
     {};
 };
@@ -87,18 +88,14 @@ struct CreateUtilityMeshInfo
 /// <summary>
 /// スプライト生成情報
 /// </summary>
-struct CreateSpriteInfo
+struct CreateSpriteInfo : public CreateMesh_Base
 {
-    RendererEngine *pRenderer;          // 描画
-    std::string ObjTag;                 // オブジェクトのタグ
-    bool IsActive;                      // 生成時にオブジェクトをアクティブにするか
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
-    SHADER_TYPE ShaderType;             // 使用するシェーダの種類
 
     ExpandConstantBufferInfo*pPSConstantBuffers;  // ピクセルシェーダ用定数バッファ
     ExpandConstantBufferInfo*pVSConstantBuffers;  // 頂点シェーダ用定数バッファ
-    int PSConstBufferNum;               // ピクセルシェーダ用定数バッファ数
-    int VSConstBufferNum;               // 頂点シェーダ用定数バッファ数
+    int PSConstBufferNum;        // ピクセルシェーダ用定数バッファ数
+    int VSConstBufferNum;        // 頂点シェーダ用定数バッファ数
 
     std::map<int, std::weak_ptr<class Texture>> pTextureMap;    // テクスチャマップ
 
@@ -107,12 +104,9 @@ struct CreateSpriteInfo
     float Height;
 
     CreateSpriteInfo():
-        pRenderer(nullptr),
-        IsActive(true),
         Width(0.0f),
         Height(0.0f),
         Type(SPRITE_USAGE_TYPE::NORMAL),
-        ShaderType(SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE),
         pPSConstantBuffers(nullptr),
         pVSConstantBuffers(nullptr),
         PSConstBufferNum(0),
@@ -124,51 +118,35 @@ struct CreateSpriteInfo
 /// <summary>
 /// ビルボード生成情報
 /// </summary>
-struct CreateBillboradInfo
+struct CreateBillboradInfo : public CreateMesh_Base
 {
-    RendererEngine* pRenderer;   // 描画
-
     BILLBOARD_USAGE_TYPE Type;    // 使用方法
     FIXED_AXIS_BITFLAG FixedAxis; // 固定軸ビットフラグ（指定しない場合は固定軸なし）
-    SHADER_TYPE ShaderType;       // 使用するシェーダの種類
-    
-    std::string ObjTag;           // オブジェクトのタグ
-    bool IsActive;                // 生成時にオブジェクトをアクティブにするか
     
     SetupMaterialInfo* MaterialData;  // マテリアル情報
     UINT MatNum;                  // マテリアル数
 
     // コンストラクタ
     CreateBillboradInfo() :
-        pRenderer(nullptr),
-        IsActive(true),
         MaterialData(nullptr),
         MatNum(0),
         Type(BILLBOARD_USAGE_TYPE::SIMPLE),
-        FixedAxis(),
-        ShaderType(SHADER_TYPE::FORWARD_UNLIT_STATIC)
+        FixedAxis()
     {};
 };
 
 /// <summary>
 /// スカイボックス生成情報
 /// </summary>
-struct CreateSkyboxInfo
+struct CreateSkyboxInfo : public CreateMesh_Base
 {
-    RendererEngine* pRenderer;   // 描画エンジン
-    SHADER_TYPE ShaderType;      // 使用するシェーダの種類
-    std::string ObjTag;          // オブジェクトのタグ
-    bool IsActive;               // 生成時にオブジェクトをアクティブにするか
     SetupMaterialInfo* MaterialData; // マテリアル情報
     UINT MatNum;                 // マテリアル数
 
     // コンストラクタ
     CreateSkyboxInfo() :
-        pRenderer(nullptr),
-        IsActive(true),
         MaterialData(nullptr),
-        MatNum(0),
-        ShaderType(SHADER_TYPE::POST_SKYBOX)
+        MatNum(0)
     {};
 };
 

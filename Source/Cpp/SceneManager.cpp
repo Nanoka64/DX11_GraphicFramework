@@ -131,7 +131,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     {
         /* カメラの作成 */
         {
-            m_pCameraObj = Instantiate(std::move(std::make_shared<GameObject>()));
+            m_pCameraObj = Instantiate(std::move(std::make_shared<GameObject>()), false);
             if (m_pCameraObj == nullptr)
             {
                 return false;
@@ -272,9 +272,9 @@ bool SceneManager::Init(RendererEngine &renderer)
 
             // プレイヤーを親に設定
             obj->get_Transform().lock()->set_Parent(m_pPlayer->get_Transform());
-            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985, -0.985, -0.985));
-            obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0, 0, 90));
-            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0, 190, 0));
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985f, -0.985f, -0.985f));
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0.0f, 0.0f, 90.0f));
+            obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0.0f, 190.0f, 0.0f));
         }
 
         /* ディレクションライトの生成(Cubuで分かりやすく) */
@@ -557,9 +557,10 @@ bool SceneManager::Init(RendererEngine &renderer)
             billboard.pRenderer = &renderer;
             billboard.Type = BILLBOARD_USAGE_TYPE::SIMPLE;
             billboard.ShaderType = SHADER_TYPE::FORWARD_UNLIT_STATIC;
-            billboard.IsActive = false;
+            billboard.IsActive = true;
             billboard.MatNum = 1;
             billboard.MaterialData = matInfo;
+            billboard.IsTransparent = true; // 透明度があり
 
             for (int i = 0; i < 10; i++)
             {

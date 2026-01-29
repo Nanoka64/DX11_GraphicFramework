@@ -41,8 +41,12 @@ float4 PSMain(PS_IN input) : SV_TARGET
     {
         luminance = 0.0f;
     }
+    //clip(luminance - 1.0f);
     
-    clip(luminance - 1.0f);
+    // 1.0ˆÈ‰º‚È‚ç0.0‚É‚È‚é
+    float t = step(1.0f, luminance);
+    texColor.xyz *= t;
     
+    texColor.a = 1.0f;
     return texColor;
 }

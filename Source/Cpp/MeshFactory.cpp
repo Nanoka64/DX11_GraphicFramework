@@ -33,7 +33,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     }
 
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pModelObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    std::shared_ptr<GameObject> pModelObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pModelObj->Init(*info.pRenderer);
     pModelObj->set_Tag(info.ObjTag.c_str());
     pModelObj->set_IsShadow(true);  // シャドウをする
@@ -91,7 +91,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
 std::shared_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUtilityMeshInfo& info)
 {
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
     pObj->set_IsShadow(true);   // シャドウをする
@@ -128,7 +128,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUti
 std::shared_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteInfo &info)
 {
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
 
@@ -156,7 +156,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteIn
 std::shared_ptr<class GameObject> MeshFactory::CreateBillboard(const CreateBillboradInfo& info)
 {
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
 
@@ -188,7 +188,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateBillboard(const CreateBillb
 std::shared_ptr<class GameObject> MeshFactory::CreateSkybox(const CreateSkyboxInfo& info)
 {
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()));
+    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
 

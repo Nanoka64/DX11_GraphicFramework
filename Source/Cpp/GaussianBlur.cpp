@@ -91,8 +91,8 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // 水平ブラー
     // 
     // ************************************************************************
-    UINT vpWidth = static_cast<UINT>(m_pTexture.lock()->get_Width() / 2.0f);
-    UINT vpHeight = static_cast<UINT>(m_pTexture.lock()->get_Height());
+    UINT vpWidth = static_cast<float>(m_pTexture.lock()->get_Width()) / 2.0f;
+    UINT vpHeight = static_cast<float>(m_pTexture.lock()->get_Height());
     
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
@@ -113,8 +113,8 @@ void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
     // 垂直ブラー
     // 
     // ************************************************************************
-    vpWidth  = static_cast<UINT>(m_pTexture.lock()->get_Width() / 2.0f);
-    vpHeight = static_cast<UINT>(m_pTexture.lock()->get_Height() / 2.0f);
+    vpWidth = static_cast<float>(m_pTexture.lock()->get_Width()) / 2.0f;
+    vpHeight = static_cast<float>(m_pTexture.lock()->get_Height()) / 2.0f;
      
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
@@ -146,8 +146,8 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format
     m_pHorizontalBlur = new DX_RenderTarget();
     result = m_pHorizontalBlur->Create(
         renderer,
-        static_cast<float>(m_pTexture.lock()->get_Width() / 2.0f),
-        static_cast<float>(m_pTexture.lock()->get_Height()),
+        static_cast<UINT>(m_pTexture.lock()->get_Width() / 2),
+        static_cast<UINT>(m_pTexture.lock()->get_Height()),
         1,
         1,
         format,
@@ -161,8 +161,8 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format
     m_pVerticalBlur = new DX_RenderTarget();
     result = m_pVerticalBlur->Create(
         renderer,
-        static_cast<float>(m_pTexture.lock()->get_Width() / 2.0f),
-        static_cast<float>(m_pTexture.lock()->get_Height() / 2.0f),
+        static_cast<UINT>(m_pTexture.lock()->get_Width() / 2),
+        static_cast<UINT>(m_pTexture.lock()->get_Height() / 2),
         1,
         1,
         format,

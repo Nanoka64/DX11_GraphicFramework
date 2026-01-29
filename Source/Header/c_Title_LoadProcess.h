@@ -13,8 +13,8 @@ class c_Title_LoadProcess : public IState<SceneManager>
 {
 private:
 	std::shared_ptr<class SpriteRenderer>m_pLoadBackSprite;
-	bool m_IsLoad;	// すでにロード済みか
-
+	bool m_IsLoad = false;	// すでにロード済みか
+	 
 public:
 	void OnEnter(SceneManager *pOwner) override;
 	void OnExit(SceneManager *pOwner)override;

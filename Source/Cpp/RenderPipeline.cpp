@@ -39,7 +39,9 @@ RenderPipeline::RenderPipeline() :
     m_pEmissive_RT(nullptr),
     m_DoF_BlurIncensity(2.0f),
     m_ShadowData(),
-    m_DofData()
+    m_DofData(),
+    m_ScreenWidth(0),
+    m_ScreenHeight(0)
 {
 }
 
@@ -72,6 +74,10 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     // 被写界深度の設定
     m_DofData.dof_MaxRange = DOF_MAX_RANGE;
     m_DofData.dof_MinRange = DOF_MIN_RANGE;
+
+    // スクリーンの大きさを取得
+    m_ScreenWidth = static_cast<float>(renderer.get_ScreenWidth());
+    m_ScreenHeight = static_cast<float>(renderer.get_ScreenHeight());
 
     // レンダリングターゲットの作成
     if (!CreateRenderTargets(renderer))
@@ -254,7 +260,7 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
     };
 
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
     renderer.RegisterCullMode(CULL_MODE::BACK);     // 裏カリング
 
     // レンダリングターゲットの設定とクリア
@@ -314,7 +320,7 @@ void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
 void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 {
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     // 最終合成用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pSceneFinal_RT->get_DSV());
@@ -377,23 +383,17 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
 
     // デフォルトの深度ステンシル設定に戻す
     renderer.RegisterDefaultDepthStencilState();
-
+    
     // カリングなし
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
-    for (int i = 0; i < 10; i++)
-    {
-        auto billboard = Master::m_pGameObjectManager->get_ObjectByTag("Billboard" + std::to_string(i));
-        billboard->get_Component<BillboardRenderer>()->Draw(renderer);
-    }
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
+    // 透明度アリオブジェクトの描画
+    Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
 
-    auto sprite = Master::m_pGameObjectManager->get_ObjectByTag("UI");
-    sprite->get_Component<SpriteRenderer>()->Draw(renderer);
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
-    sprite = Master::m_pGameObjectManager->get_ObjectByTag("TitleLoad_Back_Sp");
-    if (sprite) {
-        sprite->get_Component<SpriteRenderer>()->Draw(renderer);
-    }
+
     // オブジェクトの書き込み後に深度バッファをクリアする
     //renderer.ClearRenderTargetView(m_pDepth_RT);
 
@@ -427,7 +427,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     // 被写界深度用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);
@@ -453,7 +453,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::BACK);
      
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     // 輝度抽出用レンダリングターゲットに変更
     renderer.RegisterRenderTarget(m_pLuminance_RT->get_RTV(), m_pLuminance_RT->get_DSV());
@@ -482,7 +482,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
 
     // ブルーム合成用レンダリングターゲットに変更
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);    // 深度テストなし
 
     // ブルームスプライト
@@ -508,7 +508,7 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
     renderer.ChangeRenderTargetFrameBuffer();
 
     // ビューポートの設定
-    renderer.set_ViewPort(0, 0, renderer.get_ScreenWidth(), renderer.get_ScreenHeight());
+    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
 
     // トーンマッピングを適用する
     m_pFinalSceneToneMappingFilter_Sprite->Draw(renderer);

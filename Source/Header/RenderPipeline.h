@@ -66,6 +66,11 @@ private:
         float pad1;
     }m_ShadowData;
 
+
+    // ビューポートの設定時にスムーズに渡す用
+    float m_ScreenWidth;
+    float m_ScreenHeight;
+
 public:
     RenderPipeline();
     ~RenderPipeline();

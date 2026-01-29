@@ -7,9 +7,10 @@
 //* =========================================================================
 enum class OBJECT_STATUS_BITFLAG : unsigned
 {
-	IS_ACTIVE		= 1 << 0,	// 1
-	IS_DELETE		= 1 << 1,	// 2
-	IS_DONT_DESTROY	= 1 << 2,	// 4
+	IS_ACTIVE		= 1 << 0,	// 1	アクティブか
+	IS_DELETE		= 1 << 1,	// 2	削除するか
+	IS_DONT_DESTROY	= 1 << 2,	// 4	
+	IS_TRANSPARENT	= 1 << 3,	// 8	透明度があるか
 };
 
 // ***************************************************************************************
@@ -33,7 +34,6 @@ private:
 	//bool m_IsDontDestroy;// 削除しないでーっていうやつ（Unityのシーンを跨いで存在するようなやつ）
 
 	int m_LayerRank;       // 描画順を決めるために使うランク
-
 	unsigned int m_ObjectStatusBitFlag;	// 状態をビット管理
 public:
 	Object();
