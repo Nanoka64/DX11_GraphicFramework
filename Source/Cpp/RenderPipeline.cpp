@@ -800,8 +800,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
     sprite.IsActive = false;    // ２重更新されてしまうのでobjマネージャ側では何もしないように
     sprite.ObjTag = "GBuffer_A_Sprite";
-    sprite.Width = 1.0f;
-    sprite.Height = 1.0f;
+    sprite.Width = m_ScreenWidth;
+    sprite.Height = m_ScreenHeight;
     sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_A", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(), m_pAlbedo_RT->get_Height());
     
     // スプライト取得
@@ -813,8 +813,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     * 法線用
     *************************************************************************/
     sprite.ObjTag = "GBuffer_B_Sprite";
-    sprite.Width = 1.0f;
-    sprite.Height = 1.0f;
+    sprite.Width = m_ScreenWidth;
+    sprite.Height = m_ScreenHeight;
     sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_B", m_pNormal_RT->get_SRV_ComPtr(), m_pNormal_RT->get_Width(), m_pNormal_RT->get_Height());
     
     // スプライト取得
@@ -859,8 +859,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     * ライティングパス出力用
     *************************************************************************/
     sprite.ObjTag = "DefferdLightingSprite";
-    sprite.Width = 1.0f;
-    sprite.Height = 1.0f;
+    sprite.Width = m_ScreenWidth;
+    sprite.Height = m_ScreenHeight;
     sprite.PSConstBufferNum = 1;
     sprite.pPSConstantBuffers =  new ExpandConstantBufferInfo();
     sprite.pPSConstantBuffers->SetSlot = 9;
@@ -892,8 +892,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     luminanceSprite.pRenderer = &renderer;
     luminanceSprite.IsActive = false;
     luminanceSprite.ObjTag = "LuminanceSprite";
-    luminanceSprite.Width = 1.0f;
-    luminanceSprite.Height = 1.0f;
+    luminanceSprite.Width = m_ScreenWidth;
+    luminanceSprite.Height = m_ScreenHeight;
     luminanceSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture(
         "RT_SceneFinal",
         m_pSceneFinal_RT->get_SRV_ComPtr(),
@@ -916,8 +916,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     bloomSprite.pRenderer = &renderer;
     bloomSprite.IsActive = false;
     bloomSprite.ObjTag = "bloomSprite";
-    bloomSprite.Width = 1.0f;
-    bloomSprite.Height = 1.0f;
+    bloomSprite.Width = m_ScreenWidth;
+    bloomSprite.Height = m_ScreenHeight;
     bloomSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture(
         "RT_Luminance"
     );
@@ -944,8 +944,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     depthOfFieldSprite.pRenderer = &renderer;
     depthOfFieldSprite.IsActive = false;
     depthOfFieldSprite.ObjTag = "DepthOfFieldSprite";
-    depthOfFieldSprite.Width = 1.0f;
-    depthOfFieldSprite.Height = 1.0f;
+    depthOfFieldSprite.Width = m_ScreenWidth;
+    depthOfFieldSprite.Height = m_ScreenHeight;
     depthOfFieldSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     depthOfFieldSprite.ShaderType = SHADER_TYPE::POST_DEPTH_OF_FILED;   // 被写界深度
     depthOfFieldSprite.pTextureMap[0] = 
@@ -975,8 +975,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     toneMappingSprite.pRenderer = &renderer;
     toneMappingSprite.IsActive = false;
     toneMappingSprite.ObjTag = "ToneMappingSprite";
-    toneMappingSprite.Width = 1.0f;
-    toneMappingSprite.Height = 1.0f;
+    toneMappingSprite.Width = m_ScreenWidth;
+    toneMappingSprite.Height = m_ScreenHeight;
     toneMappingSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     toneMappingSprite.ShaderType = SHADER_TYPE::POST_TONEMAPPING;   // トーンマッピング
     toneMappingSprite.pTextureMap[0] = 

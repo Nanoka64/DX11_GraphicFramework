@@ -54,6 +54,7 @@ VS_OUTPUT VSMain(VS_INPUT input)
     output.Pos = pos; // 画面空間の頂点座標
     output.UV = input.UV; // テクスチャ座標
     output.Color = color;
+    output.Normal = float3(0, 0, 0);
     
     return output;
 }

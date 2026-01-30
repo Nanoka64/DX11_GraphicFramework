@@ -74,12 +74,12 @@ private:
 
     DirectX::XMMATRIX m_Proj;
     DirectX::XMMATRIX m_View;
-
+    ;
 
     ID3D11Buffer                            * m_pVertexBuffer;        // 頂点バッファ(実際の頂点のデータが詰まっている)
     ID3D11Buffer                            * m_pIndexBuffer;         // 頂点バッファ(実際の頂点のデータが詰まっている)
 
-
+    D3D11_VIEWPORT m_CrntViewPort;  // 現在のビューポート設定
     RenderParam m_RenderParam;  // 描画パラメータ
 
     UINT m_ScreenWidht; // ウインドウ横幅
@@ -123,11 +123,12 @@ public:
     inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
     inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     inline HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
-    inline UINT get_ScreenWidth()const { return m_ScreenWidht; };
+    inline UINT get_ScreenWidth()const { return m_ScreenWidht; };                       
     inline UINT get_ScreenHeight()const { return m_Screenheight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
-    VECTOR3::VEC3 get_CameraPosition()const;
-    void set_CameraComponent(std::shared_ptr<class Camera3D> pCam);
+    VECTOR3::VEC3 get_CameraPosition()const;                            // カメラの位置取得
+    void set_CameraComponent(std::shared_ptr<class Camera3D> pCam);     // メインカメラの設定
+    D3D11_VIEWPORT get_CrntViewPort()const { return m_CrntViewPort; }   // ビューポートの取得
 
     /// <summary>
     ///  ビューポート設定

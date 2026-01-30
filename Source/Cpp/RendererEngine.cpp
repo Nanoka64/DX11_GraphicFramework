@@ -616,6 +616,9 @@ void RendererEngine::set_ViewPort(float _topLeftX, float _topLeftY, float _width
     vp.TopLeftX = (FLOAT)_topLeftX;     // •`‰æ”ÍˆÍ‚Ì¶‘¤‚wÀ•W
     vp.TopLeftY = (FLOAT)_topLeftY;     // •`‰æ”ÍˆÍ‚Ìã•”‚xÀ•W
     m_pImmediateContext->RSSetViewports(1, &vp);
+
+
+    m_CrntViewPort = vp;
 }
 
 //*---------------------------------------------------------------------------------------

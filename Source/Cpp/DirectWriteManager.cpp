@@ -210,6 +210,7 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 //--------------------------------------------------------------------------------------
 void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, D2D1_DRAW_TEXT_OPTIONS options)
 {
+    return;
     HRESULT hr = S_OK;
 
     // ÉèÉCÉhï∂éöÇ…ïœä∑

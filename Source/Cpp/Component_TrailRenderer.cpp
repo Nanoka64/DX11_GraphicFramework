@@ -200,6 +200,10 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 
 		r_V.uv = VEC2(1.0f, (float)i / (float)(m_TrailPosList.size() - 1));
 		l_V.uv = VEC2(0.0f, (float)i / (float)(m_TrailPosList.size() - 1));
+
+		r_V.normal.AllOne();
+		l_V.normal.AllOne();
+		
 		pVertices[i * 2 + 0] = r_V;
 		pVertices[i * 2 + 1] = l_V;
 	}

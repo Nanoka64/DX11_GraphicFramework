@@ -77,11 +77,17 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	Master::m_pShaderManager->DeviceToSetShader(m_ShaderType);
 	
 	// 頂点情報の更新
-	VertexUpdate(renderer);
+	//VertexUpdate(renderer);
 
 	auto transform = m_pOwner.lock()->get_Component<Transform>();
+
+
+	transform->set_Scale(1920, 1080, 1.0f);
+	transform->set_Pos(0, 0, 0);
+	transform->set_RotateToRad(0, 0, 0);
+	
 	XMMATRIX world = transform->get_WorldMtx();
-	world = XMMatrixTranspose(world);	// 転置
+	//world = XMMatrixTranspose(world);	// 転置
 	XMStoreFloat4x4(&m_pCBTransformSet->Data.WorldMtx, world);	
 
 	// バッファの更新
@@ -154,8 +160,6 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 {
 	auto pDevice = info.pRenderer->get_Device();
 
-	m_Width = info.Width;
-	m_Height = info.Height;
 	m_pTextureMap = info.pTextureMap;
 	m_ShaderType = info.ShaderType;
 
@@ -190,7 +194,8 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 			m_pPSUserExpandCBuffers[i].Slot = info.pPSConstantBuffers[i].SetSlot;
 		}
 	}
-
+	m_Width = 1.0f;
+	m_Height = 1.0f;
 	// クアッド生成
 	switch (info.Type)
 	{
@@ -203,6 +208,12 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 	default:
 		break;
 	}
+
+
+	m_Width = info.Width;
+	m_Height = info.Height;
+
+
 
 	if (m_pMeshData == nullptr){
 		assert(false);

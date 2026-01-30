@@ -465,8 +465,8 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 
 	// 中心位置
 	VEC2 centerVec = VEC2(0.0f, 0.0f);
-	float hw = w;
-	float hh = h;
+	float hw = 0.5f;
+	float hh = 0.5f;
 
 	/* テクスチャ座標では
 	* 上：0.0
@@ -489,10 +489,10 @@ std::shared_ptr<MeshResourceData> MeshInfoFactory::CreateRTSpriteInfo(RendererEn
 	// 頂点情報
 	VERTEX::VERTEX_Static vertices[]{
 		// 座標											   // uv            // カラー                     // 法線        
-		{ VEC3(centerVec.x - hw, centerVec.y + hh,  0.0f), VEC2(0.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左上
-		{ VEC3(centerVec.x + hw, centerVec.y + hh,  0.0f), VEC2(1.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右上
-		{ VEC3(centerVec.x - hw, centerVec.y - hh,  0.0f), VEC2(0.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左下
-		{ VEC3(centerVec.x + hw, centerVec.y - hh,  0.0f), VEC2(1.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右下
+		{ VEC3(-0.5f,  0.5f,  0.0f), VEC2(0.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左上
+		{ VEC3( 0.5f,  0.5f,  0.0f), VEC2(1.0f,0.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右上
+		{ VEC3(-0.5f, -0.5f,  0.0f), VEC2(0.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 左下
+		{ VEC3( 0.5f, -0.5f,  0.0f), VEC2(1.0f,1.0f), VEC4(1.0f, 1.0f, 1.0f, 1.0f), VEC3(0.0f, 0.0f, 0.0f)  }, // 右下
 	};
 
 	*meshData = CreateMesh(pDevice, vertices, g_RTSpriteQuadVertexNum, g_QuadIndices, g_RTSpriteQuadIndexNum);

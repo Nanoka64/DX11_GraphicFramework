@@ -43,9 +43,9 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // 少し赤みを足して世紀末感を出す（定数バッファで変更できるようにすれば演出も作りやすそう）
     //hdrColor.r *= 1.2f;
-    hdrColor.r *= 0.2f;
-    hdrColor.g *= 0.2f;
-    hdrColor.b *= 0.2f;
+    //hdrColor.r *= 0.2f;
+    //hdrColor.g *= 0.2f;
+    //hdrColor.b *= 0.2f;
     
     // トーンマッピング処理
     finalColor = ACESToneMapping(hdrColor);

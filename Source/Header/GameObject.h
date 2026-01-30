@@ -73,7 +73,7 @@ public:
 	/// Transformの取得
 	/// </summary>
 	/// <returns></returns>
-	std::weak_ptr<class Transform> get_Transform()const;
+	std::weak_ptr<Transform> get_Transform()const;
 
 	/// <summary>
 	/// コンポーネントのリストを取得
