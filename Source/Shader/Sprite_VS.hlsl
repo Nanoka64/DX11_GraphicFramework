@@ -39,9 +39,9 @@ VS_OUT VSMain(VS_IN input)
     float2 uv = input.UV;
     float4 color = input.Color;
     
-    pos = mul(cb_Transform, pos);
+    pos = mul(pos, cb_Transform);
     //pos = mul(cb_View, pos);
-    pos = mul(cb_OrthographicProjection, pos);
+    pos = mul(pos, cb_OrthographicProjection);
     
     output.Pos   = pos;
     output.Color = color;

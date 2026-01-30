@@ -175,6 +175,11 @@ bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format
 
 bool GaussianBlur::InitSprites(RendererEngine& renderer)
 {
+    UINT screenW = renderer.get_ScreenWidth();
+    UINT screenH = renderer.get_ScreenHeight();
+
+    // スプライトの大きさは
+    
     /*************************************
     * 水平ブラー用スプライト
     *************************************/
@@ -187,8 +192,8 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     horizontalBlurSprite.PSConstBufferNum = 1;
     horizontalBlurSprite.IsActive = false;
     horizontalBlurSprite.ObjTag = "HorizontalBlurSprite" + std::to_string(m_Id);
-    horizontalBlurSprite.Width = m_pHorizontalBlur->get_Width();      // サイズの変更はRTだけでいい
-    horizontalBlurSprite.Height = m_pHorizontalBlur->get_Height();
+    horizontalBlurSprite.Width = screenW;      // サイズの変更はRTだけでいい
+    horizontalBlurSprite.Height = screenH;
     horizontalBlurSprite.pTextureMap[0] = m_pTexture;
     horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     horizontalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL;
@@ -207,8 +212,8 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     verticalBlurSprite.PSConstBufferNum = 1;
     verticalBlurSprite.IsActive = false;
     verticalBlurSprite.ObjTag = "VerticalBlurSprite" + std::to_string(m_Id);
-    verticalBlurSprite.Width = m_pVerticalBlur->get_Width();
-    verticalBlurSprite.Height = m_pVerticalBlur->get_Height();
+    verticalBlurSprite.Width = screenW;
+    verticalBlurSprite.Height = screenH;
     verticalBlurSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT_HorizontalBlur" + std::to_string(m_Id), m_pHorizontalBlur->get_SRV_ComPtr());
     verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
     verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;

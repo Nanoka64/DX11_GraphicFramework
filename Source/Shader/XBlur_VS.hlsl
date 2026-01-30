@@ -5,7 +5,8 @@
 //  【?】ガウシアンブラー
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
+#pragma once
+#include "ConstantBuffers_H.hlsli"
 SamplerState g_sSampler : register(s0);
 Texture2D g_tTexture : register(t0);
 
@@ -42,8 +43,12 @@ struct VS_OUT
 VS_OUT VSMain(VS_IN input)
 {
     VS_OUT output;
+    float4 pos = float4(input.Pos.xyz, 1.0f);
     
-    output.pos = float4(input.Pos.xyz, 1.0f);
+    pos = mul(pos, cb_Transform);
+    pos = mul(pos, cb_OrthographicProjection);
+    
+    output.pos = pos;
     
     // テクスチャのサイズを取得
     float2 texSize;

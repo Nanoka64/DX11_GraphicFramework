@@ -749,7 +749,7 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg,
 
     // ³Ë“Š‰es—ñì¬
     XMMATRIX ohProjMat = XMMatrixOrthographicLH(_w, _h, _near, _far);
-    ohProjMat = XMMatrixTranspose(ohProjMat);   // “]’u
+    //ohProjMat = XMMatrixTranspose(ohProjMat);   // “]’u
 
     // “§‹“Š‰es—ñ
     auto& cb = m_RenderParam.cbProjectionSet;

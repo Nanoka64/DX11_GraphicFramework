@@ -375,27 +375,14 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // スカイボックス深度ステンシル設定解除
     renderer.RegisterDepthStencilState(NULL, 0);
 
-    // ************************************************************************
-    // 
-    // ここからフォワードオブジェクトの描画
-    // 
-    // ************************************************************************
+    //
+    //※ ここからフォワードのはずだったけど、ポストエフェクトが変な風にかかってしまうので
+    //   フレームバッファへのコピーの前にした。
+    //
+    
 
     // デフォルトの深度ステンシル設定に戻す
     renderer.RegisterDefaultDepthStencilState();
-    
-    // カリングなし
-    renderer.RegisterCullMode(CULL_MODE::BACK);
-
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
-    // 透明度アリオブジェクトの描画
-    Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
-
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
-
-
-    // オブジェクトの書き込み後に深度バッファをクリアする
-    //renderer.ClearRenderTargetView(m_pDepth_RT);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -504,6 +491,27 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
 {
+
+    // ************************************************************************
+    // 
+    // ここからフォワードオブジェクトの描画
+    // 
+    // ************************************************************************
+
+    // 深度はGバッファ作成時のもの
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pDepth_RT->get_DSV());
+
+    renderer.RegisterCullMode(CULL_MODE::BACK);
+
+    // 透明度アリオブジェクトの描画
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
+    Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+ 
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+    
+
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
@@ -649,8 +657,8 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
     result = m_pShadowMap_RT->Create(
         renderer,
         // 影の品質は何も対策しなければ解像度依存
-        2048,       
-        2048,
+        4096,       
+        4096,
         1,
         1,
         // ・Rにライトから見た深度値 ・Gにライトから見た深度値の二乗をいれる

@@ -32,7 +32,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 skyTex = g_tSkyboxTexture.Sample(g_sSampler, input.TexCoord.xyz);
     
     skyTex += 0.15f;
-    skyTex.r += 1.8f;
+    //skyTex.r += 1.8f;
     
     return float4(skyTex.xyz, 1.0f);
 }

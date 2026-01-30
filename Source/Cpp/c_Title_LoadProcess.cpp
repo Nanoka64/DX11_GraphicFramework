@@ -30,13 +30,13 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 	sprite.pRenderer = m_pRenderer;
 	sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
 	sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-	sprite.Width = 0.1f;
-	sprite.Height = 0.1f;
-	sprite.IsActive = false;
+	sprite.Width = 500.1f;
+	sprite.Height = 500.1f;
+	sprite.IsActive = true;
 	sprite.IsTransparent = true;
 	auto obj = MeshFactory::CreateSprite(sprite);
 	if (obj) {
-		//m_pLoadBackSprite = obj->get_Component<SpriteRenderer>();
+		m_pLoadBackSprite = obj->get_Component<SpriteRenderer>();
 	}
 
 	m_IsLoad = true;
