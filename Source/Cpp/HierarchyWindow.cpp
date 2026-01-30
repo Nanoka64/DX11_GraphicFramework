@@ -48,8 +48,15 @@ void HierarchyWindow::Update(RendererEngine &renderer)
     using namespace Tool;
 
     std::shared_ptr<GameObject> selectedObject = nullptr;   // 選択されたオブジェクトのポインタ
-    std::list<std::shared_ptr<GameObject>> objList = Master::m_pGameObjectManager->get_Opaque_ObjectList();
+    std::list<std::shared_ptr<GameObject>> opawueObjList = Master::m_pGameObjectManager->get_Opaque_ObjectList();
+    std::list<std::shared_ptr<GameObject>> transparentObjList = Master::m_pGameObjectManager->get_Transparent_ObjectList();
     
+    std::list<std::shared_ptr<GameObject>> objList;
+
+    // 透明/不透明オブジェクトリスト合体
+    objList.splice(objList.end(), transparentObjList);
+    objList.splice(objList.end(), opawueObjList); 
+
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"));
     Master::m_pDebugger->DG_BulletText(U8ToChar(u8"数 : %d"), objList.size());
 

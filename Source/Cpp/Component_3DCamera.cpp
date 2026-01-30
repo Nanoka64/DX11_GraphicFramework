@@ -127,6 +127,11 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 		}
 	}
 
+	if (m_pFocusObject.expired())
+	{
+		return;
+	}
+
 	VEC3 focusObjPos = m_pFocusObject.lock()->get_Transform().lock()->get_VEC3ToPos();
 	focusObjPos += m_FocusOffset;
 

@@ -24,7 +24,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 	}
 
 	CreateSpriteInfo sprite;
-	sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Title_Description_01.png");
+	sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/ギガンティック・コントロール_ロゴ2.png");
 	sprite.IsActive = true;
 	sprite.ObjTag = "TitleLoad_Back_Sp";
 	sprite.pRenderer = m_pRenderer;
