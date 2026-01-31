@@ -3,21 +3,22 @@
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
-/* --- @:c_Game_LoadProcess Class --- */
+/* --- @:c_Game_Play Class --- */
 //
 // 【?】ゲームシーンの子ステート
-//		ゲームに必要なもののロード処理
+//		ゲームプレイ
 //
 // ***************************************************************************************
-class c_Game_LoadProcess : public IState<SceneManager>
+class c_Game_Play : public IState<SceneManager>
 {
 private:
-	bool m_IsLoad = false;
+
 
 public:
 	void OnEnter(SceneManager * pOwner) override;
-	void OnExit(SceneManager *pOwner)override;
-	int Update(SceneManager *pOwner)override;
-	void Draw(SceneManager *pOwner)override;
+	void OnExit(SceneManager* pOwner)override;
+	int Update(SceneManager* pOwner)override;
+	void Draw(SceneManager* pOwner)override;
 };
+
 

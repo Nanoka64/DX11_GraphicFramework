@@ -276,6 +276,41 @@ namespace VECTOR2
 		VEC2 operator-() const { return { -this->x, -this->y }; };
 		operator DirectX::XMFLOAT2()const { return DirectX::XMFLOAT2(x, y); }    // XMFLOAT2に渡す際の変換
 
+
+		// 複合代入 プラス
+		VEC2& operator+=(const VEC2& vec) {
+			this->x += vec.x;
+			this->y += vec.y;
+
+			return *this;
+		};
+
+		// 複合代入 マイナス
+		VEC2& operator-=(const VEC2& vec) {
+			this->x -= vec.x;
+			this->y -= vec.y;
+
+			return *this;
+		};
+
+		// 複合代入 掛け算
+		VEC2& operator*=(const VEC2& vec) {
+			this->x *= vec.x;
+			this->y *= vec.y;
+
+			return *this;
+		};
+
+		// 複合代入 割り算
+		VEC2& operator/=(const VEC2& vec) {
+			this->x /= vec.x;
+			this->y /= vec.y;
+
+			return *this;
+		};
+
+
+
 		// 全ての要素を1で初期化
 		void AllOne()
 		{

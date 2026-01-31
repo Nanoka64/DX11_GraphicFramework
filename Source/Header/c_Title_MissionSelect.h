@@ -1,6 +1,15 @@
 #pragma once
 #include "IState.h"
 
+/// <summary>
+/// ミッション選択中のどの状態か
+/// </summary>
+enum class MISSION_SELECT_PHASE
+{
+	SELECT_MISSION,			// ミッション選択
+	SELECT_DIFFCULTY,		// 難易度選択
+};
+
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:c_Title_MissionSelect Class --- */

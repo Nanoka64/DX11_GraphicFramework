@@ -17,11 +17,14 @@ namespace SceneStateEnums
     enum c_TITLE
     {
         c_TITLE_LOAD_PROCESS,   // ロード処理（一番最初に呼ばれる）
+        c_TITLE_MAIN_MENU,      // どの項目へ行くか選ぶ状態
+        
         c_TITLE_MISSION_SELECT, // ミッション選択
         c_TITLE_SOLDIER_SELECT, // 兵科選択
         c_TITLE_CONFIG,         // 設定
 
         c_GO_GAME_SCENE,        // 特殊フラグ ゲームシーンへ行くように親へ伝える
+        c_GO_EXIT,              // ゲームの終了
 
         c_TITLE_NUM, 
     };

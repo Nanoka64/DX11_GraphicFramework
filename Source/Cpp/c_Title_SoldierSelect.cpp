@@ -4,6 +4,7 @@
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
 #include "SceneStateEnums.h"
+#include "InputFactory.h"
 
 using namespace SceneStateEnums;
 
@@ -39,6 +40,12 @@ void c_Title_SoldierSelect::OnExit(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 int c_Title_SoldierSelect::Update(SceneManager *pOwner)
 {
+	// 右クリックでメインメニューへ戻る
+	if (GetMouseClickDown(MOUSE_BUTTON_STATE::RIGHT))
+	{
+		return c_TITLE::c_TITLE_MAIN_MENU;
+	}
+
 	return c_TITLE::c_TITLE_SOLDIER_SELECT;
 }
 
@@ -51,5 +58,5 @@ int c_Title_SoldierSelect::Update(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 {
-
+	Master::m_pDirectWriteManager->DrawString("☆兵科選択", VECTOR2::VEC2(940, 500));
 }

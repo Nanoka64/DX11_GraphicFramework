@@ -103,7 +103,7 @@ void LightManager::DirectionLight_SetCBuffer()
 	// 一旦直接セット
 	// TODO: ライトをまとめた構造体を作り、ポイント、ディレクション問わず一気に送ってしまい、その時に一緒にカメラも送るか、
 	//		 カメラを完全に分離するか…
-	m_pCBDirectionLightSet->Data[0].EyePos = m_pCameraTransform.lock()->get_VEC3ToPos();
+	m_pCBDirectionLightSet->Data[0].EyePos = m_pRenderer.lock()->get_CameraPosition();
 
 	// GPUメモリにアクセス
 	m_pContext->Map(m_pCBDirectionLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

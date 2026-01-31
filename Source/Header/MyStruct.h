@@ -97,7 +97,6 @@ struct CB_DIRECTION_LIGHT
 
 };
 
-
 /// <summary>
 /// ポイントライト
 /// </summary>
@@ -158,6 +157,21 @@ struct CB_MATERIAL_SET{
     ID3D11Buffer* pBuff = nullptr;
 };
 
+
+/// <summary>
+/// スプライト情報
+/// </summary>
+struct CB_SPRITE
+{
+    DirectX::XMFLOAT2 OffsetUV;   // UVオフセット
+    float pad[2];
+};
+
+struct CB_SPRITE_SET {
+    CB_SPRITE Data = {};
+    ID3D11Buffer* pBuff = nullptr;
+};
+
 // *******************************************************************
 /* ワールド変換とマテリアル情報をまとめた定数バッファ 
     ※使わないかも？ */
@@ -182,6 +196,7 @@ struct CB_USER_EXPAND_SET{
     int Size = 0;
     int Slot = -1;
 };
+
 
 // *******************************************************************
 /* ＣＰＵ用 ３Ｄ情報 */

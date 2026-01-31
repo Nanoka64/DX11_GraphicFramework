@@ -168,7 +168,9 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
                     }
                 }
             }
+
             pMeshes[meshIdx].Draw(renderer);
+
 
             // ブレンドオフ
             Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);

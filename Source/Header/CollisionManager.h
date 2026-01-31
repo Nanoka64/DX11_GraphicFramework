@@ -34,6 +34,13 @@ struct CollInData_AABB
     VECTOR3::VEC3 _max;
 };
 
+// 2D
+struct CollInData2D_AABB
+{
+    VECTOR2::VEC2 _min;
+    VECTOR2::VEC2 _max;
+};
+
 // Oriented Bounding Box
 struct CollInData_OBB
 {
@@ -77,13 +84,14 @@ public:
     /// </summary>
     /// <returns></returns>
     bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, std::shared_ptr<class Transform> _transA,std::shared_ptr<class Transform> _transB, class CollisionInfo* info);
-
+    
+    // 3D --------------------------------------------------------
     // 箱と箱 物理的判定
     bool HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info);
 
     // 箱と箱
     bool HitCheck_BoxVsBox(const CollInData_AABB &_src, const CollInData_AABB &_dst);
-    
+
     // 球と球
     bool HitCheck_SphereVsSphere(const CollInData_Sphere &_src, const CollInData_Sphere &_dst);
     
@@ -95,6 +103,12 @@ public:
     
     // 球と線
     bool HitCheck_SphereVsRay(const CollInData_Sphere &_sphere, const CollInData_Ray &_ray);
+
+    // 2D --------------------------------------------------------
+    // 箱と点
+    bool HitCheck2D_BoxVsPoint(const CollInData2D_AABB& _box, const VECTOR2::VEC2& _p);
+
+
 
 private:
     // コピー禁止

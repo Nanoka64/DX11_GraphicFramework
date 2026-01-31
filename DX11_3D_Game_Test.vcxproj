@@ -198,9 +198,11 @@
     <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\c_Game_LoadProcess.h" />
+    <ClInclude Include="Source\Header\c_Game_Play.h" />
     <ClInclude Include="Source\Header\c_Result_GetItemCheck.h" />
     <ClInclude Include="Source\Header\c_Title_Config.h" />
     <ClInclude Include="Source\Header\c_Title_LoadProcess.h" />
+    <ClInclude Include="Source\Header\c_Title_MainMenu.h" />
     <ClInclude Include="Source\Header\c_Title_MissionSelect.h" />
     <ClInclude Include="Source\Header\c_Title_SoldierSelect.h" />
     <ClInclude Include="Source\Header\DebugMesh.h" />
@@ -319,9 +321,11 @@
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_LoadProcess.cpp" />
+    <ClCompile Include="Source\Cpp\c_Game_Play.cpp" />
     <ClCompile Include="Source\Cpp\c_Result_GetItemCheck.cpp" />
     <ClCompile Include="Source\Cpp\c_Title_Config.cpp" />
     <ClCompile Include="Source\Cpp\c_Title_LoadProcess.cpp" />
+    <ClCompile Include="Source\Cpp\c_Title_MainMenu.cpp" />
     <ClCompile Include="Source\Cpp\c_Title_MissionSelect.cpp" />
     <ClCompile Include="Source\Cpp\c_Title_SoldierSelect.cpp" />
     <ClCompile Include="Source\Cpp\DebugMesh.cpp" />

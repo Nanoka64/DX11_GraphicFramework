@@ -23,6 +23,8 @@ private:
 	float m_NearClipDist;	// 手前クリップ
 	float m_FarClipDist;	// 奥クリップ
 
+	bool m_IsControl;	// 操作フラグ
+
 	std::weak_ptr<class GameObject> m_pFocusObject;		// フォーカス対象
 	VECTOR3::VEC3 m_PosOffset;							// 対象からどのくらい離れて球面移動するか
 	VECTOR3::VEC3 m_FocusOffset;						// フォーカス位置のオフセット
@@ -33,6 +35,10 @@ public:
 	void Start(RendererEngine& renderer) override;		// 初期化
 
 	void LateUpdate(RendererEngine &renderer)override;
+
+	
+	bool get_IsControl()const { return m_IsControl; }	// 操作フラグの取得
+	void set_IsControl(bool _f) { m_IsControl = _f; }	// 操作フラグの設定
 
 	void set_UpVec(const VECTOR3::VEC3& upVec);					// 上方向ベクトルの設定
 	void set_FocusPoint(const VECTOR3::VEC3& focus);			// 注視点の設定

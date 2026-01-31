@@ -208,9 +208,9 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
         return false;
     }
 
-    /** フォントデータ作成 **/
+    ///** フォントデータ作成 **/
     //FONT_DATA *pFontData = new FONT_DATA();
-    //pFontData->fontSize = 20.0f;
+    //pFontData->fontSize = 40.0f;
     //pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
     //pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
 

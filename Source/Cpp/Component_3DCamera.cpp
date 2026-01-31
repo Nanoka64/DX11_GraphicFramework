@@ -30,7 +30,8 @@ m_Angle_H(1.57f),
 m_Angle_V(0.f),
 m_Fov(90.0f),
 m_NearClipDist(1.0f),
-m_FarClipDist(8000.0f)
+m_FarClipDist(8000.0f),
+m_IsControl(true)
 {
 	this->set_Tag("Camera3D"); 
 	m_PosOffset.x = CAMERA_POS_OFFSET;
@@ -74,6 +75,9 @@ void Camera3D::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void Camera3D::LateUpdate(RendererEngine &renderer)
 {
+	// 操作フラグがオフなら操作できない
+	if (m_IsControl == false)return;
+
 	// マウスの移動量の差を取得する
 	LONG lX = Master::m_pInputManager->GetMousePosSlopeX();	
 	LONG lY = Master::m_pInputManager->GetMousePosSlopeY();

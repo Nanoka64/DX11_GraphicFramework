@@ -62,7 +62,12 @@ void InspectorWindow::Update(RendererEngine &renderer)
     m_pCrntSelectedObject = Master::m_pEditorManager->get_crntSelectedObject();
 
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"インスペクター"));
-
+    
+    if (m_pCrntSelectedObject.expired() == false)
+    {
+        bool isActive = m_pCrntSelectedObject.lock()->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+        Master::m_pDebugger->DG_RadioButton(U8ToChar(u8"アクティブ状態"), isActive);
+    }
     // 各エディタの更新
     for (auto &editor : m_EditorMap)
     {

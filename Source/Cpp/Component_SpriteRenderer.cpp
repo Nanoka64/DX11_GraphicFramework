@@ -23,7 +23,8 @@ m_ShaderType(SHADER_TYPE::NONE),
 m_pVSUserExpandCBuffers(nullptr),
 m_pPSUserExpandCBuffers(nullptr),
 m_VSUserExpandCBNum(0),
-m_PSUserExpandCBNum(0)
+m_PSUserExpandCBNum(0),
+m_UVOffset(VECTOR2::VEC2())
 {
     this->set_Tag("SpriteRenderer");
 }
@@ -81,15 +82,26 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 
 	auto transform = m_pOwner.lock()->get_Component<Transform>();
 	
+	// ワールド変換行列の作成 ====================================================
 	XMMATRIX world = transform->get_WorldMtx();
 	world = XMMatrixTranspose(world);	// 転置
 	XMStoreFloat4x4(&m_pCBTransformSet->Data.WorldMtx, world);	
 
-	// バッファの更新
-	pContext->UpdateSubresource(m_pCBTransformSet->pBuff, 0, nullptr, &m_pCBTransformSet->Data, 0, 0);
-	
-	// 頂点シェーダへ送信
-	pContext->VSSetConstantBuffers(0, 1, &m_pCBTransformSet->pBuff);
+	// GPUメモリにアクセス
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	pContext->Map(m_pCBTransformSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(mappedResource.pData, &m_pCBTransformSet->Data, sizeof(CB_TRANSFORM));	// データのコピー 
+	pContext->Unmap(m_pCBTransformSet->pBuff, 0);									// アクセス終了
+	pContext->VSSetConstantBuffers(0, 1, &m_pCBTransformSet->pBuff);				// 頂点シェーダへ送信
+
+	// uvオフセット ====================================================
+	m_pCBSpritDataSet->Data.OffsetUV = m_UVOffset;
+
+	// スプライト情報定数バッファへ
+	pContext->Map(m_pCBSpritDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	memcpy(mappedResource.pData, &m_pCBSpritDataSet->Data, sizeof(CB_SPRITE));		// データのコピー 
+	pContext->Unmap(m_pCBSpritDataSet->pBuff, 0);									// アクセス終了
+	pContext->VSSetConstantBuffers(10, 1, &m_pCBSpritDataSet->pBuff);				// 頂点シェーダへ送信
 
 
     // テクスチャセット ==========================
@@ -131,14 +143,25 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
     pContext->IASetIndexBuffer(m_pMeshData->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
+	Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
+
+	// UIの描画の際は深度テストをオフにする
+	renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+
     // 描画コール：インデックス数は6（三角形2個 × 3頂点） ==========================
     pContext->DrawIndexed(6, 0, 0);
+
+	// defaultに戻す
+	renderer.RegisterDefaultDepthStencilState();
 
 	for (int i = 0; i < m_pTextureMap.size(); i++)
 	{
 		pContext->PSSetShaderResources(i, 0, nullptr);
 		pContext->VSSetShaderResources(i, 0, nullptr);
 	}
+
+
+	Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 }
 
 
@@ -274,24 +297,44 @@ void SpriteRenderer::VertexUpdate(RendererEngine& renderer)
 // ----------------------------------------------------------------------------------------------------------------------
 bool SpriteRenderer::CreateCBuffer(ID3D11Device *pDevice)
 {
-	// ワールド変換定数バッファの生成
+	// ワールド変換用定数バッファ設定*************************************************
 	m_pCBTransformSet = new CB_TRANSFORM_SET;
 	if (m_pCBTransformSet == nullptr) {
 		return false;
 	}
 
-	// 定数バッファの設定
 	D3D11_BUFFER_DESC bd{};
 	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
+	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
 	bd.ByteWidth = sizeof(CB_TRANSFORM);				// バッファのサイズ
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = 0;								// CPUから書き込みしない
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 
 	// 定数バッファの生成
 	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBTransformSet->pBuff);
+	if (FAILED(hr)) {
+		return false;
+	}
+	
+
+
+	// スプライト情報用定数バッファの設定*************************************************
+	m_pCBSpritDataSet = new CB_SPRITE_SET;
+	if (m_pCBTransformSet == nullptr) {
+		return false;
+	}
+	
+	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
+	bd.ByteWidth = sizeof(CB_SPRITE);					// バッファのサイズ
+	bd.MiscFlags = 0;
+	bd.StructureByteStride = 0;
+
+	// 生成
+	hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBSpritDataSet->pBuff);
 	if (FAILED(hr)) {
 		return false;
 	}

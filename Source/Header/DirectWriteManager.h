@@ -72,7 +72,7 @@ public:
     void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, /*D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE,*/ Args&&... args)
     {
         HRESULT hr = S_OK;
-
+        
         // フォーマット検索
         // 見つけた指定子にくっつける
         str = std::vformat(str, std::make_format_args(args...));

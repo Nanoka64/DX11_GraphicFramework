@@ -370,8 +370,10 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::FRONT);    
 
     auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
-    skybox->get_Component<SkyRenderer>()->Draw(renderer);
-
+    if (skybox)
+    {
+        skybox->get_Component<SkyRenderer>()->Draw(renderer);
+    }
     // スカイボックス深度ステンシル設定解除
     renderer.RegisterDepthStencilState(NULL, 0);
 
@@ -500,17 +502,15 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
 
     // 深度はGバッファ作成時のもの
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pDepth_RT->get_DSV());
-
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
-    // 透明度アリオブジェクトの描画
+    // 透明度アリオブジェクト（UIも）の描画
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
     Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
- 
+
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
-    
 
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();

@@ -510,6 +510,12 @@
     <ClCompile Include="Source\Cpp\Root_GameSceneState.cpp">
       <Filter>ソース ファイル\Scene\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Game_Play.cpp">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\c_Title_MainMenu.cpp">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -843,6 +849,12 @@
       <Filter>ソース ファイル\Scene\Result</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\c_Title_LoadProcess.h">
+      <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Game_Play.h">
+      <Filter>ソース ファイル\Scene\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\c_Title_MainMenu.h">
       <Filter>ソース ファイル\Scene\Title</Filter>
     </ClInclude>
   </ItemGroup>

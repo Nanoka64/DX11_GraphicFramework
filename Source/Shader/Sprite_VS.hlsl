@@ -39,6 +39,9 @@ VS_OUT VSMain(VS_IN input)
     float2 uv = input.UV;
     float4 color = input.Color;
     
+    // uvオフセット
+    uv += cb_Sprite_OffsetUV;
+    
     pos = mul(pos, cb_Transform);
     //pos = mul(cb_View, pos);
     pos = mul(pos, cb_OrthographicProjection);

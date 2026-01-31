@@ -394,6 +394,34 @@ bool CollisionManager::HitCheck_BoxVsBox(const CollInData_AABB &_src, const Coll
 }
 
 //*---------------------------------------------------------------------------------------
+//*【?】2Dボックスと2D ポイントの判定
+//*
+//* [引数]
+//* &_box : ボックス 
+//* &_p : ポイント
+//* [返値]
+//* true : 当たった
+//* false : 当たってない
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck2D_BoxVsPoint(const CollInData2D_AABB& _box, const VECTOR2::VEC2& _p)
+{
+    // 左側の判定
+    if (_box._max.x < _p.x) return false;
+
+    // 右側の判定
+    if (_box._min.x > _p.x) return false;
+
+    // 上側の判定
+    if (_box._max.y < _p.y) return false;
+
+    // 下側の判定
+    if (_box._min.y > _p.y) return false;
+
+    // 当たっている可能性しか残っていない
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
 //*【?】スフィアとスフィアの判定
 //*
 //* [引数]

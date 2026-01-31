@@ -29,10 +29,13 @@ private:
 	std::shared_ptr<MeshResourceData>m_pMeshData;	// マテリアルは使わない
 
 	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
+	CB_SPRITE_SET *m_pCBSpritDataSet;		// 定数バッファ(スプライト情報)
 	std::map<int , std::weak_ptr<class Texture>> m_pTextureMap;	// スロット番号とtexture
 
 	float m_Width;
 	float m_Height;
+
+	VECTOR2::VEC2 m_UVOffset;	// uvオフセット
 
 	SHADER_TYPE m_ShaderType;	// 使用するシェーダの種類
 
@@ -51,6 +54,8 @@ public:
 	void Update(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer) override;		// 描画処理
 
+	void set_UVOffset(const VECTOR2::VEC2& _uv) { m_UVOffset = _uv; };	// UVオフセット値の設定
+	VECTOR2::VEC2 get_UVOffset()const { return m_UVOffset; }			// UVオフセット値の取得
 
 	void set_Width(float w);
 	void set_Height(float h);

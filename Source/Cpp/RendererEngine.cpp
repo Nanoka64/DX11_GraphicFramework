@@ -36,11 +36,13 @@ RendererEngine::RendererEngine() :
     m_pDepthStencilState(nullptr),
     m_pDepthTestDisabled_DSS(nullptr),
     m_pRendererPipeline(nullptr),
+    m_pClampShadow(nullptr),
     m_CrntRenderPass(RENDER_PASS::MAIN),
     m_ScreenWidht(0),
     m_Screenheight(0),
     m_hWnd(0),
     m_StartTime(0ul),
+    m_CrntViewPort(),
     m_Proj(XMMatrixIdentity()),
     m_View(XMMatrixIdentity())
 {
@@ -588,12 +590,20 @@ VECTOR3::VEC3 RendererEngine::get_CameraPosition()const
 {
     return m_pMainCamera->get_CameraPos();
 }
+
 //*---------------------------------------------------------------------------------------
 //*【?】カメラコンポーネントの設定
 //*----------------------------------------------------------------------------------------
 void RendererEngine::set_CameraComponent(std::shared_ptr<class Camera3D> pCam)
 {
     m_pMainCamera = pCam;
+}
+//*---------------------------------------------------------------------------------------
+//*【?】カメラコンポーネントの取得
+//*----------------------------------------------------------------------------------------
+std::shared_ptr<class Camera3D> RendererEngine::get_CameraComponent()const
+{
+    return m_pMainCamera;
 }
 
 //*---------------------------------------------------------------------------------------
@@ -715,6 +725,26 @@ bool RendererEngine::CreateRendererPipeline(RENDER_PIPELINE_STATE type)
 //*----------------------------------------------------------------------------------------
 void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type)
 {
+    float farClip = m_pMainCamera->get_Far();
+    float nearClip = m_pMainCamera->get_Near();
+    float fov = m_pMainCamera->get_Fov();
+
+    float screen_width = static_cast<float>(get_ScreenWidth());
+    float screen_height = static_cast<float>(get_ScreenHeight());
+
+    // プロジェクション変換行列の設定 一回でいいけど、今回はfovなど編集できるようにしているので...
+    SetupProjectionTransform(screen_width, screen_height, fov, nearClip, farClip);
+
+    // ビュー行列の更新
+    auto viewMatrix = m_pMainCamera->get_ViewMatrix();
+
+    // ビュー変換し定数バッファへ送る
+    if (!SetupViewTransform(viewMatrix)) {
+        MessageBox(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
+        return;
+    };
+
+    // パイプライン実行
     m_pRendererPipeline->Execute(*this);
 }
 

@@ -24,7 +24,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> , public Obje
 {
 private:	
 	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
-    std::shared_ptr<class Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
+    std::shared_ptr<Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
 	bool m_IsShadow;		// シャドウをかけるかどうか
