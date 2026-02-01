@@ -68,8 +68,8 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 	sprite.pRenderer = m_pRenderer;
 	sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
 	sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-	sprite.Width = 1920.0f;
-	sprite.Height = 1080.0f;
+	sprite.Width = m_pRenderer->get_ScreenWidth();
+	sprite.Height = m_pRenderer->get_ScreenHeight();
 	sprite.IsActive = true;
 	sprite.IsTransparent = true;
 	auto obj = MeshFactory::CreateSprite(sprite);
@@ -259,8 +259,8 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         sprite.pRenderer = m_pRenderer;
         sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
         sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-        sprite.Width = 1920.0f;
-        sprite.Height = 1080.0f;
+        sprite.Width = m_pRenderer->get_ScreenWidth();
+        sprite.Height = m_pRenderer->get_ScreenHeight();
         sprite.IsActive = true;
         sprite.IsTransparent = true;
         auto obj = MeshFactory::CreateSprite(sprite);
@@ -299,7 +299,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
         sprite.Width = 427.0f;
         sprite.Height = 240.0f;
-        sprite.IsActive = true;
+        sprite.IsActive = false;
         sprite.IsTransparent = true;
         // 項目分生成
         for (int i = 0; i < 4; i++)
@@ -308,6 +308,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
             auto obj = MeshFactory::CreateSprite(sprite);
         }
     }
+
     /* タイトルロゴ用スプライト */
     {
         CreateSpriteInfo sprite;
@@ -316,8 +317,8 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         sprite.pRenderer = m_pRenderer;
         sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
         sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-        sprite.Width = 1920.0f;
-        sprite.Height = 1080.0f;
+        sprite.Width = m_pRenderer->get_ScreenWidth();
+        sprite.Height = m_pRenderer->get_ScreenHeight();
         sprite.IsActive = true;
         sprite.IsTransparent = true;
         auto obj = MeshFactory::CreateSprite(sprite);

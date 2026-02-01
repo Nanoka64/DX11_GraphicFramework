@@ -19,7 +19,8 @@ using namespace VECTOR2;
 //*----------------------------------------------------------------------------------------
 EnemyController::EnemyController(std::weak_ptr<GameObject> pOwner, int updateRank)
     :IComponent(pOwner, updateRank),
-    m_IsDead(false)
+    m_IsDead(false),
+	m_StateMachine(this)
 {
     this->set_Tag("EnemyController");
 }
@@ -61,6 +62,10 @@ void EnemyController::Start(RendererEngine& renderer)
 			m_IsDead = true;
 		}
 	);
+
+	// ステートの作成（TODO:外から種類を変えられるようにする）
+	EnemyStateFactory::Create(m_StateMachine, ENEMY_TYPE::ENEMY_TYPE_ANT_Normal, renderer);
+	m_StateMachine.SetCrntState(ANT_STATE::ANT_STATE_IDLE);
 }
 
 
@@ -73,5 +78,23 @@ void EnemyController::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void EnemyController::Update(RendererEngine& renderer)
 {
+	if (m_IsDead)
+	{
+		m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	}
+}
 
+//*---------------------------------------------------------------------------------------
+//*【?】衝突処理
+//*
+//* [引数]
+//* & _other : 衝突相手の情報
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void EnemyController::OnCollisionEnter(const class CollisionInfo& _other)
+{
+	if (_other.get_HitObject().lock()->get_Tag() == "Bullet")
+	{
+		m_pHealthComp->TakeDamage(5.0f);
+	}
 }

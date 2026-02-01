@@ -76,11 +76,11 @@ void SceneFactory::CreateTitleScene(StateMachine<SceneManager> &_out, RendererEn
 	// ********************************************************************************
 	// シーンの子ステート作成
 	// ********************************************************************************
-	std::shared_ptr<c_Title_LoadProcess> c_LoadProcess = std::make_shared<c_Title_LoadProcess>();		// ロード処理
-	std::shared_ptr<c_Title_MainMenu> c_MainMenu = std::make_shared<c_Title_MainMenu>();		// ロード処理
-	std::shared_ptr<c_Title_MissionSelect> c_MissionSelect = std::make_shared<c_Title_MissionSelect>();	// ミッション選択
-	std::shared_ptr<c_Title_SoldierSelect> c_SoldierSelect = std::make_shared<c_Title_SoldierSelect>();	// 兵科選択
-	std::shared_ptr<c_Title_Config> c_Config = std::make_shared<c_Title_Config>();						// 設定
+	std::shared_ptr<c_Title_LoadProcess> c_LoadProcess		= std::make_shared<c_Title_LoadProcess>();		// ロード処理
+	std::shared_ptr<c_Title_MainMenu> c_MainMenu			= std::make_shared<c_Title_MainMenu>();		// ロード処理
+	std::shared_ptr<c_Title_MissionSelect> c_MissionSelect	= std::make_shared<c_Title_MissionSelect>();	// ミッション選択
+	std::shared_ptr<c_Title_SoldierSelect> c_SoldierSelect	= std::make_shared<c_Title_SoldierSelect>();	// 兵科選択
+	std::shared_ptr<c_Title_Config> c_Config				= std::make_shared<c_Title_Config>();						// 設定
 
 	// 親を設定
 	c_LoadProcess->set_Parent(pTitleScene);

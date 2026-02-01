@@ -223,6 +223,12 @@
     <Filter Include="ソース ファイル\Component\Game\Character">
       <UniqueIdentifier>{c5b77df7-9a72-44d0-9b54-ab56bb2a353b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Enemy\State_Ant">
+      <UniqueIdentifier>{e6f22279-2d15-4337-8f78-ca333e4d7010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\State\Factory">
+      <UniqueIdentifier>{fb5eec92-bea1-412c-b470-79f3cfeef390}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -353,9 +359,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\RootSceneState.cpp">
       <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\SceneFactory.cpp">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Camera.cpp">
       <Filter>ソース ファイル\NotUsed</Filter>
@@ -537,6 +540,15 @@
     <ClCompile Include="Source\Cpp\Component_EnemyController.cpp">
       <Filter>ソース ファイル\Component\Game\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Ant_IdleState.cpp">
+      <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\SceneFactory.cpp">
+      <Filter>ソース ファイル\State\Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
+      <Filter>ソース ファイル\State\Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -691,9 +703,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\IChildSceneState.h">
       <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\SceneFactory.h">
-      <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Camera.h">
       <Filter>ソース ファイル\NotUsed</Filter>
@@ -883,6 +892,15 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_EnemyController.h">
       <Filter>ソース ファイル\Component\Game\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Ant_IdleState.h">
+      <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\SceneFactory.h">
+      <Filter>ソース ファイル\State\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EnemyStateFactory.h">
+      <Filter>ソース ファイル\State\Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

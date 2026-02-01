@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -140,7 +140,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source/Lib/DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Lib\Effekseer\Lib;Source/Lib/DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>DirectXTexd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
@@ -155,7 +155,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -168,7 +168,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Source/Lib/Imgui;Source/Lib/DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Source\Lib\Effekseer\Lib;Source/Lib/Imgui;Source/Lib/DirectXTex;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -176,6 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Header\Ant_IdleState.h" />
     <ClInclude Include="Source\Header\BitFlag.h" />
     <ClInclude Include="Source\Header\BlendManager.h" />
     <ClInclude Include="Source\Header\CollisionManager.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Source\Header\EditorManager.h" />
     <ClInclude Include="Source\Header\EditWindowBase.h" />
     <ClInclude Include="Source\Header\EffectManager.h" />
+    <ClInclude Include="Source\Header\EnemyStateFactory.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
     <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
@@ -301,6 +303,7 @@
     <Text Include="Source\CordingRules\CPP_CordingRule.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Text>
+    <ClCompile Include="Source\Cpp\Ant_IdleState.cpp" />
     <ClCompile Include="Source\Cpp\BitFlag.cpp" />
     <ClCompile Include="Source\Cpp\BlendManager.cpp" />
     <ClCompile Include="Source\Cpp\CollisionManager.cpp" />
@@ -337,6 +340,7 @@
     <ClCompile Include="Source\Cpp\EditorManager.cpp" />
     <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />
     <ClCompile Include="Source\Cpp\EffectManager.cpp" />
+    <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
     <ClCompile Include="Source\Cpp\HierarchyWindow.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />

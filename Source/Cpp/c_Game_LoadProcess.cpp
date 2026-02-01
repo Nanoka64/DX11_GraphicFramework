@@ -21,6 +21,8 @@
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
+#include "Component_EnemyController.h"
+#include "Component_Health.h"
 
 using namespace SceneStateEnums;
 using namespace VECTOR4;
@@ -136,10 +138,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0);
             obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
+            
+            // エネミーコントローラーと体力管理を追加
+            obj->add_Component<EnemyController>();
+            obj->add_Component<Health>();
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
-            collider->set_Size(VEC3(50, 15, 10));
+            collider->set_Size(VEC3(20, 15, 20));
             collider->set_Center(VEC3(0, 10, 0));
 
             // コライダーの登録

@@ -5,7 +5,6 @@
 #include "TRIANGLE.h"
 #include "Model.h"
 #include "RootSceneState.h"
-#include "StateMachine.h"
 
 
 // ***************************************************************************************

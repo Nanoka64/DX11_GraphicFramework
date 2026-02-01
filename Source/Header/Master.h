@@ -9,6 +9,7 @@
 #include "Debugger.h"
 #include "EditorManager.h"
 #include "CollisionManager.h"
+#include "EffectManager.h"
 
 class Master
 {
@@ -23,4 +24,5 @@ public:
 	static EditorManager		* m_pEditorManager;		// エディタ管理
 	static InputManager			* m_pInputManager;		// 入力管理
 	static CollisionManager		* m_pCollisionManager;	// 衝突管理
+	static EffectManager		* m_pEffectManager;		// エフェクト管理
 };

@@ -145,7 +145,7 @@ void c_Title_MainMenu::Draw(SceneManager* pOwner)
 		// スプライトの位置（アンカー座標を画面の中心にしてしまっているため、補正している）
 		VEC2 spritePos;
 		spritePos.x = -menuItemPos.x;
-		spritePos.y = -menuItemPos.y + 490;
+		spritePos.y = -menuItemPos.y + 480;
 
 		// マウスが乗ってるならずらす
 		if (item._isHovered)
