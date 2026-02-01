@@ -2,10 +2,12 @@
 #include "Component_PlayerController.h"
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
+#include "Component_Health.h"
 #include "GameObject.h"
 #include "InputFactory.h"
 #include "DirectWriteManager.h"
 #include "RendererEngine.h"
+#include "CollisionInfo.h"
 
 using namespace Input;
 using namespace VECTOR3;
@@ -24,12 +26,13 @@ using namespace Tool;
 //*----------------------------------------------------------------------------------------
 PlayerController::PlayerController(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
 m_pCameraComp(),
-m_StateMachine(this),
 m_IsAnim(false),
 m_IsJump(false),
+m_IsDead(false),
 m_MoveVelocity(VEC3()),
 m_MoveSpeed(PLAYER_MOVE_SPEED),
-m_CrntAnimID(PLAYER_ANIMATION_ID::T_POSE)
+m_CrntAnimID(PLAYER_ANIMATION_ID::T_POSE),
+m_JumpVelocity(0.0f)
 {
 	this->set_Tag("PlayerController");
 }
@@ -65,9 +68,29 @@ void PlayerController::Start(RendererEngine& renderer)
 	m_pCameraComp = obj->get_Component<Camera3D>();
 
 	// アニメーションコンポーネントの取得
-	m_AnimatorComp = m_pOwner.lock()->get_Component<SkinnedMeshAnimator>();
+	m_pAnimatorComp = m_pOwner.lock()->get_Component<SkinnedMeshAnimator>();
 
 	m_CrntAnimID = PLAYER_ANIMATION_ID::CROUCH_FWD_LOOP;
+
+	// HP管理コンポーネントの取得
+	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
+	m_pHealthComp->set_MaxHP(200.0f);
+	m_pHealthComp->set_CrntHP(200.0f);
+	// 被弾時のコールバック
+	m_pHealthComp->RegisterOnDamage(
+		[this] (float _damage)
+		{
+			ChangeAnimation(PLAYER_ANIMATION_ID::HIT_HEAD); 
+		}
+	);	
+	// 死亡時のコールバック
+	m_pHealthComp->RegisterOnDead(
+		[this] 
+		{
+			m_IsDead = true;
+			ChangeAnimation(PLAYER_ANIMATION_ID::DEATH01); 
+		}
+	);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -81,6 +104,8 @@ void PlayerController::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void PlayerController::Update(RendererEngine &renderer)
 {
+	if (m_IsDead)return;
+
 	auto pOwner = m_pOwner.lock();
 	VEC3 upVec = VEC3(0.0f, 1.0f, 0.0f);			// カメラから取得
 	float angle_H = m_pCameraComp->get_Angle_H();	// 水平アングル取得
@@ -120,6 +145,7 @@ void PlayerController::Update(RendererEngine &renderer)
 	if (GetInput(GAME_CONFIG::MOVE_BACK)) m_MoveVelocity -= forward;
 	if (GetInput(GAME_CONFIG::MOVE_RIGHT)) m_MoveVelocity += right;
 	if (GetInput(GAME_CONFIG::MOVE_LEFT)) m_MoveVelocity -= right;
+	m_MoveVelocity = m_MoveVelocity.Normalize();
 
 	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
 	//if (GetInput(CONFIG_INPUT::C))		velocity = velocity - upVec;
@@ -134,7 +160,7 @@ void PlayerController::Update(RendererEngine &renderer)
 		if (GetInputDown(GAME_CONFIG::MOVE_JUMP))
 		{
 			m_IsJump = true;
-			m_MoveVelocity.y = m_JumpForce;
+			m_JumpVelocity = m_JumpForce;
 
 			// ジャンプ開始アニメーション
 			ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_START);
@@ -144,8 +170,11 @@ void PlayerController::Update(RendererEngine &renderer)
 	{
 		// ジャンプ中アニメーション
 		ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_LOOP);
-		m_MoveVelocity.y -= m_Gravity;	// 重力
+		m_JumpVelocity -= m_Gravity;	// 重力
 	}
+
+	// 正規化後に入れる
+	m_MoveVelocity.y = m_JumpVelocity;
 
 	m_IsAnim = false;
 
@@ -158,6 +187,7 @@ void PlayerController::Update(RendererEngine &renderer)
 	{
 		//m_MoveVelocity = m_MoveVelocity.Normalize();
 
+
 		// 移動計算
 		newPos = (crntPos + (m_MoveVelocity * m_MoveSpeed));
 
@@ -167,7 +197,7 @@ void PlayerController::Update(RendererEngine &renderer)
 			if (newPos.y < 0.0f)
 			{
 				newPos.y = 0.0f;
-				m_MoveVelocity.y = 0.0f;
+				m_JumpVelocity = 0.0f;
 				m_IsJump = false;
 				ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_LAND);
 			}
@@ -231,9 +261,21 @@ void PlayerController::Draw(RendererEngine& renderer)
 	return;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】衝突処理
+//*
+//* [引数]
+//* &other : 衝突相手の情報
+//*
+//* [返値]
+//* void
+//*----------------------------------------------------------------------------------------
 void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 {
-	//ChangeAnimation(PLAYER_ANIMATION_ID::HIT_HEAD);
+	if (other.get_HitObject().lock()->get_Tag() == "Ant_1")
+	{
+		m_pHealthComp->TakeDamage(1.0f);
+	}
 }
 
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
@@ -245,11 +287,11 @@ void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 	}
 
 	// ひとつ前のアニメーションIDセット
-	m_AnimatorComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
+	m_pAnimatorComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
 
 	m_CrntAnimID = id;
 
 	// 現在のアニメーションIDセット
-	m_AnimatorComp->set_AnimIndex(static_cast<int>(m_CrntAnimID));
-	m_AnimatorComp->set_AnimTime(0.0f);
+	m_pAnimatorComp->set_AnimIndex(static_cast<int>(m_CrntAnimID));
+	m_pAnimatorComp->set_AnimTime(0.0f);
 }

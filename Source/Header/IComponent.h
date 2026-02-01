@@ -26,9 +26,9 @@ public:
 	virtual void Draw(RendererEngine &renderer) {};		 // •`‰æˆ—
 	
 	/* “–‚½‚è”»’èŠÖ˜A */
-	virtual void OnCollisionEnter(const class CollisionInfo &other) {} // “–‚½‚Á‚½uŠÔ
-	virtual void OnCollisionStay(const class CollisionInfo &other) {}	// “–‚½‚Á‚Ä‚¢‚éŠÔ
-	virtual void OnCollisionExit(const class CollisionInfo &other) {}	// —£‚ê‚½uŠÔ
+	virtual void OnCollisionEnter(const class CollisionInfo &_other) {} // “–‚½‚Á‚½uŠÔ
+	virtual void OnCollisionStay(const class CollisionInfo &_other) {}	// “–‚½‚Á‚Ä‚¢‚éŠÔ
+	virtual void OnCollisionExit(const class CollisionInfo &_other) {}	// —£‚ê‚½uŠÔ
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// XV‚Ì‡”Ôæ“¾
 	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };

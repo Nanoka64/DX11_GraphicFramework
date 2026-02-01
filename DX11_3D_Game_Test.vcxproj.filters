@@ -112,9 +112,6 @@
     <Filter Include="ソース ファイル\Component\Game">
       <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\Game\Weapon">
-      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Component\Collision">
       <UniqueIdentifier>{a8973ed6-677a-4fee-9557-46e33ba05d2b}</UniqueIdentifier>
     </Filter>
@@ -207,6 +204,24 @@
     </Filter>
     <Filter Include="ソース ファイル\Graphics\PostEffect">
       <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Enemy">
+      <UniqueIdentifier>{34f80822-c366-4a67-8237-38f26552564f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Player">
+      <UniqueIdentifier>{f1d6915a-5824-41c8-bd1f-817eea48205c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Player\Weapon">
+      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\AI">
+      <UniqueIdentifier>{836ada99-b7b5-4aa9-abae-85ceeee5b225}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Move">
+      <UniqueIdentifier>{fe4f9adf-294d-4b9b-800b-b2ef6bfb6fc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Character">
+      <UniqueIdentifier>{c5b77df7-9a72-44d0-9b54-ab56bb2a353b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -442,10 +457,10 @@
       <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_AssultRifle.cpp">
-      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
-      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Collider.cpp">
       <Filter>ソース ファイル\Component\Collision</Filter>
@@ -476,9 +491,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
       <Filter>ソース ファイル\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_PlayerController.cpp">
-      <Filter>ソース ファイル\Component\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
@@ -515,6 +527,15 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\c_Title_MainMenu.cpp">
       <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_PlayerController.cpp">
+      <Filter>ソース ファイル\Component\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Health.cpp">
+      <Filter>ソース ファイル\Component\Game\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_EnemyController.cpp">
+      <Filter>ソース ファイル\Component\Game\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -749,9 +770,6 @@
     <ClInclude Include="Source\Header\GaussianBlur.h">
       <Filter>ソース ファイル\Graphics\PostEffect</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_PlayerController.h">
-      <Filter>ソース ファイル\Component\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\EditorManager.h">
       <Filter>ソース ファイル\Editor</Filter>
     </ClInclude>
@@ -780,10 +798,10 @@
       <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_AssultRifle.h">
-      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Bullet.h">
-      <Filter>ソース ファイル\Component\Game\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Collider.h">
       <Filter>ソース ファイル\Component\Collision</Filter>
@@ -856,6 +874,15 @@
     </ClInclude>
     <ClInclude Include="Source\Header\c_Title_MainMenu.h">
       <Filter>ソース ファイル\Scene\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_PlayerController.h">
+      <Filter>ソース ファイル\Component\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Health.h">
+      <Filter>ソース ファイル\Component\Game\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_EnemyController.h">
+      <Filter>ソース ファイル\Component\Game\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

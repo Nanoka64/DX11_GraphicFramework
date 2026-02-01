@@ -99,3 +99,16 @@ bool GetMouseClickUp(MOUSE_BUTTON_STATE key)
 {
 	return Master::m_pInputManager->GetMouseClickUp(key);
 }
+
+
+/// <summary>
+/// ’·‰Ÿ‚µ‚Ìê‡‚Ì“ü—Í”»’è‚ğæ‚é
+/// Å‰‚Ì‰Ÿ‚µn‚ß‚Í“ü—Í”»’è‚É‚È‚é
+/// ‚»‚ÌŒãA‚Ì“ü—Í”»’èŠÔŠu‚ğw’è‚Å‚«‚é
+/// </summary>
+/// <param name="_button"></param>
+/// <returns></returns>
+bool GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE _button, int _waitFrame, int _repeatFrame)
+{
+	return Master::m_pInputManager->GetMouseClickHoldRepeat(_button, _waitFrame, _repeatFrame);
+}

@@ -58,5 +58,5 @@ int c_Title_SoldierSelect::Update(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 {
-	Master::m_pDirectWriteManager->DrawString("™•º‰È‘I‘ð", VECTOR2::VEC2(940, 500));
+	Master::m_pDirectWriteManager->DrawString("™•º‰È‘I‘ð", VECTOR2::VEC2(40.0f, 500.0f));
 }

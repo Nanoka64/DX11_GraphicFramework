@@ -56,6 +56,9 @@ private:
 
 	//static const VECTOR2::VEC2 m_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)];
 	std::shared_ptr<class Transform> m_pMenuItemBackSpriteTransform[static_cast<int>(TITLEMENU_ITEM::NUM)];
+
+
+
 public:
 	void OnEnter(SceneManager* pOwner) override;
 	void OnExit(SceneManager* pOwner)override;

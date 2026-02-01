@@ -250,6 +250,7 @@ bool InputManager::GetMouseClickUp(MOUSE_BUTTON_STATE _button)const
     return false;
 }
 
+
 /// <summary>
 /// 押された瞬間
 /// </summary>
@@ -267,6 +268,31 @@ bool InputManager::GetMouseClickDown(MOUSE_BUTTON_STATE _button)const
     {
         return true;
     }
+    return false;
+}
+
+
+/// <summary>
+/// 長押しの場合の入力判定を取る
+/// 最初の押し始めは入力判定になる
+/// その後、の入力判定間隔を指定できる
+/// </summary>
+/// <param name="_button"></param>
+/// <returns></returns>
+bool InputManager::GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE _button, int _waitFrame, int _repeatFrame)const
+{
+    if (m_InputStopFlag) return false;
+    if (_button == MOUSE_BUTTON_STATE::NUM)return false;
+    int frame = m_CrntMouseState._count[static_cast<int>(_button)];
+
+    // 押し始め
+    if (frame == 1) return true;
+
+    if (frame >= _waitFrame && (frame - _waitFrame) % _repeatFrame == 0)
+    {
+        return true;
+    }
+
     return false;
 }
 

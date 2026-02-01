@@ -62,7 +62,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 
 	//if (GetInputHoldRepeat(CONFIG_INPUT::C,2,2))
-	if(GetMouseClick(MOUSE_BUTTON_STATE::LEFT))
+	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 6, 6))
     {
         // マテリアル取得
         auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
@@ -96,7 +96,7 @@ void AssultRifle::Update(RendererEngine &renderer)
         // 親の向きと位置を参照
         bullet_transform->set_Pos(pos);
         bullet_transform->set_RotateToRad(rad);
-        bullet_transform->set_Scale(VEC3(0.01f, 0.01f, 0.01f));
+        bullet_transform->set_Scale(VEC3(0.1f, 0.1f, 0.1f));
 
         // コライダーの追加
         auto collider = obj->add_Component<BoxCollider>();

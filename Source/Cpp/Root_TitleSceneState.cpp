@@ -92,7 +92,7 @@ void Root_TitleSceneState::Draw(SceneManager* pOwner)
 {
 	if (m_CrntChildStateID == -1)return;
 
-	Master::m_pDirectWriteManager->DrawString("☆タイトルです",VECTOR2::VEC2(940, 540));
+	//Master::m_pDirectWriteManager->DrawString("☆タイトルです",VECTOR2::VEC2(940, 540));
 
 	// スプライト取得
 	if (!m_pBackSprite)

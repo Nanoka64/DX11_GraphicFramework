@@ -122,18 +122,21 @@ const std::string g_PlayerAnimationNames[] =
 class PlayerController : public IComponent
 {
 private:
-    StateMachine<PlayerController> m_StateMachine;
 	std::shared_ptr<class Camera3D> m_pCameraComp;
-    bool m_IsAnim;		// アニメーション中かどうか
-    float m_MoveSpeed;	// 移動速度
-	bool m_IsJump;
+    bool m_IsAnim;					// アニメーション中かどうか
+    float m_MoveSpeed;				// 移動速度
+	bool m_IsJump;					// ジャンプしたか
 	VECTOR3::VEC3 m_MoveVelocity;	// 移動
-	std::shared_ptr<class SkinnedMeshAnimator> m_AnimatorComp;
+	float m_JumpVelocity;			// ジャンプベクトル
 	PLAYER_ANIMATION_ID m_CrntAnimID;	// 現在のアニメーションID
+	std::shared_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
+	std::shared_ptr<class Health> m_pHealthComp;	// 体力管理コンポーネント
 
 	// リジッドボディコンポーネントを作って移す
 	float m_JumpForce = 3.0f;	// ジャンプ力
 	float m_Gravity = 0.18f;	// 重力
+
+	bool m_IsDead;
 public:
 	PlayerController(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~PlayerController();

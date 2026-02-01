@@ -62,5 +62,5 @@ int c_Title_MissionSelect::Update(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 {
-	Master::m_pDirectWriteManager->DrawString("☆ミッション選択", VECTOR2::VEC2(940, 500));
+	Master::m_pDirectWriteManager->DrawString("☆ミッション選択", VECTOR2::VEC2(40.0f, 500.0f));
 }

@@ -12,6 +12,7 @@
 #include "Component_TrailRenderer.h"
 #include "Component_DirectionalLight.h"
 #include "Component_AssultRifle.h"
+#include "Component_Health.h"
 #include "GameObject.h"
 #include "MeshFactory.h"
 #include "InputFactory.h"
@@ -182,6 +183,8 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         collider->set_Size(VEC3(5, 10, 5));
         collider->set_Center(VEC3(0, 10, 0));
 
+        auto health = pPlayerObj->add_Component<Health>();
+
         // コライダーの登録
         Master::m_pCollisionManager->RegisterCollider(collider);
 
@@ -287,6 +290,24 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         }
     }
 
+    /* タイトル項目説明用スプライト */
+    {
+        CreateSpriteInfo sprite;
+        sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Title_Description_01.png");
+        sprite.pRenderer = m_pRenderer;
+        sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+        sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
+        sprite.Width = 427.0f;
+        sprite.Height = 240.0f;
+        sprite.IsActive = true;
+        sprite.IsTransparent = true;
+        // 項目分生成
+        for (int i = 0; i < 4; i++)
+        {
+            sprite.ObjTag = "TitleDescription01_Sp" + std::to_string(i + 1);
+            auto obj = MeshFactory::CreateSprite(sprite);
+        }
+    }
     /* タイトルロゴ用スプライト */
     {
         CreateSpriteInfo sprite;
@@ -344,7 +365,7 @@ void c_Title_LoadProcess::Draw(SceneManager *pOwner)
         return;
     }
 
-	Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(940, 500));
+	Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(40.0f, 500.0f));
 
     // ロード完了
     m_IsLoad = true;

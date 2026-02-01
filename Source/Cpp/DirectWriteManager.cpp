@@ -212,7 +212,7 @@ void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, 
 {
     HRESULT hr = S_OK;
 
-    return;
+    //return;
 
     // ƒƒCƒh•¶š‚É•ÏŠ·
     std::wstring wstr = StringToWString(str);

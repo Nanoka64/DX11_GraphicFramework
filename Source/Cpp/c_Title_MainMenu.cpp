@@ -161,5 +161,5 @@ void c_Title_MainMenu::Draw(SceneManager* pOwner)
 		Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos);
 	}
 
-	Master::m_pDirectWriteManager->DrawString("☆メインメニュー", VECTOR2::VEC2(940, 500));
+	Master::m_pDirectWriteManager->DrawString("☆メインメニュー", VECTOR2::VEC2(40.0f, 500.0f));
 }

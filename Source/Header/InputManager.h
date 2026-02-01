@@ -101,6 +101,7 @@ public:
     bool GetMouseClick(MOUSE_BUTTON_STATE _button)const;       // マウスボタンが押されているか
     bool GetMouseClickDown(MOUSE_BUTTON_STATE _button)const;   // 押された瞬間
     bool GetMouseClickUp(MOUSE_BUTTON_STATE _button)const;     // 離された瞬間
+    bool GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE _button, int _waitFrame, int _repeatFrame)const;     // 離された瞬間
     
     inline POINT GetMousePos()const { return m_MousePos; };   // マウス座標の取得
     inline LONG GetMousePosSlopeX()const{return m_CrntMouseState._state.lX;};   // Xの移動量の差の取得
