@@ -91,7 +91,7 @@ struct CreateUtilityMeshInfo : public CreateMesh_Base
 struct CreateSpriteInfo : public CreateMesh_Base
 {
     SPRITE_USAGE_TYPE Type;             // スプライトの使用方法
-
+    BLEND_MODE Blend;
     ExpandConstantBufferInfo*pPSConstantBuffers;  // ピクセルシェーダ用定数バッファ
     ExpandConstantBufferInfo*pVSConstantBuffers;  // 頂点シェーダ用定数バッファ
     int PSConstBufferNum;        // ピクセルシェーダ用定数バッファ数
@@ -110,7 +110,8 @@ struct CreateSpriteInfo : public CreateMesh_Base
         pPSConstantBuffers(nullptr),
         pVSConstantBuffers(nullptr),
         PSConstBufferNum(0),
-        VSConstBufferNum(0)
+        VSConstBufferNum(0),
+        Blend(BLEND_MODE::ALPHA)
     {};
 };
 

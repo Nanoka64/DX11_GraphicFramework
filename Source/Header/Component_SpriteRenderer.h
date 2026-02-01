@@ -38,6 +38,8 @@ private:
 	VECTOR2::VEC2 m_UVOffset;	// uvオフセット
 
 	SHADER_TYPE m_ShaderType;	// 使用するシェーダの種類
+	BLEND_MODE m_BlendMode;		// 使用するブレンド
+
 
 	CB_USER_EXPAND_SET *m_pVSUserExpandCBuffers;	// VSユーザー拡張用定数バッファ
 	CB_USER_EXPAND_SET * m_pPSUserExpandCBuffers;	// PSユーザー拡張用定数バッファ
@@ -61,6 +63,10 @@ public:
 	void set_Height(float h);
 	float get_Width()const;
 	float get_Height()const;
+
+	// ブレンドモードの設定
+	void set_BlendMode(const BLEND_MODE _blend) { m_BlendMode = _blend; }
+	BLEND_MODE get_BlendMode()const { return m_BlendMode; }
 
 	/// <summary>
 	/// 初期化時に設定したユーザー拡張用頂点定数バッファをGPUにセットする

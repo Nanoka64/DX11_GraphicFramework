@@ -24,7 +24,8 @@ m_pVSUserExpandCBuffers(nullptr),
 m_pPSUserExpandCBuffers(nullptr),
 m_VSUserExpandCBNum(0),
 m_PSUserExpandCBNum(0),
-m_UVOffset(VECTOR2::VEC2())
+m_UVOffset(VECTOR2::VEC2()),
+m_BlendMode(BLEND_MODE::ALPHA)
 {
     this->set_Tag("SpriteRenderer");
 }
@@ -143,7 +144,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
     pContext->IASetIndexBuffer(m_pMeshData->pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);    // インデックスバッファをセット
     pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);// Set primitive topology 頂点の組み合わせ方
 
-	Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
+	Master::m_pBlendManager->DeviceToSetBlendState(m_BlendMode);
 
 	// UIの描画の際は深度テストをオフにする
 	renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
@@ -180,11 +181,14 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 
 	m_pTextureMap = info.pTextureMap;
 	m_ShaderType = info.ShaderType;
+	m_BlendMode = info.Blend;
 
 	// ユーザー拡張用定数バッファ数の取得
 	m_VSUserExpandCBNum = info.VSConstBufferNum;
 	m_PSUserExpandCBNum = info.PSConstBufferNum;
 	
+
+
 	// 頂点シェーダー用ユーザー拡張用定数バッファ情報のセットアップ
 	if (m_VSUserExpandCBNum > 0)
 	{

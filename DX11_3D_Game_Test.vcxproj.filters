@@ -154,9 +154,6 @@
     <Filter Include="ソース ファイル\Graphics\Light">
       <UniqueIdentifier>{f12de411-cbba-4a3e-b12f-adb8e1de9e72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Graphics\PostEffect">
-      <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Graphics\Material">
       <UniqueIdentifier>{20babb4d-5770-42c0-aaa3-d3ab385ae60f}</UniqueIdentifier>
     </Filter>
@@ -207,6 +204,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Scene\Result">
       <UniqueIdentifier>{cb343d01-e87d-425e-ba78-85e3a10a87e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Graphics\PostEffect">
+      <UniqueIdentifier>{c34b52ab-c1cc-45f3-be12-abdaad252fb7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

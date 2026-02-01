@@ -409,7 +409,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // 被写界深度用ガウスブラー実行
     m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, m_DoF_BlurIncensity);
    
-    // 加算モード
+    // アルファモード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
 
     // 裏カリング
@@ -505,12 +505,11 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
     // 透明度アリオブジェクト（UIも）の描画
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
     Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
+    
 
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
@@ -926,6 +925,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     bloomSprite.ObjTag = "bloomSprite";
     bloomSprite.Width = m_ScreenWidth;
     bloomSprite.Height = m_ScreenHeight;
+    bloomSprite.Blend = BLEND_MODE::ADD;
     bloomSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture(
         "RT_Luminance"
     );
