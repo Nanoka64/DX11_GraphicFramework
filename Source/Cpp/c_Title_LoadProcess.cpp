@@ -171,7 +171,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
         //pPlayerObj->add_Component<PlayerController>(1);
-        pPlayerObj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+        pPlayerObj->get_Transform().lock()->set_Pos(0.0f, 0.0f, -1000.0f);
         //pPlayerObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
         auto trail = pPlayerObj->add_Component<TrailRenderer>();

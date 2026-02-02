@@ -17,17 +17,17 @@
 
 
 // Ç¶Ç”Ç•Ç≠ÇµÇ†
-//#ifndef _DEBUG
-//#pragma comment(lib, "Effekseer.lib")
-//#else
-//#pragma comment(lib, "Effekseerd.lib")
-//#endif
-//
-//#ifndef _DEBUG
-//#pragma comment(lib, "EffekseerRendererDX11.lib")
-//#else
-//#pragma comment(lib, "EffekseerRendererDX11d.lib")
-//#endif
+#ifndef _DEBUG
+#pragma comment(lib, "Effekseer.lib")
+#else
+#pragma comment(lib, "Effekseerd.lib")
+#endif
+
+#ifndef _DEBUG
+#pragma comment(lib, "EffekseerRendererDX11.lib")
+#else
+#pragma comment(lib, "EffekseerRendererDX11d.lib")
+#endif
 
 
 /* ëgÇ›çûÇ›ÉwÉbÉ_ */

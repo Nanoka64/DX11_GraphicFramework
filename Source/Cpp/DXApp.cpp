@@ -29,6 +29,7 @@ EditorManager           *Master::m_pEditorManager       = nullptr;  // ƒGƒfƒBƒ^Š
 InputManager            *Master::m_pInputManager        = nullptr;   // “ü—ÍŠÇ—
 CollisionManager        *Master::m_pCollisionManager    = nullptr;   // Õ“ËŠÇ—
 EffectManager           *Master::m_pEffectManager       = nullptr;   // ƒGƒtƒFƒNƒgŠÇ—
+SoundManager            *Master::m_pSoundManager        = nullptr;   // ƒTƒEƒ“ƒhŠÇ—
 
 
 //*---------------------------------------------------------------------------------------
@@ -89,7 +90,8 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pInputManager         = new InputManager();           // “ü—ÍŠÇ—
     Master::m_pCollisionManager     = new CollisionManager();       // Õ“ËŠÇ—
     Master::m_pEffectManager        = new EffectManager();          // ƒGƒtƒFƒNƒgŠÇ—
-    
+    Master::m_pSoundManager         = new SoundManager();           // ƒTƒEƒ“ƒhŠÇ—
+
     // *************************************************************************************************
     /**  ƒEƒCƒ“ƒhƒE‚Ì‰Šú‰» **/
     // *************************************************************************************************
@@ -214,13 +216,22 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     }   
     
     // *************************************************************************************************
-    /**  ƒGƒtƒFƒNƒgƒ}ƒl[ƒWƒƒ[‰Šú‰» **/
+    /**  ƒGƒtƒFƒNƒgƒ}ƒl[ƒWƒƒ‚Ì‰Šú‰» **/
     // *************************************************************************************************
-    //if (!Master::m_pEffectManager->Setup(*m_pRenderer))
-    //{
-    //    assert(false);
-    //    return false;
-    //}
+    if (!Master::m_pEffectManager->Setup(*m_pRenderer))
+    {
+        assert(false);
+        return false;
+    }
+    
+    // *************************************************************************************************
+    /**  ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒ‚Ì‰Šú‰» **/
+    // *************************************************************************************************
+    if (!Master::m_pSoundManager->InitXA2Sound())
+    {
+        assert(false);
+        return false;
+    }
 
     /** ƒtƒHƒ“ƒgƒf[ƒ^ì¬ **/
     FONT_DATA *pFontData = new FONT_DATA();
@@ -254,6 +265,7 @@ void DXApp::Term()
     Master::m_pGameObjectManager->Term(*m_pRenderer);
     Master::m_pResourceManager->Term();
     Master::m_pInputManager->Term();
+    Master::m_pSoundManager->UninitXA2Sound();
     m_pRenderer->Term();
 }
 
@@ -331,9 +343,25 @@ int DXApp::MainLoop()
                 m_pGameManager->Draw(*m_pRenderer);
 
                 // ƒGƒtƒFƒNƒgXV
-                //Master::m_pEffectManager->Update(*m_pRenderer);
+                Master::m_pEffectManager->UpdateEffect(*m_pRenderer);
+                static int counter = 0;
+                counter++;
+                if (counter % 120 == 0)
+                {
+                    //Master::m_pEffectManager->PlayEffect(1);
+                }
 
+                if (counter % 120 == 119)
+                {
+                    //    Master::m_pEffectManager->StopEffect(0);
+                }
+
+                Master::m_pEffectManager->DrawEffect();
+
+
+                // ImGUI•`‰æI—¹
                 Master::m_pDebugger->EndFrame();
+
 
                 // •`‰æ‚ÌI—¹
                 m_pRenderer->EndRender();

@@ -20,7 +20,6 @@ public:
 	void OnEnter(class EnemyController* pOwner) override;
 	void OnExit(class EnemyController* pOwner)override;
 	int Update(class EnemyController* pOwner)override;
-	void Draw(class EnemyController* pOwner)override;
 
 };
 

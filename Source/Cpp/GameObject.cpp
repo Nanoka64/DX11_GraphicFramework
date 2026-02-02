@@ -22,6 +22,7 @@ GameObject::GameObject():
 GameObject::~GameObject()
 {
 	m_pComponentList.clear();	// 解放
+	m_pTransform.reset();
 }
 
 
@@ -106,10 +107,16 @@ void GameObject::OnCollisionEnter(const CollisionInfo &info)
 //* 引数：なし
 //* 戻値：弱参照ポインタ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<Transform> GameObject::get_Transform() const
+std::weak_ptr<class Transform> GameObject::get_Transform() const
 {
 	return m_pTransform;
 }
+
+
+//Transform* GameObject::get_Transform() const
+//{
+//	return m_pTransform.get();
+//}
 
 //*---------------------------------------------------------------------------------------
 //* @:Object Class 

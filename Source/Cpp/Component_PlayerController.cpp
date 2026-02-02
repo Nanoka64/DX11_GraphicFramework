@@ -280,7 +280,7 @@ void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 {
-	// 同じなら返す
+	// 同じ又はアニメーションが止まっているなら返す
 	if (id == m_CrntAnimID)
 	{
 		return;

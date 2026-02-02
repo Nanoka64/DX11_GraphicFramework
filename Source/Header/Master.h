@@ -10,6 +10,7 @@
 #include "EditorManager.h"
 #include "CollisionManager.h"
 #include "EffectManager.h"
+#include "SoundManager.h"
 
 class Master
 {
@@ -25,4 +26,5 @@ public:
 	static InputManager			* m_pInputManager;		// 入力管理
 	static CollisionManager		* m_pCollisionManager;	// 衝突管理
 	static EffectManager		* m_pEffectManager;		// エフェクト管理
+	static SoundManager			* m_pSoundManager;		// サウンド管理
 };

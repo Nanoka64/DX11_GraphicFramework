@@ -1,5 +1,5 @@
 #pragma once
-#include "Object.h"
+//#include "Object.h"
 #include "Component_Transform.h"
 #include <algorithm>
 
@@ -73,7 +73,13 @@ public:
 	/// Transformの取得
 	/// </summary>
 	/// <returns></returns>
-	std::weak_ptr<Transform> get_Transform()const;
+	std::weak_ptr<class Transform> get_Transform()const;
+
+
+	// 生ポで書いたほうがいいかも
+	//Transform *get_Transform() const;
+
+
 
 	/// <summary>
 	/// コンポーネントのリストを取得

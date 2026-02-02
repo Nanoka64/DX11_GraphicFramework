@@ -5,6 +5,7 @@
 
 // アリ
 #include "Ant_IdleState.h"
+#include "Ant_TrackingState.h"
 
 
 
@@ -47,10 +48,12 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 {
 	// ルートシーン作成
 	std::shared_ptr<Ant_IdleState> pIdle = std::make_shared<Ant_IdleState>();
+	std::shared_ptr<Ant_TrackingState> pTracking = std::make_shared<Ant_TrackingState>();
 
 	//描画インターフェイス設定
 	// add_childの中で子シーンにもセットしてるのでaddする前に呼んで！
 	pIdle->set_Renderer(&_renderer);
+	pTracking->set_Renderer(&_renderer);
 
 	// ********************************************************************************
 	// 子ステート作成
@@ -65,4 +68,5 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 
 	//ステートマシンに登録
 	_out.RegisterState(ANT_STATE::ANT_STATE_IDLE, std::move(pIdle));
+	_out.RegisterState(ANT_STATE::ANT_STATE_TRACKING, std::move(pTracking));
 }

@@ -549,6 +549,15 @@
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
       <Filter>ソース ファイル\State\Factory</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\TragetManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Ant_TrackingState.cpp">
+      <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\SoundManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -901,6 +910,15 @@
     </ClInclude>
     <ClInclude Include="Source\Header\EnemyStateFactory.h">
       <Filter>ソース ファイル\State\Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TragetManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Ant_TrackingState.h">
+      <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\SoundManager.h">
+      <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

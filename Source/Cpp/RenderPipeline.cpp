@@ -656,8 +656,8 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
     result = m_pShadowMap_RT->Create(
         renderer,
         // 影の品質は何も対策しなければ解像度依存
-        4096,       
-        4096,
+        2048,       
+        2048,
         1,
         1,
         // ・Rにライトから見た深度値 ・Gにライトから見た深度値の二乗をいれる

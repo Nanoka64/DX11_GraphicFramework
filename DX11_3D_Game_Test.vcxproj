@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Header\Ant_IdleState.h" />
+    <ClInclude Include="Source\Header\Ant_TrackingState.h" />
     <ClInclude Include="Source\Header\BitFlag.h" />
     <ClInclude Include="Source\Header\BlendManager.h" />
     <ClInclude Include="Source\Header\CollisionManager.h" />
@@ -272,11 +273,13 @@
     <ClInclude Include="Source\Header\SceneStateEnums.h" />
     <ClInclude Include="Source\Header\SHADER.h" />
     <ClInclude Include="Source\Header\ShaderManager.h" />
+    <ClInclude Include="Source\Header\SoundManager.h" />
     <ClInclude Include="Source\Header\StateMachine.h" />
     <ClInclude Include="Source\Header\Test_ChildState_Start.h" />
     <ClInclude Include="Source\Header\Texture.h" />
     <ClInclude Include="Source\Header\Component_Transform.h" />
     <ClInclude Include="Source\Header\Root_TitleSceneState.h" />
+    <ClInclude Include="Source\Header\TragetManager.h" />
     <ClInclude Include="Source\Header\TRIANGLE.h" />
     <ClInclude Include="Source\Header\VEC.h" />
     <ClInclude Include="Source\Header\VERTEX.h" />
@@ -304,6 +307,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Text>
     <ClCompile Include="Source\Cpp\Ant_IdleState.cpp" />
+    <ClCompile Include="Source\Cpp\Ant_TrackingState.cpp" />
     <ClCompile Include="Source\Cpp\BitFlag.cpp" />
     <ClCompile Include="Source\Cpp\BlendManager.cpp" />
     <ClCompile Include="Source\Cpp\CollisionManager.cpp" />
@@ -503,6 +507,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ShaderManager.cpp" />
+    <ClCompile Include="Source\Cpp\SoundManager.cpp" />
     <ClCompile Include="Source\Cpp\StateMachine.cpp" />
     <ClCompile Include="Source\Cpp\Test_ChildState_Start.cpp" />
     <ClCompile Include="Source\Cpp\Texture.cpp">
@@ -518,6 +523,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp" />
+    <ClCompile Include="Source\Cpp\TragetManager.cpp" />
     <ClCompile Include="Source\Cpp\TRIANGLE.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

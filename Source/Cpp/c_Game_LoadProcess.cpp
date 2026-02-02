@@ -128,20 +128,32 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 50; i++)
         {
             model.ObjTag = "Ant_" + std::to_string(i + 1);   // タグ
 
             auto obj  = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
-            obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
-            obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0);
+            auto transform = obj->get_Component<Transform>();
+
             obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
             
             // エネミーコントローラーと体力管理を追加
             obj->add_Component<EnemyController>();
             obj->add_Component<Health>();
+
+            VEC3 pos = VEC3();
+            pos.x = Tool::RandRange(-1000.0, 1000.0);
+            pos.y = 15.0f;
+            pos.z = Tool::RandRange(-1000.0, 1000.0);
+            
+            VEC3 rot = VEC3();
+            rot.y = Tool::RandRange(-180.0f, 180.0f);
+
+            transform->set_Pos(pos);
+            transform->set_RotateToDeg(rot);
+            transform->set_Scale(0.1f, 0.1f, 0.1f);
+
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
