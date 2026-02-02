@@ -17,8 +17,8 @@ enum class COLLISION_CALC_TYPE
 
 struct CollInData_Ray
 {
-    VECTOR3::VEC3 _startPoint;    // 開始点 
-    VECTOR3::VEC3 _endPoint;      // 終了点
+    VECTOR3::VEC3 _point;    // 開始点 
+    VECTOR3::VEC3 _dir;      // 方向
 };
 
 struct CollInData_Sphere

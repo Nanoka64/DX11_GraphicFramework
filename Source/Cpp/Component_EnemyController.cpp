@@ -2,6 +2,7 @@
 #include "Component_EnemyController.h"
 #include "GameObject.h"
 #include "Component_SkinnedMeshAnimator.h"
+#include "Component_Collider.h"
 #include "Component_Health.h"
 #include "RendererEngine.h"
 #include "CollisionInfo.h"
@@ -48,10 +49,14 @@ void EnemyController::Start(RendererEngine& renderer)
 {
     // アニメーションコンポーネントの取得
     m_pAnimatorComp = m_pOwner.lock()->get_Component<SkinnedMeshAnimator>();
-	
-	int deadEffectHandle = Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc");
-	int damageEffectHandle = Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc");
 
+	// コライダーの取得
+	m_pColliderComp = m_pOwner.lock()->get_Component<Collider>();
+	
+
+
+	 Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc","DeadExplosion");
+	 Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc","Hit");
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
@@ -59,7 +64,7 @@ void EnemyController::Start(RendererEngine& renderer)
 	m_pHealthComp->set_CrntHP(200.0f);
 	// 被弾時のコールバック
 	m_pHealthComp->RegisterOnDamage(
-		[this, damageEffectHandle](float _damage)
+		[this](float _damage)
 		{
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
@@ -70,21 +75,21 @@ void EnemyController::Start(RendererEngine& renderer)
 
 			ChangeState(ANT_STATE::ANT_STATE_TRACKING);
 
-			Master::m_pEffectManager->PlayEffect(damageEffectHandle);
-			Master::m_pEffectManager->SetScaleEffect(damageEffectHandle, 10.0f, 10.0f, 10.0f);
-			Master::m_pEffectManager->SetPositionEffect(damageEffectHandle, pos.x, pos.y, pos.z);
-			Master::m_pEffectManager->SetRotationEffect(damageEffectHandle, rot.x, rot.y, rot.z);
+			int handle = Master::m_pEffectManager->PlayEffect("Hit");
+			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
+			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
+			Master::m_pEffectManager->SetRotationEffect(handle, rot.x, rot.y, rot.z);
 		}
 	);
 	// 死亡時のコールバック
 	m_pHealthComp->RegisterOnDead(
-		[this, deadEffectHandle]
+		[this]
 		{
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
-			Master::m_pEffectManager->PlayEffect(deadEffectHandle);
-			Master::m_pEffectManager->SetScaleEffect(deadEffectHandle,10.0f,10.0f,10.0f);
-			Master::m_pEffectManager->SetPositionEffect(deadEffectHandle, pos.x, pos.y, pos.z);
+			int handle = Master::m_pEffectManager->PlayEffect("DeadExplosion");
+			Master::m_pEffectManager->SetScaleEffect(handle,10.0f,10.0f,10.0f);
+			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
 			m_IsDead = true;
 			m_IsAnim = false;
 		}
@@ -109,6 +114,7 @@ void EnemyController::Update(RendererEngine& renderer)
 {
 	if (m_IsDead)
 	{
+		m_pColliderComp->set_IsEnable(false);	// コライダーの判定をオフに
 		m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 	}
 
@@ -130,6 +136,7 @@ void EnemyController::Update(RendererEngine& renderer)
 
 	VEC3 newPos = crntPos + m_MoveVelocity;
 
+	newPos.y = crntPos.y;	// Yは変えない
 	myTransform->set_Pos(newPos);
 
 	//目標の方向ベクトルから角度値を算出c

@@ -21,11 +21,11 @@
 class EffectManager
 {
 private:
-    ::Effekseer::ManagerRef m_EfkManager;
-    ::EffekseerRenderer::RendererRef m_EfkRenderer;
-    Effekseer::EffectRef m_EffectArray[EFFECT_MAX];
-    Effekseer::Handle m_HandleArray[EFFECT_MAX];
-    int m_EffectIndex;
+    ::Effekseer::ManagerRef m_EfkManager;           // エフェクシアの管理クラス的な？
+    ::EffekseerRenderer::RendererRef m_EfkRenderer; // エフェクトの描画に必要なもの
+    std::unordered_map<std::string,Effekseer::EffectRef> m_EffectMap; // エフェクトのパラメータを持つ
+
+    int32_t m_Timer;
 
 public:
     EffectManager();
@@ -34,8 +34,8 @@ public:
     bool Setup(RendererEngine& renderer);           // 初期化
     void UpdateEffect(RendererEngine& renderer);    // エフェクトの更新
     void DrawEffect();                              // エフェクトの描画
-    int LoadEffect(const char16_t *name);           // エフェクトの読み込み
-    void PlayEffect(int handle);                    // エフェクトの再生
+    bool LoadEffect(const char16_t *_name,const std::string&_key);           // エフェクトの読み込み
+    int PlayEffect(const std::string& _key);                    // エフェクトの再生
     void StopEffect(int handle);                    // エフェクトを止める
     void SetPositionEffect(int handle, float x, float y, float z);  // エフェクトの位置を設定
     void SetScaleEffect(int handle, float x, float y, float z);     // エフェクトの大きさを設定

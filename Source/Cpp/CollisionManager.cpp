@@ -486,8 +486,138 @@ bool CollisionManager::HitCheck_BoxVsSphere(const CollInData_AABB &_box, const C
 //* true : 当たった
 //* false : 当たってない
 //*----------------------------------------------------------------------------------------
-bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB &_src, const CollInData_Ray &_dst)
+bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB &_box, const CollInData_Ray &_ray)
 {
+    float t_Min = 0.0f;
+    float t_Max = 0.0f;
+    
+    VEC3 minV = _box._min;
+    VEC3 maxV = _box._max;
+    VEC3 point = _ray._point;
+    VEC3 dir = _ray._dir;
+
+    // X軸の判定*************************************************
+    float tx_Min = 0.0f;
+    float tx_Max = 0.0f;
+    // 線分ベクトルが0.0の場合
+    if (dir.x == 0.0f) {
+        if (point.x < minV.x || point.x > maxV.x)
+        {
+            return false;
+        }
+
+        tx_Min = 0.0f;
+        tx_Max = 1.0f;
+    }
+    else {
+        // X軸での領域を決定
+        float t0 = (minV.x - point.x) / dir.x;
+        float t1 = (maxV.x - point.x) / dir.x;
+        if (t0 < t1){
+            tx_Min = t0;
+            tx_Max = t1;
+        }
+        else{
+            tx_Min = t1;
+            tx_Max = t0;
+        }
+        // X軸領域内ですでに範囲外
+        if (tx_Max < 0.0f || tx_Min > 1.0f) {
+            return false;
+        }
+    }
+
+    t_Min = tx_Min;
+    t_Max = tx_Max;
+
+
+    // Y軸の判定*************************************************
+    float ty_Min = 0.0f;
+    float ty_Max = 0.0f;
+    // 線分ベクトルが0.0の場合
+    if (dir.y == 0.0f) {
+        if (point.y < minV.y || point.y > maxV.y)
+        {
+            return false;
+        }
+
+        ty_Min = 0.0f;
+        ty_Max = 1.0f;
+    }
+    else {
+        // X軸での領域を決定
+        float t0 = (minV.y - point.y) / dir.y;
+        float t1 = (maxV.y - point.y) / dir.y;
+        if (t0 < t1) {
+            ty_Min = t0;
+            ty_Max = t1;
+        }
+        else {
+            ty_Min = t1;
+            ty_Max = t0;
+        }    
+        // Y軸領域内ですでに範囲外
+        if (ty_Max < 0.0f || ty_Min > 1.0f) {
+            return false;
+        }
+    }
+
+    if (t_Max < ty_Min || t_Min > ty_Max)
+    {
+        return false;
+    }
+
+    // X軸とY軸の領域が被っていない
+    if (t_Min < ty_Min)t_Min = ty_Min;
+    if (t_Max > ty_Max)t_Max = ty_Max;
+
+
+
+    // Z軸の判定*************************************************
+    float tz_Min = 0.0f;
+    float tz_Max = 0.0f;
+    // 線分ベクトルが0.0の場合
+    if (dir.z == 0.0f) {
+        if (point.z < minV.z || point.z > maxV.z)
+        {
+            return false;
+        }
+
+        tz_Min = 0.0f;
+        tz_Max = 1.0f;
+    }
+    else {
+        // X軸での領域を決定
+        float t0 = (minV.z - point.z) / dir.z;
+        float t1 = (maxV.z - point.z) / dir.z;
+        if (t0 < t1) {
+            tz_Min = t0;
+            tz_Max = t1;
+        }
+        else {
+            tz_Min = t1;
+            tz_Max = t0;
+        }
+        // Z軸領域内ですでに範囲外
+        if (tz_Max < 0.0f || tz_Min > 1.0f) {
+            return false;
+        }
+    }
+
+    if (t_Max < tz_Min || t_Min > tz_Max)
+    {
+        return false;
+    }
+
+    // X軸とY軸の領域が被っていない
+    if (t_Min < tz_Min)t_Min = tz_Min;
+    if (t_Max > tz_Max)t_Max = tz_Max;
+
+    // 共通領域のチェック
+    if (t_Min > 1.0f || t_Max < 0.0f){
+        return false;
+    }
+
     return true;
 }
 

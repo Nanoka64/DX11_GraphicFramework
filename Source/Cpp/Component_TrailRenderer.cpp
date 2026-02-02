@@ -243,8 +243,8 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	m_pCBMaterialDataSet->Data.Diffuse = VEC4(1.0f, 0.0f, 0.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.EmissivePower = 4.5f;
+	m_pCBMaterialDataSet->Data.Diffuse = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pCBMaterialDataSet->Data.EmissivePower = 0.0f;
 	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(1.0f, 0.0f, 0.0f);
 	m_pCBMaterialDataSet->Data.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_pCBMaterialDataSet->Data.SpecularPower = 150.0f;

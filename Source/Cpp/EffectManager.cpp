@@ -6,8 +6,7 @@
 
 
 EffectManager::EffectManager():
-    m_HandleArray(0),
-    m_EffectIndex(0)
+    m_Timer(0)
 {
 }
 
@@ -73,7 +72,7 @@ bool EffectManager::Setup(RendererEngine& renderer)
     cameraMatrix.LookAtLH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
     // エフェクトの読み込み
-    LoadEffect(u"Resource/Effect/Laser01.efkefc");
+    LoadEffect(u"Resource/Effect/Laser01.efkefc", "Laser01");
 
     return true;
 }
@@ -82,9 +81,6 @@ bool EffectManager::Setup(RendererEngine& renderer)
 // エフェクトの更新
 void EffectManager::UpdateEffect(RendererEngine& renderer)
 {
-    // 経過したフレーム数のカウンタ
-    static int32_t time = 0;
-
     UINT screenW = renderer.get_ScreenWidth();
     UINT screenH = renderer.get_ScreenHeight();
 
@@ -118,7 +114,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
 
     // Update a time
     // 時間を更新する
-    m_EfkRenderer->SetTime(time / 60.0f);
+    m_EfkRenderer->SetTime(m_Timer / 60.0f);
 
     // Specify a projection matrix
     // 投影行列を設定
@@ -127,7 +123,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     // Specify a camera matrix
     // カメラ行列を設定
     m_EfkRenderer->SetCameraMatrix(cameraMatrix);
-    time++;
+    m_Timer++;
 }
 
 
@@ -142,6 +138,7 @@ void EffectManager::DrawEffect()
     drawParameter.ZNear = 0.0f;
     drawParameter.ZFar = 1.0f;
     drawParameter.ViewProjectionMatrix = m_EfkRenderer->GetCameraProjectionMatrix();
+    drawParameter.IsSortingEffectsEnabled = true;
     m_EfkManager->Draw(drawParameter);
 
     // エフェクトの描画終了処理
@@ -150,60 +147,61 @@ void EffectManager::DrawEffect()
 
 
 // エフェクトの読み込み
-int EffectManager::LoadEffect(const char16_t *name)
+bool EffectManager::LoadEffect(const char16_t *_name, const std::string& _key)
 {
     //最大数オーバー
-    if (m_EffectIndex >= EFFECT_MAX)
-        return -1;
+    if (m_EffectMap.size() >= EFFECT_MAX) {
+        return false;
+    }
 
-    //現在のインデックスを保存
-    int index = m_EffectIndex;
-
-    //インデックスを進める
-    m_EffectIndex++;
+    // すでに何か読み込まれている
+    if (m_EffectMap[_key] != nullptr){
+        return false;
+    }
 
     //エフェクトの読込
-    m_EffectArray[index] = Effekseer::Effect::Create(m_EfkManager, name);
+    m_EffectMap[_key] = Effekseer::Effect::Create(m_EfkManager, _name);
 
     //読み込みに失敗した
-    if (m_EffectArray[index] == nullptr)
-        return -1;
-
-    return index;
+    if (m_EffectMap[_key] == nullptr) {
+        assert(false);
+        return false;
+    }
+    return true;
 }
 
 // エフェクトの再生
-void EffectManager::PlayEffect(int handle)
+int EffectManager::PlayEffect(const std::string& _key)
 {
-    m_HandleArray[handle] = m_EfkManager->Play(m_EffectArray[handle], 0, 0, 0);
+    return m_EfkManager->Play(m_EffectMap[_key], 0, 0, 0);
 }
 
 // エフェクトを停止
 void EffectManager::StopEffect(int handle)
 {
-    m_EfkManager->StopEffect(m_HandleArray[handle]);
+    m_EfkManager->StopEffect(handle);
 }
 
 // エフェクトの位置を設定
 void EffectManager::SetPositionEffect(int handle, float x, float y, float z)
 {
-    m_EfkManager->SetLocation(m_HandleArray[handle], x, y, z);
+    m_EfkManager->SetLocation(handle, x, y, z);
 }
 
 // エフェクトの回転（ラジアン）を設定
 void EffectManager::SetRotationEffect(int handle, float x, float y, float z)
 {
-    m_EfkManager->SetRotation(m_HandleArray[handle], x, y, z);
+    m_EfkManager->SetRotation(handle, x, y, z);
 }
 
 // エフェクトの大きさを設定
 void EffectManager::SetScaleEffect(int handle, float x, float y, float z)
 {
-    m_EfkManager->SetScale(m_HandleArray[handle], x, y, z);
+    m_EfkManager->SetScale(handle, x, y, z);
 }
 
 // エフェクトが再生中かどうかを確認
 bool EffectManager::IsPlayingEffect(int handle)
 {
-    return m_EfkManager->Exists(m_HandleArray[handle]);
+    return m_EfkManager->Exists(handle);
 }

@@ -17,6 +17,7 @@ class EnemyController :  public IComponent
 private:
 	std::shared_ptr<class Health>m_pHealthComp;	// 体力管理コンポーネント
 	std::shared_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
+	std::shared_ptr<class Collider> m_pColliderComp;	// コライダーコンポーネント
 	bool m_IsDead;
 	StateMachine<EnemyController> m_StateMachine;
 
