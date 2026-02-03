@@ -230,6 +230,7 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
     PLAYER_ANIMATION_ID animId  = pComp->get_AnimID();
     VEC3 moveVelocity           = pComp->get_MoveVelocity();
     bool isJump                 = pComp->get_IsJump();
+    bool isAngle                 = pComp->get_IsContinuousAngle();
     float jumpFoce              = pComp->get_JumpFoce();
     float gravity               = pComp->get_Gravity();
 
@@ -264,6 +265,10 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_DragFloat("##Gravity", 1, &gravity, 0.01f, 0.0f, 10.0f);
 
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ƒ}ƒEƒX‚É‡‚í‚¹‚ÄŒp‘±“I‚É‰ñ“]"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_CheckBox("##IsAngle", &isAngle);
+
         Master::m_pDebugger->DG_TreePop();
     }
 
@@ -272,6 +277,7 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
     pComp->set_AnimID(animId);
     pComp->set_JumpFoce(jumpFoce);
     pComp->set_Gravity(gravity);
+    pComp->set_IsContinuousAngle(isAngle);
 }
 
 
@@ -781,6 +787,7 @@ void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj
     // begin‚ÍInspectorWindow‚Ås‚Á‚Ä‚¢‚é
     float minDist = pComp->get_MinVertexDistance();
     float width = pComp->get_Width();
+    float time = pComp->get_DrawTime();
 
 
     // ƒm[ƒh
@@ -796,12 +803,16 @@ void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_DragFloat("##Radius", 1, &width, 0.1f, 1.0f, 5000.0f);
 
-        Master::m_pDebugger->DG_TreePop();
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"Ž‘±ŽžŠÔ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Time", 1, &time, 0.1f, 1.0f, 5000.0f);
 
+        Master::m_pDebugger->DG_TreePop();
     }
 
     // ”½‰f
     pComp->set_MinVertexDistance(minDist);
     pComp->set_Width(width);
+    pComp->set_DrawTime(time);
 }
 

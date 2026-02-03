@@ -44,7 +44,8 @@ DXApp::DXApp(uint32_t width, uint32_t height) :
     m_Width(width),
     m_Height(height),
     m_pRenderer(),
-    m_pGameManager()
+    m_pGameManager(),
+    m_IsClose(false)
 {
 
 }
@@ -298,7 +299,8 @@ int DXApp::MainLoop()
             // 現在時刻と前回更新時刻の差分が１６.６６msより大きければゲーム処理を実行する
             if (difference > 1000.0f / g_Fps)
             {
-                if (GetInput(GAME_CONFIG::PAUSE)) break;   // 終了ボタン
+                // 終了ボタンが押されるか、ゲームの終了フラグが立っているか
+                if (GetInput(GAME_CONFIG::PAUSE) || m_pGameManager->get_IsGameClose()) break;   
 
                 // 前回時刻を更新
                 lastTime = crntTime;

@@ -34,6 +34,8 @@ private:
 	std::shared_ptr<GameObject> m_pAnt[2];
 	std::shared_ptr<GameObject> m_pBomber[3];
 
+	bool m_IsClose;
+
 public:
 	SceneManager();
 	~SceneManager();
@@ -42,6 +44,10 @@ public:
 	void Update(RendererEngine& renderer);
 	void Draw(RendererEngine& renderer);
 	void Term(RendererEngine &renderer);
+
+	/* シーンの終了フラグ */
+	void OnSceneClose() { m_IsClose = true; }
+	bool get_IsSceneClose()const { return m_IsClose; }
 };
 
 // シーンマネージャはタイトルシーンの中身を知る必要はない

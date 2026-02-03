@@ -82,8 +82,8 @@ private:
     D3D11_VIEWPORT m_CrntViewPort;  // 現在のビューポート設定
     RenderParam m_RenderParam;  // 描画パラメータ
 
-    UINT m_ScreenWidht; // ウインドウ横幅
-    UINT m_Screenheight;// ウインドウ縦幅
+    UINT m_ScreenWidth; // ウインドウ横幅
+    UINT m_ScreenHeight;// ウインドウ縦幅
     HWND m_hWnd;        // ウインドウハンドル
 
     DWORD m_StartTime;
@@ -123,13 +123,21 @@ public:
     inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
     inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     inline HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
-    inline UINT get_ScreenWidth()const { return m_ScreenWidht; };                       
-    inline UINT get_ScreenHeight()const { return m_Screenheight; };
+    inline UINT get_ScreenWidth()const { return m_ScreenWidth; };                       
+    inline UINT get_ScreenHeight()const { return m_ScreenHeight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
     VECTOR3::VEC3 get_CameraPosition()const;                            // カメラの位置取得
     void set_CameraComponent(std::shared_ptr<class Camera3D> pCam);     // メインカメラの設定
     std::shared_ptr<class Camera3D> get_CameraComponent()const;     // メインカメラの設定
     D3D11_VIEWPORT get_CrntViewPort()const { return m_CrntViewPort; }   // ビューポートの取得
+    
+    /// <summary>
+    /// ワールド座標をスクリーン座標へ変換
+    /// </summary>
+    /// <param name="_world">ワールド座標</param>
+    /// <param name="_screen">スクリーン座標（出力先）</param>
+    /// <returns></returns>
+    bool WorldToScreen(const VECTOR3::VEC3 &_world, VECTOR2::VEC2 &_screen);
 
     /// <summary>
     ///  ビューポート設定

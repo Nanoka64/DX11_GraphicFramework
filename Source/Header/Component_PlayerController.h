@@ -123,6 +123,7 @@ class PlayerController : public IComponent
 {
 private:
 	std::shared_ptr<class Camera3D> m_pCameraComp;
+	std::shared_ptr<class Transform> m_pMyTransformComp;
     bool m_IsAnim;					// アニメーション中かどうか
     float m_MoveSpeed;				// 移動速度
 	bool m_IsJump;					// ジャンプしたか
@@ -137,6 +138,9 @@ private:
 	float m_Gravity = 0.18f;	// 重力
 
 	bool m_IsDead;
+	bool m_IsContinuousAngle ;	// マウスに合わせて継続的に回転させるか
+
+
 public:
 	PlayerController(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~PlayerController();
@@ -170,11 +174,26 @@ public:
 	void set_Gravity(float gv) { m_Gravity = gv; }
 	float get_Gravity()const { return m_Gravity; }
 
+	/* 視点に合わせて継続的に回転させるか */
+	void set_IsContinuousAngle(bool _flag) { m_IsContinuousAngle = _flag; };
+	bool get_IsContinuousAngle()const { return m_IsContinuousAngle; };
+
 private:
 	/// <summary>
 	/// アニメーションの変更
 	/// </summary>
 	/// <param name="id"></param>
 	void ChangeAnimation(PLAYER_ANIMATION_ID id);
+
+
+	/// <summary>
+	/// マウスに合わせて継続的に回転する
+	/// </summary>
+	void ContinuousAngle(const VECTOR3::VEC3 &_crntRot);
+
+	/// <summary>
+	/// 移動した際に回転する
+	/// </summary>
+	void MovedAngle(const VECTOR3::VEC3& _crntRot,const VECTOR3::VEC3& _velocity);
 };
 

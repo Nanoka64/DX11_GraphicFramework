@@ -10,7 +10,8 @@
 //* 引数：なし
 //*----------------------------------------------------------------------------------------
 GameManager::GameManager() :
-	m_pSceneManager(nullptr)
+	m_pSceneManager(nullptr),
+	m_IsClose(false)
 {
 }
 
@@ -54,6 +55,12 @@ bool GameManager::Init(RendererEngine& renderer)
 void GameManager::Update(RendererEngine& renderer)
 {
 	m_pSceneManager->Update(renderer);
+
+	// シーンが終了していたら終わらせる
+	if (m_pSceneManager->get_IsSceneClose())
+	{
+		m_IsClose = true;
+	}
 }
 
 

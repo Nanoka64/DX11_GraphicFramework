@@ -29,6 +29,7 @@ m_pCameraComp(),
 m_IsAnim(false),
 m_IsJump(false),
 m_IsDead(false),
+m_IsContinuousAngle(false),
 m_MoveVelocity(VEC3()),
 m_MoveSpeed(PLAYER_MOVE_SPEED),
 m_CrntAnimID(PLAYER_ANIMATION_ID::T_POSE),
@@ -109,11 +110,11 @@ void PlayerController::Update(RendererEngine &renderer)
 	auto pOwner = m_pOwner.lock();
 	VEC3 upVec = VEC3(0.0f, 1.0f, 0.0f);			// カメラから取得
 	float angle_H = m_pCameraComp->get_Angle_H();	// 水平アングル取得
-	auto pTransform = pOwner->get_Transform().lock();
+	m_pMyTransformComp = pOwner->get_Transform().lock();
 
 	VEC3 newPos = VEC3();				// 新しく入れる座標
-	VEC3 crntPos = pTransform->get_VEC3ToPos();			// 現在の座標
-	VEC3 crntRot = pTransform->get_VEC3ToRotateToRad();	// 現在の回転
+	VEC3 crntPos = m_pMyTransformComp->get_VEC3ToPos();			// 現在の座標
+	VEC3 crntRot = m_pMyTransformComp->get_VEC3ToRotateToRad();	// 現在の回転
 
 	// 待機アニメーション
 	ChangeAnimation(PLAYER_ANIMATION_ID::IDLE_LOOP);
@@ -142,9 +143,9 @@ void PlayerController::Update(RendererEngine &renderer)
 
 	// 移動 
 	if (GetInput(GAME_CONFIG::MOVE_FORWARD)) m_MoveVelocity += forward;
-	if (GetInput(GAME_CONFIG::MOVE_BACK)) m_MoveVelocity -= forward;
-	if (GetInput(GAME_CONFIG::MOVE_RIGHT)) m_MoveVelocity += right;
-	if (GetInput(GAME_CONFIG::MOVE_LEFT)) m_MoveVelocity -= right;
+	if (GetInput(GAME_CONFIG::MOVE_BACK))	 m_MoveVelocity -= forward;
+	if (GetInput(GAME_CONFIG::MOVE_RIGHT))	 m_MoveVelocity += right;
+	if (GetInput(GAME_CONFIG::MOVE_LEFT))	 m_MoveVelocity -= right;
 	m_MoveVelocity = m_MoveVelocity.Normalize();
 
 	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
@@ -204,7 +205,7 @@ void PlayerController::Update(RendererEngine &renderer)
 		}
 
 		// 移動ベクトルを加算
-		pTransform->set_Pos(newPos);
+		m_pMyTransformComp->set_Pos(newPos);
 
 		// 動いているならアニメーション
 		m_IsAnim = true;
@@ -228,19 +229,37 @@ void PlayerController::Update(RendererEngine &renderer)
 				ChangeAnimation(PLAYER_ANIMATION_ID::JOG_FWD_LOOP);
 			}
 
-			//目標の方向ベクトルから角度値を算出c
-			targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
-			targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
+			////目標の方向ベクトルから角度値を算出c
+			//targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
+			//targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
 
-			ang = targetAngle;
+			//ang = targetAngle;
 
-			// 線形補間
-			targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
-			pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+			//// 線形補間
+			//targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
+			////pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
 
+			if (!m_IsContinuousAngle)
+			{
+				MovedAngle(crntRot,m_MoveVelocity);
+			}
 		}
 	}
+
+	// 継続的に視点を変える
+	if (m_IsContinuousAngle)
+	{
+		ContinuousAngle(crntRot);
+	}
+
+	//POINT mousePos = Master::m_pInputManager->GetMousePos();
+	////目標の方向ベクトルから角度値を算出c
+	//float targetAngle = atan2(mousePos.x, mousePos.y);
+	//targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
+	//targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
 	//pTransform->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
+
+
 
 	Master::m_pDebugger->BeginDebugWindow("player");
 	Master::m_pDebugger->DG_TextValue("Ang : %f.1",ang);
@@ -294,4 +313,42 @@ void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 	// 現在のアニメーションIDセット
 	m_pAnimatorComp->set_AnimIndex(static_cast<int>(m_CrntAnimID));
 	m_pAnimatorComp->set_AnimTime(0.0f);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】マウスに合わせて継続的に回転する
+//*
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void PlayerController::ContinuousAngle(const VECTOR3::VEC3 &_crntRot)
+{
+	float angle_H = m_pCameraComp->get_Angle_H();	// 水平アングル取得
+
+	POINT mousePos = Master::m_pInputManager->GetMousePos();
+	
+	// マウスの座標から角度値を算出
+	float targetAngle = atan2(mousePos.x, mousePos.y);
+	targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
+
+	// 線形補間
+	targetAngle = Lerp(_crntRot.y, targetAngle, 0.5f);
+	m_pMyTransformComp->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】移動した際に回転する
+//*
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void PlayerController::MovedAngle(const VECTOR3::VEC3 &_crntRot, const VECTOR3::VEC3 &_velocity)
+{
+	//目標の方向ベクトルから角度値を算出c
+	float targetAngle = atan2(_velocity.x, _velocity.z);
+	targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
+
+	// 線形補間
+	targetAngle = Lerp(_crntRot.y, targetAngle, 0.5f);
+	m_pMyTransformComp->set_RotateToRad(0.0f, targetAngle, 0.0f);
 }

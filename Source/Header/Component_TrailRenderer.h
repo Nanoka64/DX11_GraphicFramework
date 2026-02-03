@@ -6,12 +6,12 @@
 /// </summary>
 struct TrailInfo
 {
-	VECTOR3::VEC3 _headPos;	// 先端位置
-	VECTOR3::VEC3 _tailPos;	// 末端位置
+	VECTOR3::VEC3 _pos;	// 位置
+	int _time;		// 時間で徐々に縮めていく
 
 	TrailInfo() :
-		_headPos(VECTOR3::VEC3()),
-		_tailPos(VECTOR3::VEC3())
+		_pos(VECTOR3::VEC3()),
+		_time(0)
 	{};
 };
 
@@ -22,18 +22,17 @@ struct TrailInfo
 //  ★継承：IComponent ★
 //
 // 【?】軌跡を描画する
-//		参考サイト：https://qiita.com/himego/items/c043ca5d58912b9a58d2#4%E3%81%BE%E3%81%A8%E3%82%81
+//	参考サイト：https://qiita.com/himego/items/c043ca5d58912b9a58d2#4%E3%81%BE%E3%81%A8%E3%82%81
 // 
 // ***************************************************************************************
 class TrailRenderer : public IComponent
 {
 private:
-	std::deque<VECTOR3::VEC3> m_TrailPosList;			 // 軌跡位置リスト
-	std::vector<VERTEX::VERTEX_Static> m_VertexList; // 頂点リスト
+	std::deque<TrailInfo> m_TrailInfoList; // 軌跡情報リスト
 	VECTOR3::VEC3 m_CrntTrailPos;	// 現在の軌跡位置
 	float m_Width;					// 幅
 	float m_MinVertexDistance;		// 頂点同士の距離（大きいほどカクカク）
-	float m_DrawTime;				// 表示時間
+	int m_DrawTime;					// 表示時間
 	const UINT MAX_TRAIL_VERTEX_NUM = 256;	// 最大長点数
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertesBuffer;// 頂点バッファ
 	bool m_IsView;								// カメラに向くようにするか（ビルボード）

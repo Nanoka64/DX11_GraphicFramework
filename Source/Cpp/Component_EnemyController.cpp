@@ -52,11 +52,9 @@ void EnemyController::Start(RendererEngine& renderer)
 
 	// コライダーの取得
 	m_pColliderComp = m_pOwner.lock()->get_Component<Collider>();
-	
 
-
-	 Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc","DeadExplosion");
-	 Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc","Hit");
+	Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc","DeadExplosion");
+	Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc","Hit");
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();

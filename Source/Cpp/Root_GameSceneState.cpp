@@ -71,7 +71,7 @@ void Root_GameSceneState::Draw(SceneManager *pOwner)
 {
 	if (m_CrntChildStateID == -1)return;
 
-	Master::m_pDirectWriteManager->DrawString("™ƒQ[ƒ€‚Å‚·", VECTOR2::VEC2(940, 540));
+	//Master::m_pDirectWriteManager->DrawString("™ƒQ[ƒ€‚Å‚·", VECTOR2::VEC2(940, 540));
 
 	m_pChildStateMap[m_CrntChildStateID]->Draw(pOwner);
 }

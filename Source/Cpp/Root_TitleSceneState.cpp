@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Root_TitleSceneState.h"
+#include "SceneManager.h"
 #include "GameObjectManager.h"
 #include "ResourceManager.h"
 #include "SceneStateEnums.h"
@@ -71,6 +72,14 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 	{
 		m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);
 		return SCENE_STATE::SCENE_STATE_GAME;
+	}
+
+	// 終了
+	if (newState == c_TITLE::c_GO_EXIT)
+	{
+		m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);
+		pOwner->OnSceneClose();	// シーンを閉じる
+		return SCENE_STATE::SCENE_STATE_TITLE;
 	}
 
 	// ステートが変更されていたら切り替え処理を行う

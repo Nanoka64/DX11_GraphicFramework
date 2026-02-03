@@ -12,6 +12,10 @@
 #include "GameObject.h"
 #include <string>
 
+using namespace VECTOR2;
+using namespace VECTOR3;
+using namespace VECTOR4;
+
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】コンストラクタ
@@ -38,8 +42,8 @@ RendererEngine::RendererEngine() :
     m_pRendererPipeline(nullptr),
     m_pClampShadow(nullptr),
     m_CrntRenderPass(RENDER_PASS::MAIN),
-    m_ScreenWidht(0),
-    m_Screenheight(0),
+    m_ScreenWidth(0),
+    m_ScreenHeight(0),
     m_hWnd(0),
     m_StartTime(0ul),
     m_CrntViewPort(),
@@ -95,8 +99,8 @@ bool RendererEngine::Init(HWND hWnd)
     {
         return false;
     }
-    m_ScreenWidht = client_rc.right - client_rc.left;
-    m_Screenheight = client_rc.bottom - client_rc.top;
+    m_ScreenWidth = client_rc.right - client_rc.left;
+    m_ScreenHeight = client_rc.bottom - client_rc.top;
 
 
     // 正常に初期化されたか
@@ -111,7 +115,7 @@ bool RendererEngine::Init(HWND hWnd)
     m_StartTime = timeGetTime();    // 開始時間取得
 
     // 投影変換行列の設定
-    SetupProjectionTransform(static_cast<float>(m_ScreenWidht), static_cast<float>(m_Screenheight), 100.0f, 1.0f, 10000.0f);
+    SetupProjectionTransform(static_cast<float>(m_ScreenWidth), static_cast<float>(m_ScreenHeight), 100.0f, 1.0f, 10000.0f);
 
 
 
@@ -279,8 +283,8 @@ HRESULT RendererEngine::InitDX11_SwapChain()
         DXGI_SWAP_CHAIN_DESC sd;
         ZeroMemory(&sd, sizeof(sd));    // メモリを０で埋める
         sd.BufferCount          = 2;                                // バッファ(裏画面)の数(絵を描くキャンパスの枚数)
-        sd.BufferDesc.Width     = m_ScreenWidht;                    // バッファの横幅
-        sd.BufferDesc.Height    = m_Screenheight;                   // バッファの縦幅
+        sd.BufferDesc.Width     = m_ScreenWidth;                    // バッファの横幅
+        sd.BufferDesc.Height    = m_ScreenHeight;                   // バッファの縦幅
         sd.BufferDesc.Format    = DXGI_FORMAT_B8G8R8A8_UNORM;       // カラーフォーマット
         sd.BufferDesc.RefreshRate.Numerator   = 60;                 // リフレッシュレートの分母
         sd.BufferDesc.RefreshRate.Denominator = 1;                  // リフレッシュレートの分子
@@ -356,8 +360,8 @@ HRESULT RendererEngine::InitDX11_RenderTargetView()
     //
     D3D11_VIEWPORT vp;
     ZeroMemory(&vp, sizeof(vp));
-    vp.Width = (FLOAT)m_ScreenWidht;   // 描画範囲の横幅       
-    vp.Height = (FLOAT)m_Screenheight; // 描画範囲の縦幅
+    vp.Width = (FLOAT)m_ScreenWidth;   // 描画範囲の横幅       
+    vp.Height = (FLOAT)m_ScreenHeight; // 描画範囲の縦幅
     vp.MinDepth = 0.0f;                // Ｚバッファの最小値
     vp.MaxDepth = 1.0f;                // Ｚバッファの最大値
     vp.TopLeftX = 0.0f;                // 描画範囲の左側Ｘ座標
@@ -381,8 +385,8 @@ HRESULT RendererEngine::InitDX11_ZBuff()
     // 深度ステンシル用テクスチャリソース作成
     D3D11_TEXTURE2D_DESC descDepth;                     // テクスチャの情報を入れる構造体
     ZeroMemory(&descDepth, sizeof(descDepth));          // メモリを0で埋める
-    descDepth.Width              = m_ScreenWidht;       // バックバッファと同じサイズ
-    descDepth.Height             = m_Screenheight;      //...
+    descDepth.Width              = m_ScreenWidth;       // バックバッファと同じサイズ
+    descDepth.Height             = m_ScreenHeight;      //...
     descDepth.MipLevels          = 1;                   // LOD処理の一つ0にすると限界まで作成する
     descDepth.ArraySize          = 1;                   // 基本的には１(キューブマップとかやる場合は使う)
     descDepth.SampleDesc.Count   = 1;                   // MSAA(マルチサンプリングエイリアス)の設定
@@ -580,6 +584,31 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pRenderTargetView);
     SAFE_RELEASE(m_pSwapChain);
     SAFE_RELEASE(m_pd3dDevice)
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】ワールド座標をスクリーン座標へ変換
+//*
+//* [引数]
+//* const &_world : ワールド座標
+//* &_screen：出力先
+//* [返値]
+//* true : 成功
+//* false : 失敗
+//*----------------------------------------------------------------------------------------
+bool RendererEngine::WorldToScreen(const VECTOR3::VEC3 &_world, VECTOR2::VEC2 &_screen)
+{
+    XMVECTOR worldVec = _world;
+    XMMATRIX viewProj = m_View * m_Proj;
+
+    // XMVector3TransformCoordは内部でw除算も行ってくれているらしい
+    XMVECTOR clipSpaceVec = XMVector3TransformCoord(worldVec, viewProj);
+
+    XMFLOAT3 ndc;
+    XMStoreFloat3(&ndc, clipSpaceVec);
+
+    return true;
 }
 
 //*---------------------------------------------------------------------------------------

@@ -12,7 +12,7 @@
 class c_Game_Play : public IState<SceneManager>
 {
 private:
-
+	std::shared_ptr<class GameObject>m_pBomber[3];
 
 public:
 	void OnEnter(SceneManager * pOwner) override;

@@ -87,11 +87,11 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 	m_Angle_H -= (float)lX * semsitivity;
 	m_Angle_V += (float)lY * semsitivity;
 
-	if (m_Angle_V >= 1.5f)
+	if (m_Angle_V >= 1.5f)	// ‰º‚ðŒü‚­
 	{
 		m_Angle_V = 1.5f;
 	}
-	if (m_Angle_V <= -1.0f)
+	if (m_Angle_V <= -1.0f)	// ã
 	{
 		m_Angle_V = -1.0f;
 	}
@@ -102,14 +102,15 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 		m_Angle_H += 6.28f;
 	}
 
-	if (GetInput(GAME_CONFIG::VIEW_UP))	// ã
+
+	if (GetInput(GAME_CONFIG::VIEW_UP))		// ã
 	{
 		m_Angle_V += CAMERA_ANGLE_SPEED;
 		if (m_Angle_V >= 1.5f) {
 			m_Angle_V = 1.5f;
 		}
 	}
-	if (GetInput(GAME_CONFIG::VIEW_DOWN))		// ‰º
+	if (GetInput(GAME_CONFIG::VIEW_DOWN))	// ‰º
 	{
 		m_Angle_V -= CAMERA_ANGLE_SPEED;
 		if (m_Angle_V <= -1.0f) {

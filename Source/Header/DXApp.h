@@ -40,6 +40,8 @@ private:
     class GameManager      *m_pGameManager; // ゲームマネージャー
     std::shared_ptr<class RendererEngine> m_pRenderer;// 描画管理
 
+    bool m_IsClose; // 終了フラグ
+
 public:
 
     /// <summary>
@@ -55,7 +57,10 @@ public:
     /// </summary>
     ~DXApp();                      
 
-
+    /// <summary>
+    /// 終了フラグを立てる
+    /// </summary>
+    void OnClose() { m_IsClose = true; };
 
     /// <summary>
     ///【?】DXAppの実行（エントリーポイント的な）

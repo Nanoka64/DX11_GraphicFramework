@@ -305,7 +305,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         for (int i = 0; i < 4; i++)
         {
             sprite.ObjTag = "TitleDescription01_Sp" + std::to_string(i + 1);
-            auto obj = MeshFactory::CreateSprite(sprite);
+            //auto obj = MeshFactory::CreateSprite(sprite);
         }
     }
 

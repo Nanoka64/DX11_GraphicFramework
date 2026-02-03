@@ -14,7 +14,7 @@ using namespace VERTEX;
 TrailRenderer::TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) 
 	: IComponent(pOwner, updateRank),
 	m_MinVertexDistance(100.0f),
-	m_DrawTime(10.0f),
+	m_DrawTime(60.0f),
 	m_Width(10.0f),
 	m_CrntTrailPos(VEC3()),
 	m_pCBMaterialDataSet(nullptr),
@@ -56,7 +56,6 @@ void TrailRenderer::Start(RendererEngine &renderer)
 		return;
 	}
 	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
-
 }
 
 
@@ -74,22 +73,33 @@ void TrailRenderer::Update(RendererEngine &renderer)
 
 	// 距離判定（最後にリストに入れた地点と比較）
 	float dist = 0.0f;
-	if (!m_TrailPosList.empty()) {
-		dist = VEC3::Distance(m_CrntTrailPos, m_TrailPosList.back());
+	if (!m_TrailInfoList.empty()) {
+		dist = VEC3::Distance(m_CrntTrailPos, m_TrailInfoList.back()._pos);
 	}
 	else {	// 初回用
 		dist = m_MinVertexDistance;
 	}
 	if (dist >= m_MinVertexDistance)
 	{
-		// 現在位置を追加
-		m_TrailPosList.push_back(m_CrntTrailPos);
+		TrailInfo trail;
+		trail._time = m_DrawTime;
+		trail._pos = m_CrntTrailPos;// 現在位置を追加
+
+		// 追加
+		m_TrailInfoList.push_back(trail);
+	}
+
+	// 存在時間を過ぎたら消していく
+	// 順番は変わらないはずなので、前の方から調べていく
+	if (m_TrailInfoList.front()._time <= 0)
+	{
+		m_TrailInfoList.pop_front();
 	}
 
 	// 頂点数が最大になったら後ろから消していく
-	if ((m_TrailPosList.size() * 2) >= MAX_TRAIL_VERTEX_NUM)
+	if ((m_TrailInfoList.size() * 2) >= MAX_TRAIL_VERTEX_NUM)
 	{
-		m_TrailPosList.pop_front();
+		m_TrailInfoList.pop_front();
 	}
 }
 
@@ -129,7 +139,7 @@ void TrailRenderer::Draw(RendererEngine &renderer)
 	Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
 
 	// 描画（頂点数は一つの座標につき左右で2つあるので2倍）
-	pContext->Draw(static_cast<UINT>(m_TrailPosList.size() * 2), 0);
+	pContext->Draw(static_cast<UINT>(m_TrailInfoList.size() * 2), 0);
 	Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 }
 
@@ -148,7 +158,7 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 
-	if (m_TrailPosList.empty() || m_TrailPosList.size() == 1)return;
+	if (m_TrailInfoList.empty() || m_TrailInfoList.size() == 1)return;
 
 	// GPUメモリにアクセス
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -158,18 +168,23 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 	VEC3 cameraPos = renderer.get_CameraPosition();
 
 	VERTEX_Static *pVertices = (VERTEX_Static *)mappedResource.pData;
-	for (int i = 0; i < m_TrailPosList.size(); i++)
+	for (int i = 0; i < m_TrailInfoList.size(); i++)
 	{
-		VEC3 tail = m_TrailPosList[i];	// 末尾（今作るのはこれ）
-		VEC3 head = VEC3();				// 先頭
+		VEC3 tail = m_TrailInfoList[i]._pos;// 末尾（今作るのはこれ）
+		VEC3 head = VEC3();					// 先頭
+
+		m_TrailInfoList[i]._time--;
+
+		// 時間の比率を求める
+		float w_t = static_cast<float>(m_TrailInfoList[i]._time) / static_cast<float>(m_DrawTime);
 
 		// 先頭位置を取得
-		if (i < (m_TrailPosList.size() - 1)){
-			head = m_TrailPosList[i + 1];
+		if (i < (m_TrailInfoList.size() - 1)){
+			head = m_TrailInfoList[i + 1]._pos;
 		}
 		else{
 			// 先頭位置がない場合、前の情報から仮想の位置を作る
-			VEC3 prev = m_TrailPosList[i - 1];
+			VEC3 prev = m_TrailInfoList[i - 1]._pos;
 			head = head + (tail - prev);
 		}
 
@@ -182,8 +197,8 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 		// メッシュの広がる方向ベクトルを作る
 		VEC3 dir = VEC3::Cross(headDir, viewDir);
 
-		VEC3 r_NewPos = tail + (dir * m_Width);
-		VEC3 l_NewPos = tail + (dir * -m_Width);
+		VEC3 r_NewPos = tail + (dir * (m_Width * w_t));
+		VEC3 l_NewPos = tail + (dir * (-m_Width * w_t));
 
 		VERTEX_Static r_V = VERTEX_Static();
 		VERTEX_Static l_V = VERTEX_Static();
@@ -198,18 +213,19 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 		r_V.color.AllOne();
 		l_V.color.AllOne();
 
-		r_V.uv = VEC2(1.0f, (float)i / (float)(m_TrailPosList.size() - 1));
-		l_V.uv = VEC2(0.0f, (float)i / (float)(m_TrailPosList.size() - 1));
+		r_V.uv = VEC2(1.0f, (float)i / (float)(m_TrailInfoList.size() - 1));
+		l_V.uv = VEC2(0.0f, (float)i / (float)(m_TrailInfoList.size() - 1));
 
 		r_V.normal.AllOne();
 		l_V.normal.AllOne();
 		
 		pVertices[i * 2 + 0] = r_V;
 		pVertices[i * 2 + 1] = l_V;
+
 	}
 
 	// データのコピー 
-	memcpy(mappedResource.pData, pVertices, sizeof(VERTEX_Static) * m_TrailPosList.size() * 2);
+	memcpy(mappedResource.pData, pVertices, sizeof(VERTEX_Static) * m_TrailInfoList.size() * 2);
 
 	// アクセス終了
 	pContext->Unmap(m_pVertesBuffer.Get(), 0);
@@ -244,8 +260,8 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	m_pCBMaterialDataSet->Data.Diffuse = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.EmissivePower = 0.0f;
-	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(1.0f, 0.0f, 0.0f);
+	m_pCBMaterialDataSet->Data.EmissivePower = 5.0f;
+	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
 	m_pCBMaterialDataSet->Data.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_pCBMaterialDataSet->Data.SpecularPower = 150.0f;
 

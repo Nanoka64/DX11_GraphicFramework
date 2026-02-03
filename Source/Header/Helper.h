@@ -320,6 +320,7 @@ namespace Tool
         return ret;
     }
 
+
     /// <summary>
     /// U8•¶š—ñ‚©‚ç’Êí‚Ì•¶š—ñ‚Ö•ÏŠ·
     /// </summary>

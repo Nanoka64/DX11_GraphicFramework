@@ -128,7 +128,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 50; i++)
         {
             model.ObjTag = "Ant_" + std::to_string(i + 1);   // ƒ^ƒO
 
@@ -148,7 +148,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             pos.z = Tool::RandRange(-1000.0, 1000.0);
             
             VEC3 rot = VEC3();
-            rot.y = Tool::RandRange(-180.0f, 180.0f);
+            rot.y = Tool::RandRange(-360.0f, 360.0f);
 
             transform->set_Pos(pos);
             transform->set_RotateToDeg(rot);

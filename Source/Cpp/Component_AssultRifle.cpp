@@ -103,9 +103,11 @@ void AssultRifle::Update(RendererEngine &renderer)
         collider->set_Size(VEC3(2.0f, 2.0f, 2.0f));
         collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
 
+        // ‹OÕ
         auto trail = obj->add_Component<TrailRenderer>();
         trail->set_Width(1.0f);
-        trail->set_MinVertexDistance(0.0f);
+        trail->set_MinVertexDistance(5.0f);
+        trail->set_DrawTime(5);
 
         // ƒRƒ‰ƒCƒ_[‚Ì“o˜^
         Master::m_pCollisionManager->RegisterCollider(collider);
