@@ -217,7 +217,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         obj->get_Transform().lock()->set_Parent(pPlayerObj->get_Transform());
         obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985f, -0.985f, -0.985f));
         obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0.0f, 0.0f, 90.0f));
-        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0.0f, 190.0f, 0.0f));
+        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0.0f, 150.0f, 0.0f));
     }
 
     /* ディレクションライトの生成(Cubuで分かりやすく) */

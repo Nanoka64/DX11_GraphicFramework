@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 #include "IComponent.h"
 
 
@@ -116,3 +118,4 @@ public:
     void Release(); // ‰ð•ú
 };
 
+#endif

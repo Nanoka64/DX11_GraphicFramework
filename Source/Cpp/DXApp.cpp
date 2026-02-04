@@ -346,24 +346,10 @@ int DXApp::MainLoop()
 
                 // エフェクト更新
                 Master::m_pEffectManager->UpdateEffect(*m_pRenderer);
-                static int counter = 0;
-                counter++;
-                if (counter % 120 == 0)
-                {
-                    //Master::m_pEffectManager->PlayEffect(1);
-                }
-
-                if (counter % 120 == 119)
-                {
-                    //    Master::m_pEffectManager->StopEffect(0);
-                }
-
                 Master::m_pEffectManager->DrawEffect();
-
 
                 // ImGUI描画終了
                 Master::m_pDebugger->EndFrame();
-
 
                 // 描画の終了
                 m_pRenderer->EndRender();

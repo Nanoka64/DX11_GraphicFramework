@@ -16,7 +16,8 @@ using namespace VECTOR2;
 using namespace DirectX;
 using namespace Tool;
 
-#define PLAYER_MOVE_SPEED  5.0f		// プレイヤーの移動スピード
+constexpr float MOVE_SPEED = 5.0f;		// プレイヤーの移動速度
+constexpr int ROLLING_DURATION = 60;	// ローリング時間
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -29,11 +30,14 @@ m_pCameraComp(),
 m_IsAnim(false),
 m_IsJump(false),
 m_IsDead(false),
-m_IsContinuousAngle(false),
+m_IsRolling(false),
+m_IsContinuousAngle(true),
 m_MoveVelocity(VEC3()),
-m_MoveSpeed(PLAYER_MOVE_SPEED),
+m_MoveSpeed(MOVE_SPEED),
 m_CrntAnimID(PLAYER_ANIMATION_ID::T_POSE),
-m_JumpVelocity(0.0f)
+m_JumpVelocity(0.0f),
+m_RollingCounter(0),
+m_RollingDuration(ROLLING_DURATION)
 {
 	this->set_Tag("PlayerController");
 }
@@ -75,17 +79,18 @@ void PlayerController::Start(RendererEngine& renderer)
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
-	m_pHealthComp->set_MaxHP(200.0f);
-	m_pHealthComp->set_CrntHP(200.0f);
+	m_pHealthComp.lock()->set_MaxHP(200.0f);
+	m_pHealthComp.lock()->set_CrntHP(200.0f);
+
 	// 被弾時のコールバック
-	m_pHealthComp->RegisterOnDamage(
+	m_pHealthComp.lock()->RegisterOnDamage(
 		[this] (float _damage)
 		{
 			ChangeAnimation(PLAYER_ANIMATION_ID::HIT_HEAD); 
 		}
 	);	
 	// 死亡時のコールバック
-	m_pHealthComp->RegisterOnDead(
+	m_pHealthComp.lock()->RegisterOnDead(
 		[this] 
 		{
 			m_IsDead = true;
@@ -106,15 +111,22 @@ void PlayerController::Start(RendererEngine& renderer)
 void PlayerController::Update(RendererEngine &renderer)
 {
 	if (m_IsDead)return;
+	
+	// ローリングの処理のみ行って返す
+	if (m_IsRolling)
+	{
+		RollingUpdate();
+		return;
+	}
 
 	auto pOwner = m_pOwner.lock();
-	VEC3 upVec = VEC3(0.0f, 1.0f, 0.0f);			// カメラから取得
-	float angle_H = m_pCameraComp->get_Angle_H();	// 水平アングル取得
+	VEC3 upVec = VEC3(0.0f, 1.0f, 0.0f);					// カメラから取得
+	float angle_H = m_pCameraComp.lock()->get_Angle_H();	// 水平アングル取得
 	m_pMyTransformComp = pOwner->get_Transform().lock();
 
 	VEC3 newPos = VEC3();				// 新しく入れる座標
-	VEC3 crntPos = m_pMyTransformComp->get_VEC3ToPos();			// 現在の座標
-	VEC3 crntRot = m_pMyTransformComp->get_VEC3ToRotateToRad();	// 現在の回転
+	VEC3 crntPos = m_pMyTransformComp.lock()->get_VEC3ToPos();			// 現在の座標
+	VEC3 crntRot = m_pMyTransformComp.lock()->get_VEC3ToRotateToRad();	// 現在の回転
 
 	// 待機アニメーション
 	ChangeAnimation(PLAYER_ANIMATION_ID::IDLE_LOOP);
@@ -141,22 +153,50 @@ void PlayerController::Update(RendererEngine &renderer)
 	m_MoveVelocity.x = 0.0f;
 	m_MoveVelocity.z = 0.0f;
 
-	// 移動 
-	if (GetInput(GAME_CONFIG::MOVE_FORWARD)) m_MoveVelocity += forward;
-	if (GetInput(GAME_CONFIG::MOVE_BACK))	 m_MoveVelocity -= forward;
-	if (GetInput(GAME_CONFIG::MOVE_RIGHT))	 m_MoveVelocity += right;
-	if (GetInput(GAME_CONFIG::MOVE_LEFT))	 m_MoveVelocity -= right;
+	//-----------------------------------------------------------------------------
+	// ■ 移動入力 / ジャンプ時はローリングさせない
+	//-----------------------------------------------------------------------------
+	if (GetInput(GAME_CONFIG::MOVE_FORWARD))	// 前進
+	{
+		m_MoveVelocity += forward;
+	}
+	if (GetInput(GAME_CONFIG::MOVE_BACK))		// 後退
+	{
+		m_MoveVelocity -= forward;
+	}
+	if (GetInput(GAME_CONFIG::MOVE_RIGHT))		// 右へ
+	{ 
+		m_MoveVelocity += right;
+
+		// 右ローリング
+		if (GetInputDown(GAME_CONFIG::MOVE_JUMP) && m_IsJump == false)	
+		{
+			m_MoveVelocity = m_MoveVelocity.Normalize();
+			m_IsRolling = true;
+			return;
+		}
+	}
+	if (GetInput(GAME_CONFIG::MOVE_LEFT))		// 左へ
+	{
+		m_MoveVelocity -= right;
+
+		// 左ローリング
+		if (GetInputDown(GAME_CONFIG::MOVE_JUMP) && m_IsJump == false)
+		{
+			m_MoveVelocity = m_MoveVelocity.Normalize();
+			m_IsRolling = true;
+			return;
+		}
+	}
+	
+	// 正規化
 	m_MoveVelocity = m_MoveVelocity.Normalize();
-
-	//if (GetInput(CONFIG_INPUT::JUMP))   velocity = velocity + upVec;
-	//if (GetInput(CONFIG_INPUT::C))		velocity = velocity - upVec;
-
-	//float flightDuration = (m_JumpForce * 2) / -m_Gravity;	// 滞空時間
 
 	//-----------------------------------------------------------------------------
 	// ■ ジャンプ入力受付 / ジャンプ中処理
 	//-----------------------------------------------------------------------------
-	if (m_IsJump == false)
+	// ジャンプ状態ではない、かつ、ローリング中でもない
+	if (m_IsJump == false && m_IsRolling == false)
 	{
 		if (GetInputDown(GAME_CONFIG::MOVE_JUMP))
 		{
@@ -188,7 +228,6 @@ void PlayerController::Update(RendererEngine &renderer)
 	{
 		//m_MoveVelocity = m_MoveVelocity.Normalize();
 
-
 		// 移動計算
 		newPos = (crntPos + (m_MoveVelocity * m_MoveSpeed));
 
@@ -205,7 +244,7 @@ void PlayerController::Update(RendererEngine &renderer)
 		}
 
 		// 移動ベクトルを加算
-		m_pMyTransformComp->set_Pos(newPos);
+		m_pMyTransformComp.lock()->set_Pos(newPos);
 
 		// 動いているならアニメーション
 		m_IsAnim = true;
@@ -281,6 +320,54 @@ void PlayerController::Draw(RendererEngine& renderer)
 }
 
 //*---------------------------------------------------------------------------------------
+//*【?】ローリング処理
+//*		目標までの移動ベクトルが必要		
+//*		別に目標に到達できなくていい
+//*		時間で終わらせる
+//* 
+//* 
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void PlayerController::RollingUpdate()
+{
+	// ローリングアニメーションに
+	ChangeAnimation(PLAYER_ANIMATION_ID::ROLL);
+
+	auto pOwner = m_pOwner.lock();
+	m_pMyTransformComp = pOwner->get_Transform().lock();
+
+	VEC3 crntRot = m_pMyTransformComp.lock()->get_VEC3ToRotateToRad();
+	VEC3 crntPos = m_pMyTransformComp.lock()->get_VEC3ToPos();	// 現在の位置
+	VEC3 newPos = VEC3();	// 新しい位置
+
+	// 0.0 ～ 1.0 に正規化
+	float t = std::min(
+		static_cast<float>( m_RollingCounter) / static_cast<float>(m_RollingDuration), 
+		1.0f); 
+
+	// イージング関数でカウンタに合わせて速度を落としていく
+	float factor = Tool::Easing::EaseOutCubic(t);
+	newPos = crntPos + (m_MoveVelocity * (10.0f * factor));
+
+	// 時間で止める
+	if (m_RollingCounter >= m_RollingDuration)
+	{
+		/* 移動ベクトルとかを元に戻す */
+		m_IsRolling = false;
+		m_RollingCounter = 0;
+	}
+	
+	m_pMyTransformComp.lock()->set_Pos(newPos);
+
+	// ローリング方向に合わせて回転させる
+	MovedAngle(crntRot,m_MoveVelocity);
+
+	m_RollingCounter++;
+}
+
+
+//*---------------------------------------------------------------------------------------
 //*【?】衝突処理
 //*
 //* [引数]
@@ -293,7 +380,7 @@ void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 {
 	if (other.get_HitObject().lock()->get_Tag() == "Ant_1")
 	{
-		m_pHealthComp->TakeDamage(1.0f);
+		m_pHealthComp.lock()->TakeDamage(1.0f);
 	}
 }
 
@@ -306,13 +393,18 @@ void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 	}
 
 	// ひとつ前のアニメーションIDセット
-	m_pAnimatorComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
+	m_pAnimatorComp.lock()->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
 
 	m_CrntAnimID = id;
 
 	// 現在のアニメーションIDセット
-	m_pAnimatorComp->set_AnimIndex(static_cast<int>(m_CrntAnimID));
-	m_pAnimatorComp->set_AnimTime(0.0f);
+	m_pAnimatorComp.lock()->set_AnimIndex(static_cast<int>(m_CrntAnimID));
+
+	if (m_CrntAnimID == PLAYER_ANIMATION_ID::ROLL)
+	{
+		m_pAnimatorComp.lock()->set_AnimProcTime(0.0f);
+		m_pAnimatorComp.lock()->set_ShadowAnimProcTime(0.0f);
+	}
 }
 
 //*---------------------------------------------------------------------------------------
@@ -323,21 +415,16 @@ void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 //*----------------------------------------------------------------------------------------
 void PlayerController::ContinuousAngle(const VECTOR3::VEC3 &_crntRot)
 {
-	float angle_H = m_pCameraComp->get_Angle_H();	// 水平アングル取得
+	float angle_H = m_pCameraComp.lock()->get_Angle_H();	// 水平アングル取得
+	float angle_V = m_pCameraComp.lock()->get_Angle_V();	// 水平アングル取得
 
 	POINT mousePos = Master::m_pInputManager->GetMousePos();
-	
-	// マウスの座標から角度値を算出
-	float targetAngle = atan2(mousePos.x, mousePos.y);
-	targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
 
-	// 線形補間
-	targetAngle = Lerp(_crntRot.y, targetAngle, 0.5f);
-	m_pMyTransformComp->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
+	m_pMyTransformComp.lock()->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
 }
 
 //*---------------------------------------------------------------------------------------
-//*【?】移動した際に回転する
+//*【?】移動方向に回転する
 //*
 //* [引数]なし
 //* [返値]なし
@@ -350,5 +437,5 @@ void PlayerController::MovedAngle(const VECTOR3::VEC3 &_crntRot, const VECTOR3::
 
 	// 線形補間
 	targetAngle = Lerp(_crntRot.y, targetAngle, 0.5f);
-	m_pMyTransformComp->set_RotateToRad(0.0f, targetAngle, 0.0f);
+	m_pMyTransformComp.lock()->set_RotateToRad(0.0f, targetAngle, 0.0f);
 }

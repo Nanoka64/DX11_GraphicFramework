@@ -25,8 +25,6 @@ void Root_TitleSceneState::OnEnter(SceneManager* pOwner)
 
 	// Å‰‚Íƒ[ƒh
 	this->SetInitChildState(pOwner, c_TITLE::c_TITLE_LOAD_PROCESS);
-
-
 }
 
 

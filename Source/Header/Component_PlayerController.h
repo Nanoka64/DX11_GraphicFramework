@@ -122,16 +122,17 @@ const std::string g_PlayerAnimationNames[] =
 class PlayerController : public IComponent
 {
 private:
-	std::shared_ptr<class Camera3D> m_pCameraComp;
-	std::shared_ptr<class Transform> m_pMyTransformComp;
+	std::weak_ptr<class Camera3D> m_pCameraComp;
+	std::weak_ptr<class Transform> m_pMyTransformComp;
+	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
+	std::weak_ptr<class Health> m_pHealthComp;					// 体力管理コンポーネント
     bool m_IsAnim;					// アニメーション中かどうか
     float m_MoveSpeed;				// 移動速度
 	bool m_IsJump;					// ジャンプしたか
 	VECTOR3::VEC3 m_MoveVelocity;	// 移動
 	float m_JumpVelocity;			// ジャンプベクトル
 	PLAYER_ANIMATION_ID m_CrntAnimID;	// 現在のアニメーションID
-	std::shared_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
-	std::shared_ptr<class Health> m_pHealthComp;	// 体力管理コンポーネント
+	bool m_IsRolling;
 
 	// リジッドボディコンポーネントを作って移す
 	float m_JumpForce = 3.0f;	// ジャンプ力
@@ -140,6 +141,8 @@ private:
 	bool m_IsDead;
 	bool m_IsContinuousAngle ;	// マウスに合わせて継続的に回転させるか
 
+	int m_RollingDuration;				// ローリングの持続時間	
+	int m_RollingCounter;				// ローリング用のカウンタ
 
 public:
 	PlayerController(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
@@ -149,7 +152,10 @@ public:
 	void Update(RendererEngine& renderer) override;	// 更新処理
 	void Draw(RendererEngine& renderer)override;		// 描画処理
 
+	void RollingUpdate();
+
 	void OnCollisionEnter(const class CollisionInfo &other)override;
+
 
 	/* 移動速度 */
     float get_MoveSpeed() const { return m_MoveSpeed; }
@@ -192,7 +198,7 @@ private:
 	void ContinuousAngle(const VECTOR3::VEC3 &_crntRot);
 
 	/// <summary>
-	/// 移動した際に回転する
+	/// 移動方向に回転する
 	/// </summary>
 	void MovedAngle(const VECTOR3::VEC3& _crntRot,const VECTOR3::VEC3& _velocity);
 };

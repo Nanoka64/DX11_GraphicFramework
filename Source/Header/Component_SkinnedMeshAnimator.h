@@ -53,10 +53,12 @@ public:
 	void BoneTransformsUpdate(RendererEngine &renderer, float timeInSeconds, int animIdx);	// ボーンの更新
 	void set_MeshResource(std::weak_ptr<class ModelMeshResource> meshResource);	// リソースの設定
 
-	void set_AnimTime(float t) { m_AnimationTime = t; };			// アニメーション再生時間の設定
-	void set_AnimIndex(int idx) { m_CurrentAnimIndex = idx; };		// アニメーションインデックスの設定
-	void set_PrevAnimIndex(int idx) { m_PrevAnimIndex = idx; };		// 前のアニメーションインデックスとして設定
-	void set_IsAnim(bool f) { m_IsAnimationFlag = f; };				// アニメーションフラグ
+	void set_AnimTime(float t) { m_AnimationTime = t; };				// アニメーション再生時間の設定
+	void set_AnimProcTime(float t) { m_AnimProcTime = t; };				// アニメーション更新用カウンタの設定
+	void set_ShadowAnimProcTime(float t) { m_ShadowAnimProcTime = t; };	// アニメーション更新用カウンタの設定
+	void set_AnimIndex(int idx) { m_CurrentAnimIndex = idx; };			// アニメーションインデックスの設定
+	void set_PrevAnimIndex(int idx) { m_PrevAnimIndex = idx; };			// 前のアニメーションインデックスとして設定
+	void set_IsAnim(bool f) { m_IsAnimationFlag = f; };					// アニメーションフラグ
 
 	float get_AnimProcTime()const { return m_AnimProcTime; }
 	float get_ShadowAnimProcTime()const { return m_ShadowAnimProcTime; }

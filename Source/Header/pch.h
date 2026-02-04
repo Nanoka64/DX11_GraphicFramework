@@ -78,6 +78,7 @@
 #include <string>   // 文字列
 #include <vector>   // 動的配列
 #include <deque>    // 動的配列（両端の要素の追加削除が得意らしい）
+#include <algorithm>
 
 
 /* 定数 */

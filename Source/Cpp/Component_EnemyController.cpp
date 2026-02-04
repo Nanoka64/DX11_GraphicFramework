@@ -86,7 +86,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
 			int handle = Master::m_pEffectManager->PlayEffect("DeadExplosion");
-			Master::m_pEffectManager->SetScaleEffect(handle,10.0f,10.0f,10.0f);
+			Master::m_pEffectManager->SetScaleEffect(handle,15.0f, 15.0f, 15.0f);
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
 			m_IsDead = true;
 			m_IsAnim = false;

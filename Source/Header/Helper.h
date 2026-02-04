@@ -108,6 +108,11 @@ namespace Tool
         inline float InSine(float t) {
             return 1.0f - cosf((t * DirectX::XM_PI) / 2.0f);
         }
+
+        // ヒュッ...シュタッって感じ
+        inline float EaseOutCubic(float t) {
+            return pow(1.0f - t, 2.0f);
+        }
     }
 
     //-----------------------------------------

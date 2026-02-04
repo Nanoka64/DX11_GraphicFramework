@@ -10,6 +10,7 @@
 #include "ResourceManager.h"
 #include "Component_BoxCollider.h"
 #include "Component_TrailRenderer.h"
+#include "Component_3DCamera.h"
 
 using namespace GIGA_Engine;
 using namespace Input;
@@ -59,9 +60,16 @@ void AssultRifle::Start(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void AssultRifle::Update(RendererEngine &renderer)
 {
-	auto transform = m_pOwner.lock()->get_Transform().lock();
+    float c_AngleH = renderer.get_CameraComponent()->get_Angle_H();
+    float c_AngleV = renderer.get_CameraComponent()->get_Angle_V();
 
-	//if (GetInputHoldRepeat(CONFIG_INPUT::C,2,2))
+	auto transform = m_pOwner.lock()->get_Transform().lock();
+    
+    // 武器を回転させる
+    // 水平方向はプレイヤーに合わせているので垂直方向のみ、カメラの回転を使う。
+    transform->set_RotateToRad(VEC3(c_AngleV * -1,0.0f, 0.0f));
+
+    // 左クリックで発射
 	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
     {
         // マテリアル取得
@@ -89,10 +97,13 @@ void AssultRifle::Update(RendererEngine &renderer)
         // バレットコンポーネントの追加
         auto bulletComp = obj->add_Component<Bullet>();
         auto bullet_transform = obj->get_Transform().lock();
-
-        VEC3 pos = transform->get_WorldVEC3ToPos();
-        VEC3 rad = transform->get_Parent().lock()->get_VEC3ToRotateToRad();
         
+        VEC3 pos = transform->get_WorldVEC3ToPos();
+        VEC3 rad;
+        rad.x = c_AngleV * -1;
+        rad.y = (c_AngleH - 1.57) * -1;
+        rad.z = 0.0f;
+
         // 親の向きと位置を参照
         bullet_transform->set_Pos(pos);
         bullet_transform->set_RotateToRad(rad);
@@ -105,7 +116,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 
         // 軌跡
         auto trail = obj->add_Component<TrailRenderer>();
-        trail->set_Width(1.0f);
+        trail->set_Width(2.0f);
         trail->set_MinVertexDistance(5.0f);
         trail->set_DrawTime(5);
 
