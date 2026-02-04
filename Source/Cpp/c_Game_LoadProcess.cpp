@@ -143,9 +143,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             obj->add_Component<Health>();
 
             VEC3 pos = VEC3();
-            pos.x = Tool::RandRange(-1000.0, 1000.0);
+            pos.x = Tool::RandRange(-700.0, 700.0);
             pos.y = 15.0f;
-            pos.z = Tool::RandRange(-1000.0, 1000.0);
+            pos.z = Tool::RandRange(-700.0, 700.0);
             
             VEC3 rot = VEC3();
             rot.y = Tool::RandRange(-360.0f, 360.0f);

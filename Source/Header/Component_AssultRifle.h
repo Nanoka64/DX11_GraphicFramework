@@ -14,6 +14,7 @@ class AssultRifle : public IComponent
 {
 private:
 	std::shared_ptr<GameObject> m_pBulletObject;	// 弾となるオブジェクト
+	std::weak_ptr<class LineRenderer> m_pLineRendererComp;	// レーザー用のライン
 
 public:
 	AssultRifle(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

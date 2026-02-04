@@ -10,6 +10,7 @@
 #include "Component_3DCamera.h"
 #include "Component_Transform.h"
 #include "Component_TrailRenderer.h"
+#include "Component_LineRenderer.h"
 #include "Component_DirectionalLight.h"
 #include "Component_AssultRifle.h"
 #include "Component_Health.h"
@@ -171,7 +172,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
         //pPlayerObj->add_Component<PlayerController>(1);
-        pPlayerObj->get_Transform().lock()->set_Pos(0.0f, 0.0f, -1000.0f);
+        pPlayerObj->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f);
         //pPlayerObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
         auto trail = pPlayerObj->add_Component<TrailRenderer>();
@@ -212,12 +213,13 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         auto obj = MeshFactory::CreateModel(model);
 
         obj->add_Component<AssultRifle>();
+        obj->add_Component<LineRenderer>();
 
         // プレイヤーを親に設定
         obj->get_Transform().lock()->set_Parent(pPlayerObj->get_Transform());
         obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985f, -0.985f, -0.985f));
         obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0.0f, 0.0f, 90.0f));
-        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(0.0f, 150.0f, 0.0f));
+        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(-40.0f, 150.0f, 0.0f));
     }
 
     /* ディレクションライトの生成(Cubuで分かりやすく) */
@@ -248,7 +250,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 
         obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 1000.0f, -1000.0f));
         obj->get_Transform().lock()->set_Scale(VEC3(30.0, 30.0, 80.0));
-        obj->get_Transform().lock()->set_RotateToRad(VEC3(0.85f, 1.6f, 0.0f));
+        obj->get_Transform().lock()->set_RotateToDeg(VEC3(15.0f, 150.0f, 0.0f));
     }
 
     /* タイトル画面背景用スプライト */

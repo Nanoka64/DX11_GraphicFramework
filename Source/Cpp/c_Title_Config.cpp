@@ -58,4 +58,5 @@ int c_Title_Config::Update(SceneManager *pOwner)
 void c_Title_Config::Draw(SceneManager *pOwner)
 {
 	Master::m_pDirectWriteManager->DrawString("™Ý’è", VECTOR2::VEC2(40.0f, 500.0f));
+	Master::m_pDirectWriteManager->DrawString("‚Ü‚¾‰½‚à‚ ‚è‚Ü‚¹‚ñ", VECTOR2::VEC2(600.0f, 500.0f));
 }

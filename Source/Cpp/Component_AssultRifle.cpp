@@ -11,6 +11,7 @@
 #include "Component_BoxCollider.h"
 #include "Component_TrailRenderer.h"
 #include "Component_3DCamera.h"
+#include "Component_LineRenderer.h"
 
 using namespace GIGA_Engine;
 using namespace Input;
@@ -47,6 +48,10 @@ AssultRifle::~AssultRifle()
 //*----------------------------------------------------------------------------------------
 void AssultRifle::Start(RendererEngine &renderer)
 {
+    // 照準レーザー用
+    m_pLineRendererComp = m_pOwner.lock()->get_Component<LineRenderer>();
+    m_pLineRendererComp.lock()->set_Length(100.0f);
+    m_pLineRendererComp.lock()->set_Width(2.0f);
 
 }
 
@@ -64,10 +69,17 @@ void AssultRifle::Update(RendererEngine &renderer)
     float c_AngleV = renderer.get_CameraComponent()->get_Angle_V();
 
 	auto transform = m_pOwner.lock()->get_Transform().lock();
-    
+    VEC3 pos = transform->get_WorldVEC3ToPos();
+
     // 武器を回転させる
     // 水平方向はプレイヤーに合わせているので垂直方向のみ、カメラの回転を使う。
     transform->set_RotateToRad(VEC3(c_AngleV * -1,0.0f, 0.0f));
+
+
+    VEC3 dir = transform->get_VEC3ToRotateToRad();
+
+    m_pLineRendererComp.lock()->set_Dir(dir);
+    m_pLineRendererComp.lock()->set_StartPos(pos);
 
     // 左クリックで発射
 	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
@@ -98,11 +110,8 @@ void AssultRifle::Update(RendererEngine &renderer)
         auto bulletComp = obj->add_Component<Bullet>();
         auto bullet_transform = obj->get_Transform().lock();
         
-        VEC3 pos = transform->get_WorldVEC3ToPos();
-        VEC3 rad;
-        rad.x = c_AngleV * -1;
-        rad.y = (c_AngleH - 1.57) * -1;
-        rad.z = 0.0f;
+
+
 
         // 親の向きと位置を参照
         bullet_transform->set_Pos(pos);

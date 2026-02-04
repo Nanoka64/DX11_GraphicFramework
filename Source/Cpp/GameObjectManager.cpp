@@ -197,14 +197,14 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
     VEC3 camPos = renderer.get_CameraPosition();    // カメラ座標
     
     // カメラ座標から遠い順にソートする
-    //m_pTransparent_ObjectList.sort(
-    //    [camPos](const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
-    //    {
-    //        float a_CamDist = VEC3::DistanceSq(a->get_Transform().lock()->get_VEC3ToPos(), camPos);
-    //        float b_CamDist = VEC3::DistanceSq(b->get_Transform().lock()->get_VEC3ToPos(), camPos);
-    //        return (a_CamDist > b_CamDist);
-    //    }
-    //);
+    m_pTransparent_ObjectList.sort(
+        [camPos](const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
+        {
+            float a_CamDist = VEC3::DistanceSq(a->get_Transform().lock()->get_VEC3ToPos(), camPos);
+            float b_CamDist = VEC3::DistanceSq(b->get_Transform().lock()->get_VEC3ToPos(), camPos);
+            return (a_CamDist > b_CamDist);
+        }
+    );
 
     // 描画
     for (auto &obj : m_pTransparent_ObjectList)

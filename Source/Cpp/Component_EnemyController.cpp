@@ -124,7 +124,7 @@ void EnemyController::Update(RendererEngine& renderer)
 
 	m_pAnimatorComp->set_IsAnim(m_IsAnim);
 
-	m_StateTimer++;	
+	m_StateTimer++;
 
 
 	// 移動処理（今後移動コンポーネント等にまとめる）
@@ -137,12 +137,15 @@ void EnemyController::Update(RendererEngine& renderer)
 	newPos.y = crntPos.y;	// Yは変えない
 	myTransform->set_Pos(newPos);
 
-	//目標の方向ベクトルから角度値を算出c
-	float targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
+	if (m_MoveVelocity.LengthSq() > 0.01)
+	{
+		//目標の方向ベクトルから角度値を算出c
+		float targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
 
-	// 線形補間
-	//targetAngle = Tool::Lerp(crntRot.y, targetAngle, 0.1f);
-	myTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+		// 線形補間
+		//targetAngle = Tool::Lerp(crntRot.y, targetAngle, 0.1f);
+		myTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+	}
 }
 
 

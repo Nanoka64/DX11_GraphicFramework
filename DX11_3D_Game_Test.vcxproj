@@ -191,6 +191,7 @@
     <ClInclude Include="Source\Header\Component_Collider.h" />
     <ClInclude Include="Source\Header\Component_EnemyController.h" />
     <ClInclude Include="Source\Header\Component_Health.h" />
+    <ClInclude Include="Source\Header\Component_LineRenderer.h" />
     <ClInclude Include="Source\Header\Component_MeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="Source\Cpp\Component_Collider.cpp" />
     <ClCompile Include="Source\Cpp\Component_EnemyController.cpp" />
     <ClCompile Include="Source\Cpp\Component_Health.cpp" />
+    <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp" />

@@ -16,7 +16,8 @@ using namespace VECTOR2;
 using namespace DirectX;
 using namespace Tool;
 
-constexpr float MOVE_SPEED = 5.0f;		// プレイヤーの移動速度
+constexpr float MOVE_SPEED = 3.0f;		// プレイヤーの移動速度
+constexpr float ROLLING_SPEED = 10.0f;	// ローリング時のスピード
 constexpr int ROLLING_DURATION = 60;	// ローリング時間
 
 //*---------------------------------------------------------------------------------------
@@ -268,16 +269,6 @@ void PlayerController::Update(RendererEngine &renderer)
 				ChangeAnimation(PLAYER_ANIMATION_ID::JOG_FWD_LOOP);
 			}
 
-			////目標の方向ベクトルから角度値を算出c
-			//targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
-			//targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
-
-			//ang = targetAngle;
-
-			//// 線形補間
-			//targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
-			////pTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
-
 			if (!m_IsContinuousAngle)
 			{
 				MovedAngle(crntRot,m_MoveVelocity);
@@ -290,19 +281,6 @@ void PlayerController::Update(RendererEngine &renderer)
 	{
 		ContinuousAngle(crntRot);
 	}
-
-	//POINT mousePos = Master::m_pInputManager->GetMousePos();
-	////目標の方向ベクトルから角度値を算出c
-	//float targetAngle = atan2(mousePos.x, mousePos.y);
-	//targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
-	//targetAngle = Lerp(crntRot.y, targetAngle, 0.5f);
-	//pTransform->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
-
-
-
-	Master::m_pDebugger->BeginDebugWindow("player");
-	Master::m_pDebugger->DG_TextValue("Ang : %f.1",ang);
-	Master::m_pDebugger->EndDebugWindow();
 }
 
 //*---------------------------------------------------------------------------------------
@@ -348,7 +326,7 @@ void PlayerController::RollingUpdate()
 
 	// イージング関数でカウンタに合わせて速度を落としていく
 	float factor = Tool::Easing::EaseOutCubic(t);
-	newPos = crntPos + (m_MoveVelocity * (10.0f * factor));
+	newPos = crntPos + (m_MoveVelocity * (ROLLING_SPEED * factor));
 
 	// 時間で止める
 	if (m_RollingCounter >= m_RollingDuration)
@@ -384,6 +362,13 @@ void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 	}
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】アニメーションの切り替え
+//*
+//* [引数]
+//* id : アニメーション番号
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
 void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 {
 	// 同じ又はアニメーションが止まっているなら返す

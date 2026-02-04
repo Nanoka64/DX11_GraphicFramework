@@ -13,10 +13,10 @@ using namespace VECTOR3;
 using namespace VECTOR4;
 
 // メニュー項目の衝突判定用サイズ
-const VECTOR2::VEC2 g_MenuItemSize = VECTOR2::VEC2(400.0f, 70.0f);
+static const VECTOR2::VEC2 g_MenuItemSize = VECTOR2::VEC2(400.0f, 90.0f);
 
 // メニュー項目の位置
-const VECTOR2::VEC2 g_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)] =
+static const VECTOR2::VEC2 g_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)] =
 {
 	VEC2(400.0f,600.0f),
 	VEC2(400.0f,700.0f),
@@ -27,7 +27,7 @@ const VECTOR2::VEC2 g_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)] =
 /// <summary>
 /// タイトル項目名
 /// </summary>
-const char* g_TitleMenuItemNames[static_cast<int>(TITLEMENU_ITEM::NUM)] =
+static constexpr const char* g_TitleMenuItemNames[static_cast<int>(TITLEMENU_ITEM::NUM)] =
 {
 	"ミッション選択",
 	"兵科選択",
@@ -43,9 +43,21 @@ const char* g_TitleMenuItemNames[static_cast<int>(TITLEMENU_ITEM::NUM)] =
 //*----------------------------------------------------------------------------------------
 void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 {
-	// すでに初期化済みなら返す
+	// すでに初期化済みなら項目背景画像のみアクティブにして返す
 	if (m_IsInit)
 	{
+		// 背景画像をアクティブに
+		for (int i = 0; i < static_cast<int>(TITLEMENU_ITEM::NUM); i++)
+		{
+			auto obj = m_pMenuItemBackSpriteTransform[i]->get_OwnerObj();
+			if (obj.expired())
+			{
+				assert(false);
+				continue;
+			}
+			obj.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+		}
+
 		return;
 	}
 
@@ -81,7 +93,17 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_MainMenu::OnExit(SceneManager* pOwner)
 {
-
+	// オブジェクトを非アクティブに
+	for (int i = 0; i < static_cast<int>(TITLEMENU_ITEM::NUM); i++)
+	{
+		auto obj = m_pMenuItemBackSpriteTransform[i]->get_OwnerObj();
+		if (obj.expired())
+		{
+			assert(false);
+			continue;
+		}
+		obj.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	}
 }
 
 
