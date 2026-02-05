@@ -14,12 +14,14 @@ using namespace VERTEX;
 LineRenderer::LineRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 	: IComponent(pOwner, updateRank),
 	m_DrawTime(60.0f),
-	m_Width(10.0f),
+	m_Width(1.0f),
 	m_Length(1000.0f),
 	m_Dir(VEC3()),
 	m_StartPos(VEC3()),
+	m_Color(VEC4(1.0f, 1.0f, 1.0f, 1.0f)),
 	m_pCBMaterialDataSet(nullptr),
-	m_IsView(true)
+	m_IsView(true),
+	m_EmissivePower(3.0f)
 {
 	this->set_Tag("LineRenderer");
 
@@ -214,11 +216,11 @@ void LineRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	m_pCBMaterialDataSet->Data.Diffuse = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.EmissivePower = 5.0f;
-	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(1.0f, 0.0f, 0.0f);
+	m_pCBMaterialDataSet->Data.Diffuse = m_Color;
+	m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
+	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x,m_Color.y,m_Color.z);
 	m_pCBMaterialDataSet->Data.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.SpecularPower = 150.0f;
+	m_pCBMaterialDataSet->Data.SpecularPower = 100.0f;
 
 	// データのコピー 
 	memcpy(mappedResource.pData, &m_pCBMaterialDataSet->Data, sizeof(CB_MATERIAL));
@@ -226,7 +228,7 @@ void LineRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	// アクセス終了
 	pContext->Unmap(m_pCBMaterialDataSet->pBuff, 0);
 
-	// 定数バッファへ送信
+	// PS定数バッファへ送信
 	pContext->PSSetConstantBuffers(4, 1, &m_pCBMaterialDataSet->pBuff);
 
 	ID3D11ShaderResourceView* tex = nullptr;

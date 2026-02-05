@@ -29,7 +29,8 @@ private:
 	bool m_IsView;								// カメラに向くようにするか（ビルボード）
 	CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
 	std::shared_ptr<class Texture> m_pTex;		//
-
+	VECTOR4::VEC4 m_Color;	// エミッシブも一緒に
+	float m_EmissivePower;	// 
 
 public:
 	LineRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
@@ -49,6 +50,10 @@ public:
 	VECTOR3::VEC3 get_Dir()const { return m_Dir; }						// 方向取得
 	void set_StartPos(const VECTOR3::VEC3& _v) { m_StartPos = _v; }		// 始点設定
 	VECTOR3::VEC3 get_StartPos()const { return m_StartPos; }			// 始点取得
+	void set_Color(const VECTOR4::VEC4& _v) { m_Color = _v; }		// カラー設定
+	VECTOR4::VEC4 get_Color()const { return m_Color; }				// カラー取得
+	void set_Emissive(const float _ems) { m_EmissivePower = _ems; }	// エミッシブ設定
+	float get_Emissive()const { return m_EmissivePower; }			// エミッシブ取得
 
 private:
 	bool Setup(RendererEngine& renderer);					// 初期化

@@ -92,9 +92,13 @@ void Debugger::EndFrame()
 //      * Debugger Class - デバッグウインドウ - *
 // 引数：ラベル名
 //=======================================================================================
-bool Debugger::BeginDebugWindow(const std::string &label)
+bool Debugger::BeginDebugWindow(const std::string &_label)
 {
-    return ImGui::Begin(label.c_str());
+    bool isOpen = true;
+    return ImGui::Begin(_label.c_str(), &isOpen,
+        ImGuiWindowFlags_NoResize |     // No!サイズ!!
+        ImGuiWindowFlags_NoMove         // No!ムーブ!!
+    );
 }
 
 //**************************************************************************************
@@ -477,6 +481,18 @@ bool Debugger::DG_TreeNode(const std::string& label)
 void Debugger::DG_TreePop()
 {
     ImGui::TreePop();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】サイズ分、隙間を開けることができる
+//*     改行みたいなことができる 
+//*
+//* [引数]
+//* &_size : 隙間の大きさ
+//*----------------------------------------------------------------------------------------
+void Debugger::DG_Dummy(const VECTOR2::VEC2 &_size)
+{
+    ImGui::Dummy(ImVec2(_size.x, _size.y));
 }
 
 //*---------------------------------------------------------------------------------------

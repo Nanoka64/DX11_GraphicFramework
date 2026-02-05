@@ -11,6 +11,7 @@
 //         * シングルトンパターン *
 // 
 //			DirectWriteを扱うクラス
+//          ※ RenderDocを使う際はこれを使ってると怒られる
 // 
 // 参考サイト：https://islingtonsystem.hatenablog.jp/entry/2022/06/18/222040
 //             http://mitsunagistudio.net/old_posts/tips/d2d-d3d11-sharing/
@@ -22,13 +23,15 @@ private:
     ID2D1Factory         *m_pD2DFactory;        // Direct2D    描画オブジェクトの生成用
     IDWriteFactory       *m_pWriteFactory;      // DirectWrite 描画オブジェクトの生成用
     IDWriteTextFormat    *m_pTextFormat;        // テキストの配置、書式
-    IDWriteTextLayout    *m_pTextLayout;        // テキストの形式
+    //IDWriteTextLayout    *m_pTextLayout;        // テキストの形式    ※ローカル変数にした
     ID2D1RenderTarget    *m_pRenderTarget;      // 描画先
     ID2D1SolidColorBrush *m_pSolidBrush;        // 塗りつぶしに使う
     IDXGISurface         *m_pSurfaceBackBuffer; // 描画APIとのやり取りに使う 描画先として使える
 
-    struct FONT_DATA *m_pFontData; // フォントデータ
+    //struct FONT_DATA *m_pFontData; // フォントデータ 
 
+    // テキストデータ
+    std::map<std::string, Microsoft::WRL::ComPtr<IDWriteTextFormat>> m_pTextFormatMap;    
 
 public:
     DirectWriteManager();
@@ -44,8 +47,11 @@ public:
     HRESULT Init(RendererEngine &render);  // 初期化
     void Term();    // 終了
 
+    void BeginDraw();   // 描画の開始（フレームの最初に）
+    HRESULT EndDraw();     // 描画終了（フレームの最後）
+
     // フォントデータを設定
-    HRESULT SetFontData(FONT_DATA *data);
+    HRESULT SetFontData(struct FONT_DATA *data);
 
     // カラーの設定
     void SetColor(const D2D1_COLOR_F& col);
@@ -55,8 +61,11 @@ public:
     /// </summary>
     /// <param name="str">:文字列 </param>
     /// <param name="pos">:座標</param>
+    /// <param name="formatTag">:文字の情報を格納した配列へのキー </param>
     /// <param name="options">:整形オプション</param>
-    void DrawString(std::string str, const VECTOR2::VEC2 &_pos, D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE);
+    void DrawString(std::string str, const VECTOR2::VEC2 &_pos, const std::string& formatTag, D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE);
+
+
 
     /// <summary>
     /// ※テンプレートメソッド
@@ -72,7 +81,9 @@ public:
     void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, /*D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE,*/ Args&&... args)
     {
         HRESULT hr = S_OK;
-        
+
+        Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
+
         // フォーマット検索
         // 見つけた指定子にくっつける
         str = std::vformat(str, std::make_format_args(args...));
@@ -90,7 +101,7 @@ public:
             m_pTextFormat,
             RVSize.width,
             RVSize.height,
-            &m_pTextLayout
+            pTextLayout.GetAddressOf()
         );
         CHECK_HRESULT_NO_BOOL(hr);
 
@@ -99,22 +110,13 @@ public:
         pos.x = _pos.x;
         pos.y = _pos.y;
 
-        // 描画の開始
-        m_pRenderTarget->BeginDraw();
-
         // 描画
         m_pRenderTarget->DrawTextLayout(
             pos,
-            m_pTextLayout,
+            pTextLayout.Get(),
             m_pSolidBrush,
             D2D1_DRAW_TEXT_OPTIONS_NONE
         );
-
-        // 描画終了
-        m_pRenderTarget->EndDraw();
-
-        // メモリリークするので解放
-        SAFE_RELEASE(m_pTextLayout);
     }
 };
 

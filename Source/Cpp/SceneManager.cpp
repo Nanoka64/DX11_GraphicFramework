@@ -6,16 +6,14 @@
 #include "ResourceManager.h"
 #include "GameObjectManager.h"
 #include "InputFactory.h"
-#include "Cubu.h"
-#include "Quad.h"
 #include "SceneFactory.h"
+#include "MeshFactory.h"
 #include "Component_3DCamera.h"
 #include "Component_PlayerController.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
 #include "Component_ModelMeshRenderer.h"
 #include "Component_MeshRenderer.h"
-#include "MeshFactory.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
 #include "Component_SpriteRenderer.h"
@@ -46,7 +44,8 @@ using namespace SceneStateEnums;
 SceneManager::SceneManager():
     m_pPlayer(),
     m_StateMachine(this),
-    m_CrntSceneState(0)
+    m_CrntSceneState(0),
+    m_IsClose(false)
 {
 
 }

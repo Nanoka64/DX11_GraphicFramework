@@ -175,13 +175,15 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 			spritePos.x += 50.0f;
 		}
 
-		m_pMenuItemBackSpriteTransform[0]->set_Pos(spritePos.x, spritePos.y, 0.0f);
+		// TODO:UI用もソートされてしまっているため描画順が崩れる
+		// なので一旦オフセットのほうに位置を入れる
+		m_pMenuItemBackSpriteTransform[0]->set_VEC3ToLocalOffset_Pos(VEC3(spritePos.x, spritePos.y, 0.0f));
 		m_pMenuItemBackSpriteTransform[0]->set_Scale(500.0f, 100.0f, 1.0f);
 
 		// 文字表示
-		Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos);
+		Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos, "White_40_STD");
 	}
 
 
-	Master::m_pDirectWriteManager->DrawString("☆ミッション選択", VECTOR2::VEC2(40.0f, 500.0f));
+	Master::m_pDirectWriteManager->DrawString("☆ミッション選択", VECTOR2::VEC2(40.0f, 500.0f), "White_40_STD");
 }

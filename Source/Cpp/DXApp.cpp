@@ -235,13 +235,35 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     }
 
     /** フォントデータ作成 **/
-    FONT_DATA *pFontData = new FONT_DATA();
+    // 白 40サイズ 標準 ----------------------------------------------
+    FONT_DATA *pFontData = new FONT_DATA("White_40_STD"); 
     pFontData->fontSize = 40.0f;
     pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
     pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
 
-    // フォントデータをDirectWriteManagerに設定
+    // 登録
     Master::m_pDirectWriteManager->SetFontData(pFontData);
+    SAFE_DELETE(pFontData);
+
+    // 白 30サイズ 標準 ----------------------------------------------
+    pFontData = new FONT_DATA("White_30_STD");  
+    pFontData->fontSize = 30.0f;
+    pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
+    pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
+
+    // 登録
+    Master::m_pDirectWriteManager->SetFontData(pFontData);
+    SAFE_DELETE(pFontData);
+
+    // 白 20サイズ 標準 ----------------------------------------------
+    pFontData = new FONT_DATA("White_20_STD");  
+    pFontData->fontSize = 20.0f;
+    pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
+    pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
+
+    // 登録
+    Master::m_pDirectWriteManager->SetFontData(pFontData);
+    SAFE_DELETE(pFontData);
 
     // 正常終了
     return true;
@@ -319,18 +341,47 @@ int DXApp::MainLoop()
                 
                 using namespace Tool;
 
+
                 // 操作ガイド
                 Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"説明"));
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"操作方法"));
-                Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD : 移動\n 矢印キー：視点操作\n Space：ジャンプ\n"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD : 移動\n マウスまたは矢印キー：視点操作\n Space：ジャンプ\n AまたはDを押しながらSpace：緊急回避\n 左クリック：射撃\n"));
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(
                         u8"オブジェクトリストからオブジェクトを選択し、\nインスペクタでコンポーネントの一部パラメータ等が見れたりいじれるようになっています。"));
 
-                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"対応コンポーネント"));
-                Master::m_pDebugger->DG_Text(U8ToChar(
-                    u8"・トランスフォーム\n・ディレクションライト\n・ポイントライト\n・プレイヤーコントローラー\n・カメラ3D\n・モデルリソース\n・スキンメッシュアニメーター\n"));
+
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"実装コンポーネント"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ユーティリティ"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"・Transform\n・Camera3D\n"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
+
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"メッシュ"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"・ModelMeshResource\n・ModelMeshRenderer\n・SkinnedMeshAnimator\n・SkyRenderer\n・SpriteRenderer\n・MeshResource\n・MeshRenderer\n・LineRenderer\n・TrailRenderer\n・BillboardResource\n・BillboardRenderer\n"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
+
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ライト"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"・DirectionLight\n・PointLight\n"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
+                
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"コライダー"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"・BoxCollider\n・SphereCollider\n"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
+                
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ゲームプレイ用"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"・PlayerController\n・EnemyController\n・Health\n"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+
                 Master::m_pDebugger->EndDebugWindow();
+
+                // DirectWrite描画開始
+                Master::m_pDirectWriteManager->BeginDraw();
 
                 // 入力更新
                 Master::m_pInputManager->Update();
@@ -350,6 +401,9 @@ int DXApp::MainLoop()
 
                 // ImGUI描画終了
                 Master::m_pDebugger->EndFrame();
+
+                // DirectWrite描画終了
+                Master::m_pDirectWriteManager->EndDraw();
 
                 // 描画の終了
                 m_pRenderer->EndRender();

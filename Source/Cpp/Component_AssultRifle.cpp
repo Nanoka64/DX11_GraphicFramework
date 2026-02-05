@@ -50,9 +50,6 @@ void AssultRifle::Start(RendererEngine &renderer)
 {
     // 照準レーザー用
     m_pLineRendererComp = m_pOwner.lock()->get_Component<LineRenderer>();
-    m_pLineRendererComp.lock()->set_Length(100.0f);
-    m_pLineRendererComp.lock()->set_Width(2.0f);
-
 }
 
 
@@ -76,9 +73,13 @@ void AssultRifle::Update(RendererEngine &renderer)
     transform->set_RotateToRad(VEC3(c_AngleV * -1,0.0f, 0.0f));
 
 
-    VEC3 dir = transform->get_VEC3ToRotateToRad();
+    // ワールド変換行列から方向をとる
+    XMMATRIX worldMtx = transform->get_WorldMtx();
+    XMVECTOR forward =  worldMtx.r[2];  // Z
+    forward *= -1;  // プレイヤーが-Z前になってしまっているので
 
-    m_pLineRendererComp.lock()->set_Dir(dir);
+    // レーザーサイトの始点と方向
+    m_pLineRendererComp.lock()->set_Dir(VEC3::FromXMVECTOR(XMVector3Normalize(forward)));
     m_pLineRendererComp.lock()->set_StartPos(pos);
 
     // 左クリックで発射
@@ -111,7 +112,10 @@ void AssultRifle::Update(RendererEngine &renderer)
         auto bullet_transform = obj->get_Transform().lock();
         
 
-
+        VEC3 rad;
+        rad.x = (c_AngleV) * -1;
+        rad.y = (c_AngleH - 1.57f) * -1;
+        rad.z = 0.0f;
 
         // 親の向きと位置を参照
         bullet_transform->set_Pos(pos);

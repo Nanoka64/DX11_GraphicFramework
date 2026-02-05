@@ -122,7 +122,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), VEC2(400, 200));
             Master::m_pDebugger->DG_Separator();
 
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"法線"));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ノーマル"));
             Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(), VEC2(400, 200));
             Master::m_pDebugger->DG_Separator();
 
@@ -148,7 +148,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
             Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
             Master::m_pDebugger->DG_Separator();
 
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度ブラー"));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度"));
             Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"強度"));
             Master::m_pDebugger->DG_SliderFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 32.0f);
@@ -168,7 +168,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         {
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シャドウマップ"));
             Master::m_pDebugger->DG_Image(m_pShadowMap_RT->get_SRV_ComPtr().Get(), VEC2(400, 200));    
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー掛け"));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"分散シャドウ用ブラー掛け"));
             Master::m_pDebugger->DG_Image(m_pShadowGaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"バイアス"));
             Master::m_pDebugger->DG_SameLine();
@@ -186,7 +186,7 @@ void RenderPipeline::Execute(RendererEngine &renderer)
         }
         Master::m_pDebugger->DG_Separator();
 
-        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最終合成（トーンマッピングなし）"));
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最終合成（トーンマッピングなしver）"));
         Master::m_pDebugger->DG_Image(m_pSceneFinal_RT->get_SRV(), VEC2(400, 200));
         Master::m_pDebugger->DG_Separator();
 

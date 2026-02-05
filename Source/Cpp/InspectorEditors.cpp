@@ -12,6 +12,12 @@
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
+#include "Component_LineRenderer.h"
+
+using namespace VECTOR2;
+using namespace VECTOR3;
+using namespace VECTOR4;
+using namespace Tool;
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -25,9 +31,6 @@ bool TransformEditor::Init(RendererEngine &renderer)
 
 void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     auto pTransform = pObj.get_Component<Transform>();
 
     if (pTransform == nullptr)
@@ -85,9 +88,6 @@ bool DirectionLightEditor::Init(RendererEngine &renderer)
 
 void DirectionLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ディレクショナルライトコンポーネントの取得
     auto pDirectionLig = pObj.get_Component<DirectionalLight>();
 
@@ -159,9 +159,6 @@ bool PointLightEditor::Init(RendererEngine &renderer)
 
 void PointLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ポイントライトコンポーネントの取得
     auto pPointLig = pObj.get_Component<PointLight>();
 
@@ -214,9 +211,6 @@ bool PlayerControllerEditor::Init(RendererEngine &renderer)
 
 void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ディレクショナルライトコンポーネントの取得
     auto pComp = pObj.get_Component<PlayerController>();
 
@@ -293,9 +287,6 @@ bool Camera3DEditor::Init(RendererEngine &renderer)
 
 void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ディレクショナルライトコンポーネントの取得
     auto pComp = pObj.get_Component<Camera3D>();
 
@@ -395,9 +386,6 @@ bool SkinnedMeshAnimatorEditor::Init(RendererEngine &renderer)
 
 void SkinnedMeshAnimatorEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ディレクショナルライトコンポーネントの取得
     auto pComp = pObj.get_Component<SkinnedMeshAnimator>();
 
@@ -460,9 +448,6 @@ bool ModelMeshResourceEditor::Init(RendererEngine &renderer)
 
 void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // ディレクショナルライトコンポーネントの取得
     auto pComp = pObj.get_Component<ModelMeshResource>();
 
@@ -595,9 +580,6 @@ bool BoxColliderEditor::Init(RendererEngine &renderer)
 
 void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // コンポーネントの取得
     auto pComp = pObj.get_Component<BoxCollider>();
 
@@ -694,9 +676,6 @@ bool SphereColliderEditor::Init(RendererEngine &renderer)
 
 void SphereColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // コンポーネントの取得
     auto pComp = pObj.get_Component<SphereCollider>();
 
@@ -773,9 +752,6 @@ bool TrailRendererEditor::Init(RendererEngine &renderer)
 
 void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    using namespace VECTOR3;
-    using namespace Tool;
-
     // コンポーネントの取得
     auto pComp = pObj.get_Component<TrailRenderer>();
 
@@ -801,7 +777,7 @@ void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"幅"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragFloat("##Radius", 1, &width, 0.1f, 1.0f, 5000.0f);
+        Master::m_pDebugger->DG_DragFloat("##Width", 1, &width, 0.1f, 1.0f, 5000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"持続時間"));
         Master::m_pDebugger->DG_SameLine();
@@ -814,5 +790,76 @@ void TrailRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj
     pComp->set_MinVertexDistance(minDist);
     pComp->set_Width(width);
     pComp->set_DrawTime(time);
+}
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:LineRendererEditor Class --- */
+//
+// ***************************************************************************************
+bool LineRendererEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void LineRendererEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    // コンポーネントの取得
+    auto pComp = pObj.get_Component<LineRenderer>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    // beginはInspectorWindowで行っている
+    VEC3 dir = pComp->get_Dir();
+    VEC3 start = pComp->get_StartPos();
+    float length = pComp->get_Length();
+    float width = pComp->get_Width();
+
+    VEC4 color = pComp->get_Color();
+    float emissive = pComp->get_Emissive();
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ラインレンダラー")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"カラー"));
+        Master::m_pDebugger->DG_ColorEdit4("##Diffuse", &color);
+        Master::m_pDebugger->DG_DragFloat("エミッシブ", 1, &emissive, 0.1f, 0.0f, 5000.0f);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"始点"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragVec3("##Start", &start, 0.1f, -10000.0f, 10000.0f);
+
+        
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"方向"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragVec3("##Dir", &dir, 0.1f, -10000.0f, 10000.0f);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"伸びる距離"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Length", 1, &length, 0.1f, 1.0f, 5000.0f);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"幅"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Width", 1, &width, 0.01f, 0.01f, 5000.0f);
+
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+    // 反映
+    pComp->set_Dir(dir);
+    pComp->set_StartPos(start);
+    pComp->set_Width(width);
+    pComp->set_Length(length);
+    pComp->set_Color(color);
+    pComp->set_Emissive(emissive);
 }
 

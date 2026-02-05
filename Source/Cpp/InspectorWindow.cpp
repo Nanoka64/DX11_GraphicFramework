@@ -42,6 +42,7 @@ bool InspectorWindow::Init(RendererEngine &renderer)
     m_EditorMap["BoxCollider"]          = std::make_unique<BoxColliderEditor>();
     m_EditorMap["SphereCollider"]       = std::make_unique<SphereColliderEditor>();
     m_EditorMap["TrailRenderer"]        = std::make_unique<TrailRendererEditor>();
+    m_EditorMap["LineRenderer"]         = std::make_unique<LineRendererEditor>();
 
     return true;
 }

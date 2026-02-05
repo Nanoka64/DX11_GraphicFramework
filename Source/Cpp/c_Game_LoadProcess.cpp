@@ -495,7 +495,7 @@ void c_Game_LoadProcess::Draw(SceneManager *pOwner)
 		return;
 	}
 
-	Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(940, 500));
+	//Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(940, 500));
 
 	// ロード完了
 	m_IsLoad = true;

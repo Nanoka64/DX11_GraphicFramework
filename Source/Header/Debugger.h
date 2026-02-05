@@ -9,6 +9,7 @@
 //      * Debugger Class *
 //        - シングルトン - 
 //    Imgui使用 デバッグ全般
+// https://qiita.com/ousttrue/items/ae7c8d5715adffc5b1fa
 // =======================================================================================
 class Debugger
 {
@@ -32,7 +33,7 @@ public:
 	// 描画終了後の処理
 	void EndFrame();
 
-	bool BeginDebugWindow(const std::string &label);
+	bool BeginDebugWindow(const std::string &_label);
 	void EndDebugWindow();
 
 	void DG_Text(std::string tex);																			// テキスト表示
@@ -65,7 +66,16 @@ public:
 	bool DG_TreeNode(const std::string& label);
 	void DG_TreePop();
 
+	void DG_Dummy(const VECTOR2::VEC2 &_size);	// サイズ分、隙間を開けることができる
 	bool DG_Selectable(const std::string &_label, bool _selected, ImGuiSelectableFlags _flag, VECTOR2::VEC2 _size);
+	
+
+	// 後で作る
+	bool DG_Combo()
+	{
+		// 選択肢が出てきて選べるみたいなやつ
+		//ImGui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+	}
 
 	/* テンプレート */
 	

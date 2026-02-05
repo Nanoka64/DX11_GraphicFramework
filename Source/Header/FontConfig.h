@@ -43,8 +43,11 @@ struct FONT_DATA
     DWRITE_TEXT_ALIGNMENT textAlignment;    // テキストの配置
     D2D1_COLOR_F color;                     // フォントの色
 
+    const char *tag;   // このフォント情報にアクセスする際のキー
+
     // コンストラクタ
-    FONT_DATA()
+    FONT_DATA(const char * _tag):
+        tag(_tag)
     {
         type            = FONT_TYPE::Meiryo;
         fontCollection  = nullptr;

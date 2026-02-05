@@ -212,8 +212,15 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         auto obj = MeshFactory::CreateModel(model);
 
+        // アサルトライフル
         obj->add_Component<AssultRifle>();
-        obj->add_Component<LineRenderer>();
+        
+        // レーザーサイト
+        auto line = obj->add_Component<LineRenderer>();
+        line->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
+        line->set_Emissive(3.0f);
+        line->set_Width(0.5f);
+        line->set_Length(1000.0f);
 
         // プレイヤーを親に設定
         obj->get_Transform().lock()->set_Parent(pPlayerObj->get_Transform());
@@ -271,6 +278,24 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         }
     }
     
+    /* タイトルロゴ用スプライト */
+    {
+        CreateSpriteInfo sprite;
+        sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Title_logo.png");
+        sprite.ObjTag = "TitleLogo_Sp";
+        sprite.pRenderer = m_pRenderer;
+        sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+        sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
+        sprite.Width = m_pRenderer->get_ScreenWidth();
+        sprite.Height = m_pRenderer->get_ScreenHeight();
+        sprite.IsActive = true;
+        sprite.IsTransparent = true;
+        auto obj = MeshFactory::CreateSprite(sprite);
+        if (obj) {
+            obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+        }
+    }
+
     /* タイトルメニュー項目背景用スプライト */
     {
         CreateSpriteInfo sprite;
@@ -311,23 +336,6 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         }
     }
 
-    /* タイトルロゴ用スプライト */
-    {
-        CreateSpriteInfo sprite;
-        sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Title_logo.png");
-        sprite.ObjTag = "TitleLogo_Sp";
-        sprite.pRenderer = m_pRenderer;
-        sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
-        sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-        sprite.Width = m_pRenderer->get_ScreenWidth();
-        sprite.Height = m_pRenderer->get_ScreenHeight();
-        sprite.IsActive = true;
-        sprite.IsTransparent = true;
-        auto obj = MeshFactory::CreateSprite(sprite);
-        if (obj) {
-            obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
-        }
-    }
 
 
     // ロード画面用スプライトオフ
@@ -368,7 +376,7 @@ void c_Title_LoadProcess::Draw(SceneManager *pOwner)
         return;
     }
 
-	Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(40.0f, 500.0f));
+	//Master::m_pDirectWriteManager->DrawString("☆ロード中", VECTOR2::VEC2(40.0f, 500.0f), "White_40_STD");
 
     // ロード完了
     m_IsLoad = true;

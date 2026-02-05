@@ -72,7 +72,7 @@ int Root_ResultSceneState::Update(SceneManager *pOwner)
 void Root_ResultSceneState::Draw(SceneManager *pOwner)
 {
 	if (m_CrntChildStateID == -1)return;
-	Master::m_pDirectWriteManager->DrawString("☆リザルトです", VECTOR2::VEC2(940, 540));
+	Master::m_pDirectWriteManager->DrawString("☆リザルトです", VECTOR2::VEC2(940, 540), "White_40_STD");
 
 
 	m_pChildStateMap[m_CrntChildStateID]->Draw(pOwner);

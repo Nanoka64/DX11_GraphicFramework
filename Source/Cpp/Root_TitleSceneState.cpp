@@ -64,7 +64,9 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 {
 	if (m_CrntChildStateID == -1)return -1;
 
+	// 子ステートの更新
 	int newState = m_pChildStateMap[m_CrntChildStateID]->Update(pOwner);
+	
 	// ゲームシーンへ
 	if (newState == c_TITLE::c_GO_GAME_SCENE)
 	{
@@ -81,7 +83,7 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 	}
 
 	// ステートが変更されていたら切り替え処理を行う
-	// ※ c_GO_GAME_SCENE以外
+	// ※ c_GO_GAME_SCENE＆c_GO_EXIT以外
 	if (newState != m_CrntChildStateID)
 	{
 		ChangeChildState(pOwner, newState);
@@ -119,5 +121,12 @@ void Root_TitleSceneState::Draw(SceneManager* pOwner)
 		m_pBackSprite->set_UVOffset(m_UVScroll);
 	}
 
+	// 子ステートの描画
 	m_pChildStateMap[m_CrntChildStateID]->Draw(pOwner);
+
+
+
+	Master::m_pDirectWriteManager->DrawString("マウス：選択",	  VECTOR2::VEC2(1000.0f, 900.0f), "White_30_STD");
+	Master::m_pDirectWriteManager->DrawString("左クリック：決定", VECTOR2::VEC2(1000.0f, 940.0f), "White_30_STD");
+	Master::m_pDirectWriteManager->DrawString("右クリック：戻る", VECTOR2::VEC2(1000.0f, 980.0f), "White_30_STD");
 }

@@ -13,13 +13,12 @@ DirectWriteManager::DirectWriteManager():
     m_pD2DFactory(nullptr),
     m_pWriteFactory(nullptr),
     m_pTextFormat(nullptr),
-    m_pTextLayout(nullptr),
     m_pRenderTarget(nullptr),
     m_pSolidBrush(nullptr),
-    m_pSurfaceBackBuffer(nullptr),
-    m_pFontData(nullptr)
+    m_pSurfaceBackBuffer(nullptr)/*,
+    m_pFontData(nullptr)*/
 {
-    m_pFontData = new FONT_DATA();  
+    //m_pFontData = new FONT_DATA("");  
 }
 
 
@@ -42,7 +41,6 @@ HRESULT DirectWriteManager::Init(RendererEngine &render)
     // Direct2D初期化
     hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pD2DFactory);
     CHECK_HRESULT(hr);
-
     
     // バックバッファ取得
     ID3D11Texture2D *pBackBufferTex = nullptr;
@@ -83,32 +81,32 @@ HRESULT DirectWriteManager::Init(RendererEngine &render)
     CHECK_HRESULT(hr);
 
 
-    // フォントフォーマットの作成
-    hr = m_pWriteFactory->CreateTextFormat(
-        FontNameList[(int)m_pFontData->type],// フォントファミリー名
-        m_pFontData->fontCollection,         // フォントコレクション
-        m_pFontData->fontWeight,             // フォントの太さ
-        m_pFontData->fontStyle,              // フォントスタイル
-        m_pFontData->fontStretch,            // フォントの幅
-        m_pFontData->fontSize,               // フォントの大きさ
-        m_pFontData->localName,              // ローカル名
-        &m_pTextFormat                       // テキストの書式
-    );
-    CHECK_HRESULT(hr);
+    //// フォントフォーマットの作成
+    //hr = m_pWriteFactory->CreateTextFormat(
+    //    FontNameList[(int)m_pFontData->type],// フォントファミリー名
+    //    m_pFontData->fontCollection,         // フォントコレクション
+    //    m_pFontData->fontWeight,             // フォントの太さ
+    //    m_pFontData->fontStyle,              // フォントスタイル
+    //    m_pFontData->fontStretch,            // フォントの幅
+    //    m_pFontData->fontSize,               // フォントの大きさ
+    //    m_pFontData->localName,              // ローカル名
+    //    &m_pTextFormat                       // テキストの書式
+    //);
+    //CHECK_HRESULT(hr);
 
-    // テキストの配置、整列
-    // 
-    // 縦書き、横書きで変わる？
-    // DWRITE_TEXT_ALIGNMENT_LEADING   : 先頭 左揃え
-    // DWRITE_TEXT_ALIGNMENT_TRAILING  : 後ろ 右揃え
-    // DWRITE_TEXT_ALIGNMENT_CENTER    : 中央
-    // DWRITE_TEXT_ALIGNMENT_JUSTIFIED : 均等
-    hr = m_pTextFormat->SetTextAlignment(m_pFontData->textAlignment);
-    CHECK_HRESULT(hr);
+    //// テキストの配置、整列
+    //// 
+    //// 縦書き、横書きで変わる？
+    //// DWRITE_TEXT_ALIGNMENT_LEADING   : 先頭 左揃え
+    //// DWRITE_TEXT_ALIGNMENT_TRAILING  : 後ろ 右揃え
+    //// DWRITE_TEXT_ALIGNMENT_CENTER    : 中央
+    //// DWRITE_TEXT_ALIGNMENT_JUSTIFIED : 均等
+    //hr = m_pTextFormat->SetTextAlignment(m_pFontData->textAlignment);
+    //CHECK_HRESULT(hr);
 
-    // 色の設定
-    hr = m_pRenderTarget->CreateSolidColorBrush(m_pFontData->color, &m_pSolidBrush);
-    CHECK_HRESULT(hr);
+    //// 色の設定
+    //hr = m_pRenderTarget->CreateSolidColorBrush(m_pFontData->color, &m_pSolidBrush);
+    //CHECK_HRESULT(hr);
 
     return hr;
 }
@@ -123,12 +121,34 @@ void DirectWriteManager::Term()
     SAFE_RELEASE(m_pD2DFactory);
     SAFE_RELEASE(m_pWriteFactory);
     SAFE_RELEASE(m_pTextFormat);
-    SAFE_RELEASE(m_pTextLayout);
     SAFE_RELEASE(m_pRenderTarget);
     SAFE_RELEASE(m_pSolidBrush);
     SAFE_RELEASE(m_pSurfaceBackBuffer);
 
-    SAFE_DELETE(m_pFontData);
+    //SAFE_DELETE(m_pFontData);
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】描画の開始
+//* ※ フレームの最初に呼ぶ  
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void DirectWriteManager::BeginDraw()
+{
+    m_pRenderTarget->BeginDraw();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】描画の終了
+//* ※ フレームの最後に呼ぶ  
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+HRESULT DirectWriteManager::EndDraw()
+{
+    return m_pRenderTarget->EndDraw();
 }
 
 //--------------------------------------------------------------------------------------
@@ -154,6 +174,7 @@ std::wstring DirectWriteManager::StringToWString(std::string oString)
     return oRet;
 }
 
+
 //--------------------------------------------------------------------------------------
 //      * DirectWriteManager Class - 色の設定 - *
 //--------------------------------------------------------------------------------------
@@ -175,7 +196,14 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 {
     HRESULT hr = S_OK;
 
-    m_pFontData->type = data->type;
+    // 既に登録済みなら返す
+    auto it = m_pTextFormatMap.find(data->tag);
+    if (it != m_pTextFormatMap.end()){
+        MessageBox(NULL, "既に登録済みのフォントです", "DirectWriteManager", MB_OK);
+        return S_FALSE;
+    }
+
+    //m_pFontData->type = data->type;
 
     // テキスト書式オブジェクトの作成
     hr = m_pWriteFactory->CreateTextFormat(
@@ -186,12 +214,12 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
         data->fontStretch, 
         data->fontSize, 
         data->localName, 
-        &m_pTextFormat
+        m_pTextFormatMap[data->tag].GetAddressOf()    // 指定キー
     );
     CHECK_HRESULT(hr);
 
     // テキストの配置設定
-    hr = m_pTextFormat->SetTextAlignment(data->textAlignment);
+    hr = m_pTextFormatMap[data->tag]->SetTextAlignment(data->textAlignment);
     CHECK_HRESULT(hr);
 
     // 使用する色の指定
@@ -208,11 +236,10 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 //       :座標
 //       :整形オプション
 //--------------------------------------------------------------------------------------
-void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, D2D1_DRAW_TEXT_OPTIONS options)
+void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, const std::string &formatTag,  D2D1_DRAW_TEXT_OPTIONS options)
 {
     HRESULT hr = S_OK;
-
-    //return;
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
 
     // ワイド文字に変換
     std::wstring wstr = StringToWString(str);
@@ -224,10 +251,10 @@ void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, 
     hr = m_pWriteFactory->CreateTextLayout(
         wstr.c_str(),
         static_cast<UINT32>(wstr.size()),
-        m_pTextFormat,
+        m_pTextFormatMap[formatTag].Get(),
         RVSize.width,
         RVSize.height,
-        &m_pTextLayout
+        pTextLayout.GetAddressOf()
     );
     CHECK_HRESULT_NO_BOOL(hr);
 
@@ -236,7 +263,7 @@ void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, 
                                     static_cast<UINT32>(str.length())};    // 下線の長さ(何文字分か).
 
     // 下線設定
-    hr = m_pTextLayout->SetUnderline(TRUE, textRange);
+    hr = pTextLayout->SetUnderline(TRUE, textRange);
     CHECK_HRESULT_NO_BOOL(hr);
 
     // 描画位置の確定
@@ -244,18 +271,13 @@ void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, 
     pos.x = _pos.x;
     pos.y = _pos.y;
 
-    // 描画の開始
-    m_pRenderTarget->BeginDraw();
-
     // 描画
     m_pRenderTarget->DrawTextLayout(
         pos,
-        m_pTextLayout,
+        pTextLayout.Get(),
         m_pSolidBrush,
         options
     );
 
-    // 描画終了
-    m_pRenderTarget->EndDraw();
 }
 

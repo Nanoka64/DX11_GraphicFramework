@@ -257,3 +257,22 @@ public:
     bool Init(RendererEngine &renderer) override;
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 };
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:LineRendererEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】ラインレンダラー編集用エディタ
+//
+// ***************************************************************************************
+class LineRendererEditor : public EditorBase
+{
+private:
+public:
+    LineRendererEditor() : EditorBase() {};
+    ~LineRendererEditor() {};
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+};
