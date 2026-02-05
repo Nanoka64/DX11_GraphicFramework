@@ -344,15 +344,25 @@ int DXApp::MainLoop()
 
                 // 操作ガイド
                 Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"説明"));
-                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"操作方法"));
-                Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD : 移動\n マウスまたは矢印キー：視点操作\n Space：ジャンプ\n AまたはDを押しながらSpace：緊急回避\n 左クリック：射撃\n"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"DirectX11を使用した自作3Dグラフィックフレームワークです。"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"レンダリングパイプラインから自作し、基本的なライティング、\nポストエフェクト、シャドウ等を実装しました。"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"プログラム側はコンポーネント指向で設計し、\n柔軟にオブジェクトを作成できるようにしています。"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"※ 現在は技術デモ的なものとなってしまっているため、\nクリア画面等はありません。"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"☆操作方法"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD：移動"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"マウスまたは矢印キー：視点操作"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"Space：ジャンプ"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"AまたはDを押しながらSpace：緊急回避"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"左クリック：射撃"));
+                Master::m_pDebugger->DG_Separator();    // 区切り
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(
-                        u8"オブジェクトリストからオブジェクトを選択し、\nインスペクタでコンポーネントの一部パラメータ等が見れたりいじれるようになっています。"));
+                        u8"オブジェクトリストからオブジェクトを選択し、インスペクタでコンポーネントの\n一部パラメータ等が見れたりいじれるようになっています。"));
 
 
-                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"実装コンポーネント"));
                 Master::m_pDebugger->DG_Separator();    // 区切り
+                Master::m_pDebugger->DG_BulletText(U8ToChar(u8"☆実装コンポーネント"));
 
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ユーティリティ"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"・Transform\n・Camera3D\n"));
