@@ -158,9 +158,9 @@ struct CB_MATERIAL_SET{
 };
 
 
-/// <summary>
-/// スプライト情報
-/// </summary>
+// *******************************************************************
+/* スプライト情報  */
+// *******************************************************************
 struct CB_SPRITE
 {
     DirectX::XMFLOAT2 OffsetUV;   // UVオフセット
@@ -172,19 +172,19 @@ struct CB_SPRITE_SET {
     ID3D11Buffer* pBuff = nullptr;
 };
 
+
 // *******************************************************************
-/* ワールド変換とマテリアル情報をまとめた定数バッファ 
-    ※使わないかも？ */
+/* デカール用定数バッファ  */
 // *******************************************************************
-struct CB_OBJECT3D_DATA{
-    CB_TRANSFORM Transform;      // ワールド変換行列
-    CB_MATERIAL Material;        // マテリアル情報
+struct CB_DECAL {
+    DirectX::XMFLOAT4X4 DecalWorldInvMtx;  // デカールボックスのワールド変換行列
 };
 
-struct CB_OBJECT3D_DATA_SET{
-	CB_OBJECT3D_DATA Data = {};
-	ID3D11Buffer* pBuff = nullptr;
+struct CB_DECAL_SET {
+    CB_DECAL Data = {};
+    ID3D11Buffer *pBuff = nullptr;
 };
+
 
 
 // *******************************************************************

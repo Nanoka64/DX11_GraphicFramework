@@ -30,6 +30,7 @@ class IMeshResource : public IComponent
 private:
 	friend class MeshRenderer;
 	friend class SkyRenderer;
+	friend class DecalRenderer;
 
 	std::shared_ptr<MeshResourceData> m_pMeshData;// メッシュ情報
 	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)

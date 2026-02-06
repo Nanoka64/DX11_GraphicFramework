@@ -189,6 +189,10 @@
     <ClInclude Include="Source\Header\Component_BillboardResource.h" />
     <ClInclude Include="Source\Header\Component_Bullet.h" />
     <ClInclude Include="Source\Header\Component_Collider.h" />
+    <ClInclude Include="Source\Header\Component_DecalRenderer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\Header\Component_EnemyController.h" />
     <ClInclude Include="Source\Header\Component_Health.h" />
     <ClInclude Include="Source\Header\Component_LineRenderer.h" />
@@ -320,6 +324,10 @@
     <ClCompile Include="Source\Cpp\Component_BillboardResource.cpp" />
     <ClCompile Include="Source\Cpp\Component_Bullet.cpp" />
     <ClCompile Include="Source\Cpp\Component_Collider.cpp" />
+    <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_EnemyController.cpp" />
     <ClCompile Include="Source\Cpp\Component_Health.cpp" />
     <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp" />
@@ -584,6 +592,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Source\Shader\Decal_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
+    </FxCompile>
     <FxCompile Include="Source\Shader\DoF_Filter_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

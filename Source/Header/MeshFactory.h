@@ -152,6 +152,30 @@ struct CreateSkyboxInfo : public CreateMesh_Base
 };
 
 
+/// <summary>
+/// デカール生成情報
+/// </summary>
+struct CreateDecalInfo : public CreateMesh_Base
+{
+    UTILITY_MESH_TYPE Type;      // メッシュタイプ
+    bool IsNormalMap;            // 法線マップ使用するかどうか
+    SetupMaterialInfo *MaterialData; // マテリアル情報
+    UINT MatNum;                     // マテリアル数
+    bool IsDynamic;                  // 動的変更を行うか
+
+    // コンストラクタ
+    CreateDecalInfo() :
+        MaterialData(nullptr),
+        MatNum(0),
+        Type(UTILITY_MESH_TYPE::NONE),
+        IsNormalMap(false),
+        IsDynamic(false)
+    {
+    };
+};
+
+
+
 
 class MeshFactory
 {
@@ -164,5 +188,6 @@ public:
     static std::shared_ptr<class GameObject> CreateSprite(const CreateSpriteInfo &info);
     static std::shared_ptr<class GameObject> CreateBillboard(const CreateBillboradInfo& info);
     static std::shared_ptr<class GameObject> CreateSkybox(const CreateSkyboxInfo& info);
+    static std::shared_ptr<class GameObject> CreateDecal(const CreateDecalInfo & info);
 }; 
 

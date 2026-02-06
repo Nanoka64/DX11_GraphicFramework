@@ -8,6 +8,7 @@
 #include "Component_SpriteRenderer.h"
 #include "Component_SkyRenderer.h"
 #include "Component_BillboardRenderer.h"
+#include "Component_DecalRenderer.h"
 #include "DX_RenderTarget.h"
 #include "GaussianBlur.h"
 
@@ -205,6 +206,9 @@ void RenderPipeline::Execute(RendererEngine &renderer)
     renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
     renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
 
+    /* デカールパス */
+    Decal_PathRender(renderer);
+    
     /* ディファードライティングパス */
     Lighting_PathRender(renderer);
     renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
@@ -238,6 +242,39 @@ void RenderPipeline::Release()
     SAFE_DELETE(m_pSceneFinal_RT);
     SAFE_DELETE(m_pLuminance_RT);
     SAFE_DELETE(m_pShadowMap_RT);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】シャドウパス ライティングの前に
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
+{
+    // レンダリングターゲットの設定とクリア
+    renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
+    renderer.ClearRenderTargetView(m_pShadowMap_RT);
+
+    // シャドウパス
+    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
+
+    // 表カリング 影が浮いているような感じ（ピーターパン現象）を防ぐため
+    // ※表カリングにすると影が白くなってしまうので一旦裏カリングに
+    renderer.RegisterCullMode(CULL_MODE::BACK);     
+
+    // ライトの更新
+    Master::m_pLightManager->Update();
+
+    // シャドウ用オブジェクト描画
+    Master::m_pGameObjectManager->ObjectShadowRenderPass(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+    // シャドウマップへブラーを掛ける
+    m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 0.5f);
 }
 
 
@@ -277,38 +314,41 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 }
 
+
 //*---------------------------------------------------------------------------------------
-//*【?】シャドウパス ライティングの前に
-//*
+//*【?】デカール書き込みパス
+//*     Gバッファへ追加書き込み
 //* [引数]
 //* renderer : 描画エンジンの参照
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void RenderPipeline::Shadow_PathRender(RendererEngine &renderer)
+void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
 {
     // レンダリングターゲットの設定とクリア
-    renderer.RegisterRenderTargetAndViewPort(m_pShadowMap_RT);
-    renderer.ClearRenderTargetView(m_pShadowMap_RT);
+    renderer.RegisterRenderTargetAndViewPort(m_pAlbedo_RT);
 
-    // シャドウパス
-    renderer.set_CrntRenderPass(RENDER_PASS::SHADOW);
+    // 表カリング
+    renderer.RegisterCullMode(CULL_MODE::FRONT);
 
-    // 表カリング 影が浮いているような感じ（ピーターパン現象）を防ぐため
-    // ※表カリングにすると影が白くなってしまうので一旦裏カリングに
-    renderer.RegisterCullMode(CULL_MODE::BACK);     
+    // デプスステンシル登録
+    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
-    // ライトの更新
-    Master::m_pLightManager->Update();
+    // デカール描画
+    auto decal = Master::m_pGameObjectManager->get_ObjectByTag("Decal");
+    if (decal){
+        decal->get_Component<DecalRenderer>()->Draw(renderer);
+    }
 
-    // シャドウ用オブジェクト描画
-    Master::m_pGameObjectManager->ObjectShadowRenderPass(renderer);
+    // 深度ステンシル設定解除
+    renderer.RegisterDepthStencilState(NULL, 0);
+
+    // デフォルトの深度ステンシル設定に戻す
+    renderer.RegisterDefaultDepthStencilState();
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
-
-    // シャドウマップへブラーを掛ける
-    m_pShadowGaussianBlur->ExcuteOnGPU(renderer, 0.5f);
 }
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】ディファードライティングパス

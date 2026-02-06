@@ -27,11 +27,11 @@ private:
     static const int NUM_WEIGHTS = 8;
     float m_GaussWeights[NUM_WEIGHTS];  // ガウス重み係数
 
-    static const int BLUR_COUNT = 4;    // ブラー回数（ブルーム用）
+    static const int BLUR_COUNT = 4;         // ブラー回数（ブルーム用）
     class GaussianBlur *m_pBloomGaussianBlur;// ブルーム用ガウスブラー
 
     class GaussianBlur *m_pDoF_GaussianBlur; // 被写界深度用ガウスブラー
-    float m_DoF_BlurIncensity;  // DOFブラーの強さ
+    float m_DoF_BlurIncensity;               // DOFブラーの強さ
 
     class GaussianBlur *m_pShadowGaussianBlur; // シャドウのVSM用ガウスブラー
 
@@ -95,12 +95,13 @@ private:
     //
     // 各描画パスの処理
     //
-    void Geometry_PathRender(RendererEngine &renderer);
-    void Shadow_PathRender(RendererEngine &renderer);
-    void Lighting_PathRender(RendererEngine &renderer);
-    void Forward_PathRender(RendererEngine &renderer);
-    void PostEffect_PathRender(RendererEngine &renderer);
-    void CopyToFrameBuffer_PathRender(RendererEngine &renderer);
+    void Shadow_PathRender(RendererEngine &renderer);            // シャドウ
+    void Geometry_PathRender(RendererEngine &renderer);          // G-Buffer
+    void Decal_PathRender(RendererEngine &renderer);             // デカール
+    void Lighting_PathRender(RendererEngine &renderer);          // ディファードライティング
+    void Forward_PathRender(RendererEngine &renderer);           // フォワード
+    void PostEffect_PathRender(RendererEngine &renderer);        // ポストエフェクト
+    void CopyToFrameBuffer_PathRender(RendererEngine &renderer); // フレームバッファへ描画＆トーンマッピング
 
     /// <summary>
     /// レンダーターゲットの作成

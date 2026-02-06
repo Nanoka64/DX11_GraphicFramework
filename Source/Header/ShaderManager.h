@@ -39,6 +39,7 @@ enum class SHADER_TYPE
     DEFERRED_STD_RT_SPRITE,             // RT描画用スプライト        
     _DEFERRED_STD_BILLBOARD,            // ◆ ビルボード                  
     DEFERRED_STD_TRAIL,                 // 軌跡                  
+    DEFERRED_STD_DECAL,                 // デカール                  
 
     /////////////////////////////////////////////////////////////////////
     // フォワードシェーディング ****************************************

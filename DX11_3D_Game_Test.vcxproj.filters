@@ -561,6 +561,9 @@
     <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -926,6 +929,9 @@
     <ClInclude Include="Source\Header\Component_LineRenderer.h">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_DecalRenderer.h">
+      <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1023,6 +1029,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\Trail_VS.hlsl">
       <Filter>HLSL\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Decal_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

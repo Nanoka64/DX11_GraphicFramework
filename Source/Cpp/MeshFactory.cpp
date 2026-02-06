@@ -11,6 +11,7 @@
 #include "Component_BillboardRenderer.h"
 #include "Component_BillboardResource.h"
 #include "Component_SkyRenderer.h"
+#include "Component_DecalRenderer.h"
 #include "ResourceManager.h"
 #include "Texture.h"
 
@@ -207,5 +208,36 @@ std::shared_ptr<class GameObject> MeshFactory::CreateSkybox(const CreateSkyboxIn
     // Rendererにリソースを設定
     skyRenderer->set_MeshResource(meshResource);
 
+    return pObj;
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:MeshFactory Class 
+//*【?】デカールボックスの生成
+//* 引数：1.CreateDecalInfo&
+//* 返値：std::shared_ptr<GameObject>
+//*----------------------------------------------------------------------------------------
+std::shared_ptr<class GameObject> MeshFactory::CreateDecal(const CreateDecalInfo &info)
+{
+    // オブジェクトの生成
+    std::shared_ptr<GameObject> pObj = Instantiate(std::move(std::make_shared<GameObject>()), info.IsTransparent);
+    pObj->Init(*info.pRenderer);
+    pObj->set_Tag(info.ObjTag.c_str());
+
+    // オブジェクトの状態をアクティブにする
+    if (info.IsActive) {
+        pObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    }
+
+    // コンポーネントの追加
+    auto meshResource = pObj->add_Component<IMeshResource>();
+    auto decalRenderer = pObj->add_Component<DecalRenderer>();
+
+    // リソースのセットアップ                                  ↓キューブにする
+    if (!meshResource->Setup(*info.pRenderer, info.ShaderType, UTILITY_MESH_TYPE::CUBU, info.MaterialData->pMaterialData, info.MatNum, false))return {};
+
+    // Rendererにリソースを設定
+    decalRenderer->set_MeshResource(meshResource);
+    decalRenderer->set_IsDynamic(true);
     return pObj;
 }

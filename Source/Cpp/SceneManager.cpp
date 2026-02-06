@@ -23,6 +23,7 @@
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
+#include "Component_DecalRenderer.h"
 
 
 using namespace VECTOR4;
@@ -467,6 +468,46 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    spriteInitData.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
         //    auto obj = MeshFactory::CreateSprite(spriteInitData);
         //}
+    }
+
+    /* デカールの生成*/
+    {
+        Material mat[1];
+        mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Wall_W033.jpg");
+        mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        mat[0].m_SpecularPower = 100.0f;
+        mat[0].m_EmissivePower = 1.0f;
+        mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f, 1.0f);
+
+        // マテリアル登録
+        Master::m_pResourceManager->RegisterMaterialData("Decal", mat[0]);
+        auto matPtr = Master::m_pResourceManager->FindMaterial("Decal");
+
+        SetupMaterialInfo matInfo[1];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr;
+
+        CreateDecalInfo decal;
+        decal.pRenderer = &renderer;
+        decal.Type = UTILITY_MESH_TYPE::CUBU;
+        decal.MatNum = 1;
+        decal.MaterialData = matInfo;
+        decal.IsActive = false;
+        decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+        decal.IsNormalMap = false;
+        decal.IsDynamic = true;
+
+        VEC3 pt;
+        pt.x = 10.0f;
+        pt.y = 10.0f;
+        pt.z = 10.0f;
+
+        auto obj = MeshFactory::CreateDecal(decal);
+        obj->get_Component<DecalRenderer>()->Start(renderer);
+        obj->get_Transform().lock()->set_Pos(pt);
+        obj->get_Transform().lock()->set_Scale(VEC3(1, 1, 1));
+        obj->set_Tag("Decal");
     }
 
     // パイプラインの作成
