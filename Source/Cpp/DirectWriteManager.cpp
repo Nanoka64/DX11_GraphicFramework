@@ -239,6 +239,8 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, const std::string &formatTag,  D2D1_DRAW_TEXT_OPTIONS options)
 {
     HRESULT hr = S_OK;
+    //return;
+    
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
 
     // ワイド文字に変換

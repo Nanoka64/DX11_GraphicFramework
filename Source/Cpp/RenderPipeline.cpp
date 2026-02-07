@@ -208,7 +208,9 @@ void RenderPipeline::Execute(RendererEngine &renderer)
 
     /* デカールパス */
     Decal_PathRender(renderer);
-    
+    renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
+    renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
+
     /* ディファードライティングパス */
     Lighting_PathRender(renderer);
     renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
@@ -324,8 +326,13 @@ void RenderPipeline::Geometry_PathRender(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
 {
-    // レンダリングターゲットの設定とクリア
-    renderer.RegisterRenderTargetAndViewPort(m_pAlbedo_RT);
+    DX_RenderTarget* decalMRT[] = {
+        m_pAlbedo_RT ,
+        m_pNormal_RT,
+    };
+
+    // アルベドと法線に上書き
+    renderer.RegisterRenderTargets(ARRAYSIZE(decalMRT), decalMRT, nullptr);
 
     // 表カリング
     renderer.RegisterCullMode(CULL_MODE::FRONT);
@@ -333,11 +340,20 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
     // デプスステンシル登録
     renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
+    auto depthTex = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
+    ID3D11ShaderResourceView* depthSrv = depthTex->get_SRV();
+    renderer.get_DeviceContext()->PSSetShaderResources(2, 1, &depthSrv);
+
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
+
     // デカール描画
-    auto decal = Master::m_pGameObjectManager->get_ObjectByTag("Decal");
-    if (decal){
-        decal->get_Component<DecalRenderer>()->Draw(renderer);
+    auto decal = Master::m_pGameObjectManager->get_ObjectListByTag("BulletHole");
+    if (!decal.empty()) {
+        for (auto& hole : decal) {
+            hole->get_Component<DecalRenderer>()->Draw(renderer);
+        }
     }
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
     // 深度ステンシル設定解除
     renderer.RegisterDepthStencilState(NULL, 0);

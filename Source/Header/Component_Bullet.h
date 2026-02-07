@@ -17,6 +17,9 @@ private:
 	VECTOR3::VEC3 m_StartPos;
 	VECTOR3::VEC3 m_MoveVelocity;
 	float m_Counter;
+	std::function<void(const class CollisionInfo& _other)> m_CollisionTask;		// Õ“Ë‚Ìˆ—
+
+
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~Bullet();

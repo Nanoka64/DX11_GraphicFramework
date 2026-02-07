@@ -90,9 +90,12 @@ void DecalRenderer::Draw(RendererEngine &renderer)
     UINT vtxStride = meshInfo->VertexStride;
     ID3D11Buffer *idxBuff = meshInfo->pIndexBuffer;
 
+    auto transform = m_pOwner.lock()->get_Transform().lock();
+
+
     /* ========== 定数バッファの更新 ========== */
     // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
+    XMMATRIX worldMtx = transform->get_WorldMtx();
     worldMtx = XMMatrixTranspose(worldMtx);                 // 行列の転置
     XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
 
@@ -150,6 +153,7 @@ void DecalRenderer::Draw(RendererEngine &renderer)
 
         // 定数バッファをセット ==========================
         pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);       // ワールド
+        pContext->PSSetConstantBuffers(0, 1, &cbTransSet->pBuff);       // ワールド
         pContext->PSSetConstantBuffers(11,1, &m_pCBDecalSet->pBuff);    // デカール
         pContext->VSSetConstantBuffers(4, 1, &cbMatSet->pBuff);         // マテリアル
         pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);         // ,,,
@@ -177,9 +181,6 @@ void DecalRenderer::Draw(RendererEngine &renderer)
 
     // 描画コール ==========================
     pContext->DrawIndexed(meshInfo->NumIndex, 0, 0);
-
-    pContext->PSSetShaderResources(0, 0, nullptr);
-    pContext->PSSetShaderResources(1, 0, nullptr);
 }
 
 //*---------------------------------------------------------------------------------------

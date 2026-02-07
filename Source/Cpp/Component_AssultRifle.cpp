@@ -136,7 +136,6 @@ void AssultRifle::Update(RendererEngine &renderer)
         // ƒRƒ‰ƒCƒ_[‚Ì“o˜^
         Master::m_pCollisionManager->RegisterCollider(collider);
 
-
         // ‰Šú‰»
         bulletComp->Start(renderer);
 	}

@@ -211,9 +211,6 @@
     <Filter Include="ソース ファイル\Component\Game\Player">
       <UniqueIdentifier>{f1d6915a-5824-41c8-bd1f-817eea48205c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\Game\Player\Weapon">
-      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Component\AI">
       <UniqueIdentifier>{836ada99-b7b5-4aa9-abae-85ceeee5b225}</UniqueIdentifier>
     </Filter>
@@ -228,6 +225,12 @@
     </Filter>
     <Filter Include="ソース ファイル\State\Factory">
       <UniqueIdentifier>{fb5eec92-bea1-412c-b470-79f3cfeef390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Weapon">
+      <UniqueIdentifier>{209a994f-57aa-40b1-a209-2727fce6b4b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\Game\Weapon\Weapon">
+      <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -460,10 +463,10 @@
       <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_AssultRifle.cpp">
-      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
-      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Collider.cpp">
       <Filter>ソース ファイル\Component\Collision</Filter>
@@ -822,10 +825,10 @@
       <Filter>ソース ファイル\Graphics\Material</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_AssultRifle.h">
-      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Bullet.h">
-      <Filter>ソース ファイル\Component\Game\Player\Weapon</Filter>
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Collider.h">
       <Filter>ソース ファイル\Component\Collision</Filter>

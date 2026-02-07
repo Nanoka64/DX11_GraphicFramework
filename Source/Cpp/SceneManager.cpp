@@ -473,7 +473,8 @@ bool SceneManager::Init(RendererEngine &renderer)
     /* デカールの生成*/
     {
         Material mat[1];
-        mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Wall_W033.jpg");
+        mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole.png");
+        mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole_n.png");
         mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
         mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
         mat[0].m_SpecularPower = 100.0f;
@@ -481,8 +482,8 @@ bool SceneManager::Init(RendererEngine &renderer)
         mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f, 1.0f);
 
         // マテリアル登録
-        Master::m_pResourceManager->RegisterMaterialData("Decal", mat[0]);
-        auto matPtr = Master::m_pResourceManager->FindMaterial("Decal");
+        Master::m_pResourceManager->RegisterMaterialData("Decal_BulletHole", mat[0]);
+        auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_BulletHole");
 
         SetupMaterialInfo matInfo[1];
         matInfo[0].Index = 0;
@@ -499,14 +500,14 @@ bool SceneManager::Init(RendererEngine &renderer)
         decal.IsDynamic = true;
 
         VEC3 pt;
-        pt.x = 10.0f;
-        pt.y = 10.0f;
-        pt.z = 10.0f;
+        pt.x = 0.0f;
+        pt.y = 0.0f;
+        pt.z = 0.0f;
 
         auto obj = MeshFactory::CreateDecal(decal);
         obj->get_Component<DecalRenderer>()->Start(renderer);
         obj->get_Transform().lock()->set_Pos(pt);
-        obj->get_Transform().lock()->set_Scale(VEC3(1, 1, 1));
+        obj->get_Transform().lock()->set_Scale(VEC3(10.0f, 10.0f, 10.0f));
         obj->set_Tag("Decal");
     }
 

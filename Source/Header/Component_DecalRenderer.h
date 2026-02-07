@@ -24,7 +24,7 @@ public:
 	void Update(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer)override;		// 描画処理
 
-	bool CreateDecalConstantBuffer(RendererEngine &renderer);
+	bool CreateDecalConstantBuffer(RendererEngine &renderer);	// デカール用定数バッファの作成
 
 	void set_MeshResource(std::weak_ptr<class IMeshResource> meshResource);
 	void set_IsDynamic(bool _flag) { m_IsDynamic = _flag; }	// 動的変更を行うか
