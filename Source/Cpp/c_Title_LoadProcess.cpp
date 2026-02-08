@@ -14,6 +14,7 @@
 #include "Component_DirectionalLight.h"
 #include "Component_AssultRifle.h"
 #include "Component_Health.h"
+#include "Component_PointLight.h"
 #include "GameObject.h"
 #include "MeshFactory.h"
 #include "InputFactory.h"
@@ -49,6 +50,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
         obj->Init(*m_pRenderer);
         obj->set_Tag("Camera");
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+        obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
         obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 1000.0f);
         m_pCameraComp = obj->add_Component<Camera3D>(); // カメラコンポーネントの追加
         m_pCameraComp->set_IsControl(false);    // 操作フラグをオフに
@@ -90,6 +92,13 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 {
+    // ロード画面用スプライトオフ
+    m_pLoadBackSprite->get_OwnerObj().lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    if (m_IsMatLoad)
+    {
+        return;
+    }
+
 
     // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
@@ -171,6 +180,9 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
+        // 破棄しない
+        pPlayerObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
+
         //pPlayerObj->add_Component<PlayerController>(1);
         pPlayerObj->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f);
         //pPlayerObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
@@ -212,9 +224,17 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         auto obj = MeshFactory::CreateModel(model);
 
+        // 破棄しない
+        obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
+
         // アサルトライフル
         obj->add_Component<AssultRifle>();
-        
+
+        // フラッシュ用ポイントライト
+        auto flash = obj->add_Component<PointLight>();
+        flash->set_Intensity(0.0f);
+        flash->set_Range(0.0f);
+
         // レーザーサイト
         auto line = obj->add_Component<LineRenderer>();
         line->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -249,6 +269,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         //auto obj = Instantiate(std::move(std::make_shared<GameObject>()));
         obj->set_Tag("DirLight");
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+        obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);// 破棄しない
         auto light = obj->add_Component<DirectionalLight>();
         light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
         light->set_Intensity(2.0f);
@@ -337,9 +358,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
     }
 
 
-
-    // ロード画面用スプライトオフ
-	m_pLoadBackSprite->get_OwnerObj().lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+    m_IsMatLoad = true;
 }
 
 

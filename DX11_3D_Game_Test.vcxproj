@@ -204,6 +204,7 @@
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
+    <ClInclude Include="Source\Header\Component_TimerDestruction.h" />
     <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
     <ClInclude Include="Source\Header\c_Game_LoadProcess.h" />
@@ -223,7 +224,6 @@
     <ClInclude Include="Source\Header\GaussianBlur.h" />
     <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\IDX_BlendState.h" />
-    <ClInclude Include="Source\Header\IChildSceneState.h" />
     <ClInclude Include="Source\Header\InspectorEditors.h" />
     <ClInclude Include="Source\Header\InspectorWindow.h" />
     <ClInclude Include="Source\Header\LightManager.h" />
@@ -236,12 +236,9 @@
     <ClInclude Include="Source\Header\DX_RenderTarget.h" />
     <ClInclude Include="Source\Header\ObjectSelect.h" />
     <ClInclude Include="Source\Header\RenderPipeline.h" />
-    <ClInclude Include="Source\Header\RootSceneState.h" />
     <ClInclude Include="Source\Header\IState.h" />
     <ClInclude Include="Source\Header\Object.h" />
     <ClInclude Include="Source\Header\BufferManeger.h" />
-    <ClInclude Include="Source\Header\Camera.h" />
-    <ClInclude Include="Source\Header\Cubu.h" />
     <ClInclude Include="Source\Header\Debugger.h" />
     <ClInclude Include="Source\Header\Component_DirectionalLight.h" />
     <ClInclude Include="Source\Header\DXApp.h" />
@@ -267,7 +264,6 @@
     <ClInclude Include="Source\Header\Path.h" />
     <ClInclude Include="Source\Header\pch.h" />
     <ClInclude Include="Source\Header\PixelShader.h" />
-    <ClInclude Include="Source\Header\Quad.h" />
     <ClInclude Include="Source\Header\RendererEngine.h" />
     <ClInclude Include="Source\Header\RenderParam.h" />
     <ClInclude Include="Source\Header\ResourceManager.h" />
@@ -280,10 +276,10 @@
     <ClInclude Include="Source\Header\ShaderManager.h" />
     <ClInclude Include="Source\Header\SoundManager.h" />
     <ClInclude Include="Source\Header\StateMachine.h" />
-    <ClInclude Include="Source\Header\Test_ChildState_Start.h" />
     <ClInclude Include="Source\Header\Texture.h" />
     <ClInclude Include="Source\Header\Component_Transform.h" />
     <ClInclude Include="Source\Header\Root_TitleSceneState.h" />
+    <ClInclude Include="Source\Header\TimeManager.h" />
     <ClInclude Include="Source\Header\TragetManager.h" />
     <ClInclude Include="Source\Header\TRIANGLE.h" />
     <ClInclude Include="Source\Header\VEC.h" />
@@ -339,6 +335,7 @@
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_SphereCollider.cpp" />
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp" />
+    <ClCompile Include="Source\Cpp\Component_TimerDestruction.cpp" />
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp" />
     <ClCompile Include="Source\Cpp\CompositeState.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_LoadProcess.cpp" />
@@ -358,7 +355,6 @@
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
     <ClCompile Include="Source\Cpp\HierarchyWindow.cpp" />
     <ClCompile Include="Source\Cpp\IDX_BlendState.cpp" />
-    <ClCompile Include="Source\Cpp\IChildSceneState.cpp" />
     <ClCompile Include="Source\Cpp\InspectorEditors.cpp" />
     <ClCompile Include="Source\Cpp\InspectorWindow.cpp" />
     <ClCompile Include="Source\Cpp\LightManager.cpp" />
@@ -373,7 +369,6 @@
     <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp" />
     <ClCompile Include="Source\Cpp\ObjectSelect.cpp" />
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp" />
-    <ClCompile Include="Source\Cpp\RootSceneState.cpp" />
     <ClCompile Include="Source\Cpp\IState.cpp" />
     <ClCompile Include="Source\Cpp\Object.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -382,18 +377,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\BufferManeger.cpp" />
-    <ClCompile Include="Source\Cpp\Camera.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Cubu.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Debugger.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -477,12 +460,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\PixelShader.cpp" />
-    <ClCompile Include="Source\Cpp\Quad.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\RendererEngine.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -519,7 +496,6 @@
     <ClCompile Include="Source\Cpp\ShaderManager.cpp" />
     <ClCompile Include="Source\Cpp\SoundManager.cpp" />
     <ClCompile Include="Source\Cpp\StateMachine.cpp" />
-    <ClCompile Include="Source\Cpp\Test_ChildState_Start.cpp" />
     <ClCompile Include="Source\Cpp\Texture.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -533,6 +509,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp" />
+    <ClCompile Include="Source\Cpp\TimeManager.cpp" />
     <ClCompile Include="Source\Cpp\TragetManager.cpp" />
     <ClCompile Include="Source\Cpp\TRIANGLE.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>

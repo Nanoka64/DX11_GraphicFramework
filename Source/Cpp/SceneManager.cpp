@@ -633,7 +633,6 @@ void SceneManager::Draw(RendererEngine& renderer)
     // シーンステートの描画
     m_StateMachine.Draw();
 
-
     //Master::m_pDirectWriteManager->DrawString("こんにちは",VEC2(940, 540));
 }
 

@@ -11,6 +11,7 @@
 #include "CollisionManager.h"
 #include "EffectManager.h"
 #include "SoundManager.h"
+#include "TimeManager.h"
 
 class Master
 {
@@ -27,4 +28,5 @@ public:
 	static CollisionManager		* m_pCollisionManager;	// 衝突管理
 	static EffectManager		* m_pEffectManager;		// エフェクト管理
 	static SoundManager			* m_pSoundManager;		// サウンド管理
+	static TimeManager			* m_pTimeManager;		// 時間管理
 };

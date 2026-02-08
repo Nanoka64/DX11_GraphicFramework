@@ -356,9 +356,9 @@ void PlayerController::RollingUpdate()
 //*----------------------------------------------------------------------------------------
 void PlayerController::OnCollisionEnter(const class CollisionInfo &other)
 {
-	if (other.get_HitObject().lock()->get_Tag() == "Ant_1")
+	if (other.get_HitObject().lock()->get_Tag() == "Ant")
 	{
-		m_pHealthComp.lock()->TakeDamage(1.0f);
+		//m_pHealthComp.lock()->TakeDamage(1.0f);
 	}
 }
 

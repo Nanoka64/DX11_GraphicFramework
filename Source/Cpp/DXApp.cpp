@@ -30,6 +30,7 @@ InputManager            *Master::m_pInputManager        = nullptr;   // 入力管理
 CollisionManager        *Master::m_pCollisionManager    = nullptr;   // 衝突管理
 EffectManager           *Master::m_pEffectManager       = nullptr;   // エフェクト管理
 SoundManager            *Master::m_pSoundManager        = nullptr;   // サウンド管理
+TimeManager             *Master::m_pTimeManager         = nullptr;   // 時間管理
 
 
 //*---------------------------------------------------------------------------------------
@@ -92,6 +93,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pCollisionManager     = new CollisionManager();       // 衝突管理
     Master::m_pEffectManager        = new EffectManager();          // エフェクト管理
     Master::m_pSoundManager         = new SoundManager();           // サウンド管理
+    Master::m_pTimeManager          = new TimeManager();            // 時間管理
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/
@@ -234,10 +236,30 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
         assert(false);
         return false;
     }
+    
+    // *************************************************************************************************
+    /**  タイムマネージャの初期化 **/
+    // *************************************************************************************************
+    if (!Master::m_pTimeManager->Init())
+    {
+        assert(false);
+        return false;
+    }
 
     /** フォントデータ作成 **/
+    // 白 50サイズ 標準 ----------------------------------------------
+    FONT_DATA *pFontData = new FONT_DATA("White_50_STD"); 
+    pFontData->fontSize = 50.0f;
+    pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
+    pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
+
+    // 登録
+    Master::m_pDirectWriteManager->SetFontData(pFontData);
+    SAFE_DELETE(pFontData);
+
+
     // 白 40サイズ 標準 ----------------------------------------------
-    FONT_DATA *pFontData = new FONT_DATA("White_40_STD"); 
+    pFontData = new FONT_DATA("White_40_STD");
     pFontData->fontSize = 40.0f;
     pFontData->fontWeight = DWRITE_FONT_WEIGHT_BOLD;
     pFontData->color = D2D1::ColorF(D2D1::ColorF::White);
@@ -265,6 +287,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     // 登録
     Master::m_pDirectWriteManager->SetFontData(pFontData);
     SAFE_DELETE(pFontData);
+
 
     // 正常終了
     return true;
@@ -331,13 +354,19 @@ int DXApp::MainLoop()
                 float win_width = static_cast<float>(m_pRenderer->get_ScreenWidth());
                 float win_height = static_cast<float>(m_pRenderer->get_ScreenHeight());
 
+                Master::m_pTimeManager->Update();
+
                 Master::m_pDebugger->BeginFrame(win_width, win_height);
+
+                float deltatime = Master::m_pTimeManager->get_DeltaTime();
+
 
                 // アプリケーション情報
                 Master::m_pDebugger->BeginDebugWindow("Application");
                 Master::m_pDebugger->DG_TextValue("CrntTime : %d", crntTime);
                 Master::m_pDebugger->DG_TextValue("LastTime : %d", lastTime);
                 Master::m_pDebugger->DG_TextValue("Difference : %f.3", difference);
+                Master::m_pDebugger->DG_TextValue("DeltaTime : %f.3", deltatime);
                 Master::m_pDebugger->EndDebugWindow(); 
                 
                 using namespace Tool;
@@ -406,9 +435,8 @@ int DXApp::MainLoop()
                 // ゲーム描画
                 m_pGameManager->Draw(*m_pRenderer);
 
-                // エフェクト更新
+                // エフェクト更新（描画はパイプラインクラスのフォワードと同じ位置で行っている）
                 Master::m_pEffectManager->UpdateEffect(*m_pRenderer);
-                Master::m_pEffectManager->DrawEffect();
 
                 // ImGUI描画終了
                 Master::m_pDebugger->EndFrame();
@@ -427,7 +455,7 @@ int DXApp::MainLoop()
 
     m_pRenderer->Term();  // リソース解放
 
-    timeBeginPeriod(1); // タイマーの分解機能設定をデフォルトに戻す
+    timeEndPeriod(1); // タイマーの分解機能設定をデフォルトに戻す
 
     return (int)msg.wParam;
 }

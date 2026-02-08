@@ -138,6 +138,10 @@ std::shared_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteIn
         pObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
     }
 
+    // TODO:無条件DontDestroy
+    pObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
+
+
     // コンポーネントの追加
     auto sprite = pObj->add_Component<SpriteRenderer>();
 

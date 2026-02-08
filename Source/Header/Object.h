@@ -11,6 +11,7 @@ enum class OBJECT_STATUS_BITFLAG : unsigned
 	IS_DELETE		= 1 << 1,	// 2	削除するか
 	IS_DONT_DESTROY	= 1 << 2,	// 4	
 	IS_TRANSPARENT	= 1 << 3,	// 8	透明度があるか
+	IS_TIME_DESTROY	= 1 << 4,	// 16	時間で削除するか
 };
 
 // ***************************************************************************************
@@ -35,6 +36,7 @@ private:
 
 	int m_LayerRank;       // 描画順を決めるために使うランク
 	unsigned int m_ObjectStatusBitFlag;	// 状態をビット管理
+
 public:
 	Object();
 	virtual ~Object() = default;

@@ -37,8 +37,8 @@ void c_Result_GetItemCheck::OnExit(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 int c_Result_GetItemCheck::Update(SceneManager *pOwner)
 {
-	// リザルトシーンへ
-	if (GetInputDown(GAME_CONFIG::MOVE_JUMP))
+	// タイトルシーンへ
+	if (GetInputHold(GAME_CONFIG::MOVE_JUMP, 60))
 	{
 		return c_RESULT::c_GO_TITLE_SCENE;
 	}
@@ -55,5 +55,6 @@ int c_Result_GetItemCheck::Update(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Result_GetItemCheck::Draw(SceneManager *pOwner)
 {
-
+	Master::m_pDirectWriteManager->DrawString("クリアおめでとう！", VECTOR2::VEC2(740, 540), "White_50_STD");
+	Master::m_pDirectWriteManager->DrawString("Spaceを1秒以上長押しでタイトルに戻ります", VECTOR2::VEC2(540, 840), "White_40_STD");
 }

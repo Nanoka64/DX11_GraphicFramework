@@ -28,7 +28,6 @@ private:
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
 	bool m_IsShadow;		// シャドウをかけるかどうか
 
-
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
 public:

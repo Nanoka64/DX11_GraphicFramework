@@ -83,6 +83,10 @@ bool EffectManager::Setup(RendererEngine& renderer)
 
     // エフェクトの読み込み
     LoadEffect(u"Resource/Effect/Laser01.efkefc", "Laser01");
+    LoadEffect(u"Resource/Effect/Spark.efkefc", "Spark");
+    LoadEffect(u"Resource/Effect/Smoke.efkefc", "Smoke");
+    LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc", "DeadExplosion");
+    LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
 
     return true;
 }
@@ -127,7 +131,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     // マネージャーの更新
     Effekseer::Manager::UpdateParameter updateParameter;
     m_EfkManager->Update(updateParameter);
-
+    
     // Update a time
     // 時間を更新する
     m_EfkRenderer->SetTime(m_Timer / 60.0f);
@@ -153,7 +157,6 @@ void EffectManager::DrawEffect()
 {
     // エフェクトの描画開始処理
     m_EfkRenderer->BeginRendering();
-
     // エフェクトの描画
     Effekseer::Manager::DrawParameter drawParameter;
     drawParameter.ZNear = 0.0f;
@@ -161,7 +164,6 @@ void EffectManager::DrawEffect()
     drawParameter.ViewProjectionMatrix = m_EfkRenderer->GetCameraProjectionMatrix();
     drawParameter.IsSortingEffectsEnabled = true;
     m_EfkManager->Draw(drawParameter);
-
     // エフェクトの描画終了処理
     m_EfkRenderer->EndRendering();
 }

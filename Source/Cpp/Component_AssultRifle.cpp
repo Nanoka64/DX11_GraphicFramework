@@ -12,6 +12,7 @@
 #include "Component_TrailRenderer.h"
 #include "Component_3DCamera.h"
 #include "Component_LineRenderer.h"
+#include "Component_PointLight.h"
 
 using namespace GIGA_Engine;
 using namespace Input;
@@ -50,6 +51,7 @@ void AssultRifle::Start(RendererEngine &renderer)
 {
     // 照準レーザー用
     m_pLineRendererComp = m_pOwner.lock()->get_Component<LineRenderer>();
+    m_pFlashPointLight = m_pOwner.lock()->get_Component<PointLight>();
 }
 
 
@@ -78,6 +80,8 @@ void AssultRifle::Update(RendererEngine &renderer)
     XMVECTOR forward =  worldMtx.r[2];  // Z
     forward *= -1;  // プレイヤーが-Z前になってしまっているので
 
+    m_pFlashPointLight.lock()->set_Intensity(0.0f);
+
     // レーザーサイトの始点と方向
     m_pLineRendererComp.lock()->set_Dir(VEC3::FromXMVECTOR(XMVector3Normalize(forward)));
     m_pLineRendererComp.lock()->set_StartPos(pos);
@@ -85,6 +89,10 @@ void AssultRifle::Update(RendererEngine &renderer)
     // 左クリックで発射
 	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
     {
+        m_pFlashPointLight.lock()->set_Range(30.0f);
+        m_pFlashPointLight.lock()->set_Intensity(1.0f);
+        m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+
         // マテリアル取得
         auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
 
@@ -124,7 +132,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 
         // コライダーの追加
         auto collider = obj->add_Component<BoxCollider>();
-        collider->set_Size(VEC3(2.0f, 2.0f, 2.0f));
+        collider->set_Size(VEC3(5.0f, 5.0f, 5.0f));
         collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
 
         // 軌跡

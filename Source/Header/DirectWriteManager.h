@@ -70,7 +70,7 @@ public:
     /// <summary>
     /// ※テンプレートメソッド
     /// <para>フォーマット指定</para>
-    /// <para>必ず文字列の中に"{}"をフォーマット分含めること！！</para>
+    /// <para>必ず文字列の中に"{:d}"みたいなのをフォーマット分含めること！！</para>
     /// </summary>
     /// <typeparam name="...Args"></typeparam>
     /// <param name="str"></param>
@@ -78,7 +78,7 @@ public:
     /// <param name="options"></param>
     /// <param name="...args"></param>
     template <typename... Args>
-    void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, /*D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE,*/ Args&&... args)
+    void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, const std::string& formatTag,  Args&&... args)
     {
         HRESULT hr = S_OK;
 
@@ -98,7 +98,7 @@ public:
         hr = m_pWriteFactory->CreateTextLayout(
             wstr.c_str(),
             static_cast<UINT32>(wstr.size()),
-            m_pTextFormat,
+            m_pTextFormatMap[formatTag].Get(),
             RVSize.width,
             RVSize.height,
             pTextLayout.GetAddressOf()

@@ -45,6 +45,15 @@ int c_Game_Play::Update(SceneManager *pOwner)
     static float counter = 0.0f;
     counter += 0.01f;
 
+    auto antList = Master::m_pGameObjectManager->get_ObjectListByTag("Ant");
+    m_EnemyNum = antList.size();
+    // 敵が居なくなったらリザルトへ
+    if (m_EnemyNum == 0)
+    {
+        return c_GAME::c_GO_RESULT_SCENE;
+    }
+
+
     //-----------------------------------------------------------------------------
     // ■ 爆撃機の移動処理
     //-----------------------------------------------------------------------------
@@ -88,5 +97,5 @@ int c_Game_Play::Update(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Game_Play::Draw(SceneManager* pOwner)
 {
-
+    Master::m_pDirectWriteManager->DrawFormatString("残りの敵数：{:d}", VECTOR2::VEC2(0, 540), "White_40_STD",m_EnemyNum);
 }

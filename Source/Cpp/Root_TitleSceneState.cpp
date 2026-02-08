@@ -25,6 +25,20 @@ void Root_TitleSceneState::OnEnter(SceneManager* pOwner)
 
 	// 最初はロード
 	this->SetInitChildState(pOwner, c_TITLE::c_TITLE_LOAD_PROCESS);
+
+	// タイトル用のスプライトをオフに
+	auto obj = Master::m_pGameObjectManager->get_ObjectByTag("TitleBack_Sp");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	obj = Master::m_pGameObjectManager->get_ObjectByTag("TitleLogo_Sp");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	obj = Master::m_pGameObjectManager->get_ObjectByTag("MenuItemBack_Sp1");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	obj = Master::m_pGameObjectManager->get_ObjectByTag("MenuItemBack_Sp2");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	obj = Master::m_pGameObjectManager->get_ObjectByTag("MenuItemBack_Sp3");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+	obj = Master::m_pGameObjectManager->get_ObjectByTag("MenuItemBack_Sp4");
+	if (obj)obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 }
 
 

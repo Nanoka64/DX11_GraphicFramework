@@ -4,6 +4,7 @@
 #include "Component_AssultRifle.h"
 #include "Component_Transform.h"
 #include "Component_DecalRenderer.h"
+#include "Component_TimerDestruction.h"
 #include "RendererEngine.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
@@ -45,7 +46,7 @@ Bullet::~Bullet()
 //* &renderer : 描画エンジンの参照
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-void Bullet::Start(RendererEngine &renderer)
+void Bullet::Start(RendererEngine& renderer)
 {
     auto transform = m_pOwner.lock()->get_Transform().lock();
 
@@ -85,7 +86,6 @@ void Bullet::Start(RendererEngine &renderer)
 
             VEC3 hitNormal = _other.get_HitNormal();    // 衝突相手の法線
 
-
             // 水平方向の向きを求める
             float angleY = atan2(hitNormal.x, hitNormal.z);
             // 水平成分の長さ
@@ -94,26 +94,38 @@ void Bullet::Start(RendererEngine &renderer)
             // 法線の逆を向かせたいのでマイナスを付ける
             float angleX = atan2(-hitNormal.y, xzLen);
 
-            // 法線と弾の移動ベクトルの内積
-            float dot_HitNormToMoveVel = abs(VEC3::Dot(hitNormal, m_MoveVelocity));
+            // 当たった方向に伸ばそうとしたけど上手くいかなかった
+            {
+                //VEC3 moveVel = -m_MoveVelocity.Normalize();
+                //// 法線と弾の移動ベクトルの内積
+                //float dot_HitNormToMoveVel = abs(VEC3::Dot(hitNormal, moveVel));
 
-            // 地面を這うベクトルを求める
-            VEC3 tempVec = m_MoveVelocity - (hitNormal * dot_HitNormToMoveVel);
-            tempVec = tempVec.Normalize();
+                //// 地面を這うベクトルを求める
+                //VEC3 tempVec = moveVel - (hitNormal * dot_HitNormToMoveVel);
+                //tempVec = tempVec.Normalize();
 
-            VEC3 side = VEC3::Cross(VEC3(0.0f, 1.0f, 0.0f), hitNormal).Normalize();
-            VEC3 up = VEC3::Cross(hitNormal, side);
+                //VEC3 baseUp(0.0f, 1.0f, 0.0f);
+                //// 法線が真上を向いているか確かめる
+                //if (abs(hitNormal.y) > 0.99f) {
+                //    baseUp = VEC3(1.0f, 0.0f, 0.0f); // 軸をズラす
+                //}
 
-            float dotSide = VEC3::Dot(tempVec, side);
-            float dotUp = VEC3::Dot(tempVec, up);
+                //VEC3 side = VEC3::Cross(baseUp, hitNormal).Normalize();
+                //VEC3 up = VEC3::Cross(hitNormal, side);
 
-            float angleZ = atan2f(dotSide, dotUp);
+                //float dotSide = VEC3::Dot(tempVec, side);
+                //float dotUp = VEC3::Dot(tempVec, up);
 
+                //float angleZ = atan2f(dotSide, dotUp);
+                //scale.y = 20.0f + (1.0f - dot_HitNormToMoveVel) * 120.0f;
+            }
+
+            float angleZ = Tool::RandRange(0.0f, 6.14f);
 
             VEC3 scale;
-            scale.x = 30.0f;
-            scale.y = 30.0f + (1.0f - dot_HitNormToMoveVel) * 150.0f;
-            scale.z = 10.0f;
+            scale.x = 20.0f;
+            scale.y = 20.0f;
+            scale.z = 60.0f;
 
             auto obj = MeshFactory::CreateDecal(decal);
             obj->get_Component<DecalRenderer>()->Start(renderer);
@@ -121,6 +133,21 @@ void Bullet::Start(RendererEngine &renderer)
             obj->get_Transform().lock()->set_Scale(scale);
             obj->get_Transform().lock()->set_RotateToRad(angleX, angleY, angleZ);
             obj->set_Tag("BulletHole");
+            auto timer = obj->add_Component<TimerDestruction>();
+            timer->set_LifeTime(2.0f);  // 生存時間
+
+            VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
+            int spark_handle = Master::m_pEffectManager->PlayEffect("Spark");   // 火花
+            int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke");   // 煙
+            // 火花
+            Master::m_pEffectManager->SetScaleEffect(spark_handle, 5.0f, 5.0f, 5.0f);
+            Master::m_pEffectManager->SetPositionEffect(spark_handle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetRotationEffect(spark_handle, effectRot.x, effectRot.y, effectRot.z);
+
+            // 煙
+            Master::m_pEffectManager->SetScaleEffect(smoke_handle, 5.0f, 5.0f, 5.0f);
+            Master::m_pEffectManager->SetPositionEffect(smoke_handle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetRotationEffect(smoke_handle, effectRot.x, effectRot.y, effectRot.z);
         };
 }
 
@@ -134,6 +161,7 @@ void Bullet::Start(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void Bullet::Update(RendererEngine &renderer)
 {
+
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 crntPos = transform->get_VEC3ToPos();
     

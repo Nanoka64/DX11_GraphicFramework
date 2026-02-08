@@ -128,9 +128,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 50; i++)
         {
-            model.ObjTag = "Ant_" + std::to_string(i + 1);   // タグ
+            model.ObjTag = "Ant"/* + std::to_string(i + 1)*/;   // タグ
 
             auto obj  = MeshFactory::CreateModel(model);
             auto transform = obj->get_Component<Transform>();
@@ -143,9 +143,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             obj->add_Component<Health>();
 
             VEC3 pos = VEC3();
-            pos.x = Tool::RandRange(-700.0, 700.0);
+            pos.x = Tool::RandRange(-600.0, 600.0);
             pos.y = 15.0f;
-            pos.z = Tool::RandRange(-700.0, 700.0);
+            pos.z = Tool::RandRange(-600.0, 600.0);
             
             VEC3 rot = VEC3();
             rot.y = Tool::RandRange(-360.0f, 360.0f);

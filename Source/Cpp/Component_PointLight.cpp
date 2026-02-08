@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "Component_3DCamera.h"
 
+using namespace VECTOR3;
+
 //*---------------------------------------------------------------------------------------
 //* @:PointLight Class 
 //*【?】コンストラクタ
@@ -55,8 +57,12 @@ void PointLight::Update(RendererEngine &renderer)
 
     CB_POINT_LIGHT pointData{};
 
+    
+
+    VEC3 pos = m_pOwnerTransform.lock()->get_WorldVEC3ToPos();;
+
     // バッファの更新
-    pointData.Pos               = m_pOwnerTransform.lock()->get_VEC3ToPos();
+    pointData.Pos               = pos;
 	pointData.Range	            = m_Range;
     pointData.SpecularColor     = VECTOR3::VEC3(1,0,0);
     pointData.SpecularIntensity = 1.0f;

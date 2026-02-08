@@ -505,6 +505,12 @@ void GameObjectManager::clear_NotIsDontDestroyObject()
             return (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY) == false);
         }
     );
+    m_pTransparent_ObjectList.remove_if(
+        [](const std::shared_ptr<GameObject> &obj)
+        {
+            return (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY) == false);
+        }
+    );
 }
 
 namespace GIGA_Engine

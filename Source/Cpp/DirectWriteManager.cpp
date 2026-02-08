@@ -234,6 +234,7 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 //      * DirectWriteManager Class - 文字列の描画 - *
 //       :文字列
 //       :座標
+//       :使用するフォーマットキー
 //       :整形オプション
 //--------------------------------------------------------------------------------------
 void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, const std::string &formatTag,  D2D1_DRAW_TEXT_OPTIONS options)

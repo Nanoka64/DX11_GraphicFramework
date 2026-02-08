@@ -9,6 +9,7 @@
 #include "Component_SkyRenderer.h"
 #include "Component_BillboardRenderer.h"
 #include "Component_DecalRenderer.h"
+#include "Component_TimerDestruction.h"
 #include "DX_RenderTarget.h"
 #include "GaussianBlur.h"
 
@@ -340,6 +341,7 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
     // デプスステンシル登録
     renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
 
+    // 深度テクスチャをスロット2渡す
     auto depthTex = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
     ID3D11ShaderResourceView* depthSrv = depthTex->get_SRV();
     renderer.get_DeviceContext()->PSSetShaderResources(2, 1, &depthSrv);
@@ -351,6 +353,7 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
     if (!decal.empty()) {
         for (auto& hole : decal) {
             hole->get_Component<DecalRenderer>()->Draw(renderer);
+            hole->get_Component<TimerDestruction>()->Update(renderer);
         }
     }
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
@@ -560,8 +563,17 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pDepth_RT->get_DSV());
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
+
     // 透明度アリオブジェクト（UIも）の描画
     Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
+
+
+    /*
+    * エフェクシアの描画もここでする！！
+    */
+    Master::m_pEffectManager->DrawEffect();
+
+
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -575,6 +587,7 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
 
     // トーンマッピングを適用する
     m_pFinalSceneToneMappingFilter_Sprite->Draw(renderer);
+
 }
 
 
@@ -866,7 +879,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.Width = m_ScreenWidth;
     sprite.Height = m_ScreenHeight;
     sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_A", m_pAlbedo_RT->get_SRV_ComPtr(), m_pAlbedo_RT->get_Width(), m_pAlbedo_RT->get_Height());
-    
+
     // スプライト取得
     m_pAlbed_Sprite = MeshFactory::CreateSprite(sprite)->get_Component<SpriteRenderer>();
     

@@ -348,29 +348,11 @@
     <ClCompile Include="Source\Cpp\IState.cpp">
       <Filter>ソース ファイル\State</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Test_ChildState_Start.cpp">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\StateMachine.cpp">
       <Filter>ソース ファイル\State</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\CompositeState.cpp">
       <Filter>ソース ファイル\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\IChildSceneState.cpp">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\RootSceneState.cpp">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Camera.cpp">
-      <Filter>ソース ファイル\NotUsed</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Quad.cpp">
-      <Filter>ソース ファイル\NotUsed</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Cubu.cpp">
-      <Filter>ソース ファイル\NotUsed</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ModelData.cpp">
       <Filter>ソース ファイル\Graphics\Model</Filter>
@@ -567,6 +549,12 @@
     <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_TimerDestruction.cpp">
+      <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\TimeManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -707,29 +695,11 @@
     <ClInclude Include="Source\Header\SceneStateEnums.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Test_ChildState_Start.h">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\StateMachine.h">
       <Filter>ソース ファイル\State</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\CompositeState.h">
       <Filter>ソース ファイル\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\RootSceneState.h">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\IChildSceneState.h">
-      <Filter>ソース ファイル\NotUsed\TestScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Camera.h">
-      <Filter>ソース ファイル\NotUsed</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Quad.h">
-      <Filter>ソース ファイル\NotUsed</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Cubu.h">
-      <Filter>ソース ファイル\NotUsed</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ModelData.h">
       <Filter>ソース ファイル\Graphics\Model</Filter>
@@ -934,6 +904,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_DecalRenderer.h">
       <Filter>ソース ファイル\Component\Mesh\UtilityMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_TimerDestruction.h">
+      <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TimeManager.h">
+      <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

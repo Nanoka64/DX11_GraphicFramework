@@ -53,9 +53,6 @@ void EnemyController::Start(RendererEngine& renderer)
 	// コライダーの取得
 	m_pColliderComp = m_pOwner.lock()->get_Component<Collider>();
 
-	Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc","DeadExplosion");
-	Master::m_pEffectManager->LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc","Hit");
-
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
 	m_pHealthComp->set_MaxHP(200.0f);
@@ -113,7 +110,7 @@ void EnemyController::Update(RendererEngine& renderer)
 	if (m_IsDead)
 	{
 		m_pColliderComp->set_IsEnable(false);	// コライダーの判定をオフに
-		m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+		m_pOwner.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 	}
 
 	auto target = Master::m_pGameObjectManager->get_ObjectByTag("Player");
@@ -135,6 +132,12 @@ void EnemyController::Update(RendererEngine& renderer)
 	VEC3 newPos = crntPos + m_MoveVelocity;
 
 	newPos.y = crntPos.y;	// Yは変えない
+
+	if (newPos.y <= 5.0f)
+	{
+		newPos.y = 5.0f;
+	}
+
 	myTransform->set_Pos(newPos);
 
 	if (m_MoveVelocity.LengthSq() > 0.01)
