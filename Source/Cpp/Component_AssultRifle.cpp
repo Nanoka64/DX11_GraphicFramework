@@ -80,17 +80,25 @@ void AssultRifle::Update(RendererEngine &renderer)
     XMVECTOR forward =  worldMtx.r[2];  // Z
     forward *= -1;  // プレイヤーが-Z前になってしまっているので
 
+    // 弾を発射してないときはフラッシュライトをオフ
     m_pFlashPointLight.lock()->set_Intensity(0.0f);
 
     // レーザーサイトの始点と方向
     m_pLineRendererComp.lock()->set_Dir(VEC3::FromXMVECTOR(XMVector3Normalize(forward)));
     m_pLineRendererComp.lock()->set_StartPos(pos);
 
+    // 右クリックでズーム
+    renderer.get_CameraComponent()->set_Fov(90.0f);
+    if (GetMouseClick(MOUSE_BUTTON_STATE::RIGHT))
+    {
+        renderer.get_CameraComponent()->set_Fov(40.0f);
+    }
     // 左クリックで発射
 	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
     {
+        // フラッシュライト
         m_pFlashPointLight.lock()->set_Range(30.0f);
-        m_pFlashPointLight.lock()->set_Intensity(1.0f);
+        m_pFlashPointLight.lock()->set_Intensity(1.5f);
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
 
         // マテリアル取得

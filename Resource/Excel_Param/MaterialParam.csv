@@ -12,5 +12,5 @@ Claymore,1,1,1,1,1,1,1,1,200,0,0,0,0,Resource/Model/Claymore/Mat_Base_Color.png,
 Building,1,1,1,1,1,1,1,1,150,0,0,0,0,Resource/Model/Building/01/texture/building5-lo.jpg,Resource/Texture/DefaultN_Map.png,-1,0
 MotherShip,1,1,1,1,1,1,1,1,150,0,0,0,0,Resource/Texture/metal_plate_02_diff_2k.jpg,Resource/Texture/DefaultN_Map.png,-1,0
 Ground,1,1,1,1,1,1,1,1,100,1,1,1,0,Resource/Texture/aerial_grass_rock_diff_4k.png,Resource/Texture/aerial_grass_rock_nor_dx_4k.png,-1,0
-Billboard,1,1,1,1,1,1,1,1,50,0,0,0,0,Resource/Texture/0191.png,-1,-1,1
+Billboard,1,1,1,1,1,1,1,1,50,0,0,0,0,Resource/Texture/Billboard.png,-1,-1,1
 PointLight,1,1,1,1,1,1,1,1,50,1,1,1,0.1,Resource/Texture/Wall_W040.jpg,Resource/Texture/Wall_W040_n.png,-1,0

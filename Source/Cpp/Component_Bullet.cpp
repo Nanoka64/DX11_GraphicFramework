@@ -23,7 +23,12 @@ using namespace VECTOR3;
 //* pOwner : オーナーオブジェクト
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
-Bullet::Bullet(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank)
+Bullet::Bullet(std::weak_ptr<GameObject> pOwner, int updateRank)
+    : IComponent(pOwner, updateRank),
+    m_StartPos(VEC3()),
+    m_PrevPos(VEC3()),
+    m_MoveVelocity(VEC3()),
+    m_Counter(0)
 {
     this->set_Tag("Bullet");
 }
@@ -52,6 +57,7 @@ void Bullet::Start(RendererEngine& renderer)
 
     // 開始位置
     m_StartPos = transform->get_VEC3ToPos();
+    m_PrevPos = m_StartPos;
 
     m_MoveVelocity = transform->get_Forward(); // 前方向ベクトル
 
@@ -161,14 +167,15 @@ void Bullet::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void Bullet::Update(RendererEngine &renderer)
 {
-
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 crntPos = transform->get_VEC3ToPos();
     
-    crntPos -= m_MoveVelocity * 20.0f;
+    m_PrevPos = crntPos;
+    crntPos = crntPos - m_MoveVelocity * 20.0f;
 
     transform->set_Pos(crntPos);
 
+    // 距離で削除
     if (VEC3::Distance(crntPos, m_StartPos) > 2000.0f)
     {
         m_pOwner.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);

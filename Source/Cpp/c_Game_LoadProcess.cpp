@@ -380,31 +380,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         billboard.MaterialData = matInfo;
         billboard.IsTransparent = true; // 透明度があり
 
-        for (int i = 0; i < 10; i++)
-        {
-            VEC3 pos;
-            pos.x = static_cast<float>(rand() % 2000) - 1000.0f;
-            pos.y = static_cast<float>(rand() % 200) - 100.0f;;
-            pos.z = static_cast<float>(rand() % 2000) - 1000.0f;
+        VEC3 pos = VEC3(-600.0f, 50.0f, 800.0f);
 
-            VEC3 scl;
-            scl.x = static_cast<float>(rand() % 50) - 25.0f;
-            scl.y = static_cast<float>(rand() % 50) - 25.0f;;
-            scl.z = static_cast<float>(rand() % 50) - 25.0f;
-
-            VEC3 col;
-            col.x = static_cast<float>(rand() % 255) / 255.0f;
-            col.y = static_cast<float>(rand() % 255) / 255.0f;
-            col.z = static_cast<float>(rand() % 255) / 255.0f;
-
-            //mat->m_DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
-            auto obj = MeshFactory::CreateBillboard(billboard);
-            obj->get_Transform().lock()->set_Pos(pos);
-            obj->get_Transform().lock()->set_Scale(50, 50, 50);
-            obj->set_Tag("Billboard" + std::to_string(i));
-        }
+        //mat->m_DiffuseColor = VEC4(0.5, 0.5, 0.5, 1.0f);
+        auto obj = MeshFactory::CreateBillboard(billboard);
+        obj->get_Transform().lock()->set_Pos(pos);
+        obj->get_Transform().lock()->set_Scale(50, 50, 50);
+        obj->set_Tag("Billboard");
     }
-
     /* ポイントライトの生成 (Cubuで分かりやすく)*/
     {
         // マテリアル取得
@@ -451,6 +434,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     // プレイヤーに操作コンポーネントつける
     auto player = Master::m_pGameObjectManager->get_ObjectByTag("Player");
+    player->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f); // プレイヤーの初期位置を設定
+    player->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
     auto comp = player->add_Component<PlayerController>(1);
     comp->Start(*m_pRenderer);
 

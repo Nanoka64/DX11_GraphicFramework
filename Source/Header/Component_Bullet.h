@@ -14,7 +14,8 @@ class Bullet : public IComponent
 {
 private:
 	std::shared_ptr<GameObject> m_pBulletObject;	// 弾となるオブジェクト
-	VECTOR3::VEC3 m_StartPos;
+	VECTOR3::VEC3 m_StartPos;	// 発射開始位置
+	VECTOR3::VEC3 m_PrevPos;	// 前の座標
 	VECTOR3::VEC3 m_MoveVelocity;
 	float m_Counter;
 	std::function<void(const class CollisionInfo& _other)> m_CollisionTask;		// 衝突時の処理

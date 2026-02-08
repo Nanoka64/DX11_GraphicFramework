@@ -62,8 +62,13 @@ void HierarchyWindow::Update(RendererEngine &renderer)
 
     int id = 0;
 
-    for (auto &obj : objList)
+    for (auto& obj : objList)
     {
+        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        {
+            continue;
+        }
+        
         bool isSelected = false;
         id++;
         // IDを名前に入れて一意にする（##ID は表示されず、内部的な識別子になる）

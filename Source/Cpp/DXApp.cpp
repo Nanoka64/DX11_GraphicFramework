@@ -375,9 +375,9 @@ int DXApp::MainLoop()
                 // 操作ガイド
                 Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"説明"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"DirectX11を使用した自作3Dグラフィックフレームワークです。"));
-                Master::m_pDebugger->DG_Text(U8ToChar(u8"レンダリングパイプラインから自作し、基本的なライティング、\nポストエフェクト、シャドウ等を実装しました。"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"レンダリングパイプラインから自作し、ディファードシェーディングによる\n基本的なライティング、ポストエフェクト、シャドウ等を実装しました。"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"プログラム側はコンポーネント指向で設計し、\n柔軟にオブジェクトを作成できるようにしています。"));
-                Master::m_pDebugger->DG_Text(U8ToChar(u8"※ 現在は技術デモ的なものとなってしまっているため、\nクリア画面等はありません。"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"※ 現在は技術デモ的なものとなってしまっているため、\n敵を一定数倒すだけのシンプルなものになっています。"));
                 Master::m_pDebugger->DG_Separator();    // 区切り
                 Master::m_pDebugger->DG_BulletText(U8ToChar(u8"☆操作方法"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"WASD：移動"));
@@ -385,6 +385,8 @@ int DXApp::MainLoop()
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"Space：ジャンプ"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"AまたはDを押しながらSpace：緊急回避"));
                 Master::m_pDebugger->DG_Text(U8ToChar(u8"左クリック：射撃"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"右クリック：ズーム"));
+                Master::m_pDebugger->DG_Text(U8ToChar(u8"ESC：終了"));
                 Master::m_pDebugger->DG_Separator();    // 区切り
                 Master::m_pDebugger->DG_BulletText(
                     U8ToChar(

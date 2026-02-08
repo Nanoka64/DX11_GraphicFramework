@@ -15,26 +15,36 @@ enum class COLLISION_CALC_TYPE
     NUM,
 };
 
+/// <summary>
+/// 3Dレイ判定
+/// </summary>
 struct CollInData_Ray
 {
     VECTOR3::VEC3 _point;    // 開始点 
     VECTOR3::VEC3 _dir;      // 方向
 };
 
+/// <summary>
+/// 3D球判定
+/// </summary>
 struct CollInData_Sphere
 {
     VECTOR3::VEC3 _pos;
     float _radius;
 };
 
-// Axis-Aligned Bounding Box
+/// <summary>
+/// 3DボックスAABB判定
+/// </summary>
 struct CollInData_AABB
 {
     VECTOR3::VEC3 _min;
     VECTOR3::VEC3 _max;
 };
 
-// 2D
+/// <summary>
+/// 2DボックスAABB判定
+/// </summary>
 struct CollInData2D_AABB
 {
     VECTOR2::VEC2 _min;

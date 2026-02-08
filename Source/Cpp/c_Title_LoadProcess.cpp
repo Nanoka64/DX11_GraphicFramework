@@ -272,7 +272,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);// ”jŠü‚µ‚È‚¢
         auto light = obj->add_Component<DirectionalLight>();
         light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
-        light->set_Intensity(2.0f);
+        light->set_Intensity(1.5f);
         light->set_LightCameraTrackingObj(m_pCameraComp->get_OwnerObj().lock());
         light->Start(*m_pRenderer);
 
