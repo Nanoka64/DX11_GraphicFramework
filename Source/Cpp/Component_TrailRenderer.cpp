@@ -13,12 +13,14 @@ using namespace VERTEX;
 //*----------------------------------------------------------------------------------------
 TrailRenderer::TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) 
 	: IComponent(pOwner, updateRank),
-	m_MinVertexDistance(100.0f),
+	m_MinVertexDistance(10.0f),
 	m_DrawTime(60.0f),
 	m_Width(10.0f),
 	m_CrntTrailPos(VEC3()),
 	m_pCBMaterialDataSet(nullptr),
-	m_IsView(true)
+	m_IsView(true),
+	m_EmissivePower(1.0f),
+	m_Color(VEC4(1.0f, 1.0f, 1.0f,1.0f))
 {
 	this->set_Tag("TrailRenderer");
 }
@@ -259,10 +261,10 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	m_pCBMaterialDataSet->Data.Diffuse = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.EmissivePower = 5.0f;
-	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
-	m_pCBMaterialDataSet->Data.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pCBMaterialDataSet->Data.Diffuse		 = m_Color;
+	m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
+	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
+	m_pCBMaterialDataSet->Data.Specular		 = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
 	m_pCBMaterialDataSet->Data.SpecularPower = 150.0f;
 
 	// データのコピー 

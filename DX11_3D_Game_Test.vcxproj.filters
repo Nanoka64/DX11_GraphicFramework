@@ -232,6 +232,9 @@
     <Filter Include="ソース ファイル\Component\Game\Weapon\Weapon">
       <UniqueIdentifier>{c9af8cc5-aa30-4fb7-a64a-ab0ff0fc4a60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Singleton">
+      <UniqueIdentifier>{1e12f4f9-01e9-43b3-a45a-8ab752c8a575}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -255,29 +258,14 @@
     <ClCompile Include="Source\Cpp\Helper.cpp">
       <Filter>ソース ファイル\Tool</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\GameManager.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\DirectWriteManager.cpp">
-      <Filter>ソース ファイル\Graphics\Whrite</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\TRIANGLE.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\InputFactory.cpp">
       <Filter>ソース ファイル\Tool\KeyInput</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\InputManager.cpp">
-      <Filter>ソース ファイル\Tool\KeyInput</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Texture.cpp">
       <Filter>ソース ファイル\Graphics\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\ResourceManager.cpp">
-      <Filter>ソース ファイル\Tool</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Debugger.cpp">
-      <Filter>ソース ファイル\Tool\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_win32.cpp">
       <Filter>外部ライブラリ\ImGui</Filter>
@@ -338,9 +326,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\IDXBuffer.cpp">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
-      <Filter>ソース ファイル\Obj</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\SceneManager.cpp">
       <Filter>ソース ファイル\Scene</Filter>
@@ -468,9 +453,6 @@
     <ClCompile Include="Source\Cpp\DebugMesh.cpp">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\EffectManager.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\IDXResource.cpp">
       <Filter>ソース ファイル\Graphics</Filter>
     </ClCompile>
@@ -534,14 +516,8 @@
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
       <Filter>ソース ファイル\State\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\TragetManager.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Ant_TrackingState.cpp">
       <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\SoundManager.cpp">
-      <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
@@ -552,7 +528,34 @@
     <ClCompile Include="Source\Cpp\Component_TimerDestruction.cpp">
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Debugger.cpp">
+      <Filter>ソース ファイル\Tool\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\InputManager.cpp">
+      <Filter>ソース ファイル\Tool\KeyInput</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\DirectWriteManager.cpp">
+      <Filter>ソース ファイル\Graphics\Whrite</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
+      <Filter>ソース ファイル\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\GameManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EffectManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\ResourceManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\SoundManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\TimeManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\TragetManager.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -575,17 +578,11 @@
     <ClInclude Include="Source\Header\RenderParam.h">
       <Filter>ソース ファイル\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\GameManager.h">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\ModelMesh.h">
       <Filter>ソース ファイル\Graphics\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Helper.h">
       <Filter>ソース ファイル\Tool</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\DirectWriteManager.h">
-      <Filter>ソース ファイル\Graphics\Whrite</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\FontConfig.h">
       <Filter>ソース ファイル\Graphics\Whrite</Filter>
@@ -599,9 +596,6 @@
     <ClInclude Include="Source\Header\InputFactory.h">
       <Filter>ソース ファイル\Tool\KeyInput</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\InputManager.h">
-      <Filter>ソース ファイル\Tool\KeyInput</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\VERTEX.h">
       <Filter>ソース ファイル\Tool\Math</Filter>
     </ClInclude>
@@ -613,12 +607,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Texture.h">
       <Filter>ソース ファイル\Graphics\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\ResourceManager.h">
-      <Filter>ソース ファイル\Tool</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Debugger.h">
-      <Filter>ソース ファイル\Tool\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_win32.h">
       <Filter>外部ライブラリ\ImGui</Filter>
@@ -683,9 +671,6 @@
     <ClInclude Include="Source\Header\IDXBuffer.h">
       <Filter>ソース ファイル\Graphics\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\GameObjectManager.h">
-      <Filter>ソース ファイル\Obj</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\SceneManager.h">
       <Filter>ソース ファイル\Scene</Filter>
     </ClInclude>
@@ -733,9 +718,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\LightManager.h">
       <Filter>ソース ファイル\Graphics\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Master.h">
-      <Filter>ソース ファイル\App</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\BitFlag.h">
       <Filter>ソース ファイル\Tool\BIt</Filter>
@@ -818,9 +800,6 @@
     <ClInclude Include="Source\Header\DebugMesh.h">
       <Filter>ソース ファイル\Graphics\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\EffectManager.h">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\IDXResource.h">
       <Filter>ソース ファイル\Graphics</Filter>
     </ClInclude>
@@ -890,14 +869,8 @@
     <ClInclude Include="Source\Header\EnemyStateFactory.h">
       <Filter>ソース ファイル\State\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\TragetManager.h">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Ant_TrackingState.h">
       <Filter>ソース ファイル\Component\Game\Enemy\State_Ant</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\SoundManager.h">
-      <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_LineRenderer.h">
       <Filter>ソース ファイル\Component\Mesh\Trail</Filter>
@@ -908,7 +881,37 @@
     <ClInclude Include="Source\Header\Component_TimerDestruction.h">
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Master.h">
+      <Filter>ソース ファイル\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Debugger.h">
+      <Filter>ソース ファイル\Tool\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\InputManager.h">
+      <Filter>ソース ファイル\Tool\KeyInput</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\DirectWriteManager.h">
+      <Filter>ソース ファイル\Graphics\Whrite</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\GameObjectManager.h">
+      <Filter>ソース ファイル\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\GameManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EffectManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ResourceManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\SoundManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Header\TimeManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TragetManager.h">
       <Filter>ソース ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>

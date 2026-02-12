@@ -141,6 +141,11 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             // エネミーコントローラーと体力管理を追加
             obj->add_Component<EnemyController>();
             obj->add_Component<Health>();
+            auto trail = obj->add_Component<TrailRenderer>();
+            trail->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
+            trail->set_Width(15.0f);
+            trail->set_DrawTime(120.0f);
+            trail->set_EmissivePower(2.0f);
 
             VEC3 pos = VEC3();
             pos.x = Tool::RandRange(-600.0, 600.0);

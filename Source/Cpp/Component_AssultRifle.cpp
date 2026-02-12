@@ -148,6 +148,8 @@ void AssultRifle::Update(RendererEngine &renderer)
         trail->set_Width(2.0f);
         trail->set_MinVertexDistance(5.0f);
         trail->set_DrawTime(5);
+        trail->set_EmissivePower(10.0f);
+        trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
         // ƒRƒ‰ƒCƒ_[‚Ì“o˜^
         Master::m_pCollisionManager->RegisterCollider(collider);

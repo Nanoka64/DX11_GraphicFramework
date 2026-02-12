@@ -183,13 +183,16 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         // ”jŠü‚µ‚È‚¢
         pPlayerObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
 
-        //pPlayerObj->add_Component<PlayerController>(1);
         pPlayerObj->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f);
+        //pPlayerObj->add_Component<PlayerController>(1);
         //pPlayerObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
+        // ‹OÕ
         auto trail = pPlayerObj->add_Component<TrailRenderer>();
         trail->set_MinVertexDistance(4.0f);
         trail->set_Width(5.0f);
+        trail->set_EmissivePower(5.0f);
+        trail->set_Color(VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
         // ƒRƒ‰ƒCƒ_[‚Ì’Ç‰Á
         auto collider = pPlayerObj->add_Component<BoxCollider>();

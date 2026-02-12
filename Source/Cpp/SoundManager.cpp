@@ -7,10 +7,9 @@
 //*----------------------------------------------------------------------------------------
 SoundManager::SoundManager():
 	m_pXAudio2(nullptr),
-	m_pMasteringVoice(nullptr),
-	m_pSourceVoice(nullptr),
-	m_WavBuffer(nullptr),
-	m_SoundIndex(0)
+	m_pMasteringVoice(nullptr)
+	//m_WavBuffer(nullptr),
+	//m_SoundIndex(0)
 {
 }
 
@@ -32,30 +31,63 @@ SoundManager::~SoundManager()
 //*----------------------------------------------------------------------------------------
 bool SoundManager::InitXA2Sound(void)
 {
-	//COMインターフェースの初期化
-	//CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	HRESULT hr = S_OK;
 
-	//XAudio2デバイス作成
-	if (XAudio2Create(&m_pXAudio2, XAUDIO2_DEBUG_ENGINE) != S_OK)
-	{
-		//CoUninitialize();
+	//COMインターフェースの初期化------------------------------------------
+	hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	if (FAILED(hr)){
+		MessageBox(NULL, "初期化エラー", "SoundManager", MB_OK);
 		return false;
 	}
 
-	//マスターボイスの作成
-	if (m_pXAudio2->CreateMasteringVoice(&m_pMasteringVoice) != S_OK)
-	{
-		//CoUninitialize();
+
+	//XAudio2デバイス作成------------------------------------------
+	hr = XAudio2Create(&m_pXAudio2, XAUDIO2_DEBUG_ENGINE);
+	if (FAILED(hr)) {
+		CoUninitialize();
 		return false;
 	}
 
-	m_SoundIndex = 0;
+	
+	//マスターボイスの作成------------------------------------------
+	hr = m_pXAudio2->CreateMasteringVoice(&m_pMasteringVoice);
+	if (FAILED(hr)) {
+		CoUninitialize();
+		return false;
+	}
+
+
+	// ソースボイスの作成
+	for (int i = 0; i < 64; i++)
+	{
+		SoundInstance sound;
+		WAVEFORMATEX wf = {};
+		wf.wFormatTag = WAVE_FORMAT_PCM;
+		wf.nChannels = 2;			// ステレオ
+		wf.nSamplesPerSec = 44100;  // 44.1kHz
+		wf.wBitsPerSample = 16;     // 16bit (一般的)
+		wf.cbSize = 0;
+
+		// 1ブロックあたりのバイト数 = (チャンネル数) * (1サンプルあたりのバイト数)
+		wf.nBlockAlign = wf.nChannels * (wf.wBitsPerSample / 8);
+
+		// 1秒あたりの平均バイト数 = (サンプリングレート) * (ブロックサイズ)
+		wf.nAvgBytesPerSec = wf.nSamplesPerSec * wf.nBlockAlign;
+
+		//ソースボイス作成
+		if (m_pXAudio2->CreateSourceVoice(&sound._pSourceVoice, &wf) != S_OK){
+			continue;
+		}
+
+		m_SoundInstanceArray.push_back(sound);
+	}
 
 	return true;
 }
 
 //*---------------------------------------------------------------------------------------
 //*【?】解放
+//* ※ 作成した順番と逆に解放
 //*
 //* [引数]なし
 //* [返値]なし
@@ -67,66 +99,123 @@ void SoundManager::UninitXA2Sound(void)
 		m_pMasteringVoice->DestroyVoice();
 		m_pMasteringVoice = nullptr;
 	}
-
 	if (m_pXAudio2 != nullptr)
 	{
 		m_pXAudio2->Release();
 		m_pXAudio2 = nullptr;
 	}
 
-	//CoUninitialize();
+	// ソースボイス削除
+	for (auto& instance : m_SoundInstanceArray) {
+		if (instance._pSourceVoice) {
+			instance._pSourceVoice->DestroyVoice();
+			instance._pSourceVoice = nullptr;
+		}
+	}
+
+	CoUninitialize();
 }
 
 //*---------------------------------------------------------------------------------------
 //*【?】サウンドファイルの読み込み
+//* WAVファイルはRIFF形式という方法で構成されていて、
+//* チャンクというデータの塊が複数連結している。
+//* チャンクは基本的に「ID」「サイズ」「中身」という感じで要素が入っている
+//* waveファイルではRIFFが親チャンクとなり、その子としてfmt、dataなどのチャンクが居るっぽい
 //*
+//* fmt：形式情報
+//* data：実際の波形データ
+//* 
 //* [引数]
 //* *filename：読み込むファイル名 
 //* [返値]
-//* ハンドル 
+//* true:成功
+//* false:失敗
 //*----------------------------------------------------------------------------------------
-int SoundManager::LoadXA2Sound(char *filename)
+bool SoundManager::LoadXA2Sound(char *_filename, SOUND_ID _id)
 {
-	HMMIO hMMIO = NULL;
+	HMMIO mmio_handle = NULL;	// mmioハンドル
 	DWORD size;
-	WAVEFORMATEX *pwfex;
-	MMCKINFO ckInfo = {};
-	MMCKINFO rifckInfo = {};
-	PCMWAVEFORMAT pcmFormat;
-	DWORD index = m_SoundIndex;
+	BYTE* buffer;
+	WAVEFORMATEX wfx;			// waveファイルのフォーマット情報
+	MMCKINFO ckInfo = {};		// チャンク情報
+	MMCKINFO rifckInfo = {};	// RIFFチャンク用
+	MMRESULT mmhr;
 
-	m_SoundIndex++;
-
-	//ファイルを開く
-	hMMIO = mmioOpen(filename, NULL, MMIO_ALLOCBUF | MMIO_READ);
-
-	//fmtチャンク読み込み
-	mmioDescend(hMMIO, &rifckInfo, NULL, 0);
-	ckInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
-	mmioDescend(hMMIO, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
-	mmioRead(hMMIO, (HPSTR)&pcmFormat, sizeof(pcmFormat));
-	pwfex = (WAVEFORMATEX *)new BYTE[sizeof(WAVEFORMATEX)];
-	memcpy(pwfex, &pcmFormat, sizeof(pcmFormat));
-	pwfex->cbSize = 0;
-	mmioAscend(hMMIO, &ckInfo, 0);
-
-	//dataチャンク読み込み
-	ckInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
-	mmioDescend(hMMIO, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
-	size = ckInfo.cksize;
-	m_WavBuffer[index] = new BYTE[size];
-	mmioRead(hMMIO, (HPSTR)m_WavBuffer[index], size);
-
-	//ソースボイス作成
-	if (m_pXAudio2->CreateSourceVoice(&m_pSourceVoice[index], pwfex) != S_OK)
-	{
-		return -1;
+	//	ファイルを開く
+	mmio_handle = mmioOpen(_filename, NULL, MMIO_ALLOCBUF | MMIO_READ);
+	
+	if (!mmio_handle){
+		MessageBox(NULL, "wavファイルを開けませんでした", "SoundManager", MB_OK);
+		return false;
 	}
 
-	m_WavSize[index] = size;
+	// RIFF（親）チャンクへ進入************************************************************
+	mmhr = mmioDescend(mmio_handle, &rifckInfo, NULL, 0);	
+	if (mmhr != MMSYSERR_NOERROR){
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		MessageBox(NULL, "RIFFチャンクへの進入失敗", "SoundManager", MB_OK);
+		return false;
+	}
 
-	//読み込んだインデックスを返す
-	return index;
+
+	// fmtチャンクへ進入************************************************************
+	ckInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
+	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
+	if (mmhr != MMSYSERR_NOERROR) {
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		MessageBox(NULL, "fmtチャンクへの進入失敗", "SoundManager", MB_OK);
+		return false;
+	}
+	
+	DWORD readSize = mmioRead(mmio_handle, (HPSTR)&wfx, sizeof(wfx)/* std::min((DWORD)sizeof(WAVEFORMATEX), ckInfo.cksize)*/);	// 読み込み
+	wfx.cbSize = 0;
+	
+	// サイズチェック
+	if (readSize != ckInfo.cksize){
+		MessageBox(NULL, "読み込みサイズが一致していません", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+	// フォーマットチェック
+	if (wfx.wFormatTag != WAVE_FORMAT_PCM){
+		MessageBox(NULL, "Waveフォーマットエラーです", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+
+	mmioAscend(mmio_handle, &ckInfo, 0); // fmtチャンクから退出
+
+
+	// dataチャンクへ進入************************************************************
+	ckInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
+	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK); 
+	if (mmhr != MMSYSERR_NOERROR) {
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		MessageBox(NULL, "dataチャンクへの進入失敗", "SoundManager", MB_OK);
+		return false;
+	}
+
+	size = ckInfo.cksize;
+	buffer = new BYTE[size];
+	readSize = mmioRead(mmio_handle, (HPSTR)buffer, size);
+	if (readSize != ckInfo.cksize) {
+		// 読み込みサイズが一致していません
+		mmioClose(mmio_handle, MMIO_FHOPEN);
+		return false;
+	}
+
+	// データを保持
+	m_WaveResourceMap[_id]._waveFormat = wfx;
+	m_WaveResourceMap[_id]._waveBuffer = buffer;
+	m_WaveResourceMap[_id]._size = size;
+
+	// ファイルを閉じる
+	mmioClose(mmio_handle, MMIO_FHOPEN);
+
+	buffer = nullptr;
+
+	return true;
 }
 
 //*---------------------------------------------------------------------------------------
@@ -137,24 +226,29 @@ int SoundManager::LoadXA2Sound(char *filename)
 //* 
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void SoundManager::PlayXA2Sound(int index)
+void SoundManager::PlayXA2Sound(SOUND_ID _id)
 {
-	if (index < 0 || index >= m_SoundIndex)
+	// 見つからなければそのまま返す
+	auto it = m_WaveResourceMap.find(_id);
+	if (it == m_WaveResourceMap.end())
+	{
 		return;
+	}
 
-	//再生中のサウンドを止める
-	m_pSourceVoice[index]->Stop(0, 0);
-	m_pSourceVoice[index]->FlushSourceBuffers();
 
-	//再生
+	// 波形データをソースボイスに渡す
 	XAUDIO2_BUFFER buff = {};
-	buff.pAudioData = m_WavBuffer[index];
+	buff.pAudioData = m_WaveResourceMap[_id]._waveBuffer;
 	buff.Flags = XAUDIO2_END_OF_STREAM;
-	buff.AudioBytes = m_WavSize[index];
-	if (m_pSourceVoice[index]->SubmitSourceBuffer(&buff) != S_OK)
-		return;
+	buff.AudioBytes = m_WaveResourceMap[_id]._size;
 
-	m_pSourceVoice[index]->Start(0, XAUDIO2_COMMIT_NOW);
+
+	//if (m_pSourceVoice[index]->SubmitSourceBuffer(&buff) != S_OK) {
+	//	return;
+	//}
+
+	//// 音を鳴らす
+	//m_pSourceVoice[index]->Start(0, XAUDIO2_COMMIT_NOW);
 }
 
 
@@ -166,11 +260,11 @@ void SoundManager::PlayXA2Sound(int index)
 //* 
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void SoundManager::StopXA2Sound(int index)
+void SoundManager::StopXA2Sound(SOUND_ID _id)
 {
-	if (index < 0 || index >= m_SoundIndex)
-		return;
+	//if (index < 0 || index >= m_SoundIndex)
+	//	return;
 
-	m_pSourceVoice[index]->Stop(0, 0);
-	m_pSourceVoice[index]->FlushSourceBuffers();
+	//m_pSourceVoice[index]->Stop(0, 0);
+	//m_pSourceVoice[index]->FlushSourceBuffers();
 }

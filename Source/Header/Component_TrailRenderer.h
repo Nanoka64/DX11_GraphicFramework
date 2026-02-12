@@ -30,6 +30,8 @@ class TrailRenderer : public IComponent
 private:
 	std::deque<TrailInfo> m_TrailInfoList; // 軌跡情報リスト
 	VECTOR3::VEC3 m_CrntTrailPos;	// 現在の軌跡位置
+	VECTOR4::VEC4 m_Color;			// カラー（エミッシブも一緒に）
+	float m_EmissivePower;			// 発光の強さ
 	float m_Width;					// 幅
 	float m_MinVertexDistance;		// 頂点同士の距離（大きいほどカクカク）
 	int m_DrawTime;					// 表示時間
@@ -55,6 +57,11 @@ public:
 	float get_MinVertexDistance()const { return m_MinVertexDistance; }				// 頂点同士の距離の取得
 	void set_DrawTime(const float _t) { m_DrawTime = _t; }	// 表示時間の設定
 	float get_DrawTime()const { return m_DrawTime; }		// 表示時間の取得
+	void set_EmissivePower(const float _power) { m_EmissivePower = _power; }		// エミッシブ設定
+	float get_EmissivePower()const { return m_EmissivePower; }						// エミッシブ取得
+
+	void set_Color(const VECTOR4::VEC4& _col) { m_Color = _col; }			//カラー設定
+	VECTOR4::VEC4 get_Color()const { return m_Color; }						//カラー取得
 
 private:
 	bool Setup(RendererEngine& renderer);
