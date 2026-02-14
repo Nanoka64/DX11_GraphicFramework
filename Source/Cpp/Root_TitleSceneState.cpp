@@ -23,6 +23,7 @@ void Root_TitleSceneState::OnEnter(SceneManager* pOwner)
 	//char filename01[] = "Resource/Sound/BGM/battle-dark.mp3";
 	//Master::m_pSoundManager->LoadXA2Sound(filename01);
 
+
 	// 最初はロード
 	this->SetInitChildState(pOwner, c_TITLE::c_TITLE_LOAD_PROCESS);
 
@@ -65,6 +66,11 @@ void Root_TitleSceneState::OnExit(SceneManager* pOwner)
 	if (obj)obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 	obj = Master::m_pGameObjectManager->get_ObjectByTag("MenuItemBack_Sp4");
 	if (obj)obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+	// ****************************************************
+	//				タイトルBGMの停止
+	// ****************************************************
+	Master::m_pSoundManager->StopSound(SOUND_TYPE::BGM, SOUND_ID::BGM_TITLE_01);
 }
 
 

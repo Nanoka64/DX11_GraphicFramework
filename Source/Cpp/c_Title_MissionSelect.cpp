@@ -53,6 +53,8 @@ void c_Title_MissionSelect::OnEnter(SceneManager *pOwner)
 		return;
 	}
 
+	m_PrevHoveredMIssionItem = 0;
+
 	// アクティブにしてトランスフォームを取得
 	for (int i = 0; i < MISSION_NUM; i++)
 	{
@@ -89,6 +91,8 @@ void c_Title_MissionSelect::OnExit(SceneManager *pOwner)
 		}
 		obj.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 	}
+
+
 }
 
 
@@ -171,6 +175,18 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 		// マウスが乗ってるならずらす
 		if (item._isHovered)
 		{
+			menuItemPos.x += 50.0f;
+			spritePos.x += 50.0f;
+			if (m_PrevHoveredMIssionItem)
+			{
+				// ****************************************************
+				//				カーソルが載った時のSE再生
+				// ****************************************************
+				Master::m_pSoundManager->PlaySE(SOUND_ID::SYSTEM_MOVING_CURSOR01);
+			}
+
+			m_PrevHoveredMIssionItem = 0;	// なんの項目に乗ったか保持
+
 			menuItemPos.x += 50.0f;
 			spritePos.x += 50.0f;
 		}

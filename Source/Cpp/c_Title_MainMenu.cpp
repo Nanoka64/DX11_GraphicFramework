@@ -61,6 +61,14 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 		return;
 	}
 
+	m_PrevHoveredMenuItem = TITLEMENU_ITEM::EXIT;
+
+	// ****************************************************
+	//				タイトルBGMの再生
+	// ****************************************************
+	Master::m_pSoundManager->PlayBGM(SOUND_ID::BGM_TITLE_01);
+
+
 	// アクティブにしてトランスフォームを取得
 	for (int i = 0; i < static_cast<int>(TITLEMENU_ITEM::NUM); i++)
 	{
@@ -174,6 +182,15 @@ void c_Title_MainMenu::Draw(SceneManager* pOwner)
 		{
 			menuItemPos.x += 50.0f;
 			spritePos.x += 50.0f;
+			if (m_PrevHoveredMenuItem != item._type)
+			{
+				// ****************************************************
+				//				カーソルが載った時のSE再生
+				// ****************************************************
+				Master::m_pSoundManager->PlaySE(SOUND_ID::SYSTEM_MOVING_CURSOR01);
+			}
+
+			m_PrevHoveredMenuItem = item._type;	// なんの項目に乗ったか保持
 		}
 		
 		// TODO:UI用もソートされてしまっているため描画順が崩れる

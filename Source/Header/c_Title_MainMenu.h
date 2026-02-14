@@ -53,7 +53,9 @@ private:
 
 	MenuItemInfo m_MenuItemInfoArray[static_cast<int>(TITLEMENU_ITEM::NUM)];
 
+	TITLEMENU_ITEM m_PrevHoveredMenuItem;	// 前にマウスが乗っていた項目（SE用）
 	bool m_IsInit;	// 既に初期化済みか
+
 
 	//static const VECTOR2::VEC2 m_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)];
 	std::shared_ptr<class Transform> m_pMenuItemBackSpriteTransform[static_cast<int>(TITLEMENU_ITEM::NUM)];

@@ -42,9 +42,13 @@ private:
 		};
 	}m_MissionItems[1];
 
+
 	SceneStateEnums:: c_TITLE m_NextState = SceneStateEnums::c_TITLE::c_TITLE_MAIN_MENU;
+	int m_PrevHoveredMIssionItem;	// 前にマウスが乗っていた項目（SE用）
 	bool m_IsInit;	// 既に初期化済みか
+	
 	std::shared_ptr<class Transform> m_pMenuItemBackSpriteTransform[MISSION_NUM];
+
 public:
 	void OnEnter(SceneManager *pOwner) override;
 	void OnExit(SceneManager *pOwner)override;

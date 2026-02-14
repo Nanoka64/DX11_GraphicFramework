@@ -96,6 +96,11 @@ void AssultRifle::Update(RendererEngine &renderer)
     // 左クリックで発射
 	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
     {
+        // ****************************************************
+        //				 発射音再生
+        // ****************************************************
+        Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::GUN_FIRE02, 300);
+
         // フラッシュライト
         m_pFlashPointLight.lock()->set_Range(30.0f);
         m_pFlashPointLight.lock()->set_Intensity(1.5f);

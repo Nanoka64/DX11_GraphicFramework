@@ -70,6 +70,11 @@ void EnemyController::Start(RendererEngine& renderer)
 
 			ChangeState(ANT_STATE::ANT_STATE_TRACKING);
 
+			// ****************************************************
+			//				 ”í’e‰¹Ä¶
+			// ****************************************************
+			Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::ENEMY_ANT_HIT01, 300);
+
 			int handle = Master::m_pEffectManager->PlayEffect("Hit");
 			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
@@ -80,6 +85,12 @@ void EnemyController::Start(RendererEngine& renderer)
 	m_pHealthComp->RegisterOnDead(
 		[this]
 		{
+			// ****************************************************
+			//				 Ž€–S‰¹Ä¶
+			// ****************************************************
+			Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::ENEMY_ANT_DEAD, 300);
+
+
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
 			int handle = Master::m_pEffectManager->PlayEffect("DeadExplosion");

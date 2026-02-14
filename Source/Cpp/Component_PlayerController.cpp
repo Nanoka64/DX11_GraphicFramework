@@ -174,6 +174,11 @@ void PlayerController::Update(RendererEngine &renderer)
 		{
 			m_MoveVelocity = m_MoveVelocity.Normalize();
 			m_IsRolling = true;
+			// ****************************************************
+			//				 ローリング開始音/声 再生
+			// ****************************************************
+			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
+			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
 			return;
 		}
 	}
@@ -186,6 +191,12 @@ void PlayerController::Update(RendererEngine &renderer)
 		{
 			m_MoveVelocity = m_MoveVelocity.Normalize();
 			m_IsRolling = true;
+			// ****************************************************
+			//				 ローリング開始音/声 再生
+			// ****************************************************
+			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
+			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
+
 			return;
 		}
 	}
@@ -203,6 +214,12 @@ void PlayerController::Update(RendererEngine &renderer)
 		{
 			m_IsJump = true;
 			m_JumpVelocity = m_JumpForce;
+
+			// ****************************************************
+			//				 ジャンプ開始音/声 再生
+			// ****************************************************
+			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
+			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
 
 			// ジャンプ開始アニメーション
 			ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_START);
@@ -237,6 +254,11 @@ void PlayerController::Update(RendererEngine &renderer)
 			// 地面判定
 			if (newPos.y < 0.0f)
 			{
+				// ****************************************************
+				//				 ジャンプ - 着地音再生
+				// ****************************************************
+				Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_LAND);
+
 				newPos.y = 0.0f;
 				m_JumpVelocity = 0.0f;
 				m_IsJump = false;
@@ -334,6 +356,11 @@ void PlayerController::RollingUpdate()
 		/* 移動ベクトルとかを元に戻す */
 		m_IsRolling = false;
 		m_RollingCounter = 0;
+
+		// ****************************************************
+		//				 ローリング終了音再生
+		// ****************************************************
+		Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_LAND);
 	}
 	
 	m_pMyTransformComp.lock()->set_Pos(newPos);
