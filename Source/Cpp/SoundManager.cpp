@@ -2,14 +2,16 @@
 #include "SoundManager.h"
 #include <windows.h>
 
-constexpr int SE_CHANNELS_NUM    = 2;		// SEのチャンネル数
-constexpr int VOICE_CHANNELS_NUM = 1;		// ボイスのチャンネル数
+constexpr int SE_CHANNELS_NUM    = 1;	    // SEのチャンネル数（モノラル）
+constexpr int VOICE_CHANNELS_NUM = 1;	    // ボイスのチャンネル数（モノラル）
+constexpr int BGM_CHANNELS_NUM   = 2;	    // BGMのチャンネル数（ステレオ）
 constexpr int SAMPLE_RATE		 = 44100;	// サンプル数 44.1kHz
 constexpr int BITS_PER_SAMPLE	 = 16;		// サンプルあたりのビット数
 
-constexpr float DEFAULT_SE_VOL    = 0.5f;		// SEのデフォルトの音量
-constexpr float DEFAULT_BGM_VOL   = 0.3f;		// BGMのデフォルトの音量
-constexpr float DEFAULT_VOICE_VOL = 0.7f;		// ボイスのデフォルトの音量
+
+constexpr float DEFAULT_SE_VOL    = 0.5f;	// SEのデフォルトの音量
+constexpr float DEFAULT_BGM_VOL   = 0.3f;	// BGMのデフォルトの音量
+constexpr float DEFAULT_VOICE_VOL = 0.7f;	// ボイスのデフォルトの音量
 
 
 constexpr int SE_SVPOOL_NUM    = 64;  // SV(SourceVoice)のプール数
@@ -50,6 +52,12 @@ bool SoundManager::InitXA2Sound(void)
 {
 	HRESULT hr = S_OK;
 
+	// ############################################################################
+
+	//							XAudio2関連の初期化
+	
+	// ############################################################################
+
 	//COMインターフェースの初期化------------------------------------------
 	//hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	if (FAILED(hr)){
@@ -73,9 +81,8 @@ bool SoundManager::InitXA2Sound(void)
 		return false;
 	}
 
-
 	// ※ SEと声でプールは分けている。
-	
+
 	// **************************************************************************
 	// ソースボイスの作成（SE用）
 	// **************************************************************************
@@ -84,7 +91,7 @@ bool SoundManager::InitXA2Sound(void)
 		SoundInstance sound;
 		WAVEFORMATEX wf = {};
 		wf.wFormatTag = WAVE_FORMAT_PCM;
-		wf.nChannels = SE_CHANNELS_NUM;	     // 2（ステレオ）
+		wf.nChannels = SE_CHANNELS_NUM;	     // 1（モノラル）
 		wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
 		wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
 		wf.cbSize = 0;
@@ -132,14 +139,13 @@ bool SoundManager::InitXA2Sound(void)
 	}
 
 
-
 	// **************************************************************************
 	// BGM用ソースボイスの作成
 	// **************************************************************************
 	SoundInstance sound;
 	WAVEFORMATEX wf = {};
 	wf.wFormatTag = WAVE_FORMAT_PCM;
-	wf.nChannels = SE_CHANNELS_NUM;	     // 2（ステレオ）
+	wf.nChannels = BGM_CHANNELS_NUM;	     // 2（ステレオ）
 	wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
 	wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
 	wf.cbSize = 0;
@@ -154,6 +160,81 @@ bool SoundManager::InitXA2Sound(void)
 		return false;
 	}
 
+
+	// ############################################################################
+
+	//							X3DAudioの初期化
+
+	// ############################################################################
+
+	// 出力形式のチャンネルビットマスクを取得する（最終的な出力先のスピーカーがどういう構成になっているかを取得しているっぽい？）
+	DWORD dwChannelMask;
+	hr = m_pMasteringVoice->GetChannelMask(&dwChannelMask);
+	if (FAILED(hr)) {
+		CoUninitialize();
+		return false;
+	}
+
+
+	// X3Dインスタンスハンドル
+	hr = X3DAudioInitialize(dwChannelMask, X3DAUDIO_SPEED_OF_SOUND, m_X3DInstanceHandle);
+	if (FAILED(hr)) {
+		CoUninitialize();
+		return false;
+	}
+
+	ZeroMemory(&m_Listener, sizeof(&m_Listener));
+
+	m_Listener.Position.x = 0.0f;
+	m_Listener.Position.y = 0.0f;
+	m_Listener.Position.z = 0.0f;
+
+	m_Listener.OrientFront.x = 0.0f;
+	m_Listener.OrientFront.y = 0.0f;
+	m_Listener.OrientFront.z = 1.0f;
+
+	m_Listener.OrientTop.x = 0.0f;
+	m_Listener.OrientTop.y = 1.0f;
+	m_Listener.OrientTop.z = 0.0f;
+
+	// エミッター
+	X3DAUDIO_EMITTER emitter = {};
+	emitter.ChannelCount = 1;		// チャンネル数は再生する音声に合わせる
+	emitter.CurveDistanceScaler = 1.0f;
+	emitter.DopplerScaler = 1.0f;
+
+	
+	// DSP設定に使用する音声の詳細情報の取得
+	m_pMasteringVoice->GetVoiceDetails(&m_DeviceDetails);
+
+
+	// X3DAudioCalculateからの処理結果を受け取るためのもの！
+	// DSP:音の加工に使うもの（？）
+	FLOAT32* matrix = new FLOAT32[m_DeviceDetails.InputChannels];
+	m_DSPSettings.SrcChannelCount = 1;
+	m_DSPSettings.DstChannelCount = m_DeviceDetails.InputChannels;
+	m_DSPSettings.pMatrixCoefficients = matrix;
+
+	
+	// 3Dサウンドにするための計算
+	X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
+		X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER | X3DAUDIO_CALCULATE_LPF_DIRECT | X3DAUDIO_CALCULATE_REVERB,
+		&m_DSPSettings);
+
+	
+	// ボリュームとピッチの値をソース音声に適用
+	m_BGM_SoundSlot._pSourceVoice->SetOutputMatrix(m_pMasteringVoice, 1, m_DeviceDetails.InputChannels, m_DSPSettings.pMatrixCoefficients);
+	m_BGM_SoundSlot._pSourceVoice->SetFrequencyRatio(m_DSPSettings.DopplerFactor);
+
+	XAUDIO2_FILTER_PARAMETERS FilterParameters = { LowPassFilter, 2.0f * sinf(X3DAUDIO_PI / 6.0f * m_DSPSettings.LPFDirectCoefficient), 1.0f };
+	m_BGM_SoundSlot._pSourceVoice->SetFilterParameters(&FilterParameters);
+
+	// ############################################################################
+
+	//							音声のロード
+	//			（使用するすべての音声をここで一旦ロードしてしまう）
+	
+	// ############################################################################
 
 	// システム
 	LoadSE_Wav("Resource/Sound/SE/System/moving-cursor-2.wav", SOUND_ID::SYSTEM_MOVING_CURSOR01);
@@ -171,7 +252,7 @@ bool SoundManager::InitXA2Sound(void)
 	LoadSE_Wav("Resource/Sound/SE/Enemy/DSGNImpt_Impact High Spark 04_RSCPC_HV.wav", SOUND_ID::ENEMY_ANT_DEAD);
 
 	// BGM
-	LoadSE_Wav("Resource/Sound/BGM/Flash_Shadow.wav", SOUND_ID::BGM_TITLE_01);
+	LoadBGM_Wav("Resource/Sound/BGM/Flash_Shadow.wav", BGM_ID::BGM_TITLE_01);
 
 	// ボイス
 	LoadVoice_Wav("Resource/Sound/Voice/Ranger/an000_01.wav", VOICE_ID::SOLDIER_R_SHOUT_01);
@@ -222,7 +303,7 @@ void SoundManager::UninitXA2Sound(void)
 //* [注意]
 //* ・対応フォーマット
 //* 　拡張子：wav 
-//* 　チャンネル数：2（ステレオ）
+//* 　チャンネル数：1（モノラル）
 //* 　サンプル数：44100（44.1kHz）
 //* 　サンプルビット数：16
 //* 
@@ -245,7 +326,45 @@ bool SoundManager::LoadSE_Wav(const char *_filename, SOUND_ID _id)
 	WaveResource wavRes = {};
 
 	// wavのロード
-	if (!Internal_Load_Wav(_filename, m_SE_WaveResourceMap[_id]))
+	if (!Internal_Load_Wav(_filename, m_SE_WaveResourceMap[_id], 1))
+	{
+		return false;
+	}
+
+
+	return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】BGM用のWavファイル読み込み
+//* 
+//* [注意]
+//* ・対応フォーマット
+//* 　拡張子：wav 
+//* 　チャンネル数：2（ステレオ）
+//* 　サンプル数：44100（44.1kHz）
+//* 　サンプルビット数：16
+//* 
+//* [引数]
+//* *filename：読み込むファイル名 
+//* _id：対応するSEのID
+//* 
+//* [返値]
+//* true:成功
+//* false:失敗
+//*----------------------------------------------------------------------------------------
+bool SoundManager::LoadBGM_Wav(const char* _filename, BGM_ID _id)
+{
+	auto it = m_BGM_WaveResourceMap.find(_id);
+	if (it != m_BGM_WaveResourceMap.end()){
+		MessageBox(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
+		return false;
+	}
+
+	WaveResource wavRes = {};
+
+	// wavのロード
+	if (!Internal_Load_Wav(_filename, m_BGM_WaveResourceMap[_id], 1))
 	{
 		return false;
 	}
@@ -292,145 +411,6 @@ bool SoundManager::LoadVoice_Wav(const char* _filename, VOICE_ID _id)
 	return true;
 }
 
-
-//*---------------------------------------------------------------------------------------
-//*【?】WAVファイルの読み込み（実際の内部的な読み込み関数）
-//* 
-//* WAVファイルはRIFF形式という方法で構成されていて、
-//* チャンクというデータの塊が複数連結している。
-//* チャンクは基本的に「ID」「サイズ」「中身」という感じで要素が入っている
-//* waveファイルではRIFFが親チャンクとなり、その子としてfmt、dataなどのチャンクが居るっぽい
-//*
-//* fmt：形式情報
-//* data：実際の波形データ
-//* 
-//* [注意]
-//* ・対応フォーマット
-//* 　拡張子：wav 
-//* 　チャンネル数：2（ステレオ）
-//* 　サンプル数：44100（44.1kHz）
-//* 　サンプルビット数：16
-//* 
-//* [引数]
-//* *filename：読み込むファイル名 
-//* &_out：波形データの出力先
-//* 
-//* [返値]
-//* true:成功
-//* false:失敗
-//*----------------------------------------------------------------------------------------
-bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, int _channelNum, int _sampleLate, int _bitsPersample )
-{
-	HMMIO mmio_handle = NULL;	// mmioハンドル
-	DWORD size;
-	BYTE* buffer;
-	WAVEFORMATEX wfx = {};		// waveファイルのフォーマット情報
-	MMCKINFO ckInfo = {};		// チャンク情報
-	MMCKINFO rifckInfo = {};	// RIFFチャンク用
-	MMRESULT mmhr;
-
-	char str_buffer[512] = {};
-	strcpy_s(str_buffer, _filename);
-
-	//	ファイルを開く
-	mmio_handle = mmioOpen(str_buffer, NULL, MMIO_ALLOCBUF | MMIO_READ);
-
-	if (!mmio_handle) {
-		MessageBox(NULL, "wavファイルを開けませんでした", "SoundManager", MB_OK);
-		return false;
-	}
-
-	// ##########################################################################################
-	//							RIFF（親）チャンクへ進入
-	// ##########################################################################################
-	mmhr = mmioDescend(mmio_handle, &rifckInfo, NULL, 0);
-
-	// fccType が 'WAVE' であることを確認
-	if (mmhr != MMSYSERR_NOERROR || rifckInfo.fccType != mmioFOURCC('W', 'A', 'V', 'E')) {
-		MessageBox(NULL, "RIFFチャンクへの進入失敗", "SoundManager", MB_OK);
-		mmioClose(mmio_handle, 0);
-		return false;
-	}
-
-
-	// ##########################################################################################
-	//							fmtチャンクへ進入
-	// ##########################################################################################
-	ckInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
-	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
-	if (mmhr != MMSYSERR_NOERROR) {
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		MessageBox(NULL, "fmtチャンクへの進入失敗", "SoundManager", MB_OK);
-		return false;
-	}
-
-	DWORD readSize = mmioRead(mmio_handle, (HPSTR)&wfx, sizeof(wfx)/* std::min((DWORD)sizeof(WAVEFORMATEX), ckInfo.cksize)*/);	// 読み込み
-
-	wfx.cbSize = 0;
-
-	// フォーマットチェック
-	if (wfx.wFormatTag != WAVE_FORMAT_PCM) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		return false;
-	}
-	// チャンネル数チェック
-	if (wfx.nChannels != _channelNum) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		return false;
-	}
-	// サンプル数チェック
-	if (wfx.nSamplesPerSec != _sampleLate) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		return false;
-	}
-	// ビット数チェック
-	if (wfx.wBitsPerSample != _bitsPersample) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		return false;
-	}
-
-	mmioAscend(mmio_handle, &ckInfo, 0); // fmtチャンクから退出
-
-
-	// ##########################################################################################
-	//							dataチャンクへ進入
-	// ##########################################################################################
-	ckInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
-	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
-	if (mmhr != MMSYSERR_NOERROR) {
-		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		MessageBox(NULL, "dataチャンクへの進入失敗", "SoundManager", MB_OK);
-		return false;
-	}
-
-	size = ckInfo.cksize;
-	buffer = new BYTE[size];
-	readSize = mmioRead(mmio_handle, (HPSTR)buffer, size);
-	if (readSize != ckInfo.cksize) {
-		delete[] buffer;	// バッファの開放
-		// 読み込みサイズが一致していません
-		mmioClose(mmio_handle, MMIO_FHOPEN);
-		return false;
-	}
-
-
-	// 格納
-	_out._size = size;
-	_out._waveBuffer = buffer;
-	_out._waveFormat = wfx;
-
-
-	// ファイル閉じる
-	mmioClose(mmio_handle, MMIO_FHOPEN);
-
-	buffer = nullptr;
-
-	return true;
-}
 
 
 //*---------------------------------------------------------------------------------------
@@ -556,6 +536,35 @@ bool SoundManager::PlaySE_RandPitch(SOUND_ID _id, int _pitchRange, bool _loop)
 	}
 
 	return false;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】3D空間でのSEの再生
+//*
+//* [引数]
+//* index：再生するサウンドのハンドル
+//* _loop：ループさせるか
+//* 
+//* [返値] 
+// true:成功
+// false:失敗
+//*----------------------------------------------------------------------------------------
+bool SoundManager::PlaySE_3D(SOUND_ID _id, const VECTOR3::VEC3& _pos, bool _loop )
+{
+	// エミッター
+	X3DAUDIO_EMITTER emitter = {};
+	emitter.ChannelCount = 2;		// チャンネル数は再生する音声に合わせる
+	emitter.CurveDistanceScaler = 1.0f;
+	emitter.DopplerScaler = 1.0f;
+	emitter.ChannelRadius = 1.0f;
+	emitter.pChannelAzimuths;
+
+	// 3Dサウンドにするための計算
+	X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
+		X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER | X3DAUDIO_CALCULATE_LPF_DIRECT | X3DAUDIO_CALCULATE_REVERB,
+		&m_DSPSettings);
+	
+	return true;
 }
 
 
@@ -696,15 +705,15 @@ bool SoundManager::PlayVoice_Rand(VOICE_ID _beginID, int _range)
 // true:成功
 // false:失敗
 //*----------------------------------------------------------------------------------------
-bool SoundManager::PlayBGM(SOUND_ID _id, bool _loop)
+bool SoundManager::PlayBGM(BGM_ID _id, bool _loop)
 {
 	// 見つからなければそのまま返す
-	auto it = m_SE_WaveResourceMap.find(_id);
-	if (it == m_SE_WaveResourceMap.end()) {
+	auto it = m_BGM_WaveResourceMap.find(_id);
+	if (it == m_BGM_WaveResourceMap.end()) {
 		return false;
 	}
 
-	auto& resource = m_SE_WaveResourceMap[_id];
+	auto& resource = m_BGM_WaveResourceMap[_id];
 	HRESULT hr = S_OK;
 
 	// 波形データ
@@ -731,6 +740,37 @@ bool SoundManager::PlayBGM(SOUND_ID _id, bool _loop)
 	if (FAILED(hr)) return false;
 
 	return true;
+}
+
+
+bool SoundManager::SoundPlay(SOUND_ID _id, bool _loop)
+{
+	return Internal_SoundPlay(SOUND_TYPE::SE, static_cast<int>(_id));
+}
+
+bool SoundManager::SoundPlay(VOICE_ID _id, bool _loop)
+{
+	return Internal_SoundPlay(SOUND_TYPE::VOICE, static_cast<int>(_id));
+}
+
+bool SoundManager::SoundPlay(BGM_ID _id, bool _loop)
+{
+	return Internal_SoundPlay(SOUND_TYPE::BGM, static_cast<int>(_id));
+}
+
+bool SoundManager::Internal_SoundPlay(SOUND_TYPE _type, int _id)
+{
+	switch (_type)
+	{
+	case SOUND_TYPE::SE:
+		break;
+	case SOUND_TYPE::BGM:
+		break;
+	case SOUND_TYPE::VOICE:
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -764,6 +804,146 @@ bool SoundManager::StopSound(SOUND_TYPE _type, SOUND_ID _id)
 		hr = m_BGM_SoundSlot._pSourceVoice->FlushSourceBuffers();
 		if (FAILED(hr)) return false;
 	}
+
+	return true;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】WAVファイルの読み込み（実際の内部的な読み込み関数）
+//* 
+//* WAVファイルはRIFF形式という方法で構成されていて、
+//* チャンクというデータの塊が複数連結している。
+//* チャンクは基本的に「ID」「サイズ」「中身」という感じで要素が入っている
+//* waveファイルではRIFFが親チャンクとなり、その子としてfmt、dataなどのチャンクが居るっぽい
+//*
+//* fmt：形式情報
+//* data：実際の波形データ
+//* 
+//* [注意]
+//* ・対応フォーマット
+//* 　拡張子：wav 
+//* 　チャンネル数：2（ステレオ）
+//* 　サンプル数：44100（44.1kHz）
+//* 　サンプルビット数：16
+//* 
+//* [引数]
+//* *filename：読み込むファイル名 
+//* &_out：波形データの出力先
+//* 
+//* [返値]
+//* true:成功
+//* false:失敗
+//*----------------------------------------------------------------------------------------
+bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, int _channelNum, int _sampleLate, int _bitsPersample)
+{
+	HMMIO mmio_handle = NULL;	// mmioハンドル
+	DWORD size;
+	BYTE* buffer;
+	WAVEFORMATEX wfx = {};		// waveファイルのフォーマット情報
+	MMCKINFO ckInfo = {};		// チャンク情報
+	MMCKINFO rifckInfo = {};	// RIFFチャンク用
+	MMRESULT mmhr;
+
+	char str_buffer[512] = {};
+	strcpy_s(str_buffer, _filename);
+
+	//	ファイルを開く
+	mmio_handle = mmioOpen(str_buffer, NULL, MMIO_ALLOCBUF | MMIO_READ);
+
+	if (!mmio_handle) {
+		MessageBox(NULL, "wavファイルを開けませんでした", "SoundManager", MB_OK);
+		return false;
+	}
+
+	// ##########################################################################################
+	//							RIFF（親）チャンクへ進入
+	// ##########################################################################################
+	mmhr = mmioDescend(mmio_handle, &rifckInfo, NULL, 0);
+
+	// fccType が 'WAVE' であることを確認
+	if (mmhr != MMSYSERR_NOERROR || rifckInfo.fccType != mmioFOURCC('W', 'A', 'V', 'E')) {
+		MessageBox(NULL, "RIFFチャンクへの進入失敗", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, 0);
+		return false;
+	}
+
+
+	// ##########################################################################################
+	//							fmtチャンクへ進入
+	// ##########################################################################################
+	ckInfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
+	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
+	if (mmhr != MMSYSERR_NOERROR) {
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		MessageBox(NULL, "fmtチャンクへの進入失敗", "SoundManager", MB_OK);
+		return false;
+	}
+
+	DWORD readSize = mmioRead(mmio_handle, (HPSTR)&wfx, sizeof(wfx)/* std::min((DWORD)sizeof(WAVEFORMATEX), ckInfo.cksize)*/);	// 読み込み
+
+	wfx.cbSize = 0;
+
+	// フォーマットチェック
+	if (wfx.wFormatTag != WAVE_FORMAT_PCM) {
+		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+	// チャンネル数チェック
+	if (wfx.nChannels != _channelNum) {
+		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+	// サンプル数チェック
+	if (wfx.nSamplesPerSec != _sampleLate) {
+		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+	// ビット数チェック
+	if (wfx.wBitsPerSample != _bitsPersample) {
+		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		return false;
+	}
+
+	mmioAscend(mmio_handle, &ckInfo, 0); // fmtチャンクから退出
+
+
+	// ##########################################################################################
+	//							dataチャンクへ進入
+	// ##########################################################################################
+	ckInfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
+	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
+	if (mmhr != MMSYSERR_NOERROR) {
+		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
+		MessageBox(NULL, "dataチャンクへの進入失敗", "SoundManager", MB_OK);
+		return false;
+	}
+
+	size = ckInfo.cksize;
+	buffer = new BYTE[size];
+	readSize = mmioRead(mmio_handle, (HPSTR)buffer, size);
+	if (readSize != ckInfo.cksize) {
+		delete[] buffer;	// バッファの開放
+		// 読み込みサイズが一致していません
+		mmioClose(mmio_handle, MMIO_FHOPEN);
+		return false;
+	}
+
+
+	// 格納
+	_out._size = size;
+	_out._waveBuffer = buffer;
+	_out._waveFormat = wfx;
+
+
+	// ファイル閉じる
+	mmioClose(mmio_handle, MMIO_FHOPEN);
+
+	buffer = nullptr;
 
 	return true;
 }
