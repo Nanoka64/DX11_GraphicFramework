@@ -12,12 +12,16 @@
 
 #define MAX_WAV 100 //WAVサウンド最大数
 
+
+// サウンドIDをintに変換するマクロ
+#define SOUND_ID_TO_INT(_id) (static_cast<int>(_id))
+
 /// <summary>
 /// 音声の種類
 /// </summary>
-enum class SOUND_TYPE
+enum class SOUND_TYPE : char
 {
-    SE,     
+    SE = 0,     
     BGM,
     VOICE,
 };
@@ -34,6 +38,7 @@ enum class SOUND_ID
     GUN_FIRE01,            
     GUN_FIRE02,
 
+
     /* 兵士 */
     SOLDIER_R_JUMP_IN,       // ジャンプ - 開始
     SOLDIER_R_JUMP_LAND,     // ジャンプ - 着地
@@ -43,9 +48,11 @@ enum class SOUND_ID
     ENEMY_ANT_HIT01,        // アリ被弾 
     ENEMY_ANT_DEAD,         // アリやられる
 
+    
     /* システム */
     SYSTEM_MOVING_CURSOR01, // 項目にカーソルがホバーしている状態
 
+    
     NUM
 };
 
@@ -65,6 +72,9 @@ enum class VOICE_ID
     SOLDIER_R_HIT_01,
     SOLDIER_R_HIT_02,
     SOLDIER_R_HIT_03,
+
+
+    NUM
 };
 
 /// <summary>
@@ -76,6 +86,9 @@ enum class BGM_ID
 
     // BGM
     BGM_TITLE_01,
+
+
+    NUM
 };
 
 
@@ -100,19 +113,33 @@ struct WaveResource
 };
 
 /// <summary>
-/// サウンドデータ
+/// 再生に必要なデータ
 /// </summary>
 struct SoundInstance
 {
-    IXAudio2SourceVoice* _pSourceVoice;// 音の起点
-    bool _isUse;    // 使用中か
+    IXAudio2SourceVoice* _pSourceVoice; // 音の起点
+    VECTOR3::VEC3 _pos;                 // 3Dサウンド用の位置情報
+    bool _is3D;                         // 3Dサウンドかどうか
+    bool _isUsed;                       // 再生中かどうか
+    bool _isLoop;                       // ループ再生するかどうか
+    SOUND_TYPE _soundType;              // 音声の種類（SE、BGM、ボイス）
+    float _volumeFactor;                // 音量調整用の係数（0.0f～1.0f 1.0fなら元の音量）
+    int _soundID;                       // どの音声データを再生しているかのID
+
     SoundInstance() :
         _pSourceVoice(nullptr),
-        _isUse(false)
+        _pos(VECTOR3::VEC3()),
+        _is3D(false),
+        _isUsed(false),
+        _isLoop(false),
+        _soundID(-1),
+        _soundType(SOUND_TYPE::SE),
+        _volumeFactor(0.0)
     {
     };
     ~SoundInstance() {};
 };
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -139,7 +166,7 @@ private:
     IXAudio2MasteringVoice* m_pMasteringVoice; 
 
 
-    // リスナー
+    // リスナー（カメラ）
     X3DAUDIO_LISTENER m_Listener;              
 
 
@@ -160,8 +187,10 @@ private:
     std::unordered_map<BGM_ID, WaveResource> m_BGM_WaveResourceMap;     // BGM用
     std::vector<SoundInstance> m_SoundSlotArray;         // 主にSE用のソースボイス
     std::vector<SoundInstance> m_VoiceSoundSlotArray;    // ボイス用のソースボイス
-    SoundInstance m_BGM_SoundSlot;                       // BGM用 基本一つなので
+    SoundInstance m_BGM_SoundSlot;                       // BGM用 基本一つだけ再生するので
 
+    std::vector<X3DAUDIO_EMITTER> m_3DAudioEmitterArray;    // 3Dサウンド用のエミッター配列
+    
     // 音量調整用
     float m_SEVolume;
     float m_BGMVolume;
@@ -176,33 +205,29 @@ public:
     // 解放
     void UninitXA2Sound(void);
     
+    // 更新
+    bool Update(RendererEngine& renderer);
+
     //
     // ロード関数
     //  
-    bool LoadSE_Wav(const char *filename, SOUND_ID _id);            // SE用のWavファイル読み込み
-    bool LoadBGM_Wav(const char *filename, BGM_ID _id);             // BGM用のWavファイル読み込み
-    bool LoadVoice_Wav(const char* filename, VOICE_ID _id);         // ボイス用のWavファイル読み込み
+    bool Load_Wav(const char *filename,SOUND_TYPE _type, int _id);            // SE用のWavファイル読み込み
     
 
     //
     // 再生関数
     //
-    bool SoundPlay(SOUND_ID _id, bool _loop = false);
-    bool SoundPlay(VOICE_ID _id, bool _loop = false);
-    bool SoundPlay(BGM_ID _id, bool _loop = false);
-
-
-    bool PlaySE(SOUND_ID _id, bool _loop = false);                              // SEの再生
-    bool PlaySE_RandPitch(SOUND_ID _id, int _pitchRange, bool _loop = false);   // SEの再生（ピッチをランダムに揺らす）
-    bool PlayVoice(VOICE_ID _id);                                               // ボイスの再生
-    bool PlayVoice_Rand(VOICE_ID _beginID, int _range);                         // ボイスの再生（指定範囲のボイスからランダムに再生 _beginIDから音声データが連続している必要あり）
-    bool PlayBGM(BGM_ID _id, bool _loop = true);                              // BGMの再生
-    bool PlaySE_3D(SOUND_ID _id, const VECTOR3::VEC3& _pos, bool _loop = false);
+    bool Play(SOUND_TYPE _type, int _id, bool _loop = false);                               // 再生
+    bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, bool _loop = false); // 再生（3D空間で鳴らす）
+    bool Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);    // 再生（ピッチをランダムに揺らす）
+    bool Play_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);         // 指定範囲のサウンドからランダムに再生 _beginIDから音声データが連続している必要あり
+    
+    bool PlayBGM(BGM_ID _id, bool _loop = true); // BGMの再生
     
     //
     // 停止関数
     //
-    bool StopSound(SOUND_TYPE _type, SOUND_ID _id);     // 停止（今はBGMのみ）
+    bool Stop(SOUND_TYPE _type, int _id);     // 停止（今はBGMのみ）
 
 private:
     // コピー禁止
@@ -213,6 +238,13 @@ private:
     // LoadSE_Wavなどが外から明示的に呼ぶ関数であるのに対し、
     // こっちは内部的な読み込みを行っている。
     bool Internal_Load_Wav(const char* _filename, WaveResource& _out, int _channelNum = 2, int _sampleLate = 44100, int _bitsPersample = 16);
-    bool Internal_SoundPlay(SOUND_TYPE _type, int _id);
+    bool Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop = false);
+    bool Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);
+    bool Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);
+    bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, bool _loop = false);
+
+    bool BaseSoundPlay(SOUND_TYPE _type, int _id, const XAUDIO2_BUFFER &_buff, bool _is3D, const VECTOR3::VEC3 &_pos, int _pitch, bool _loop);
+
+    bool SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::vector<SoundInstance>*& _outInstArray);
 };
 

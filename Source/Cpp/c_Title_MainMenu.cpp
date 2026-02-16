@@ -66,7 +66,7 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 	// ****************************************************
 	//				タイトルBGMの再生
 	// ****************************************************
-	Master::m_pSoundManager->PlayBGM(SOUND_ID::BGM_TITLE_01);
+	Master::m_pSoundManager->PlayBGM(BGM_ID::BGM_TITLE_01);
 
 
 	// アクティブにしてトランスフォームを取得
@@ -187,7 +187,7 @@ void c_Title_MainMenu::Draw(SceneManager* pOwner)
 				// ****************************************************
 				//				カーソルが載った時のSE再生
 				// ****************************************************
-				Master::m_pSoundManager->PlaySE(SOUND_ID::SYSTEM_MOVING_CURSOR01);
+				Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SYSTEM_MOVING_CURSOR01));
 			}
 
 			m_PrevHoveredMenuItem = item._type;	// なんの項目に乗ったか保持

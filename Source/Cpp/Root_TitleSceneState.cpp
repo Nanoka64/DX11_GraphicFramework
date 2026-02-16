@@ -70,7 +70,7 @@ void Root_TitleSceneState::OnExit(SceneManager* pOwner)
 	// ****************************************************
 	//				ƒ^ƒCƒgƒ‹BGM‚Ì’âŽ~
 	// ****************************************************
-	Master::m_pSoundManager->StopSound(SOUND_TYPE::BGM, SOUND_ID::BGM_TITLE_01);
+	Master::m_pSoundManager->Stop(SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_TITLE_01));
 }
 
 

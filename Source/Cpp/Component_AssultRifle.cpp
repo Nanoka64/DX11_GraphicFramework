@@ -99,7 +99,7 @@ void AssultRifle::Update(RendererEngine &renderer)
         // ****************************************************
         //				 発射音再生
         // ****************************************************
-        Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::GUN_FIRE02, 300);
+        Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE02), 300);
 
         // フラッシュライト
         m_pFlashPointLight.lock()->set_Range(30.0f);

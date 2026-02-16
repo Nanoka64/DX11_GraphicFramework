@@ -73,7 +73,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			// ****************************************************
 			//				 ”í’e‰¹Ä¶
 			// ****************************************************
-			Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::ENEMY_ANT_HIT01, 300);
+			Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), 300);
 
 			int handle = Master::m_pEffectManager->PlayEffect("Hit");
 			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
@@ -88,7 +88,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			// ****************************************************
 			//				 Ž€–S‰¹Ä¶
 			// ****************************************************
-			Master::m_pSoundManager->PlaySE_RandPitch(SOUND_ID::ENEMY_ANT_DEAD, 300);
+			Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), 300);
 
 
 			auto transform = m_pOwner.lock()->get_Transform().lock();

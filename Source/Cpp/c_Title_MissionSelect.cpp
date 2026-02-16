@@ -182,7 +182,7 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 				// ****************************************************
 				//				ƒJ[ƒ\ƒ‹‚ªÚ‚Á‚½Žž‚ÌSEÄ¶
 				// ****************************************************
-				Master::m_pSoundManager->PlaySE(SOUND_ID::SYSTEM_MOVING_CURSOR01);
+				Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SYSTEM_MOVING_CURSOR01));
 			}
 
 			m_PrevHoveredMIssionItem = 0;	// ‚È‚ñ‚Ì€–Ú‚Éæ‚Á‚½‚©•ÛŽ

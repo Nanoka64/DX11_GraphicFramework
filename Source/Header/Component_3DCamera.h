@@ -15,6 +15,8 @@ class Camera3D : public IComponent
 private:
 	VECTOR3::VEC3 m_FocusPoint;
 	VECTOR3::VEC3 m_UpVec;
+    VECTOR3::VEC3 m_CameraPos;	// カメラの座標（色んなところで使うのでトランスフォームからではなく、ここに持つ）
+    VECTOR3::VEC3 m_LookDir;
 
 	float m_Angle_H;	// 水平方向アングル
 	float m_Angle_V;	// 垂直方向アングル
@@ -69,6 +71,7 @@ public:
 	float get_Far()const { return m_FarClipDist; };		    // 奥クリップの設定
 
 	VECTOR3::VEC3 get_CameraPos()const;	// 座標取得
+    VECTOR3::VEC3 get_LookDir()const;		// 注視方向取得
 
 	/// <summary>
 	/// ビュー変換行列の取得

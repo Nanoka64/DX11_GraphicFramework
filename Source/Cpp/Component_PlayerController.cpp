@@ -177,8 +177,8 @@ void PlayerController::Update(RendererEngine &renderer)
 			// ****************************************************
 			//				 ローリング開始音/声 再生
 			// ****************************************************
-			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
-			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
+			Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_IN));
+			Master::m_pSoundManager->Play_Rand(SOUND_TYPE::VOICE, SOUND_ID_TO_INT(VOICE_ID::SOLDIER_R_SHOUT_01), 3);
 			return;
 		}
 	}
@@ -194,8 +194,8 @@ void PlayerController::Update(RendererEngine &renderer)
 			// ****************************************************
 			//				 ローリング開始音/声 再生
 			// ****************************************************
-			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
-			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
+			Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_IN));
+			Master::m_pSoundManager->Play_Rand(SOUND_TYPE::VOICE, SOUND_ID_TO_INT(VOICE_ID::SOLDIER_R_SHOUT_01), 3);
 
 			return;
 		}
@@ -218,8 +218,8 @@ void PlayerController::Update(RendererEngine &renderer)
 			// ****************************************************
 			//				 ジャンプ開始音/声 再生
 			// ****************************************************
-			Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_IN);
-			Master::m_pSoundManager->PlayVoice_Rand(VOICE_ID::SOLDIER_R_SHOUT_01, 3);
+			Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_IN));
+			Master::m_pSoundManager->Play_Rand(SOUND_TYPE::VOICE, SOUND_ID_TO_INT(VOICE_ID::SOLDIER_R_SHOUT_01), 3);
 
 			// ジャンプ開始アニメーション
 			ChangeAnimation(PLAYER_ANIMATION_ID::JUMP_START);
@@ -257,7 +257,7 @@ void PlayerController::Update(RendererEngine &renderer)
 				// ****************************************************
 				//				 ジャンプ - 着地音再生
 				// ****************************************************
-				Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_LAND);
+				Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_LAND));
 
 				newPos.y = 0.0f;
 				m_JumpVelocity = 0.0f;
@@ -360,7 +360,7 @@ void PlayerController::RollingUpdate()
 		// ****************************************************
 		//				 ローリング終了音再生
 		// ****************************************************
-		Master::m_pSoundManager->PlaySE(SOUND_ID::SOLDIER_R_JUMP_LAND);
+		Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_LAND));
 	}
 	
 	m_pMyTransformComp.lock()->set_Pos(newPos);

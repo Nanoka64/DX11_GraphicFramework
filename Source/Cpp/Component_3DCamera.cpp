@@ -25,6 +25,8 @@ using namespace DirectX;
 Camera3D::Camera3D(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
 m_FocusPoint({ 0.0f,0.0f,0.0f }),
 m_UpVec({ 0.0f,1.0f,0.0f }),
+m_CameraPos({ 0.0f,0.0f,0.0f }),
+m_LookDir({ 0.0f,0.0f,0.0f }),
 m_Angle_H(1.57f),
 m_Angle_V(0.f),
 m_Fov(90.0f),
@@ -149,8 +151,11 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 	lookDir.y = m_PosOffset.y * sinf(m_Angle_V);
 	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sinf(m_Angle_H);
 
+	m_CameraPos = lookDir + m_FocusPoint;
+    m_LookDir = lookDir;
+
 	// ƒJƒƒ‰‚ÌˆÊ’u
-	m_pOwner.lock()->get_Transform().lock()->set_Pos(lookDir + m_FocusPoint);
+	m_pOwner.lock()->get_Transform().lock()->set_Pos(m_CameraPos);
 }
 
 
@@ -162,7 +167,7 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 XMMATRIX Camera3D::get_ViewMatrix()const
 {
-	XMFLOAT3 eye = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();;
+	XMFLOAT3 eye = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
 	XMFLOAT3 foucus = m_FocusPoint;
 	XMFLOAT3 upVec = m_UpVec;
 
@@ -228,5 +233,10 @@ VECTOR3::VEC3 Camera3D::get_FocusOffset()const
 
 VECTOR3::VEC3 Camera3D::get_CameraPos()const
 {
-	return m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
+	return m_CameraPos;
+}
+
+VECTOR3::VEC3 Camera3D::get_LookDir()const
+{
+	return m_LookDir;
 }
