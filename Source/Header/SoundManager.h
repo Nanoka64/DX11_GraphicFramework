@@ -51,6 +51,9 @@ enum class SOUND_ID
     
     /* システム */
     SYSTEM_MOVING_CURSOR01, // 項目にカーソルがホバーしている状態
+    
+    
+    TEST,
 
     
     NUM

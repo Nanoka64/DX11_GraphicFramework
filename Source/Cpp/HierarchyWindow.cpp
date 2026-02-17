@@ -54,7 +54,7 @@ void HierarchyWindow::Update(RendererEngine &renderer)
     std::list<std::shared_ptr<GameObject>> objList;
 
     // 透明/不透明オブジェクトリスト合体
-    //objList.splice(objList.end(), transparentObjList);
+    objList.splice(objList.end(), transparentObjList);
     objList.splice(objList.end(), opawueObjList); 
 
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"));

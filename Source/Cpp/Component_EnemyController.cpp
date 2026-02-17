@@ -2,11 +2,14 @@
 #include "Component_EnemyController.h"
 #include "GameObject.h"
 #include "Component_SkinnedMeshAnimator.h"
+#include "Component_DecalRenderer.h"
+#include "Component_TimerDestruction.h"
 #include "Component_Collider.h"
 #include "Component_Health.h"
 #include "RendererEngine.h"
 #include "CollisionInfo.h"
-
+#include "MeshFactory.h"
+#include "ResourceManager.h"
 using namespace GIGA_Engine;
 using namespace VECTOR3;
 using namespace VECTOR2;
@@ -59,7 +62,7 @@ void EnemyController::Start(RendererEngine& renderer)
 	m_pHealthComp->set_CrntHP(200.0f);
 	// 被弾時のコールバック
 	m_pHealthComp->RegisterOnDamage(
-		[this](float _damage)
+		[this, &renderer](float _damage)
 		{
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
@@ -80,11 +83,44 @@ void EnemyController::Start(RendererEngine& renderer)
 			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
 			Master::m_pEffectManager->SetRotationEffect(handle, rot.x, rot.y, rot.z);
+
+
+
+			auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");
+
+			SetupMaterialInfo matInfo[1];
+			matInfo[0].Index = 0;
+			matInfo[0].pMaterialData = matPtr;
+
+			CreateDecalInfo decal;
+			decal.pRenderer = &renderer;
+			decal.Type = UTILITY_MESH_TYPE::CUBU;
+			decal.MatNum = 1;
+			decal.MaterialData = matInfo;
+			decal.IsActive = false;
+			decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+			decal.IsNormalMap = false;
+			decal.IsDynamic = true;
+
+
+			VEC3 scale;
+			scale.x = 100.0f;
+			scale.y = 100.0f;
+			scale.z = 100.0f;
+
+			auto obj = MeshFactory::CreateDecal(decal);
+			obj->get_Component<DecalRenderer>()->Start(renderer);
+			obj->get_Transform().lock()->set_Pos(pos);
+			obj->get_Transform().lock()->set_Scale(scale);
+			obj->get_Transform().lock()->set_RotateToRad(1.57, Tool::RandRange(0.0f, 6.14f), 0.0f);
+			obj->set_Tag("Ant_Splash");
+			auto timer = obj->add_Component<TimerDestruction>();
+			timer->set_LifeTime(8.0f);  // 生存時間
 		}
 	);
 	// 死亡時のコールバック
 	m_pHealthComp->RegisterOnDead(
-		[this]
+		[this, &renderer]
 		{
 			auto transform = m_pOwner.lock()->get_Transform().lock();
 			VEC3 pos = transform->get_VEC3ToPos();
@@ -101,6 +137,40 @@ void EnemyController::Start(RendererEngine& renderer)
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
 			m_IsDead = true;
 			m_IsAnim = false;
+
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos);
+
+
+			auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");
+
+			SetupMaterialInfo matInfo[1];
+			matInfo[0].Index = 0;
+			matInfo[0].pMaterialData = matPtr;
+
+			CreateDecalInfo decal;
+			decal.pRenderer = &renderer;
+			decal.Type = UTILITY_MESH_TYPE::CUBU;
+			decal.MatNum = 1;
+			decal.MaterialData = matInfo;
+			decal.IsActive = false;
+			decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+			decal.IsNormalMap = false;
+			decal.IsDynamic = true;
+
+
+			VEC3 scale;
+			scale.x = 200.0f;
+			scale.y = 200.0f;
+			scale.z = 200.0f;
+
+			auto obj = MeshFactory::CreateDecal(decal);
+			obj->get_Component<DecalRenderer>()->Start(renderer);
+			obj->get_Transform().lock()->set_Pos(pos);
+			obj->get_Transform().lock()->set_Scale(scale);
+			obj->get_Transform().lock()->set_RotateToRad(1.57, 0.0f, 0.0f);
+			obj->set_Tag("Ant_Splash");
+			auto timer = obj->add_Component<TimerDestruction>();
+			timer->set_LifeTime(15.0f);  // 生存時間
 		}
 	);
 
@@ -109,6 +179,7 @@ void EnemyController::Start(RendererEngine& renderer)
 	// ステートの作成（TODO:外から種類を変えられるようにする）
 	EnemyStateFactory::Create(m_StateMachine, ENEMY_TYPE::ENEMY_TYPE_ANT_Normal, renderer);
 	m_StateMachine.SetCrntState(ANT_STATE::ANT_STATE_IDLE);
+
 }
 
 
@@ -126,6 +197,7 @@ void EnemyController::Update(RendererEngine& renderer)
 		m_pColliderComp->set_IsEnable(false);	// コライダーの判定をオフに
 		m_pOwner.lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 	}
+
 
 	auto target = Master::m_pGameObjectManager->get_ObjectByTag("Player");
 	m_pTarget = target;
@@ -163,6 +235,8 @@ void EnemyController::Update(RendererEngine& renderer)
 		//targetAngle = Tool::Lerp(crntRot.y, targetAngle, 0.1f);
 		myTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
 	}
+
+
 }
 
 

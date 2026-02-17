@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Component_Bullet.h"
-#include "pch.h"
 #include "Component_AssultRifle.h"
 #include "Component_Transform.h"
 #include "Component_DecalRenderer.h"
@@ -142,6 +141,7 @@ void Bullet::Start(RendererEngine& renderer)
             auto timer = obj->add_Component<TimerDestruction>();
             timer->set_LifeTime(2.0f);  // 生存時間
 
+            // エフェクト
             VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
             int spark_handle = Master::m_pEffectManager->PlayEffect("Spark");   // 火花
             int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke");   // 煙

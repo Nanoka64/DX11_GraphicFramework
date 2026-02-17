@@ -356,6 +356,14 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
             hole->get_Component<TimerDestruction>()->Update(renderer);
         }
     }
+    decal = Master::m_pGameObjectManager->get_ObjectListByTag("Ant_Splash");
+    if (!decal.empty()) {
+        for (auto& hole : decal) {
+            hole->get_Component<DecalRenderer>()->Draw(renderer);
+            hole->get_Component<TimerDestruction>()->Update(renderer);
+        }
+    }
+
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
     // 深度ステンシル設定解除

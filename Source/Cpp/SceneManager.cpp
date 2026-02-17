@@ -470,45 +470,32 @@ bool SceneManager::Init(RendererEngine &renderer)
         //}
     }
 
-    /* デカールの生成*/
+    /* デカールのマテリアル登録*/
     {
-        Material mat[1];
-        mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole.png");
-        mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole_n.png");
-        mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-        mat[0].m_SpecularPower = 100.0f;
-        mat[0].m_EmissivePower = 1.0f;
-        mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f, 1.0f);
+        //Material mat[1];
+        //mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole.png");
+        //mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole_n.png");
+        //mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //mat[0].m_SpecularPower = 100.0f;
+        //mat[0].m_EmissivePower = 1.0f;
+        //mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f, 1.0f);
 
-        // マテリアル登録
-        Master::m_pResourceManager->RegisterMaterialData("Decal_BulletHole", mat[0]);
-        auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_BulletHole");
+        //// マテリアル登録
+        //Master::m_pResourceManager->RegisterMaterialData("Decal_BulletHole", mat[0]);
 
-        SetupMaterialInfo matInfo[1];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr;
 
-        CreateDecalInfo decal;
-        decal.pRenderer = &renderer;
-        decal.Type = UTILITY_MESH_TYPE::CUBU;
-        decal.MatNum = 1;
-        decal.MaterialData = matInfo;
-        decal.IsActive = false;
-        decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
-        decal.IsNormalMap = false;
-        decal.IsDynamic = true;
+        //Material mat[1];
+        //mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole.png");
+        //mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/BulletHole_n.png");
+        //mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+        //mat[0].m_SpecularPower = 100.0f;
+        //mat[0].m_EmissivePower = 1.0f;
+        //mat[0].m_EmissiveColor = VEC3(1.0f, 1.0f, 1.0f);
 
-        VEC3 pt;
-        pt.x = 0.0f;
-        pt.y = 0.0f;
-        pt.z = 0.0f;
-
-        auto obj = MeshFactory::CreateDecal(decal);
-        obj->get_Component<DecalRenderer>()->Start(renderer);
-        obj->get_Transform().lock()->set_Pos(pt);
-        obj->get_Transform().lock()->set_Scale(VEC3(10.0f, 10.0f, 10.0f));
-        obj->set_Tag("Decal");
+        //// マテリアル登録
+        //Master::m_pResourceManager->RegisterMaterialData("Decal_Ant_Splash", mat[0]);
     }
 
     // パイプラインの作成

@@ -279,6 +279,10 @@ bool SoundManager::InitXA2Sound(void)
 	// 敵
 	Load_Wav("Resource/Sound/SE/Enemy/DSGNImpt_Impact Smear Short 04_RSCPC_HV.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01));
 	Load_Wav("Resource/Sound/SE/Enemy/DSGNImpt_Impact High Spark 04_RSCPC_HV.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD));
+	
+	
+	Load_Wav("Resource/Sound/BGM/Taboo Marionette.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::TEST));
+
 
 	// BGM
 	Load_Wav("Resource/Sound/BGM/Flash_Shadow.wav", SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_TITLE_01));
@@ -344,7 +348,12 @@ bool SoundManager::Update(RendererEngine &renderer)
 	auto cameraComp = renderer.get_CameraComponent();
 	VECTOR3::VEC3 cameraPos = cameraComp->get_CameraPos();
 	VECTOR3::VEC3 cameraUp = cameraComp->get_UpVec();
-    VECTOR3::VEC3 cameraLook = cameraComp->get_FocusPoint();
+    VECTOR3::VEC3 cameraLook = cameraComp->get_LookDir();
+
+
+	// 何故かパンが反転してしまうため
+	cameraLook = -cameraLook;
+
 
     // カメラの位置と向きからリスナーの情報を更新
     m_Listener.Position.x = cameraPos.x;
@@ -372,6 +381,8 @@ bool SoundManager::Update(RendererEngine &renderer)
 	// ############################################################################
 	HRESULT hr = S_OK;
 
+	int updateFlag = 1;
+
     // 使用されているスロットすべてに対して更新処理を行う
 	for (auto &slot : m_3DSoundSlotArray)
 	{
@@ -386,13 +397,13 @@ bool SoundManager::Update(RendererEngine &renderer)
 			slot._pos = VECTOR3::VEC3(0.0f, 0.0f, 0.0f);
 			slot._isLoop = false;
 			
-			hr = m_BGM_SoundSlot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
+			hr = slot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS, updateFlag);
 			if (FAILED(hr)) return false;
 			hr = slot._pSourceVoice->FlushSourceBuffers();
 			if (FAILED(hr)) return false;
 
             // 音量を0にしておく
-			hr = slot._pSourceVoice->SetVolume(0.0f);
+			hr = slot._pSourceVoice->SetVolume(0.0f, updateFlag);
 			if (FAILED(hr)) {
 				return false;
 			}
@@ -403,7 +414,7 @@ bool SoundManager::Update(RendererEngine &renderer)
 		// エミッター
 		X3DAUDIO_EMITTER emitter = {};
 		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
-		emitter.CurveDistanceScaler = 10.0f;
+		emitter.CurveDistanceScaler = 2.0f;
 		emitter.DopplerScaler = 1.0f;
 		emitter.ChannelRadius = 0.0f;
 		emitter.Position.x = slot._pos.x;
@@ -420,7 +431,14 @@ bool SoundManager::Update(RendererEngine &renderer)
 			&m_DSPSettings);
 
         // 計算結果をソースボイスに反映
-		hr = slot._pSourceVoice->SetOutputMatrix(m_pMasteringVoice, 1, m_DeviceDetails.InputChannels, m_DSPSettings.pMatrixCoefficients);
+		hr = slot._pSourceVoice->SetOutputMatrix(
+			m_pMasteringVoice, 
+			1,
+			m_DeviceDetails.InputChannels, 
+			m_DSPSettings.pMatrixCoefficients, 
+			updateFlag
+		);
+
 		if (FAILED(hr)) {
 			continue;
 		}
@@ -430,8 +448,9 @@ bool SoundManager::Update(RendererEngine &renderer)
 			continue;
 		}
 
-		m_pXAudio2->CommitChanges(XAUDIO2_COMMIT_ALL);
 	}
+	m_pXAudio2->CommitChanges(updateFlag);
+
 	return true;
 }
 
@@ -635,6 +654,7 @@ bool SoundManager::Play(SOUND_TYPE _type, int _id, bool _loop)
 bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel, bool _loop)
 {
 	return Internal_SoundPlay_3D(_type, _id, _pos, _vel, _loop);
+	//return Internal_SoundPlay_3D(_type, _id, _pos, _vel, _loop);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -868,6 +888,9 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
 
 	WaveResource *typeWaveResource = nullptr;
 
+	// 音声データの取得
+	SerchResource(_type, _id, typeWaveResource);
+
 	// 再生が終了しているソースボイスを探す
 	for (auto &slot : m_3DSoundSlotArray) {
 		XAUDIO2_VOICE_STATE state;
@@ -877,8 +900,6 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
         if (state.BuffersQueued != 0)continue;
         if (slot._isUsed == true)continue;	
 
-		// 音声データの取得
-		SerchResource(_type, _id, typeWaveResource);
 
 		if (typeWaveResource == nullptr) {
 			continue;
@@ -897,7 +918,7 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
 		// エミッター
 		X3DAUDIO_EMITTER emitter = {};
 		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
-		emitter.CurveDistanceScaler = 10.0f;
+		emitter.CurveDistanceScaler = 2.0f;
 		emitter.DopplerScaler = 1.0f;
 		emitter.ChannelRadius = 0.0f;
 		emitter.Position.x = slot._pos.x;
@@ -913,6 +934,18 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
 		X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
 			X3DAUDIO_CALCULATE_MATRIX,
 			&m_DSPSettings);
+
+		// 計算結果をソースボイスに反映
+		hr = slot._pSourceVoice->SetOutputMatrix(
+			m_pMasteringVoice,
+			1,
+			m_DeviceDetails.InputChannels,
+			m_DSPSettings.pMatrixCoefficients
+		);
+
+		if (FAILED(hr)) {
+			continue;
+		}
 
 		// 波形データ
 		XAUDIO2_BUFFER buff = {};
@@ -930,7 +963,7 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
 		}
 
 		// バッファのクリア
-		slot._pSourceVoice->Stop();
+		slot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
 		slot._pSourceVoice->FlushSourceBuffers();
 
 
