@@ -4,9 +4,9 @@
 #include "Component_3DCamera.h"
 #include <windows.h>
 
-constexpr int SE_CHANNELS_NUM    = 1;	    // SEのチャンネル数（モノラル）
-constexpr int VOICE_CHANNELS_NUM = 1;	    // ボイスのチャンネル数（モノラル）
-constexpr int BGM_CHANNELS_NUM   = 2;	    // BGMのチャンネル数（ステレオ）
+constexpr int NUM_SE_CHANNELS    = 1;	    // SEのチャンネル数（モノラル）
+constexpr int NUM_VOICE_CHANNELS = 1;	    // ボイスのチャンネル数（モノラル）
+constexpr int NUM_BGM_CHANNELS   = 2;	    // BGMのチャンネル数（ステレオ）
 constexpr int SAMPLE_RATE		 = 44100;	// サンプル数 44.1kHz
 constexpr int BITS_PER_SAMPLE	 = 16;		// サンプルあたりのビット数
 
@@ -16,8 +16,16 @@ constexpr float DEFAULT_BGM_VOL   = 0.3f;	// BGMのデフォルトの音量
 constexpr float DEFAULT_VOICE_VOL = 0.7f;	// ボイスのデフォルトの音量
 
 
-constexpr int SE_SVPOOL_NUM    = 64;  // SV(SourceVoice)のプール数
-constexpr int VOICE_SVPOOL_NUM = 32;
+constexpr int NUM_SE_SVPOOL			 = 32;  // SV(SourceVoice)のプール数
+constexpr int NUM_VOICE_SVPOOL		 = 32;	// ボイス用
+constexpr int NUM_SOUND_3D_SVPOOL    = 64;  // 3D用
+
+
+// ※AIに頼んだ
+// 距離減衰のプリセット（直線的な減衰）
+// Point(距離, 音量)
+static X3DAUDIO_DISTANCE_CURVE_POINT LinearCurvePoints[2] = { 0.0f, 1.0f, 300.0f, 0.0f }; // 300mで音量0
+static X3DAUDIO_DISTANCE_CURVE LinearCurve = { (X3DAUDIO_DISTANCE_CURVE_POINT *)&LinearCurvePoints[0], 2 };
 
 
 //*---------------------------------------------------------------------------------------
@@ -28,9 +36,12 @@ SoundManager::SoundManager():
 	m_pMasteringVoice(nullptr),
 	m_SEVolume(DEFAULT_SE_VOL),
 	m_BGMVolume(DEFAULT_BGM_VOL),
-	m_VoiceVolume(DEFAULT_VOICE_VOL)
-	//m_WavBuffer(nullptr),
-	//m_SoundIndex(0)
+	m_VoiceVolume(DEFAULT_VOICE_VOL),
+	m_Listener(),
+    m_DeviceDetails(),
+    m_DSPSettings(),
+	m_X3DInstanceHandle(),
+	m_BGM_SoundSlot()
 {
 }
 
@@ -89,12 +100,14 @@ bool SoundManager::InitXA2Sound(void)
 	// **************************************************************************
 	// ソースボイスの作成（SE用）
 	// **************************************************************************
-	for (int i = 0; i < SE_SVPOOL_NUM; i++)
+	//m_SoundSlotArray.resize(NUM_SE_SVPOOL);
+	
+	for (int i = 0; i < NUM_SE_SVPOOL; i++)
 	{
 		SoundInstance sound;
 		WAVEFORMATEX wf = {};
 		wf.wFormatTag = WAVE_FORMAT_PCM;
-		wf.nChannels = SE_CHANNELS_NUM;	     // 1（モノラル）
+		wf.nChannels = NUM_SE_CHANNELS;	     // 1（モノラル）
 		wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
 		wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
 		wf.cbSize = 0;
@@ -114,15 +127,18 @@ bool SoundManager::InitXA2Sound(void)
 		m_SoundSlotArray.push_back(sound);
 	}
 
+
 	// **************************************************************************
 	// ソースボイスの作成（声用）
 	// **************************************************************************
-	for (int i = 0; i < VOICE_SVPOOL_NUM; i++)
+	//m_VoiceSoundSlotArray.resize(NUM_VOICE_SVPOOL);
+	
+	for (int i = 0; i < NUM_VOICE_SVPOOL; i++)
 	{
 		SoundInstance sound;
 		WAVEFORMATEX wf = {};
 		wf.wFormatTag = WAVE_FORMAT_PCM;
-		wf.nChannels = VOICE_CHANNELS_NUM;	 // 1（モノラル）
+		wf.nChannels = NUM_VOICE_CHANNELS;	 // 1（モノラル）
 		wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
 		wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
 		wf.cbSize = 0;
@@ -148,7 +164,7 @@ bool SoundManager::InitXA2Sound(void)
 	SoundInstance sound;
 	WAVEFORMATEX wf = {};
 	wf.wFormatTag = WAVE_FORMAT_PCM;
-	wf.nChannels = BGM_CHANNELS_NUM;	 // 2（ステレオ）
+	wf.nChannels = NUM_BGM_CHANNELS;	 // 2（ステレオ）
 	wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
 	wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
 	wf.cbSize = 0;
@@ -163,6 +179,35 @@ bool SoundManager::InitXA2Sound(void)
 		return false;
 	}
 
+
+	// **************************************************************************
+	// ソースボイスの作成（3D用）
+	// **************************************************************************
+	//m_3DSoundSlotArray.resize(NUM_SOUND_3D_SVPOOL);
+	
+	for (int i = 0; i < NUM_SOUND_3D_SVPOOL; i++)
+	{
+		SoundInstance sound;
+		WAVEFORMATEX wf = {};
+		wf.wFormatTag = WAVE_FORMAT_PCM;
+		wf.nChannels = NUM_SE_CHANNELS;	     // 1（モノラル）
+		wf.nSamplesPerSec = SAMPLE_RATE;     // 44.1kHz
+		wf.wBitsPerSample = BITS_PER_SAMPLE; // 16bit
+		wf.cbSize = 0;
+
+		// 1ブロックあたりのバイト数 = (チャンネル数) * (1サンプルあたりのバイト数)
+		wf.nBlockAlign = wf.nChannels * (wf.wBitsPerSample / 8);
+
+		// 1秒あたりの平均バイト数 = (サンプリングレート) * (ブロックサイズ)
+		wf.nAvgBytesPerSec = wf.nSamplesPerSec * wf.nBlockAlign;
+
+		//ソースボイス作成
+		if (m_pXAudio2->CreateSourceVoice(&sound._pSourceVoice, &wf) != S_OK) {
+			return false;
+		}
+
+		m_3DSoundSlotArray.push_back(sound);
+	}
 
 	// ############################################################################
 
@@ -200,13 +245,7 @@ bool SoundManager::InitXA2Sound(void)
 	m_Listener.OrientTop.y = 1.0f;
 	m_Listener.OrientTop.z = 0.0f;
 
-	// エミッター
-	X3DAUDIO_EMITTER emitter = {};
-	emitter.ChannelCount = 1;		// チャンネル数は再生する音声に合わせる
-	emitter.CurveDistanceScaler = 1.0f;
-	emitter.DopplerScaler = 1.0f;
 
-	
 	// DSP設定に使用する音声の詳細情報の取得
 	m_pMasteringVoice->GetVoiceDetails(&m_DeviceDetails);
 
@@ -217,18 +256,8 @@ bool SoundManager::InitXA2Sound(void)
 	m_DSPSettings.SrcChannelCount = 1;
 	m_DSPSettings.DstChannelCount = m_DeviceDetails.InputChannels;
 	m_DSPSettings.pMatrixCoefficients = matrix;
-
+    m_DSPSettings.pDelayTimes = nullptr;
 	
-	// 3Dサウンドにするための計算
-	X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
-		X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER | X3DAUDIO_CALCULATE_LPF_DIRECT | X3DAUDIO_CALCULATE_REVERB,
-		&m_DSPSettings);
-
-	
-	// ボリュームとピッチの値をソース音声に適用
-	m_BGM_SoundSlot._pSourceVoice->SetOutputMatrix(m_pMasteringVoice, 1, m_DeviceDetails.InputChannels, m_DSPSettings.pMatrixCoefficients);
-	m_BGM_SoundSlot._pSourceVoice->SetFrequencyRatio(m_DSPSettings.DopplerFactor);
-
 	// ############################################################################
 
 	//							音声のロード
@@ -296,6 +325,7 @@ void SoundManager::UninitXA2Sound(void)
 	CoUninitialize();
 }
 
+
 //*---------------------------------------------------------------------------------------
 //*【?】更新
 //*
@@ -308,10 +338,13 @@ void SoundManager::UninitXA2Sound(void)
 //*----------------------------------------------------------------------------------------
 bool SoundManager::Update(RendererEngine &renderer)
 {
+	// ############################################################################
+	//							リスナーの更新
+	// ############################################################################
 	auto cameraComp = renderer.get_CameraComponent();
 	VECTOR3::VEC3 cameraPos = cameraComp->get_CameraPos();
 	VECTOR3::VEC3 cameraUp = cameraComp->get_UpVec();
-    VECTOR3::VEC3 cameraLook = cameraComp->get_LookDir();
+    VECTOR3::VEC3 cameraLook = cameraComp->get_FocusPoint();
 
     // カメラの位置と向きからリスナーの情報を更新
     m_Listener.Position.x = cameraPos.x;
@@ -326,15 +359,78 @@ bool SoundManager::Update(RendererEngine &renderer)
     m_Listener.OrientTop.y = cameraUp.y;
     m_Listener.OrientTop.z = cameraUp.z;
 
+    m_Listener.pCone = nullptr;	// コーンは使用しない
+
+	// 今回はリスナーは動かない想定なので速度は0
+    m_Listener.Velocity.x = 0.0f;
+    m_Listener.Velocity.y = 0.0f;
+    m_Listener.Velocity.z = 0.0f;
 
 
-	for (auto &emitter : m_3DAudioEmitterArray)
+	// ############################################################################
+    //							3Dサウンドの更新
+	// ############################################################################
+	HRESULT hr = S_OK;
+
+    // 使用されているスロットすべてに対して更新処理を行う
+	for (auto &slot : m_3DSoundSlotArray)
 	{
+        if (slot._isUsed == false)continue; // 使用されていないスロットはスキップ
+
+		XAUDIO2_VOICE_STATE state;
+		slot._pSourceVoice->GetState(&state);
+
+		// 再生が終了していればスロットを解放
+		if (state.BuffersQueued == 0) {
+			slot._isUsed = false;
+			slot._pos = VECTOR3::VEC3(0.0f, 0.0f, 0.0f);
+			slot._isLoop = false;
+			
+			hr = m_BGM_SoundSlot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
+			if (FAILED(hr)) return false;
+			hr = slot._pSourceVoice->FlushSourceBuffers();
+			if (FAILED(hr)) return false;
+
+            // 音量を0にしておく
+			hr = slot._pSourceVoice->SetVolume(0.0f);
+			if (FAILED(hr)) {
+				return false;
+			}
+
+            continue;
+		}
+
+		// エミッター
+		X3DAUDIO_EMITTER emitter = {};
+		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
+		emitter.CurveDistanceScaler = 10.0f;
+		emitter.DopplerScaler = 1.0f;
+		emitter.ChannelRadius = 0.0f;
+		emitter.Position.x = slot._pos.x;
+		emitter.Position.y = slot._pos.y;
+		emitter.Position.z = slot._pos.z;
+		emitter.Velocity.x = slot._velocity.x;
+		emitter.Velocity.y = slot._velocity.y;
+		emitter.Velocity.z = slot._velocity.z;
+		emitter.pVolumeCurve = &LinearCurve;
 
 		// 3Dサウンドにするための計算
 		X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
-			X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER | X3DAUDIO_CALCULATE_LPF_DIRECT | X3DAUDIO_CALCULATE_REVERB,
+			X3DAUDIO_CALCULATE_MATRIX | X3DAUDIO_CALCULATE_DOPPLER ,
 			&m_DSPSettings);
+
+        // 計算結果をソースボイスに反映
+		hr = slot._pSourceVoice->SetOutputMatrix(m_pMasteringVoice, 1, m_DeviceDetails.InputChannels, m_DSPSettings.pMatrixCoefficients);
+		if (FAILED(hr)) {
+			continue;
+		}
+
+		//hr = slot._pSourceVoice->SetFrequencyRatio(m_DSPSettings.DopplerFactor);
+		if (FAILED(hr)) {
+			continue;
+		}
+
+		m_pXAudio2->CommitChanges(XAUDIO2_COMMIT_ALL);
 	}
 	return true;
 }
@@ -421,7 +517,6 @@ bool SoundManager::Load_Wav(const char *_filename, SOUND_TYPE _type, int _id)
 }
 
 
-
 //*---------------------------------------------------------------------------------------
 //*【?】SEの再生
 //*　　 ピッチをランダムにする（銃声などのずっと同じ音にしたくない場合）
@@ -440,30 +535,6 @@ bool SoundManager::Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bo
 	return Internal_SoundPlay_RandPitch(_type, _id, _pitchRange, _loop);
 }
 
-//*---------------------------------------------------------------------------------------
-//*【?】3D空間でのSEの再生
-//*
-//* [引数]
-//* index：再生するサウンドのハンドル
-//* _loop：ループさせるか
-//* 
-//* [返値] 
-// true:成功
-// false:失敗
-//*----------------------------------------------------------------------------------------
-//bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, bool _loop)
-//{
-//	// エミッター
-//	X3DAUDIO_EMITTER emitter = {};
-//	emitter.ChannelCount = 1;		// チャンネル数は再生する音声に合わせる
-//	emitter.CurveDistanceScaler = 1.0f;
-//	emitter.DopplerScaler = 1.0f;
-//	emitter.ChannelRadius = 1.0f;
-//
-//	m_3DAudioEmitterArray.push_back(emitter);
-//	
-//	return true;
-//}
 
 //*---------------------------------------------------------------------------------------
 //*【?】ボイスの再生（範囲ランダム）
@@ -561,9 +632,9 @@ bool SoundManager::Play(SOUND_TYPE _type, int _id, bool _loop)
 // true:成功
 // false:失敗
 //*----------------------------------------------------------------------------------------
-bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, bool _loop)
+bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel, bool _loop)
 {
-	return Internal_SoundPlay_3D(_type, _id, _pos);
+	return Internal_SoundPlay_3D(_type, _id, _pos, _vel, _loop);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -784,32 +855,106 @@ bool SoundManager::Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _
 //* _type：サウンドの種類 (SE、BGM、ボイスなど)
 //* _id  ：再生するサウンドのID 
 //* _pos ：ワールド座標
+//* _vel ：移動ベクトル
 //* _loop：ループするかどうか
 //* 
 //* [返値] 
 // true:成功
 // false:失敗
 //*---------------------------------------------------------------------------------------
-bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, bool _loop)
+bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel, bool _loop)
 {
-	switch (_type)
-	{
-	case SOUND_TYPE::SE:
-		break;
-	case SOUND_TYPE::BGM:
-		break;
-	case SOUND_TYPE::VOICE:
-		break;
-	default:
-		break;
+    HRESULT hr = S_OK;
+
+	WaveResource *typeWaveResource = nullptr;
+
+	// 再生が終了しているソースボイスを探す
+	for (auto &slot : m_3DSoundSlotArray) {
+		XAUDIO2_VOICE_STATE state;
+		slot._pSourceVoice->GetState(&state);
+
+		// 使われているスロットは飛ばす
+        if (state.BuffersQueued != 0)continue;
+        if (slot._isUsed == true)continue;	
+
+		// 音声データの取得
+		SerchResource(_type, _id, typeWaveResource);
+
+		if (typeWaveResource == nullptr) {
+			continue;
+		}
+
+        slot._pos = _pos;		 // 音を鳴らす位置をセット
+        slot._velocity = _vel;	 // 音の移動ベクトルをセット
+		slot._isLoop = _loop;	 // ループするかどうかをセット
+        slot._soundID = _id;	 // 音のIDをセット
+        slot._soundType = _type; // 音の種類をセット
+        slot._isUsed = true;	 // スロット使用中にする
+        slot._volumeDefault = get_Volume(_type);	// 音量のデフォルト値をセット
+        slot._volumeFactor = 1.0f;					// 音量の倍率を初期化
+		
+
+		// エミッター
+		X3DAUDIO_EMITTER emitter = {};
+		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
+		emitter.CurveDistanceScaler = 10.0f;
+		emitter.DopplerScaler = 1.0f;
+		emitter.ChannelRadius = 0.0f;
+		emitter.Position.x = slot._pos.x;
+		emitter.Position.y = slot._pos.y;
+		emitter.Position.z = slot._pos.z;
+		emitter.Velocity.x = slot._velocity.x;
+		emitter.Velocity.y = slot._velocity.y;
+		emitter.Velocity.z = slot._velocity.z;
+		emitter.pVolumeCurve = &LinearCurve;
+
+
+		// 3Dサウンドにするための計算
+		X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
+			X3DAUDIO_CALCULATE_MATRIX,
+			&m_DSPSettings);
+
+		// 波形データ
+		XAUDIO2_BUFFER buff = {};
+		buff.pAudioData = typeWaveResource->_waveBuffer;	// 波形データの先頭アドレス
+		buff.AudioBytes = typeWaveResource->_size;			// 波形データのサイズ
+		buff.Flags = XAUDIO2_END_OF_STREAM;
+		buff.LoopCount = slot._isLoop ? XAUDIO2_LOOP_INFINITE : 0;	// ループさせるか
+
+		float volume = slot._volumeDefault * slot._volumeFactor;
+
+		// 音量
+		hr = slot._pSourceVoice->SetVolume(volume);
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		// バッファのクリア
+		slot._pSourceVoice->Stop();
+		slot._pSourceVoice->FlushSourceBuffers();
+
+
+		// 音声バッファの追加
+		hr = slot._pSourceVoice->SubmitSourceBuffer(&buff);
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		// 音を鳴らす
+		hr = slot._pSourceVoice->Start();
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 
 //*---------------------------------------------------------------------------------------
-//*【?】再生止める
+//*【?】再生止める（BGM以外）
 //*
 //* [引数]
 //* _type：サウンドの種類
@@ -821,22 +966,6 @@ bool SoundManager::Stop(SOUND_TYPE _type, int _id)
 {
 	HRESULT hr = S_OK;
 
-    // BGMは1つしかないので、BGMの停止はID関係なくここで処理してしまう
-	if (_type == SOUND_TYPE::BGM)
-	{
-		// 再生停止（XAUDIO2_PLAY_TAILSは止めた後、リバーブを掛けれるらしい）
-		hr = m_BGM_SoundSlot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
-		if (FAILED(hr)) return false;
-
-		// キューにたまっているバッファをクリアする
-		hr = m_BGM_SoundSlot._pSourceVoice->FlushSourceBuffers();
-		if (FAILED(hr)) return false;
-
-
-        return true; // BGMは1つしかないので、ここで終わり
-	}
-
-
     // BGM以外はIDからリソースを特定して処理する *************************************
 	std::vector<SoundInstance> *typeSoundSlotArray = nullptr;
 	WaveResource *typeWaveResource = nullptr;
@@ -844,7 +973,49 @@ bool SoundManager::Stop(SOUND_TYPE _type, int _id)
 	// サウンドの種類とIDから、再生に必要なリソースを取得
 	SoundTypeAndIDConvertToResource(_type, _id, typeWaveResource, typeSoundSlotArray);
 
+	// 再生が終了していないソースボイスを探す
+	for (auto &slot : *typeSoundSlotArray) {
+		XAUDIO2_VOICE_STATE state;
+		slot._pSourceVoice->GetState(&state);
+
+		if (state.BuffersQueued != 0)
+		{
+			// 再生停止（XAUDIO2_PLAY_TAILSは止めた後、リバーブを掛けれるらしい）
+			hr = slot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
+			if (FAILED(hr)) return false;
+
+			// キューにたまっているバッファをクリアする
+			hr = slot._pSourceVoice->FlushSourceBuffers();
+			if (FAILED(hr)) return false;
+		}
+	}
+
 	return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】再生止める（BGMだけ）
+//*
+//* [引数]
+//* _id：停止するBGMのID
+//* 
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+bool SoundManager::StopBGM(BGM_ID _id)
+{
+	HRESULT hr = S_OK;
+
+	// BGMは1つしかないので、BGMの停止はID関係なくここで処理してしまう
+	// 再生停止（XAUDIO2_PLAY_TAILSは止めた後、リバーブを掛けれるらしい）
+	hr = m_BGM_SoundSlot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
+	if (FAILED(hr)) return false;
+
+	// キューにたまっているバッファをクリアする
+	hr = m_BGM_SoundSlot._pSourceVoice->FlushSourceBuffers();
+	if (FAILED(hr)) return false;
+
+
+	return true; // BGMは1つしかないので、ここで終わり
 }
 
 
@@ -991,7 +1162,7 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 
 
 //*---------------------------------------------------------------------------------------
-//*【?】サウンドの種類とIDから、再生に必要なリソースを取得する関数
+//*【?】サウンドの種類とIDから、再生に必要なリソースとソースボイスを取得する関数
 //*
 //* [引数]
 //* _type：サウンドの種類 (SE、BGM、ボイスなど)
@@ -1050,4 +1221,89 @@ bool SoundManager::SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, Wa
 	}
 
 	return true;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】サウンドの種類とIDから、再生に必要なリソースを取得する関数
+//*
+//* [引数]
+//* _type：サウンドの種類 (SE、BGM、ボイスなど)
+//* _id  ：再生するサウンドのID 
+//* *&_outResource : サウンドの波形データなどを持つリソース構造体の出力先
+//* 
+//* [返値] 
+// true:成功
+// false:失敗
+//*---------------------------------------------------------------------------------------
+bool SoundManager::SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource)
+{
+	switch (_type)
+	{
+	case SOUND_TYPE::SE:
+	{
+		auto it = m_SE_WaveResourceMap.find(static_cast<SOUND_ID>(_id));
+		if (it == m_SE_WaveResourceMap.end())
+		{
+			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			return false;
+		}
+		_outResource = &it->second;
+		break;
+	}
+	case SOUND_TYPE::BGM:
+	{
+		auto it = m_BGM_WaveResourceMap.find(static_cast<BGM_ID>(_id));
+		if (it == m_BGM_WaveResourceMap.end())
+		{
+			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			return false;
+		}
+		_outResource = &it->second;
+	}
+	break;
+	case SOUND_TYPE::VOICE:
+	{
+		auto it = m_Voice_WaveResourceMap.find(static_cast<VOICE_ID>(_id));
+		if (it == m_Voice_WaveResourceMap.end())
+		{
+			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			return false;
+		}
+		_outResource = &it->second;
+	}
+	break;
+	default:
+		MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+		break;
+	}
+	return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】指定サウンドタイプの音量を取得
+//*
+//* [引数]
+//* _type：サウンドの種類 (SE、BGM、ボイスなど)
+//* 
+//* [返値] 
+//* float : 音量 
+//*---------------------------------------------------------------------------------------
+float SoundManager::get_Volume(SOUND_TYPE _type)
+{
+	switch (_type)
+	{
+	case SOUND_TYPE::SE:
+		return m_SEVolume;
+		break;
+	case SOUND_TYPE::BGM:
+		return m_BGMVolume;
+		break;
+	case SOUND_TYPE::VOICE:
+		return m_VoiceVolume;
+		break;
+	default:
+		return 0.0f;
+		break;
+    }
 }

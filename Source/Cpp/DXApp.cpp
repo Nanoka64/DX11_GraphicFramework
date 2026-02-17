@@ -437,6 +437,9 @@ int DXApp::MainLoop()
                 // ゲーム描画
                 m_pGameManager->Draw(*m_pRenderer);
 
+                // サウンドの更新
+                Master::m_pSoundManager->Update(*m_pRenderer);
+
                 // エフェクト更新（描画はパイプラインクラスのフォワードと同じ位置で行っている）
                 Master::m_pEffectManager->UpdateEffect(*m_pRenderer);
 

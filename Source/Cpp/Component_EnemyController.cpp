@@ -73,7 +73,8 @@ void EnemyController::Start(RendererEngine& renderer)
 			// ****************************************************
 			//				 ”í’e‰¹Ä¶
 			// ****************************************************
-			Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), 300);
+			//Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), 300);
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), pos);
 
 			int handle = Master::m_pEffectManager->PlayEffect("Hit");
 			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
@@ -85,14 +86,16 @@ void EnemyController::Start(RendererEngine& renderer)
 	m_pHealthComp->RegisterOnDead(
 		[this]
 		{
+			auto transform = m_pOwner.lock()->get_Transform().lock();
+			VEC3 pos = transform->get_VEC3ToPos();
+			
 			// ****************************************************
 			//				 Ž€–S‰¹Ä¶
 			// ****************************************************
-			Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), 300);
+			//Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), 300);
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos);
 
-
-			auto transform = m_pOwner.lock()->get_Transform().lock();
-			VEC3 pos = transform->get_VEC3ToPos();
+            // Ž€–SƒGƒtƒFƒNƒg
 			int handle = Master::m_pEffectManager->PlayEffect("DeadExplosion");
 			Master::m_pEffectManager->SetScaleEffect(handle,15.0f, 15.0f, 15.0f);
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);

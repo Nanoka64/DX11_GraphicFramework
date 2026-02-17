@@ -119,22 +119,24 @@ struct SoundInstance
 {
     IXAudio2SourceVoice* _pSourceVoice; // 音の起点
     VECTOR3::VEC3 _pos;                 // 3Dサウンド用の位置情報
-    bool _is3D;                         // 3Dサウンドかどうか
+    VECTOR3::VEC3 _velocity;            // 3Dサウンド用の移動ベクトル情報
     bool _isUsed;                       // 再生中かどうか
     bool _isLoop;                       // ループ再生するかどうか
+    float _volumeFactor;                // 音量調整用の係数（0.0f～1.0f  1.0fなら元の音量）
+    float _volumeDefault;               // デフォルト音量
     SOUND_TYPE _soundType;              // 音声の種類（SE、BGM、ボイス）
-    float _volumeFactor;                // 音量調整用の係数（0.0f～1.0f 1.0fなら元の音量）
     int _soundID;                       // どの音声データを再生しているかのID
 
     SoundInstance() :
         _pSourceVoice(nullptr),
         _pos(VECTOR3::VEC3()),
-        _is3D(false),
+        _velocity(VECTOR3::VEC3()),
         _isUsed(false),
         _isLoop(false),
         _soundID(-1),
         _soundType(SOUND_TYPE::SE),
-        _volumeFactor(0.0)
+        _volumeFactor(1.0f),
+        _volumeDefault(0.0f)
     {
     };
     ~SoundInstance() {};
@@ -149,6 +151,10 @@ struct SoundInstance
 //
 // 【?】音声管理
 //      Wavファイルの読み込み、再生、停止などの役割を持つ
+// ※ファイルフォーマットについて
+//     ここでは、WAVEファイルのフォーマットはPCMで、サンプリングレート44100Hz、ビット深度16bit、
+//     3D用サウンドやSEはモノラル（1チャンネル）、BGMはステレオ（２チャンネル）を前提としています。
+// 
 //      
 // 参考サイト：https://zenn.dev/kd_gamegikenblg/articles/4f955822601484
 // 
@@ -182,14 +188,15 @@ private:
     X3DAUDIO_HANDLE m_X3DInstanceHandle;
 
 
-    std::unordered_map<SOUND_ID, WaveResource> m_SE_WaveResourceMap;    // SE用
-    std::unordered_map<VOICE_ID, WaveResource> m_Voice_WaveResourceMap; // ボイス用
-    std::unordered_map<BGM_ID, WaveResource> m_BGM_WaveResourceMap;     // BGM用
+    std::unordered_map<SOUND_ID, WaveResource> m_SE_WaveResourceMap;    // リソース - SE
+    std::unordered_map<VOICE_ID, WaveResource> m_Voice_WaveResourceMap; // リソース - ボイス
+    std::unordered_map<BGM_ID, WaveResource> m_BGM_WaveResourceMap;     // リソース - BGM
+
     std::vector<SoundInstance> m_SoundSlotArray;         // 主にSE用のソースボイス
     std::vector<SoundInstance> m_VoiceSoundSlotArray;    // ボイス用のソースボイス
+    std::vector<SoundInstance> m_3DSoundSlotArray;       // 3Dサウンド用のソースボイス
     SoundInstance m_BGM_SoundSlot;                       // BGM用 基本一つだけ再生するので
 
-    std::vector<X3DAUDIO_EMITTER> m_3DAudioEmitterArray;    // 3Dサウンド用のエミッター配列
     
     // 音量調整用
     float m_SEVolume;
@@ -218,16 +225,18 @@ public:
     // 再生関数
     //
     bool Play(SOUND_TYPE _type, int _id, bool _loop = false);                               // 再生
-    bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, bool _loop = false); // 再生（3D空間で鳴らす）
+    bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel = VECTOR3::VEC3(), bool _loop = false); // 再生（3D空間で鳴らす）
     bool Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);    // 再生（ピッチをランダムに揺らす）
     bool Play_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);         // 指定範囲のサウンドからランダムに再生 _beginIDから音声データが連続している必要あり
-    
-    bool PlayBGM(BGM_ID _id, bool _loop = true); // BGMの再生
+    bool PlayBGM(BGM_ID _id, bool _loop = true);    // BGMの再生
     
     //
     // 停止関数
     //
-    bool Stop(SOUND_TYPE _type, int _id);     // 停止（今はBGMのみ）
+    bool Stop(SOUND_TYPE _type, int _id);     // 停止（BGM以外）
+    bool StopBGM(BGM_ID _id);                 // 停止（BGMのみ）
+
+    float get_Volume(SOUND_TYPE _type);        // 音量の取得
 
 private:
     // コピー禁止
@@ -241,10 +250,11 @@ private:
     bool Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop = false);
     bool Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);
     bool Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);
-    bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, bool _loop = false);
+    bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);
 
     bool BaseSoundPlay(SOUND_TYPE _type, int _id, const XAUDIO2_BUFFER &_buff, bool _is3D, const VECTOR3::VEC3 &_pos, int _pitch, bool _loop);
 
     bool SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::vector<SoundInstance>*& _outInstArray);
+    bool SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource);
 };
 
