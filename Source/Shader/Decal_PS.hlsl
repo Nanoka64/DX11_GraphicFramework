@@ -66,7 +66,7 @@ PS_OUT PSMain(PS_IN input) : SV_TARGET
 
     // UV座標へ変換
     float2 decalUV = localPosToDecal.xy;
-    decalUV += 0.5f;
+    decalUV += 0.5f;    // 0.0 ～ 1.0
     decalUV.y = 1.0f - decalUV.y;
     
     // テクスチャのサンプリング*********************************************

@@ -8,6 +8,8 @@
 #include "Component_3DCamera.h"
 
 using namespace VECTOR3;
+constexpr int DEF_RANGE = 100.0f;
+
 
 //*---------------------------------------------------------------------------------------
 //* @:PointLight Class 
@@ -15,8 +17,9 @@ using namespace VECTOR3;
 //* 引数：1.オーナーオブジェクト
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
-PointLight::PointLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
-m_Range(0.0f)
+PointLight::PointLight(std::weak_ptr<GameObject> pOwner, int updateRank) 
+    : Light(pOwner, updateRank),
+    m_Range(DEF_RANGE)
 {
     this->set_Tag("PointLight");
 }
@@ -54,7 +57,6 @@ void PointLight::Start(RendererEngine &renderer)
 void PointLight::Update(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
-
     CB_POINT_LIGHT pointData{};
 
     

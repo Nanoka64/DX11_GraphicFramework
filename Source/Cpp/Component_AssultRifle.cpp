@@ -156,6 +156,11 @@ void AssultRifle::Update(RendererEngine &renderer)
         trail->set_EmissivePower(10.0f);
         trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
+
+        auto lig = obj->add_Component<PointLight>();
+        lig->set_LightColor(VEC3(0.0f, 0.5f, 1.0f));
+        lig->set_Intensity(10.0f);
+
         // ƒRƒ‰ƒCƒ_[‚Ì“o˜^
         Master::m_pCollisionManager->RegisterCollider(collider);
 

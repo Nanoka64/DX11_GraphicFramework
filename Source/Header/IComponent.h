@@ -32,5 +32,7 @@ public:
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// 更新の順番取得
 	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };
+
+	bool get_IsActiveOwnerObj()const { return (m_pOwner.expired() ? false : true); }	// オーナーが存在しているか確認
 };
 

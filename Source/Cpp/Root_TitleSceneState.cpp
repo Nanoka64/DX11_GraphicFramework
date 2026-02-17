@@ -20,10 +20,6 @@ using namespace Tool::UV;
 //*----------------------------------------------------------------------------------------
 void Root_TitleSceneState::OnEnter(SceneManager* pOwner)
 {
-	//char filename01[] = "Resource/Sound/BGM/battle-dark.mp3";
-	//Master::m_pSoundManager->LoadXA2Sound(filename01);
-
-
 	// Å‰‚Íƒ[ƒh
 	this->SetInitChildState(pOwner, c_TITLE::c_TITLE_LOAD_PROCESS);
 

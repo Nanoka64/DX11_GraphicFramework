@@ -43,6 +43,11 @@ static constexpr const char* g_TitleMenuItemNames[static_cast<int>(TITLEMENU_ITE
 //*----------------------------------------------------------------------------------------
 void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 {
+	// ****************************************************
+	//				タイトルBGMの再生
+	// ****************************************************
+	Master::m_pSoundManager->PlayBGM(BGM_ID::BGM_TITLE_01);
+
 	// すでに初期化済みなら項目背景画像のみアクティブにして返す
 	if (m_IsInit)
 	{
@@ -62,11 +67,6 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 	}
 
 	m_PrevHoveredMenuItem = TITLEMENU_ITEM::EXIT;
-
-	// ****************************************************
-	//				タイトルBGMの再生
-	// ****************************************************
-	Master::m_pSoundManager->PlayBGM(BGM_ID::BGM_TITLE_01);
 
 
 	// アクティブにしてトランスフォームを取得
