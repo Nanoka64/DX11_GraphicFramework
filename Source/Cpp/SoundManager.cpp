@@ -16,10 +16,6 @@ constexpr float DEFAULT_BGM_VOL   = 0.3f;	// BGMのデフォルトの音量
 constexpr float DEFAULT_VOICE_VOL = 0.7f;	// ボイスのデフォルトの音量
 
 
-constexpr int NUM_SE_SVPOOL			 = 32;  // SV(SourceVoice)のプール数
-constexpr int NUM_VOICE_SVPOOL		 = 32;	// ボイス用
-constexpr int NUM_SOUND_3D_SVPOOL    = 64;  // 3D用
-
 
 // ※AIに頼んだ
 // 距離減衰のプリセット（直線的な減衰）
@@ -100,7 +96,6 @@ bool SoundManager::InitXA2Sound(void)
 	// **************************************************************************
 	// ソースボイスの作成（SE用）
 	// **************************************************************************
-	//m_SoundSlotArray.resize(NUM_SE_SVPOOL);
 	
 	for (int i = 0; i < NUM_SE_SVPOOL; i++)
 	{
@@ -124,14 +119,13 @@ bool SoundManager::InitXA2Sound(void)
 		}
 
 		// SE
-		m_SoundSlotArray.push_back(sound);
+		m_SoundSlotArray.at(i) = sound;
 	}
 
 
 	// **************************************************************************
 	// ソースボイスの作成（声用）
 	// **************************************************************************
-	//m_VoiceSoundSlotArray.resize(NUM_VOICE_SVPOOL);
 	
 	for (int i = 0; i < NUM_VOICE_SVPOOL; i++)
 	{
@@ -154,9 +148,8 @@ bool SoundManager::InitXA2Sound(void)
 			return false;
 		}
 		// ボイス
-		m_VoiceSoundSlotArray.push_back(sound);
+		m_VoiceSoundSlotArray.at(i) = sound;
 	}
-
 
 	// **************************************************************************
 	// ソースボイスの作成（BGM用）
@@ -183,7 +176,6 @@ bool SoundManager::InitXA2Sound(void)
 	// **************************************************************************
 	// ソースボイスの作成（3D用）
 	// **************************************************************************
-	//m_3DSoundSlotArray.resize(NUM_SOUND_3D_SVPOOL);
 	
 	for (int i = 0; i < NUM_SOUND_3D_SVPOOL; i++)
 	{
@@ -206,7 +198,7 @@ bool SoundManager::InitXA2Sound(void)
 			return false;
 		}
 
-		m_3DSoundSlotArray.push_back(sound);
+		m_3DSoundSlotArray.at(i) = sound;
 	}
 
 	// ############################################################################
@@ -671,7 +663,7 @@ bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos,
 //*---------------------------------------------------------------------------------------
 bool SoundManager::Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop)
 {
-    std::vector<SoundInstance> *typeSoundSlotArray = nullptr;
+	std::span<SoundInstance> typeSoundSlotArray;
     WaveResource *typeWaveResource = nullptr;
 
     // サウンドの種類とIDから、再生に必要なリソースを取得
@@ -687,7 +679,7 @@ bool SoundManager::Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop)
 	buff.LoopCount = _loop ? XAUDIO2_LOOP_INFINITE : 0;	// ループさせるか
 
 	// 再生が終了しているソースボイスを探して
-	for (auto &slot : *typeSoundSlotArray) {
+	for (auto &slot : typeSoundSlotArray) {
 		XAUDIO2_VOICE_STATE state;
 		slot._pSourceVoice->GetState(&state);
 
@@ -732,7 +724,7 @@ bool SoundManager::Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop)
 //*---------------------------------------------------------------------------------------
 bool SoundManager::Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginID, int _range, bool _loop)
 {
-    std::vector<SoundInstance> *typeSoundSlotArray = nullptr;
+	std::span<SoundInstance> typeSoundSlotArray;
     WaveResource *typeWaveResource = nullptr;
 
 	// ランダム求める
@@ -776,7 +768,7 @@ bool SoundManager::Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginID, int _
 	buff.LoopCount = _loop ? XAUDIO2_LOOP_INFINITE : 0;	  // ループさせるか
 
 	// 再生が終了しているソースボイスを探して
-	for (auto &slot : *typeSoundSlotArray) {
+	for (auto &slot : typeSoundSlotArray) {
 		XAUDIO2_VOICE_STATE state;
 		slot._pSourceVoice->GetState(&state);
 
@@ -820,7 +812,7 @@ bool SoundManager::Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginID, int _
 //*---------------------------------------------------------------------------------------
 bool SoundManager::Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop)
 {
-    std::vector<SoundInstance> *typeSoundSlotArray = nullptr;
+	std::span<SoundInstance> typeSoundSlotArray;
     WaveResource *typeWaveResource = nullptr;
 
 	// サウンドの種類とIDから、再生に必要なリソースを取得
@@ -836,7 +828,7 @@ bool SoundManager::Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _
 	buff.LoopCount = _loop ? XAUDIO2_LOOP_INFINITE : 0;	  // ループさせるか
 
 	// 再生が終了しているソースボイスを探して
-	for (auto &slot : *typeSoundSlotArray) {
+	for (auto &slot : typeSoundSlotArray) {
 		XAUDIO2_VOICE_STATE state;
 		slot._pSourceVoice->GetState(&state);
 
@@ -1000,14 +992,14 @@ bool SoundManager::Stop(SOUND_TYPE _type, int _id)
 	HRESULT hr = S_OK;
 
     // BGM以外はIDからリソースを特定して処理する *************************************
-	std::vector<SoundInstance> *typeSoundSlotArray = nullptr;
+	std::span<SoundInstance> typeSoundSlotArray;
 	WaveResource *typeWaveResource = nullptr;
 
 	// サウンドの種類とIDから、再生に必要なリソースを取得
 	SoundTypeAndIDConvertToResource(_type, _id, typeWaveResource, typeSoundSlotArray);
 
 	// 再生が終了していないソースボイスを探す
-	for (auto &slot : *typeSoundSlotArray) {
+	for (auto &slot : typeSoundSlotArray) {
 		XAUDIO2_VOICE_STATE state;
 		slot._pSourceVoice->GetState(&state);
 
@@ -1201,13 +1193,13 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 //* _type：サウンドの種類 (SE、BGM、ボイスなど)
 //* _id  ：再生するサウンドのID 
 //* *&_outResource : サウンドの波形データなどを持つリソース構造体の出力先
-//* &_outInstArray : 再生に使用するソースボイスの配列の出力先 
+//* &_outInstArray : 再生に使用するソースボイスの配列の出力先 （spanとすることで要素数の異なる配列に対応可）
 //* 
 //* [返値] 
 // true:成功
 // false:失敗
 //*---------------------------------------------------------------------------------------
-bool SoundManager::SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::vector<SoundInstance> *&_outInstArray)
+bool SoundManager::SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::span<SoundInstance> &_outInstArray)
 {
 	switch (_type)
 	{
@@ -1216,7 +1208,7 @@ bool SoundManager::SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, Wa
 		// ****************************************************************
 	case SOUND_TYPE::SE:
 	{
-		_outInstArray = &m_SoundSlotArray;
+		_outInstArray = m_SoundSlotArray;
 
 		auto it = m_SE_WaveResourceMap.find(static_cast<SOUND_ID>(_id));
 		if (it == m_SE_WaveResourceMap.end()) {
@@ -1239,7 +1231,7 @@ bool SoundManager::SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, Wa
 	// ****************************************************************
 	case SOUND_TYPE::VOICE:
 	{
-		_outInstArray = &m_VoiceSoundSlotArray;
+		_outInstArray = m_VoiceSoundSlotArray;
 
 		auto it = m_Voice_WaveResourceMap.find(static_cast<VOICE_ID>(_id));
 		if (it == m_Voice_WaveResourceMap.end()) {

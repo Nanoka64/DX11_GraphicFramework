@@ -16,6 +16,12 @@
 // サウンドIDをintに変換するマクロ
 #define SOUND_ID_TO_INT(_id) (static_cast<int>(_id))
 
+
+constexpr int NUM_SE_SVPOOL         = 32;  // SV(SourceVoice)のプール数
+constexpr int NUM_VOICE_SVPOOL      = 32;	// ボイス用
+constexpr int NUM_SOUND_3D_SVPOOL   = 64;  // 3D用
+
+
 /// <summary>
 /// 音声の種類
 /// </summary>
@@ -195,10 +201,10 @@ private:
     std::unordered_map<VOICE_ID, WaveResource> m_Voice_WaveResourceMap; // リソース - ボイス
     std::unordered_map<BGM_ID, WaveResource> m_BGM_WaveResourceMap;     // リソース - BGM
 
-    std::vector<SoundInstance> m_SoundSlotArray;         // 主にSE用のソースボイス
-    std::vector<SoundInstance> m_VoiceSoundSlotArray;    // ボイス用のソースボイス
-    std::vector<SoundInstance> m_3DSoundSlotArray;       // 3Dサウンド用のソースボイス
-    SoundInstance m_BGM_SoundSlot;                       // BGM用 基本一つだけ再生するので
+    std::array<SoundInstance, NUM_SE_SVPOOL>       m_SoundSlotArray;         // 主にSE用のソースボイス
+    std::array<SoundInstance, NUM_VOICE_SVPOOL>    m_VoiceSoundSlotArray;    // ボイス用のソースボイス
+    std::array<SoundInstance, NUM_SOUND_3D_SVPOOL> m_3DSoundSlotArray;       // 3Dサウンド用のソースボイス
+    SoundInstance m_BGM_SoundSlot;      // BGM用 基本一つだけ再生するので
 
     
     // 音量調整用
@@ -257,7 +263,7 @@ private:
 
     bool BaseSoundPlay(SOUND_TYPE _type, int _id, const XAUDIO2_BUFFER &_buff, bool _is3D, const VECTOR3::VEC3 &_pos, int _pitch, bool _loop);
 
-    bool SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::vector<SoundInstance>*& _outInstArray);
+    bool SoundTypeAndIDConvertToResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource, std::span<SoundInstance> &_outInstArray);
     bool SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outResource);
 };
 

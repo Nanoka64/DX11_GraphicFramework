@@ -71,7 +71,7 @@
 
 
 
-// スタンダードヘッダ
+// 標準ヘッダ
 #include <unordered_map>    // 連想配列用
 #include <map>      // 連想配列用
 #include <memory>   // スマートポインタ用
@@ -79,7 +79,8 @@
 #include <vector>   // 動的配列
 #include <deque>    // 動的配列（両端の要素の追加削除が得意らしい）
 #include <algorithm>
-
+#include <array>
+#include <span>
 
 /* 定数 */
 constexpr int POINTLIGHT_MAX_NUM		= 500; // ポイントライトの最大数
@@ -96,7 +97,7 @@ constexpr int DIRECTIONLIGHT_MAX_NUM	= 1;   // ディレクションライトの最大数
 #include "BitFlag.h"		// ビットフラグ関連
 #include "Master.h"			// シングルトン
 #include "StateMachine.h"	// ステートマシン
-#include "EnemyStateFactory.h"	// ステートマシン
+#include "EnemyStateFactory.h"	// ステートの作成
 
 //#include "ShaderManager.h"	// シェーダ管理
 //#include "Debugger.h"	    // Imguiデバッグ用

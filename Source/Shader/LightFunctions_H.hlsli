@@ -33,6 +33,7 @@ float3 LambertDiffuseLightCalc(float3 _ligDir, float3 _ligCol, float3 _norm)
 {
     float3 finalDfs = float3(0.0f, 0.0f, 0.0f);
     
+    // ライトの向きと法線の内積を求める（ポリゴンとライトがどれくらい当たっているか）
     float diffuseFactor = saturate(dot(-_ligDir, _norm));
     
     // 拡散反射求める
@@ -172,9 +173,16 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
     // Blinn版
     //float3 specularLig = Blinn_PhongSpecularLightCalc(-ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
+    // ディフューズが0の場合に、スペキュラだけ浮いて見えてしまうので、ディフューズの強さも考慮してスペキュラの強さを決める
+    float diffFactor = abs(sign(_ligData.DiffuseIntensity));
+    
+    specularLig *= _ligData.SpecularIntensity * diffFactor;
+    diffuseLig *= _ligData.DiffuseIntensity; 
+    
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffuseLig * _ligData.DiffuseIntensity;
-    outData.Specular = specularLig * _ligData.SpecularIntensity;
+    outData.Diffuse = diffuseLig;
+    outData.Specular = specularLig;
+    
     return outData;
 }
 
