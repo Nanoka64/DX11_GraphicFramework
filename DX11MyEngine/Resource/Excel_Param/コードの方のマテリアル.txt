@@ -1,0 +1,228 @@
+   {
+       /* プレイヤー */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁S050.jpg");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+           mat.m_DiffuseColor = VEC4(0.4f, 0.4f, 0.6f, 1.0f);
+           mat.m_SpecularPower = 150.0f;
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("PlayerModel", mat);
+       }
+       /* 兵士 */
+       {
+           Material mat[2];
+           mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_diffuse.png");
+           mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_normal.png");
+           mat[0].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_Body_specular.png");
+           mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularPower = 50.0f;
+           mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("soldier_body", mat[0]);
+
+           mat[1].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_diffuse.png");
+           mat[1].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_normal.png");
+           mat[1].m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Player/textures/Soldier_head_specular.png");
+           mat[1].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[1].m_SpecularPower = 50.0f;
+           mat[1].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("soldier_head", mat[1]);
+       }
+       /* 銃弾*/
+       {
+           Material mat[1];
+           mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
+           mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularPower = 200.0f;
+           mat[0].m_EmissivePower = 50.0f;
+           mat[0].m_EmissiveColor = VEC3(0.0f, 1.0f, 1.0f);
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Bullet", mat[0]);
+       }
+       /* アサルトライフル*/
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W030.jpg");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 100.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("AssultRifle", mat);
+       }
+       /* ディレクションライト*/
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Light_Img.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 1.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("DirLight", mat);
+       }
+       /* 壁 */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 20.0f;
+           mat.m_EmissiveColor = VEC3(0.0f, 1.0f, 0.0f);
+           mat.m_EmissivePower = 200.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Canonn", mat);
+       }
+       /* アリ */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant.png");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Enemy/trader_ant_lowpoly.fbm/new_bake_ant_n.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 100.0f;
+           mat.m_SpecularColor = VEC4(0.5f, 0.5f, 0.5f, 1.0f);
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Ant", mat);
+       }
+       /* B-2 */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_diffuseOriginal.jpeg");
+           mat.m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_metallic.jpeg");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/b-2/textures/ggg_normal.jpeg");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 100.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("B_2", mat);
+       }
+       /* クレイモア */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Base_Color.png");
+           mat.m_SpecularMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Roughness.png");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Claymore/Mat_Normal_DirectX.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 200.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Claymore", mat);
+       }
+       /* 建物 */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/Building/01/texture/building5-lo.jpg");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 150.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Building", mat);
+       }
+       /* マザーシップ */
+       {
+           Material mat[1];
+           mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/metal_plate_02_diff_2k.jpg");
+           mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/DefaultN_Map.png");
+           mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularPower = 150.0f;
+           mat[0].m_EmissiveColor = VEC3(0.0f, 0.1f, 0.0f);
+           mat[0].m_EmissivePower = 0.2f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("MotherShip", mat[0]);
+       }
+       /* クモ */
+       {
+           Material mat[4];
+           mat[0].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/Spinnen_Bein_tex.jpg");
+           mat[0].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/haar_detail_NRM.jpg");
+           mat[0].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[0].m_SpecularPower = 150.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Spider_1", mat[0]);
+
+           mat[1].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/Spinnen_Bein_tex.jpg");
+           mat[1].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[1].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[1].m_SpecularPower = 150.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Spider_2", mat[1]);
+
+           mat[2].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/Spinnen_Bein_tex.jpg");
+           mat[2].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[2].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[2].m_SpecularPower = 150.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Spider_3", mat[2]);
+
+           mat[3].m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/SH3.png");
+           mat[3].m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Model/fbx/textures/haar_detail_NRM.jpg");
+           mat[3].m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[3].m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat[3].m_SpecularPower = 100.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Spider_4", mat[3]);
+       }
+       /* 地面 */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_diff_4k.png");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/aerial_grass_rock_nor_dx_4k.png");
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 50.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Ground", mat);
+       }
+       /* スカイボックス */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("SkyBox", mat);
+       }
+       /* ビルボード */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/0191.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 100.0f;
+           mat.m_BlendMode = BLEND_MODE::ALPHA;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("Billboard", mat);
+       }
+       /* ポイントライト */
+       {
+           Material mat;
+           mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040.jpg");
+           mat.m_NormalMap.Texture = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/外壁W040_n.png");
+           mat.m_DiffuseColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularColor = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+           mat.m_SpecularPower = 20.0f;
+
+           // マテリアル登録
+           Master::m_pResourceManager->RegisterMaterialData("PointLight", mat);
+       }
+   }

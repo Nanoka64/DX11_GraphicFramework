@@ -1,0 +1,229 @@
+#include "pch.h"
+#include "GaussianBlur.h"
+#include "Texture.h"
+#include "MeshFactory.h"
+#include "ResourceManager.h"
+#include "DX_RenderTarget.h"
+#include "RendererEngine.h"
+#include "Component_SpriteRenderer.h"
+#include "GameObject.h"
+
+
+/// <summary>
+/// ※ 魔導書にあった関数
+/// ガウシアン関数を利用して重みテーブルを計算する
+/// </summary>
+/// <param name="weightsTbl">重みテーブルの記録先</param>
+/// <param name="sizeOfWeightsTbl">重みテーブルのサイズ</param>
+/// <param name="sigma">分散具合。この数値が大きくなると分散具合が強くなる</param>
+void CalcWeightsTableFromGaussian(float* weightsTbl, int sizeOfWeightsTbl, float sigma)
+{
+    if (sigma <= 0.0f)
+    {
+        return;
+    }
+
+    // 重みの合計を記録する変数を定義する
+    float total = 0;
+
+    // ここからガウス関数を用いて重みを計算している
+    // ループ変数のxが基準テクセルからの距離
+    for (int x = 0; x < sizeOfWeightsTbl; x++)
+    {
+        weightsTbl[x] = expf(-0.5f * (float)(x * x) / sigma);
+        total += 2.0f * weightsTbl[x];
+    }
+
+    // 重みの合計で除算することで、重みの合計を1にしている
+    for (int i = 0; i < sizeOfWeightsTbl; i++)
+    {
+        weightsTbl[i] /= total;
+    }
+}
+
+
+
+GaussianBlur::GaussianBlur():
+    m_weights(),
+    m_pHorizontalBlur(nullptr),
+    m_pVerticalBlur(nullptr),
+    m_Id()
+{
+}
+
+GaussianBlur::~GaussianBlur()
+{
+}
+
+bool GaussianBlur::Setup(RendererEngine& renderer, std::shared_ptr<Texture> pTex, DXGI_FORMAT format, int id)
+{
+    if (pTex == nullptr){
+        return false;
+    }
+    m_Id = id;
+	m_pTexture = pTex;
+
+    // RTの初期化
+	if (!InitRenderTargets(renderer, format)) {
+		return false;
+	}
+
+    // ガウシアンブラー用の重みテーブルを計算する
+    CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, 4.0f);
+
+    // スプライトの初期化
+	if (!InitSprites(renderer)){
+		return false;
+	}
+
+    return true;
+}
+
+void GaussianBlur::ExcuteOnGPU(RendererEngine& renderer, float blurPow)
+{
+    // ガウシアンブラー用の重みテーブルを計算する
+    CalcWeightsTableFromGaussian(m_weights, NUM_WEIGHTS, blurPow);
+
+    renderer.RegisterCullMode(CULL_MODE::BACK);
+
+    // ************************************************************************
+    // 
+    // 水平ブラー
+    // 
+    // ************************************************************************
+    UINT vpWidth = static_cast<float>(m_pTexture.lock()->get_Width()) / 2.0f;
+    UINT vpHeight = static_cast<float>(m_pTexture.lock()->get_Height());
+    
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
+
+    // 水平ブラー用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pHorizontalBlur->get_RTV(), nullptr);
+    renderer.ClearRenderTargetView(m_pHorizontalBlur);
+
+    // 水平ブラー
+    m_pHorizontalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    m_pHorizontalBlurSprite->Draw(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+
+    // ************************************************************************
+    // 
+    // 垂直ブラー
+    // 
+    // ************************************************************************
+    vpWidth = static_cast<float>(m_pTexture.lock()->get_Width()) / 2.0f;
+    vpHeight = static_cast<float>(m_pTexture.lock()->get_Height()) / 2.0f;
+     
+    // ビューポートの設定
+    renderer.set_ViewPort(0, 0, vpWidth, vpHeight);
+    // 垂直ブラー用レンダリングターゲットに変更
+    renderer.RegisterRenderTarget(m_pVerticalBlur->get_RTV(), nullptr);
+    renderer.ClearRenderTargetView(m_pVerticalBlur);
+
+    // 垂直ブラー
+    m_pVerticalBlurSprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_weights);
+    m_pVerticalBlurSprite->Draw(renderer);
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+}
+
+void GaussianBlur::Term()
+{
+    SAFE_DELETE(m_pHorizontalBlur);
+    SAFE_DELETE(m_pVerticalBlur);
+}
+
+bool GaussianBlur::InitRenderTargets(RendererEngine& renderer,DXGI_FORMAT format)
+{
+    bool result = true;
+
+    // ****************************************************************
+    // 水平ブラー
+    // ****************************************************************
+    m_pHorizontalBlur = new DX_RenderTarget();
+    result = m_pHorizontalBlur->Create(
+        renderer,
+        static_cast<UINT>(m_pTexture.lock()->get_Width() / 2),
+        static_cast<UINT>(m_pTexture.lock()->get_Height()),
+        1,
+        1,
+        format,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    // ****************************************************************
+    // 垂直ブラー
+    // ****************************************************************
+    m_pVerticalBlur = new DX_RenderTarget();
+    result = m_pVerticalBlur->Create(
+        renderer,
+        static_cast<UINT>(m_pTexture.lock()->get_Width() / 2),
+        static_cast<UINT>(m_pTexture.lock()->get_Height() / 2),
+        1,
+        1,
+        format,
+        DXGI_FORMAT_D32_FLOAT
+    );
+    if (result == false)return false;
+
+    return result;
+}
+
+bool GaussianBlur::InitSprites(RendererEngine& renderer)
+{
+    UINT screenW = renderer.get_ScreenWidth();
+    UINT screenH = renderer.get_ScreenHeight();
+
+    // スプライトの大きさは
+    
+    /*************************************
+    * 水平ブラー用スプライト
+    *************************************/
+    CreateSpriteInfo horizontalBlurSprite;
+    horizontalBlurSprite.pRenderer = &renderer;
+    horizontalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
+    horizontalBlurSprite.pPSConstantBuffers->SetSlot = 7;               // スロット7にセット
+    horizontalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
+    horizontalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
+    horizontalBlurSprite.PSConstBufferNum = 1;
+    horizontalBlurSprite.IsActive = false;
+    horizontalBlurSprite.ObjTag = "HorizontalBlurSprite" + std::to_string(m_Id);
+    horizontalBlurSprite.Width = screenW;      // サイズの変更はRTだけでいい
+    horizontalBlurSprite.Height = screenH;
+    horizontalBlurSprite.pTextureMap[0] = m_pTexture;
+    horizontalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    horizontalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL;
+    auto obj = MeshFactory::CreateSprite(horizontalBlurSprite);
+    m_pHorizontalBlurSprite = obj->get_Component<SpriteRenderer>();
+
+    /*************************************
+    * 垂直ブラー用スプライト
+    *************************************/
+    CreateSpriteInfo verticalBlurSprite;
+    verticalBlurSprite.pRenderer = &renderer;
+    verticalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
+    verticalBlurSprite.pPSConstantBuffers->SetSlot = 7;                 // スロット7にセット
+    verticalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_weights;
+    verticalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_weights);
+    verticalBlurSprite.PSConstBufferNum = 1;
+    verticalBlurSprite.IsActive = false;
+    verticalBlurSprite.ObjTag = "VerticalBlurSprite" + std::to_string(m_Id);
+    verticalBlurSprite.Width = screenW;
+    verticalBlurSprite.Height = screenH;
+    verticalBlurSprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("RT_HorizontalBlur" + std::to_string(m_Id), m_pHorizontalBlur->get_SRV_ComPtr());
+    verticalBlurSprite.Type = SPRITE_USAGE_TYPE::RENDER_TARGET;
+    verticalBlurSprite.ShaderType = SHADER_TYPE::POST_GAUSSIAN_BLUR_VERTICAL;
+    obj = MeshFactory::CreateSprite(verticalBlurSprite);
+    m_pVerticalBlurSprite = obj->get_Component<SpriteRenderer>();
+
+    return true;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GaussianBlur::get_AfterBlurTexture()const
+{
+    return m_pVerticalBlur->get_SRV_ComPtr();
+}
