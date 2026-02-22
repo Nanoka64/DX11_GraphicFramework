@@ -22,7 +22,7 @@
 //      ラジアン指定のほうが変換処理が要らないため、効率がいい
 //
 // *************************************************************************************************************
-class Transform : public IComponent
+class MyTransform : public IComponent
 {
 private:
 	DirectX::XMVECTOR m_Position;	// 位置
@@ -35,15 +35,15 @@ private:
 
     bool m_isDirty; // 座標更新が行われたか
 
-	std::weak_ptr<Transform> m_pParent;	        // 親オブジェクト
+	std::weak_ptr<MyTransform> m_pParent;	        // 親オブジェクト
 
     void Start(RendererEngine &renderer) override {};	// 初期化
     void Update(RendererEngine &renderer) override {}; 	// 更新処理
     void Draw(RendererEngine &renderer)override {};		// 描画処理
 
 public:
-	Transform(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);
-	virtual~Transform();
+	MyTransform(std::weak_ptr<class GameObject> pOwner, int updateRank = 100);
+	virtual~MyTransform();
 
     /// <summary>
     /// 目標方向へ向かせる
@@ -66,7 +66,7 @@ public:
     void set_VEC3ToLocalOffset_RotateToDeg(const VECTOR3::VEC3 &vIn);// ローカル空間オフセット回転設定 - ベクトル指定 デグリー
     void set_VEC3ToLocalOffset_Scale(const VECTOR3::VEC3 &vIn);      // ローカル空間オフセット拡大設定 - ベクトル指定
 
-    void set_Parent(std::weak_ptr<Transform> parent) { m_pParent = parent; }  // 親設定
+    void set_Parent(std::weak_ptr<MyTransform> parent) { m_pParent = parent; }  // 親設定
 
     /****** ゲッタ ******/
     DirectX::XMVECTOR get_XMVecToPos() const;            // 位置取得 - XMVECTOR
@@ -94,7 +94,7 @@ public:
 
 
 
-    std::weak_ptr<Transform> get_Parent()const;
+    std::weak_ptr<MyTransform> get_Parent()const;
 
     /// <summary>
     /// パラメータを個別に設定するver

@@ -241,12 +241,12 @@ bool LightManager::CreateDirectionLightCBuffer(ID3D11Device* pDevice)
 //*【?】ライト計算に必要なカメラのトランスフォーム設定
 //*
 //* [引数]
-//* std::weak_ptr<Transform>* : カメラのTransformコンポーネント
+//* std::weak_ptr<MyTransform>* : カメラのTransformコンポーネント
 //*
 //* [返値]
 //* void 
 //*----------------------------------------------------------------------------------------
-void LightManager::set_CameraTransform(std::weak_ptr<class Transform> pCamTransform)
+void LightManager::set_CameraTransform(std::weak_ptr<class MyTransform> pCamTransform)
 {
 	m_pCameraTransform = pCamTransform;
 }

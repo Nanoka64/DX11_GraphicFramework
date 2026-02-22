@@ -156,9 +156,9 @@ bool SceneManager::Init(RendererEngine &renderer)
         //        model.ObjTag = "Ant_" + std::to_string(i + 1);   // タグ
 
         //        m_pAnt[i] = MeshFactory::CreateModel(model);
-        //        m_pAnt[i]->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
-        //        m_pAnt[i]->get_Component<Transform>()->set_RotateToDeg(0.0f, 180, 0.0);
-        //        m_pAnt[i]->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0);
+        //        m_pAnt[i]->get_Component<MyTransform>()->set_Scale(0.1f, 0.1f, 0.1f);
+        //        m_pAnt[i]->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 180, 0.0);
+        //        m_pAnt[i]->get_Component<MyTransform>()->set_Pos(0.0f, 0.0f, 0.0);
         //        m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
         //        m_pAnt[i]->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
@@ -193,7 +193,7 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    {
         //        model.ObjTag = "B-2_" + std::to_string(i + 1);
         //        m_pBomber[i] = MeshFactory::CreateModel(model);
-        //        m_pBomber[i]->get_Component<Transform>()->set_Scale(0.05f, 0.05f, 0.05f);
+        //        m_pBomber[i]->get_Component<MyTransform>()->set_Scale(0.05f, 0.05f, 0.05f);
         //    }
         //}
 
@@ -215,8 +215,8 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    model.SetupMaterial = matInfo;
         //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
         //    auto obj = MeshFactory::CreateModel(model);
-        //    obj->get_Component<Transform>()->set_Scale(2.0f, 2.0f, 2.0f);
-        //    obj->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 400.0f);
+        //    obj->get_Component<MyTransform>()->set_Scale(2.0f, 2.0f, 2.0f);
+        //    obj->get_Component<MyTransform>()->set_Pos(0.0f, 100.0f, 400.0f);
         //}
 
         ///* 建物 モデルの生成 */
@@ -237,9 +237,9 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    model.SetupMaterial = matInfo;
         //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         //    m_pTempObj = MeshFactory::CreateModel(model);
-        //    m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        //    m_pTempObj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
-        //    m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Pos(300.0f, 0.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
         //    // コライダーの追加
         //    auto collider = m_pTempObj->add_Component<BoxCollider>();
@@ -272,9 +272,9 @@ bool SceneManager::Init(RendererEngine &renderer)
 
         //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         //    m_pTempObj = MeshFactory::CreateModel(model);
-        //    m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        //    m_pTempObj->get_Component<Transform>()->set_Pos(0.0f, 2000.0f, 0.0f);
-        //    m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Pos(0.0f, 2000.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         //}
 
         ///* クモ モデルの生成 */
@@ -308,9 +308,9 @@ bool SceneManager::Init(RendererEngine &renderer)
         //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
         //    m_pTempObj = MeshFactory::CreateModel(model);
         //    m_pTempObj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-        //    m_pTempObj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        //    m_pTempObj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0f);
-        //    m_pTempObj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_Pos(0.0f, 0.0f, 0.0f);
+        //    m_pTempObj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
         //}
 
         ///* 地面の生成 */

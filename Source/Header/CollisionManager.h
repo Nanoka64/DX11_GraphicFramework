@@ -93,7 +93,7 @@ public:
     /// ”»’è‚ğs‚¤
     /// </summary>
     /// <returns></returns>
-    bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, std::shared_ptr<class Transform> _transA,std::shared_ptr<class Transform> _transB, class CollisionInfo* info);
+    bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, std::shared_ptr<class MyTransform> _transA,std::shared_ptr<class MyTransform> _transB, class CollisionInfo* info);
     
     // 3D --------------------------------------------------------
     // ” ‚Æ”  •¨—“I”»’è

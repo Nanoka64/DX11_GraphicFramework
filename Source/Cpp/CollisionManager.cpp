@@ -83,8 +83,8 @@ void CollisionManager::CollisionProcess()
             }
 
             // トランスフォームの取得
-            auto transA = colA->get_OwnerObj().lock()->get_Component<Transform>();
-            auto transB = colB->get_OwnerObj().lock()->get_Component<Transform>();
+            auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
+            auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();
 
             if (transA == nullptr || transB == nullptr){
                 MessageBox(NULL, "トランスフォームコンポーネントがありません", "衝突判定", MB_OK);
@@ -154,8 +154,8 @@ void CollisionManager::CollisionProcess()
 bool CollisionManager::HitCheck(
     std::shared_ptr<class Collider> _colA, 
     std::shared_ptr<class Collider> _colB, 
-    std::shared_ptr<class Transform> _transA, 
-    std::shared_ptr<class Transform> _transB, 
+    std::shared_ptr<class MyTransform> _transA, 
+    std::shared_ptr<class MyTransform> _transB, 
     class CollisionInfo *info
 )
 {

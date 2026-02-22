@@ -123,7 +123,7 @@ class PlayerController : public IComponent
 {
 private:
 	std::weak_ptr<class Camera3D> m_pCameraComp;
-	std::weak_ptr<class Transform> m_pMyTransformComp;
+	std::weak_ptr<class MyTransform> m_pMyTransformComp;
 	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
 	std::weak_ptr<class Health> m_pHealthComp;					// 体力管理コンポーネント
     bool m_IsAnim;					// アニメーション中かどうか

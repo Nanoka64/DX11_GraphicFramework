@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------------------
 /* --- @:IDXBuffer Class --- */
 //
-//  ★継承：GameObject3D ← Transform ← Object ★
+//  ★継承：GameObject3D ← MyTransform ← Object ★
 //
 // 【?】バッファを格納するクラス
 //		GameObject3Dがこのクラスを継承する形でもいいかもしれない

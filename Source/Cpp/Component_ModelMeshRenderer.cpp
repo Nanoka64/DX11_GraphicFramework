@@ -93,7 +93,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     }
     
     // ワールド行列更新 ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Component<Transform>()->get_WorldMtx();
+    XMMATRIX worldMtx = m_pOwner.lock()->get_Component<MyTransform>()->get_WorldMtx();
     worldMtx = XMMatrixTranspose(worldMtx);
     XMStoreFloat4x4(&CB_TransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
 

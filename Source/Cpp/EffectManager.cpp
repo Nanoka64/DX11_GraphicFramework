@@ -87,6 +87,8 @@ bool EffectManager::Setup(RendererEngine& renderer)
     LoadEffect(u"Resource/Effect/Smoke.efkefc", "Smoke");
     LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc", "DeadExplosion");
     LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
+    LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
+    LoadEffect(u"Resource/Effect/Explosion_Smoke_01.efkefc", "Explosion_Smoke_01");
 
     return true;
 }

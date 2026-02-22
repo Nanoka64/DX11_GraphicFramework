@@ -314,7 +314,7 @@ void EnemyController::ChangeAnimation(const int _newId)
 //*  _id : アニメーション番号
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<Transform> EnemyController::get_TargetTransform() const
+std::shared_ptr<MyTransform> EnemyController::get_TargetTransform() const
 {
 	if (m_pTarget)
 	{

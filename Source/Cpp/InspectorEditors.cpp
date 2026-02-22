@@ -31,7 +31,7 @@ bool TransformEditor::Init(RendererEngine &renderer)
 
 void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    auto pTransform = pObj.get_Component<Transform>();
+    auto pTransform = pObj.get_Component<MyTransform>();
 
     if (pTransform == nullptr)
     {

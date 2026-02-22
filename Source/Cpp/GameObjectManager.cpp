@@ -239,12 +239,12 @@ bool GameObjectManager::Term(RendererEngine &renderer)
 //* 引数：1.RendererEngine
 //* 返値：生成したオブジェクトの共有ポインタ
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<Transform> parent)
+std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<MyTransform> parent)
 {
     // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
     // (Unity風に)
-    pObj->add_Component<Transform>();
-    pObj->m_pTransform = pObj->get_Component<Transform>();
+    pObj->add_Component<MyTransform>();
+    pObj->m_pTransform = pObj->get_Component<MyTransform>();
     pObj->m_pTransform->set_Pos(pos);
     pObj->m_pTransform->set_RotateToDeg(rot);
 
@@ -515,7 +515,7 @@ void GameObjectManager::clear_NotIsDontDestroyObject()
 
 namespace GIGA_Engine
 {
-    std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<Transform> parent )
+    std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<MyTransform> parent )
     {
         return Master::m_pGameObjectManager->Internal_Instantiate(pObj, isTransparent, pos, rot, parent);
     }

@@ -71,7 +71,7 @@ public:
 	void set_Target(std::shared_ptr<GameObject> _pObj) { m_pTarget = _pObj; }
 
 	/* 攻撃目標のトランスフォームを取得 */
-	std::shared_ptr<class Transform> get_TargetTransform() const;
+	std::shared_ptr<class MyTransform> get_TargetTransform() const;
 
 	/* ステート時間 */
 	int get_StateTimer()const { return m_StateTimer; }

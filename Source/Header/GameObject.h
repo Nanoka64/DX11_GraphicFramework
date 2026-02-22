@@ -23,7 +23,7 @@ class GameObject : public std::enable_shared_from_this<GameObject> , public Obje
 {
 private:	
 	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
-    std::shared_ptr<Transform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
+    std::shared_ptr<MyTransform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
 	bool m_IsShadow;		// シャドウをかけるかどうか
@@ -71,11 +71,11 @@ public:
 	/// Transformの取得
 	/// </summary>
 	/// <returns></returns>
-	std::weak_ptr<class Transform> get_Transform()const;
+	std::weak_ptr<class MyTransform> get_Transform()const;
 
 
 	// 生ポで書いたほうがいいかも
-	//Transform *get_Transform() const;
+	//MyTransform *get_Transform() const;
 
 
 

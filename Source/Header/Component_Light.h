@@ -13,7 +13,7 @@
 class Light : public IComponent
 {
 protected:
-    std::weak_ptr<class Transform> m_pOwnerTransform;   // オーナーの方向を保持（ライトの方向に使うため）
+    std::weak_ptr<class MyTransform> m_pOwnerTransform;   // オーナーの方向を保持（ライトの方向に使うため）
     VECTOR3::VEC3 m_LightColor;                         // ライトカラー
     float m_Intensity;   // 強度
 

@@ -14,8 +14,8 @@ Object::Object() :
 {
 	// Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
 	// (Unity風に)
-	//this->add_Component<Transform>();
-	//m_pTransform = this->get_Component<Transform>();
+	//this->add_Component<MyTransform>();
+	//m_pTransform = this->get_Component<MyTransform>();
 }
 
 

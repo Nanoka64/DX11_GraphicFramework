@@ -176,7 +176,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
         model.Shadow_ShaderType = SHADER_TYPE::POST_SHADOWMAP;
         pPlayerObj = MeshFactory::CreateModel(model);
-        pPlayerObj->get_Component<Transform>()->set_Scale(0.1f, 0.1f, 0.1f);
+        pPlayerObj->get_Component<MyTransform>()->set_Scale(0.1f, 0.1f, 0.1f);
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
         pPlayerObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
 
@@ -206,50 +206,6 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 
         // カメラのフォーカスオブジェクトに設定
         m_pCameraComp->set_FocusObject(pPlayerObj);
-    }
-
-    /* アサルトライフル */
-    {
-        // マテリアル取得
-        auto matPtr1 = Master::m_pResourceManager->FindMaterial("AssultRifle");
-
-        SetupMaterialInfo matInfo[1];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr1; // 体
-
-        CreateModelInfo model;
-        model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Weapon/M4A1.fbx";
-        model.ObjTag = "AssultRifle";
-        model.IsAnim = false;
-        model.MatNum = 1;
-        model.SetupMaterial = matInfo;
-        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-        auto obj = MeshFactory::CreateModel(model);
-
-        // 破棄しない
-        obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
-
-        // アサルトライフル
-        obj->add_Component<AssultRifle>();
-
-        // フラッシュ用ポイントライト
-        auto flash = obj->add_Component<PointLight>();
-        flash->set_Intensity(0.0f);
-        flash->set_Range(0.0f);
-
-        // レーザーサイト
-        auto line = obj->add_Component<LineRenderer>();
-        line->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
-        line->set_Emissive(3.0f);
-        line->set_Width(0.5f);
-        line->set_Length(1000.0f);
-
-        // プレイヤーを親に設定
-        obj->get_Transform().lock()->set_Parent(pPlayerObj->get_Transform());
-        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985f, -0.985f, -0.985f));
-        obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0.0f, 0.0f, 90.0f));
-        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(-40.0f, 150.0f, 0.0f));
     }
 
     /* ディレクションライトの生成(Cubuで分かりやすく) */

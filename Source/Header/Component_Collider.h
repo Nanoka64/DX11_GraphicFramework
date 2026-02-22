@@ -26,7 +26,7 @@ protected:
 	VECTOR3::VEC3 m_Center;	// コライダーの中心位置
 	bool m_IsHit;			// 現在衝突しているかどうか
 	COLLIDER_TYPE m_ColliderType;	// コライダーの種類
-	std::weak_ptr<class Transform> m_pTransform;
+	std::weak_ptr<class MyTransform> m_pTransform;
 	bool m_IsStatic;	// 静的かどうか（建物など動かないもの）
 
 public:
@@ -47,7 +47,7 @@ public:
 
 	COLLIDER_TYPE get_ColliderType()const { return m_ColliderType; }
 
-	std::weak_ptr<class Transform>get_Transform() { return m_pTransform; };
+	std::weak_ptr<class MyTransform>get_Transform() { return m_pTransform; };
 
 	/* 衝突したかどうか */
 	void set_IsHit(bool _flag) { m_IsHit = _flag; }

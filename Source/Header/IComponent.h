@@ -13,7 +13,7 @@
 class IComponent : public Object
 {
 protected:
-	std::weak_ptr<GameObject> m_pOwner;	// このコンポーネントの持ち主
+	std::weak_ptr<class GameObject> m_pOwner;	// このコンポーネントの持ち主
 	int m_UpdateRank;	// 更新の順番
 
 public:

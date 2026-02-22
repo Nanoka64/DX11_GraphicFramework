@@ -107,7 +107,7 @@ void GameObject::OnCollisionEnter(const CollisionInfo &info)
 //* 引数：なし
 //* 戻値：弱参照ポインタ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<class Transform> GameObject::get_Transform() const
+std::weak_ptr<MyTransform> GameObject::get_Transform() const
 {
 	return m_pTransform;
 }

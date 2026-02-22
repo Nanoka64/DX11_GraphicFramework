@@ -59,7 +59,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // そのままだと本来よりも暗くなってしまう。
     // 1.0 / 2.2をすることで0.4545...ガンマの逆数となり、
     // この累乗を計算することで正しい明るさで表示される......らしい。
-    finalColor = pow(finalColor, 1.0f / 2.2f);
+    finalColor = pow(hdrColor, 1.0f / 2.2f);
     
     return float4(finalColor, 1.0f);;
 }

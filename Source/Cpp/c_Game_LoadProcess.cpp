@@ -23,6 +23,7 @@
 #include "Component_TrailRenderer.h"
 #include "Component_EnemyController.h"
 #include "Component_Health.h"
+#include "Component_LineRenderer.h"
 
 using namespace SceneStateEnums;
 using namespace VECTOR4;
@@ -133,7 +134,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             model.ObjTag = "Ant"/* + std::to_string(i + 1)*/;   // タグ
 
             auto obj  = MeshFactory::CreateModel(model);
-            auto transform = obj->get_Component<Transform>();
+            auto transform = obj->get_Component<MyTransform>();
 
             obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
@@ -191,7 +192,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         {
             model.ObjTag = "B-2_" + std::to_string(i + 1);
             auto obj = MeshFactory::CreateModel(model);
-            obj->get_Component<Transform>()->set_Scale(0.05f, 0.05f, 0.05f);
+            obj->get_Component<MyTransform>()->set_Scale(0.05f, 0.05f, 0.05f);
         }
     }
 
@@ -213,8 +214,8 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
         auto obj = MeshFactory::CreateModel(model);
-        obj->get_Component<Transform>()->set_Scale(2.0f, 2.0f, 2.0f);
-        obj->get_Component<Transform>()->set_Pos(0.0f, 100.0f, 400.0f);
+        obj->get_Component<MyTransform>()->set_Scale(2.0f, 2.0f, 2.0f);
+        obj->get_Component<MyTransform>()->set_Pos(0.0f, 100.0f, 400.0f);
     }
 
     /* 建物 モデルの生成 */
@@ -235,9 +236,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         auto obj = MeshFactory::CreateModel(model);
-        obj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        obj->get_Component<Transform>()->set_Pos(300.0f, 0.0f, 0.0f);
-        obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        obj->get_Component<MyTransform>()->set_Pos(300.0f, 0.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
         // コライダーの追加
         auto collider = obj->add_Component<BoxCollider>();
@@ -270,9 +271,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
         auto obj = MeshFactory::CreateModel(model);
-        obj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        obj->get_Component<Transform>()->set_Pos(0.0f, 2000.0f, 0.0f);
-        obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        obj->get_Component<MyTransform>()->set_Pos(0.0f, 2000.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
     /* クモ モデルの生成 */
@@ -306,9 +307,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
         auto obj = MeshFactory::CreateModel(model);
         obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-        obj->get_Component<Transform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        obj->get_Component<Transform>()->set_Pos(0.0f, 0.0f, 0.0f);
-        obj->get_Component<Transform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
+        obj->get_Component<MyTransform>()->set_Pos(0.0f, 0.0f, 0.0f);
+        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
     /* 地面の生成 */
@@ -393,6 +394,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         obj->get_Transform().lock()->set_Scale(50, 50, 50);
         obj->set_Tag("Billboard");
     }
+
     /* ポイントライトの生成 (Cubuで分かりやすく)*/
     {
         // マテリアル取得
@@ -437,13 +439,60 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     // カメラ操作をオンに
     m_pRenderer->get_CameraComponent()->set_IsControl(true);
 
-    // プレイヤーに操作コンポーネントつける
-    auto player = Master::m_pGameObjectManager->get_ObjectByTag("Player");
-    player->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f); // プレイヤーの初期位置を設定
-    player->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 
-    auto comp = player->add_Component<PlayerController>(1);
+
+    // プレイヤーに操作コンポーネントつける
+    auto playerObj = Master::m_pGameObjectManager->get_ObjectByTag("Player");
+    playerObj->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f); // プレイヤーの初期位置を設定
+    playerObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+    auto comp = playerObj->add_Component<PlayerController>(1);
     comp->Start(*m_pRenderer);
+
+    /* アサルトライフル */
+    {
+        // マテリアル取得
+        auto matPtr1 = Master::m_pResourceManager->FindMaterial("AssultRifle");
+
+        SetupMaterialInfo matInfo[1];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr1; // 体
+
+        CreateModelInfo model;
+        model.pRenderer = m_pRenderer;
+        model.Path = "Resource/Model/Weapon/M4A1.fbx";
+        model.ObjTag = "AssultRifle";
+        model.IsAnim = false;
+        model.MatNum = 1;
+        model.SetupMaterial = matInfo;
+        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        auto obj = MeshFactory::CreateModel(model);
+
+        // 破棄しない
+        obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
+
+        // アサルトライフル
+        obj->add_Component<AssultRifle>();
+
+        // フラッシュ用ポイントライト
+        auto flash = obj->add_Component<PointLight>();
+        flash->set_Intensity(0.0f);
+        flash->set_Range(0.0f);
+
+        // レーザーサイト
+        auto line = obj->add_Component<LineRenderer>();
+        line->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
+        line->set_Emissive(3.0f);
+        line->set_Width(0.5f);
+        line->set_Length(1000.0f);
+
+        // プレイヤーを親に設定
+        obj->get_Transform().lock()->set_Parent(playerObj->get_Transform());
+        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Scale(VEC3(-0.985f, -0.985f, -0.985f));
+        obj->get_Transform().lock()->set_VEC3ToLocalOffset_RotateToDeg(VEC3(0.0f, 0.0f, 90.0f));
+        obj->get_Transform().lock()->set_VEC3ToLocalOffset_Pos(VEC3(-40.0f, 150.0f, 0.0f));
+    }
+
 
 
     // ロード画面用スプライトをオフに

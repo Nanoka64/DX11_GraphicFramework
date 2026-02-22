@@ -47,7 +47,7 @@ private:
 	int m_PrevHoveredMIssionItem;	// 前にマウスが乗っていた項目（SE用）
 	bool m_IsInit;	// 既に初期化済みか
 	
-	std::shared_ptr<class Transform> m_pMenuItemBackSpriteTransform[MISSION_NUM];
+	std::shared_ptr<class MyTransform> m_pMenuItemBackSpriteTransform[MISSION_NUM];
 
 public:
 	void OnEnter(SceneManager *pOwner) override;

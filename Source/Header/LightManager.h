@@ -15,7 +15,7 @@ class LightManager
 private:
 	CB_POINT_LIGHT_SET *m_pCBPointLightSet;
 	CB_DIRECTION_LIGHT_SET *m_pCBDirectionLightSet;
-	std::weak_ptr<class Transform> m_pCameraTransform;  // カメラの座標取得のために保持
+	std::weak_ptr<class MyTransform> m_pCameraTransform;  // カメラの座標取得のために保持
 	std::weak_ptr<RendererEngine> m_pRenderer;
 	ID3D11DeviceContext* m_pContext;
 
@@ -34,7 +34,7 @@ public:
 	/// カメラのトランスフォームセット
 	/// </summary>
 	/// <param name="pCam"></param>
-	void set_CameraTransform(std::weak_ptr<class Transform> pCamTransform);
+	void set_CameraTransform(std::weak_ptr<class MyTransform> pCamTransform);
 
 	void set_PointLightData(const CB_POINT_LIGHT& data);
 	void set_DirectionLightData(const CB_DIRECTION_LIGHT& data);

@@ -81,7 +81,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	// 頂点情報の更新
 	//VertexUpdate(renderer);
 
-	auto transform = m_pOwner.lock()->get_Component<Transform>();
+	auto transform = m_pOwner.lock()->get_Component<MyTransform>();
 	
 	// ワールド変換行列の作成 ====================================================
 	XMMATRIX world = transform->get_WorldMtx();

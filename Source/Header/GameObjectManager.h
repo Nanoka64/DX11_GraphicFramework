@@ -1,5 +1,5 @@
 #pragma once
-class GameObject;
+#include "GameObject.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ public:
 	/// <param name="pos"></param>
 	/// <param name="rot"></param>
 	/// <returns></returns>
-	std::shared_ptr<GameObject>Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<class Transform> parent = {});
+	std::shared_ptr<GameObject>Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
 
 
 	/// <summary>
@@ -164,6 +164,6 @@ namespace GIGA_Engine
 	//* 引数：5.親
 	//* 返値：void
 	//*----------------------------------------------------------------------------------------
-	std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<class Transform> parent = {});
+	std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
 }
 

@@ -76,7 +76,7 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
     ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
 
-    std::shared_ptr<Transform> transform = m_pOwner.lock()->get_Transform().lock();
+    std::shared_ptr<MyTransform> transform = m_pOwner.lock()->get_Transform().lock();
 
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::FORWARD_UNLIT_STATIC);
