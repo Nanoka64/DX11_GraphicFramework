@@ -102,12 +102,22 @@ void InputManager::Update()
 void InputManager::Term()
 {
     // デバイスの制御を停止
-    m_pKeyDevice->Unacquire();
-    m_pMouseDevice->Unacquire();
+    if (m_pKeyDevice != nullptr)
+    {
+        m_pKeyDevice->Unacquire();
+        SAFE_RELEASE(m_pKeyDevice);
 
-    SAFE_RELEASE(m_pKeyDevice);
-    SAFE_RELEASE(m_pMouseDevice);
-    SAFE_RELEASE(m_pDInput);
+    }
+    if (m_pMouseDevice != nullptr)
+    {
+        m_pMouseDevice->Unacquire();
+        SAFE_RELEASE(m_pMouseDevice);
+
+    }
+    if (m_pDInput != nullptr)
+    {
+        SAFE_RELEASE(m_pDInput);
+    }
 }
 
 //--------------------------------------------------------------------------------------
