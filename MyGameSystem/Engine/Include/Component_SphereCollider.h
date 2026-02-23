@@ -1,0 +1,30 @@
+#pragma once
+#include "Component_Collider.h"
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:SphereCollider Class --- */
+//
+//  š Œp³ š
+//
+// y?z‹…”»’èƒRƒ‰ƒCƒ_[
+//
+// ***************************************************************************************
+class SphereCollider : public Collider
+{
+private:
+	float m_Radius;	// ”¼Œa
+
+public:
+	SphereCollider(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
+	~SphereCollider();
+
+	void Start(RendererEngine &renderer) override;		// ‰Šú‰»
+	void Update(RendererEngine &renderer) override;		// XVˆ—
+	void Draw(RendererEngine &renderer)override;		// •`‰æˆ—
+
+	// ”¼Œa
+	void set_Radius(float _r) { m_Radius = _r; }
+	float get_Radius()const { return m_Radius; }
+};
+

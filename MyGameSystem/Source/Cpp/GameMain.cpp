@@ -1,7 +1,13 @@
-#if defined(DEBUG) || defined(_DEBUG)
-#define _CRTDBG_MAP_ALLOC
-#include<crtdbg.h>
-#endif//defined(DEBUG)||defined(_DEBUG)
+
+
+//------------------------------------------------------------------------------------------
+// エンジンのリンク
+//------------------------------------------------------------------------------------------
+#ifdef _DEBUG
+#pragma comment(lib, "DX11MyEngined.lib")   
+#else
+#pragma comment(lib, "DX11MyEngine.lib")
+#endif
 
 
 //------------------------------------------------------------------------------------------
@@ -9,8 +15,10 @@
 //------------------------------------------------------------------------------------------
 #include <windows.h>        // ウインドウ系
 #include <time.h>
-#include "../../../DX11MyEngine/Source/Header/DXApp.h"
-#include "../../../DX11MyEngine/Source/Header/Window.h"
+#include "../../Engine/Include/DXApp.h"
+#include "../../Engine/Include/Window.h"
+
+
 
 
 //------------------------------------------------------------------------------------------
@@ -20,12 +28,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     // 乱数初期化
     srand((unsigned int)time(NULL));
-
-#if defined(DEBUG) || defined(_DEBUG)
-    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif//defined(DEBUG)||defined(_DEBUG)
-
-    //_CrtSetBreakAlloc(7202115);
 
     // アプリケーションを実行
     DXApp dxApp(WND_RECT_RIGHT, WND_RECT_BOTTOM);
