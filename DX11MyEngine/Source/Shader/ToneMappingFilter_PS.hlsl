@@ -23,6 +23,8 @@ struct PS_IN
 };
 
 // ACESトーンマッピングの近似式
+// 参考： https://bravememo.hatenablog.com/entry/2020/06/05/143255
+//        https://ny-program.hatenablog.com/entry/2021/07/10/153631
 float3 ACESToneMapping(float3 x)
 {
     float a = 2.51f;

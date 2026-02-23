@@ -7,14 +7,14 @@
 //------------------------------------------------------------------------------------------
 // Includes
 //------------------------------------------------------------------------------------------
-#include "pch.h"
 #include <windows.h>        // ウインドウ系
 #include <time.h>
-#include "DxApp.h"
+#include "../../../DX11MyEngine/Source/Header/DXApp.h"
+#include "../../../DX11MyEngine/Source/Header/Window.h"
+
+
 //------------------------------------------------------------------------------------------
-
 // メインエントリーポイント
-
 //------------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

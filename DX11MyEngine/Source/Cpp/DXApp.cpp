@@ -528,7 +528,7 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     // windowの作成
     // Create window
     m_hInst = hInstance;
-    RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  WND_RECT_RIGHT, WND_RECT_BOTTOM };      // 矩形を設定する
+    RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  m_Width, m_Height };      // 矩形を設定する
     int res = AdjustWindowRect(&rc, dwStyle, FALSE);   // ウインドウの形を整える
 
     m_hWnd = CreateWindowW(

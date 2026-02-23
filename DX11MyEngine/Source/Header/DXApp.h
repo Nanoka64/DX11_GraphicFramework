@@ -10,16 +10,12 @@
 #include <new>
 #include <d2d1.h>
 #include <wrl/client.h>
+#include <cstdint>  // 追加
+#include <memory>   // 追加
 
 /* .libリンクしてねっていうやつ(プロパティからも出来る) */
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "imm32.lib")
-
-//#include "RendererEngine.h"
-//#include "GameManager.h"
-
-using Microsoft::WRL::ComPtr;
-
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -39,7 +35,7 @@ private:
 
     class GameManager      *m_pGameManager; // ゲームマネージャー
     std::shared_ptr<class RendererEngine> m_pRenderer;// 描画管理
-
+    
     bool m_IsClose; // 終了フラグ
 
 public:
