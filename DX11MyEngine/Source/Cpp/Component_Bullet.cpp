@@ -39,7 +39,7 @@ Bullet::Bullet(std::weak_ptr<GameObject> pOwner, int updateRank)
 //*----------------------------------------------------------------------------------------
 Bullet::~Bullet()
 {
-
+    m_pBulletObject.reset();
 }
 
 

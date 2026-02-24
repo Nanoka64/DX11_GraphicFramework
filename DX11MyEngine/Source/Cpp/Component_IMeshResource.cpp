@@ -35,6 +35,7 @@ IMeshResource::~IMeshResource()
 		m_pCBTransformSet = nullptr;
 	}
 
+    // マテリアル情報定数バッファの解放
 	if (m_pCBMaterialDataSet) {
 		if (m_pCBMaterialDataSet->pBuff) {
 			m_pCBMaterialDataSet->pBuff->Release();

@@ -32,9 +32,9 @@ private:
 	friend class SkyRenderer;
 	friend class DecalRenderer;
 
-	std::shared_ptr<MeshResourceData> m_pMeshData;// メッシュ情報
-	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
-	CB_MATERIAL_SET *m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
+	std::shared_ptr<MeshResourceData> m_pMeshData; // メッシュ情報
+	CB_TRANSFORM_SET *m_pCBTransformSet;		   // 定数バッファ(ワールド行列用)
+	CB_MATERIAL_SET *m_pCBMaterialDataSet;		   // 定数バッファ(マテリアル用)
 	SHADER_TYPE m_ShaderType;	
 public:
 	IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

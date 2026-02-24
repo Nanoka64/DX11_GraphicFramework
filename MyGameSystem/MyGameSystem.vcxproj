@@ -80,6 +80,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engine\External\Lib\Effekseer\Lib;$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\Lib\Release;$(ProjectDir)Engine\Lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,6 +95,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engine\External\Lib\Effekseer\Lib;$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\Lib\Release;$(ProjectDir)Engine\Lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,7 +110,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engine\Lib\Debug;%(AdditionalLibraryDirectories);$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\External\Lib\Effekseer\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engine\External\Lib\Effekseer\Lib;$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\Lib\Release;$(ProjectDir)Engine\Lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTexd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,7 +128,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)Engine\Lib\Release;%(AdditionalLibraryDirectories);C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\MyGameSystem\Engine\External\Lib\DirectXTex;C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\MyGameSystem\Engine\External\Lib\Effekseer\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)Engine\External\Lib\Effekseer\Lib;$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\Lib\Release;$(ProjectDir)Engine\Lib\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

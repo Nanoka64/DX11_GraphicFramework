@@ -356,6 +356,7 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
             hole->get_Component<TimerDestruction>()->Update(renderer);
         }
     }
+    decal.clear();
     decal = Master::m_pGameObjectManager->get_ObjectListByTag("Ant_Splash");
     if (!decal.empty()) {
         for (auto& hole : decal) {
@@ -363,6 +364,7 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
             hole->get_Component<TimerDestruction>()->Update(renderer);
         }
     }
+    decal.clear();
 
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
 
