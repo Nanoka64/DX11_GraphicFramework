@@ -47,16 +47,27 @@ void MoveLogic::Start(RendererEngine &renderer)
 //*
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void MoveLogic::Update(RendererEngine &renderer)
+void MoveLogic::Calculate(const MoveParam& _param)
 {
     float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
     // 移動挙動クラスがセットされていれば、移動計算をする
-    if (m_pMoveBehaviour)
+    if (auto pTransform = m_pOwner.lock()->get_Transform().lock())
     {
-        auto pTransform = m_pOwner.lock()->get_Transform();
+        if (m_pMoveBehaviour)
+        {
+            ResultMove res;
 
-        m_pMoveBehaviour->MoveCalculate(deltaTime, *pTransform.lock());
+            // 移動計算を呼び出す
+            res = m_pMoveBehaviour->MoveCalculate(deltaTime, _param, *pTransform);
+
+            // 移動ベクトルと回転ベクトルをもとに、新しい位置と回転を計算する
+            VEC3 crntPos = pTransform->get_VEC3ToPos();
+            VEC3 newPos = crntPos + (res._moveVelocity * deltaTime);
+
+            // 反映
+            pTransform->set_Pos(newPos);
+        }
     }
 }
 

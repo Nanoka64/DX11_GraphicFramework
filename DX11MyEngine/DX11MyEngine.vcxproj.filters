@@ -570,6 +570,9 @@
     <ClCompile Include="Source\Cpp\Component_MoveLogic.cpp">
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\LinearMove_Behaviour.cpp">
+      <Filter>ソース ファイル\Component\Move</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -936,6 +939,9 @@
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_MoveLogic.h">
+      <Filter>ソース ファイル\Component\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\LinearMove_Behaviour.h">
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClInclude>
   </ItemGroup>
