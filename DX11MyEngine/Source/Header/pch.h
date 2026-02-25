@@ -17,22 +17,19 @@
 
 
 // えふぇくしあ
-#ifndef _DEBUG
-#pragma comment(lib, "Effekseer.lib")
-#else
+#ifdef _DEBUG
 #pragma comment(lib, "Effekseerd.lib")
-#endif
-
-#ifndef _DEBUG
-#pragma comment(lib, "EffekseerRendererDX11.lib")
-#else
 #pragma comment(lib, "EffekseerRendererDX11d.lib")
+
+#else
+#pragma comment(lib, "Effekseer.lib")
+#pragma comment(lib, "EffekseerRendererDX11.lib")
 #endif
 
 
 /* 組み込みヘッダ */
 #include <d3d11.h>          // directX11
-#include <d3d12.h>          // directX11
+#include <d3d12.h>          // directX12
 #include <DirectXMath.h>    // 数学系
 #include <DirectXTex.h>     // テクスチャ読み込み
 #pragma comment(lib, "d3d11.lib")			  // directX11ライブラリのリンク
@@ -54,11 +51,11 @@
 //! プロパティ側で対応
 //!**************************************************************
 // Texライブラリのリンク
-//#ifdef _DEBUG
-//#pragma comment(lib, "DirectXTexd.lib")
-//#else
-//#pragma comment(lib, "DirectXTex.lib")
-//#endif
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTexd.lib")
+#else
+#pragma comment(lib, "DirectXTex.lib")
+#endif
 
 // シェーダー
 #include <d3dcompiler.h>				// シェーダーをコンパイルするためのやつ

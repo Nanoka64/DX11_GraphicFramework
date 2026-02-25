@@ -558,6 +558,18 @@
     <ClCompile Include="Source\Cpp\TragetManager.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\ObjectPool.cpp">
+      <Filter>ソース ファイル\Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\BulletManager.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\IMoveBehaviour.cpp">
+      <Filter>ソース ファイル\Component\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_MoveLogic.cpp">
+      <Filter>ソース ファイル\Component\Move</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -913,6 +925,18 @@
     </ClInclude>
     <ClInclude Include="Source\Header\TragetManager.h">
       <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ObjectPool.h">
+      <Filter>ソース ファイル\Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BulletManager.h">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\IMoveBehaviour.h">
+      <Filter>ソース ファイル\Component\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_MoveLogic.h">
+      <Filter>ソース ファイル\Component\Move</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

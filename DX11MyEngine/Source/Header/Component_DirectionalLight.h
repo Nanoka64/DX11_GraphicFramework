@@ -18,7 +18,6 @@ private:
 	float m_OrthographicWidth;		// ‰¡•
 	float m_OrthographicHeigh;		// c•
 	float m_ShadowDistance;			// ‰e‚Ì”ÍˆÍ
-
 public:
 	DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank);
 	~DirectionalLight();

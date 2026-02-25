@@ -129,6 +129,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)Engine\External\Lib\Effekseer\Lib;$(ProjectDir)Engine\External\Lib\DirectXTex;$(ProjectDir)Engine\Lib\Release;$(ProjectDir)Engine\Lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
