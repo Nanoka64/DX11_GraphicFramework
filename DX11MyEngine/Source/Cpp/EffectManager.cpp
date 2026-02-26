@@ -82,13 +82,13 @@ bool EffectManager::Setup(RendererEngine& renderer)
     cameraMatrix.LookAtLH(viewerPosition, ::Effekseer::Vector3D(0.0f, 0.0f, 0.0f), ::Effekseer::Vector3D(0.0f, 1.0f, 0.0f));
 
     // エフェクトの読み込み
-    LoadEffect(u"Resource/Effect/Laser01.efkefc", "Laser01");
     LoadEffect(u"Resource/Effect/Spark.efkefc", "Spark");
     LoadEffect(u"Resource/Effect/Smoke.efkefc", "Smoke");
     LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc", "DeadExplosion");
     LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
     LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
     LoadEffect(u"Resource/Effect/Explosion_Smoke_01.efkefc", "Explosion_Smoke_01");
+    LoadEffect(u"Resource/Effect/Explosion_Plasma01.efkefc", "Exp_Plasma_01");
 
     return true;
 }
