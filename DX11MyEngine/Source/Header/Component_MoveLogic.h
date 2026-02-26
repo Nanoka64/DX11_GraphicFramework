@@ -37,8 +37,16 @@ public:
     void Start(RendererEngine &renderer) override;		// ‰Šú‰»
     void Calculate(const struct MoveParam& _param);		    // ˆÚ“®ˆ—
 
-
+    /// <summary>
+    /// ˆÚ“®‹““®‚Ì“o˜^
+    /// </summary>
+    /// <param name="_type">ˆÚ“®‹““®‚Ìí—Ş</param>
     void Register(MOVE_BEHAVIOUR_TYPE _type);
+
+    /// <summary>
+    /// ˆÚ“®‹““®‚Ì•ÏX
+    /// </summary>
+    /// <param name="_type">•ÏX‚·‚éˆÚ“®‹““®‚Ìí—Ş</param>
     void ChangeBehaviour(MOVE_BEHAVIOUR_TYPE _type);
 };
 

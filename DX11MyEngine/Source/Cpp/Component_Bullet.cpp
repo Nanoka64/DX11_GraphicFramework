@@ -4,6 +4,7 @@
 #include "Component_Transform.h"
 #include "Component_DecalRenderer.h"
 #include "Component_TimerDestruction.h"
+#include "Component_MoveLogic.h"
 #include "RendererEngine.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
@@ -66,7 +67,11 @@ void Bullet::Start(RendererEngine& renderer)
 
     m_MoveVelocity = m_MoveVelocity.Normalize();
 
-
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //
+	//						Õ“ËŽžˆ—‚ÌÝ’è
+    // 
+    //////////////////////////////////////////////////////////////////////////////////////////
     m_CollisionTask =
         [this, &renderer](const class CollisionInfo& _other)
         {
@@ -130,7 +135,7 @@ void Bullet::Start(RendererEngine& renderer)
             VEC3 scale;
             scale.x = 20.0f;
             scale.y = 20.0f;
-            scale.z = 60.0f;
+            scale.z = 40.0f;
 
             auto obj = MeshFactory::CreateDecal(decal);
             obj->get_Component<DecalRenderer>()->Start(renderer);
@@ -189,6 +194,8 @@ void Bullet::Update(RendererEngine &renderer)
     
     m_PrevPos = crntPos;
     crntPos = crntPos - m_MoveVelocity * 20.0f;
+
+
 
     transform->set_Pos(crntPos);
 

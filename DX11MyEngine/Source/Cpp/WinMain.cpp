@@ -22,9 +22,9 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 #if _DEBUG
-    XmlArrange *xmlArrange = new XmlArrange();
-    xmlArrange->Arrange();
-    delete xmlArrange;
+    //XmlArrange *xmlArrange = new XmlArrange();
+    //xmlArrange->Arrange();
+    //delete xmlArrange;
 #endif
 
     // —”‰Šú‰»

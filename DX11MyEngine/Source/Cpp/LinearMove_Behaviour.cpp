@@ -28,7 +28,7 @@ LinearMove_Behaviour::~LinearMove_Behaviour()
 //* [返値]
 //* VEC3 : 移動ベクトル
 //*----------------------------------------------------------------------------------------
-ResultMove LinearMove_Behaviour::MoveCalculate(float _deltaTime, const MoveParam& _param, const class MyTransform& _transform)
+ResultMove LinearMove_Behaviour::MoveCalculate(float _deltaTime, const MoveParam& _param, const MyTransform& _transform)
 {
 	ResultMove res;
 

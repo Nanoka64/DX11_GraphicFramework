@@ -30,6 +30,7 @@ public:
 	void Draw(RendererEngine &renderer)override;		// •`‰æˆ—
 	void OnCollisionEnter(const class CollisionInfo &other);
 
+	void set_CollisionTask(std::function<void(const class CollisionInfo& _other)> task) { m_CollisionTask = task; }	// Õ“Ë‚Ìˆ—‚Ìİ’è
 
 	void set_BulletObject(std::shared_ptr<GameObject> pObj);
 };
