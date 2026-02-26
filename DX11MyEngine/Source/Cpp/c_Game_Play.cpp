@@ -52,8 +52,8 @@ int c_Game_Play::Update(SceneManager *pOwner)
     {
         return c_GAME::c_GO_RESULT_SCENE;
     }
-
-
+    auto player = Master::m_pGameObjectManager->get_ObjectByTag("Player");
+    VEC3 playerPos = player->get_Transform().lock()->get_VEC3ToPos();
     //-----------------------------------------------------------------------------
     // ¡ ”šŒ‚‹@‚ÌˆÚ“®ˆ—
     //-----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ int c_Game_Play::Update(SceneManager *pOwner)
             B2PrevPos[i] = pos;
 
             B2Transform->set_Pos(pos);
-            B2Transform->set_RotateToRad(0.0f, targetAngle, 0.0f);
+            B2Transform->SlerpLookAt(playerPos, 0.5f);
         }
     }
     return c_GAME::c_GAME_PLAY;

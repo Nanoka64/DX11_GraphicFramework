@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Component_MoveLogic.h"
 #include "IMoveBehaviour.h"
+#include "LinearMove_Behaviour.h"
 #include "GameObject.h"
 
 using namespace GIGA_Engine;
@@ -36,7 +37,7 @@ MoveLogic::~MoveLogic()
 void MoveLogic::Start(RendererEngine &renderer)
 {
     // デフォルトは直線移動
-    set_MoveBehaviour(MOVE_BEHAVIOUR_TYPE::STRAIGHT);
+    Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ void MoveLogic::Calculate(const MoveParam& _param)
     // 移動挙動クラスがセットされていれば、移動計算をする
     if (auto pTransform = m_pOwner.lock()->get_Transform().lock())
     {
-        if (m_pMoveBehaviour)
+        if (m_pMoveBehaviour != nullptr)
         {
             ResultMove res;
 
@@ -79,16 +80,36 @@ void MoveLogic::Calculate(const MoveParam& _param)
 //* 
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void MoveLogic::set_MoveBehaviour(MOVE_BEHAVIOUR_TYPE _type)
+void MoveLogic::Register(MOVE_BEHAVIOUR_TYPE _type)
 {
     switch (_type)
     {
-    case MOVE_BEHAVIOUR_TYPE::STRAIGHT:
+    case MOVE_BEHAVIOUR_TYPE::LINEAR:
+        m_pMoveBehaviourMap[_type] = std::make_unique<LinearMove_Behaviour>();
         break;
     case MOVE_BEHAVIOUR_TYPE::HOMING:
         break;
     default:
-        m_pMoveBehaviour = nullptr;
         break;
     }
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】移動挙動の変更
+//*
+//* [引数]
+//* _type : 変更する移動挙動の種類（事前に登録されていなかった場合、登録処理を行うため、newが走る）
+//* 
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void MoveLogic::ChangeBehaviour(MOVE_BEHAVIOUR_TYPE _type)
+{
+    // もし登録されていなければ登録する
+    auto it = m_pMoveBehaviourMap.find(_type);
+    if (it == m_pMoveBehaviourMap.end())
+    {
+        Register(_type);
+    }
+
+    m_pMoveBehaviour = m_pMoveBehaviourMap[_type].get();
 }

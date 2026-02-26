@@ -7,6 +7,24 @@ using namespace VERTEX;
 using namespace Tool::UV;
 using namespace Tool;
 
+/// <summary>
+/// クオータニオンからオイラー角を取得する関数
+/// </summary>
+/// <param name="q"></param>
+/// <returns></returns>
+VEC3 QuaternionToEuler(const XMVECTOR& q)
+{
+    // クォータニオンからオイラー角を計算
+    float x = XMVectorGetX(q);
+    float y = XMVectorGetY(q);
+    float z = XMVectorGetZ(q);
+    float w = XMVectorGetW(q);
+    // オイラー角の計算
+    float pitch = atan2f(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
+    float yaw   = asinf(2.0f * (w * y - z * x));
+    float roll  = atan2f(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+    return VEC3(pitch, yaw, roll);
+}
 
 const DirectX::XMVECTOR MyTransform::FORWARD  = DirectX::XMVectorSet(0, 0, 1, 0);
 const DirectX::XMVECTOR MyTransform::UP       = DirectX::XMVectorSet(0, 1, 0, 0);
@@ -19,11 +37,11 @@ const DirectX::XMVECTOR MyTransform::RIGHT    = DirectX::XMVectorSet(1, 0, 0, 0)
 MyTransform::MyTransform(std::weak_ptr<GameObject> pOwner, int updateRank)
     : IComponent(pOwner, updateRank),
 	m_Position(DirectX::XMVectorZero()),
-	m_Rotation(DirectX::XMVectorZero()),
+	m_RotationQ(DirectX::XMQuaternionIdentity()),
 	m_Scale(DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f)),
-    m_LocalOffset_Position(DirectX::XMVectorZero()),
-    m_LocalOffset_Rotation(DirectX::XMVectorZero()),
-    m_LocalOffset_Scale(DirectX::XMVectorZero()),
+    m_Local_Position(DirectX::XMVectorZero()),
+    m_Local_RotationQ(DirectX::XMQuaternionIdentity()),
+    m_Local_Scale(DirectX::XMVectorZero()),
 	m_pParent(),
     m_isDirty(false)
 {
@@ -44,34 +62,44 @@ MyTransform::~MyTransform()
 //*     主にターゲットになるオブジェクトへ向かせる場合等に使う 
 //*
 //* [引数]
-//* &target : ターゲットのトランスフォーム
+//* &target : 目標座標
 //*
 //* [返値]
 //* なし 
 //*----------------------------------------------------------------------------------------
-XMMATRIX MyTransform::LookAt(const VECTOR3::VEC3 &target)
+void MyTransform::LookAt(const VECTOR3::VEC3 &_targetPos)
 {
-    VEC3 forward;
-    VEC3 right;
-    VEC3 up;
+    // LookAt関数で、現在の位置から目標位置を向くためのビュー行列を作成
+    XMMATRIX lookAtMtx = XMMatrixLookAtLH(m_Position, _targetPos, UP);  
 
-    // 目標方向から前方向ベクトルを作る
-    forward = (target - VEC3::FromXMVECTOR(this->m_Position)).Normalize();
-    
-    // 上方向と前方向ベクトルから横ベクトルを求める
-    right = VEC3::Cross(this->get_Up(), forward).Normalize();
-    
-    // 前と横方向のベクトルの外積を求めて上方向ベクトルにする
-    up = VEC3::Cross(forward, right).Normalize();
-    
-    // 回転行列の作成
-    XMMATRIX mtxRot = XMMatrixIdentity();
-    mtxRot.r[0] = right;
-    mtxRot.r[1] = up;
-    mtxRot.r[2] = forward;
+    // 逆行列を取ることで、目標方向を向くための回転行列を得る
+    XMMATRIX invLookAtMtx = XMMatrixInverse(nullptr, lookAtMtx);       
+
+    // 回転行列からクォータニオンを作成
+    XMVECTOR rot = XMQuaternionRotationMatrix(invLookAtMtx);             
+
+    m_RotationQ = rot;                                      
+}
 
 
-    return mtxRot;
+//*---------------------------------------------------------------------------------------
+//*【?】球面線形補間を使用した目標方向への回転
+//*
+//* [引数]
+//* &target : 目標座標
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void MyTransform::SlerpLookAt(const VECTOR3::VEC3 &_targetPos, float _t)
+{
+    XMMATRIX lookAtMtx = XMMatrixLookAtLH(m_Position, _targetPos, UP);  
+    XMMATRIX invLookAtMtx = XMMatrixInverse(nullptr, lookAtMtx);        
+    XMVECTOR rot = XMQuaternionRotationMatrix(invLookAtMtx);            
+    // ここまではLookAtと同じ --------------------------------------
+
+    // 球面線形補間で滑らかに回転させる
+    m_RotationQ = XMQuaternionSlerp(m_RotationQ, rot, _t);
 }
 
 
@@ -104,25 +132,44 @@ void MyTransform::set_Pos(const VECTOR3::VEC3& vIn) {
 /*--------------- Rotate ---------------*/
 /* ラジアン指定 */
 
-void MyTransform::set_RotateToRad(float x, float y, float z){
-    m_Rotation = XMVectorSet(x, y, z, 1.f);
+void MyTransform::set_RotateToRad(float _pitch, float _yaw, float _roll)
+{
+    m_EulerAngles = VEC3(_pitch, _yaw, _roll);   // オイラー角も保持しておく
+    m_RotationQ = XMQuaternionRotationRollPitchYaw(_pitch, _yaw, _roll);
 }
-void MyTransform::set_RotateToRad(const VECTOR3::VEC3& vIn) {
-    m_Rotation = vIn;
+void MyTransform::set_RotateToRad(const VECTOR3::VEC3 &_vIn)
+{
+    m_EulerAngles = _vIn;   // オイラー角も保持しておく
+    m_RotationQ = XMQuaternionRotationRollPitchYaw(_vIn.x, _vIn.y, _vIn.z);
 }
 
 /* デグリー指定 */
 
-void MyTransform::set_RotateToDeg(float x, float y, float z){
-    m_Rotation = XMVectorSet(DegToRad(x), DegToRad(y), DegToRad(z), 1.f);
-}
-void MyTransform::set_RotateToDeg(const VECTOR3::VEC3& vIn) {
-    VEC3 deg;
-    deg.x = DegToRad(vIn.x);
-    deg.y = DegToRad(vIn.y);
-    deg.z = DegToRad(vIn.z);
+void MyTransform::set_RotateToDeg(float _pitch, float _yaw, float _roll)
+{
+   m_EulerAngles.x =  XMConvertToRadians(_pitch);
+   m_EulerAngles.y =  XMConvertToRadians(_yaw);
+   m_EulerAngles.z =  XMConvertToRadians(_roll);
 
-    m_Rotation = deg;
+    m_RotationQ = XMQuaternionRotationRollPitchYaw(m_EulerAngles.x, m_EulerAngles.y, m_EulerAngles.z);
+}
+
+void MyTransform::set_RotateToDeg(const VECTOR3::VEC3& _vIn) 
+{
+    m_EulerAngles.x = XMConvertToRadians(_vIn.x);
+    m_EulerAngles.y = XMConvertToRadians(_vIn.y);
+    m_EulerAngles.z = XMConvertToRadians(_vIn.z);
+
+    m_RotationQ = XMQuaternionRotationRollPitchYaw(m_EulerAngles.x, m_EulerAngles.y, m_EulerAngles.z);
+}
+
+//
+// クォータニオンを直接設定
+//
+void MyTransform::set_RotationQuaternion(const DirectX::XMVECTOR &_q)
+{
+    m_EulerAngles = QuaternionToEuler(_q);   // オイラー角も保持しておく
+    m_RotationQ = _q;
 }
 
 /*--------------- Scale ---------------*/
@@ -149,40 +196,49 @@ const VEC3 MyTransform::get_VEC3ToPos() const {
 }
 
 /*--------------- Rotate ---------------*/
+// クォータニオンで保持しているが、外からはオイラーで取得できるようにする
+// 今後、クォータニオンでの取得、設定用のメソッドも用意するかも
+
+
 /* ラジアン */
 
-XMVECTOR MyTransform::get_XMVecToRotateToRad() const {
-    return m_Rotation;
+XMVECTOR MyTransform::get_XMVecToRotateToRad() const 
+{
+    return m_EulerAngles;
 }
-const VEC3 MyTransform::get_VEC3ToRotateToRad() const {
-    return VEC3(
-        XMVectorGetX(m_Rotation),
-        XMVectorGetY(m_Rotation),
-        XMVectorGetZ(m_Rotation)
-    );
+
+const VEC3 MyTransform::get_VEC3ToRotateToRad() const
+{
+    return m_EulerAngles;
 }
 
 /* デグリー */
 
-XMVECTOR MyTransform::get_XMVecToRotateToDeg() const {
+XMVECTOR MyTransform::get_XMVecToRotateToDeg() const 
+{
 	return XMVectorSet(
-		XMConvertToDegrees(XMVectorGetX(m_Rotation)),
-		XMConvertToDegrees(XMVectorGetY(m_Rotation)),
-		XMConvertToDegrees(XMVectorGetZ(m_Rotation)),
-		0.0f
+		XMConvertToDegrees(m_EulerAngles.x),
+		XMConvertToDegrees(m_EulerAngles.y),
+		XMConvertToDegrees(m_EulerAngles.z),
+		1.0f
 	);
 }
 
-const VEC3 MyTransform::get_VEC3ToRotateToDeg() const {
-    VEC3 res = VEC3(
-        XMVectorGetX(m_Rotation),
-        XMVectorGetY(m_Rotation),
-        XMVectorGetZ(m_Rotation)
-    );
-    res.x = RadToDeg(res.x);
-    res.y = RadToDeg(res.y);
-    res.z = RadToDeg(res.z);
+const VEC3 MyTransform::get_VEC3ToRotateToDeg() const 
+{
+    VEC3 res = VEC3();
+    res.x = RadToDeg(m_EulerAngles.x);
+    res.y = RadToDeg(m_EulerAngles.y);
+    res.z = RadToDeg(m_EulerAngles.z);
     return res;
+}
+
+//
+// クォータニオンでの取得
+//
+XMVECTOR MyTransform::get_RotationQuaternion()const
+{
+    return m_RotationQ;
 }
 
 /*--------------- Scale ---------------*/
@@ -216,72 +272,67 @@ const VECTOR3::VEC3 MyTransform::get_WorldVEC3ToPos()const
 // ・セッタ
 // *===========================================================================
 /*--------------- Position ---------------*/
-void MyTransform::set_VEC3ToLocalOffset_Pos(const VECTOR3::VEC3 &vIn) {
-    m_LocalOffset_Position = vIn;
+void MyTransform::set_VEC3ToLocal_Pos(const VECTOR3::VEC3 &vIn) 
+{
+    m_Local_Position = vIn;
 }
 /*--------------- Rotate ---------------*/
 /* ラジアン */
-void MyTransform::set_VEC3ToLocalOffset_RotateToRad(const VECTOR3::VEC3 &vIn) {
-    m_LocalOffset_Rotation = vIn;
+void MyTransform::set_VEC3ToLocal_RotateToRad(const VECTOR3::VEC3 &vIn) 
+{
+    m_Local_EulerAngles = vIn;   // オイラー角も保持しておく
+    m_Local_RotationQ = XMQuaternionRotationRollPitchYaw(vIn.x, vIn.y, vIn.z);
 }
 /* デグリー */
-void MyTransform::set_VEC3ToLocalOffset_RotateToDeg(const VECTOR3::VEC3 &vIn) {
-    VEC3 deg;
-    deg.x = DegToRad(vIn.x);
-    deg.y = DegToRad(vIn.y);
-    deg.z = DegToRad(vIn.z);
-
-    m_LocalOffset_Rotation = deg;
+void MyTransform::set_VEC3ToLocal_RotateToDeg(const VECTOR3::VEC3 &_vIn) 
+{
+    m_Local_EulerAngles.x =  XMConvertToRadians(_vIn.x);
+    m_Local_EulerAngles.y =  XMConvertToRadians(_vIn.y);
+    m_Local_EulerAngles.z =  XMConvertToRadians(_vIn.z);
+    m_Local_RotationQ = XMQuaternionRotationRollPitchYaw(m_Local_EulerAngles.x, m_Local_EulerAngles.y, m_Local_EulerAngles.z);
 }
 /*--------------- Scale ---------------*/
-void MyTransform::set_VEC3ToLocalOffset_Scale(const VECTOR3::VEC3 &vIn) {
-    m_LocalOffset_Scale = vIn;
+void MyTransform::set_VEC3ToLocal_Scale(const VECTOR3::VEC3 &vIn) 
+{
+    m_Local_Scale = vIn;
 }
 
 // *===========================================================================
 // ・ゲッタ
 // *===========================================================================
 /*--------------- Position ---------------*/
-const VEC3 MyTransform::get_VEC3ToLocalOffset_Pos()const
+const VEC3 MyTransform::get_VEC3ToLocal_Pos()const
 {
     return VEC3(
-        XMVectorGetX(m_LocalOffset_Position),
-        XMVectorGetY(m_LocalOffset_Position),
-        XMVectorGetZ(m_LocalOffset_Position)
+        XMVectorGetX(m_Local_Position),
+        XMVectorGetY(m_Local_Position),
+        XMVectorGetZ(m_Local_Position)
     );
 }
 
 /*--------------- Rotate ---------------*/
 /* ラジアン */
-const VEC3 MyTransform::get_VEC3ToLocalOffset_RotateToRad()const
+const VEC3 MyTransform::get_VEC3ToLocal_RotateToRad()const
 {
-    return VEC3(
-        XMVectorGetX(m_LocalOffset_Rotation),
-        XMVectorGetY(m_LocalOffset_Rotation),
-        XMVectorGetZ(m_LocalOffset_Rotation)
-    );
+    return m_Local_EulerAngles;
 }
 /* デグリー */
-const VEC3 MyTransform::get_VEC3ToLocalOffset_RotateToDeg()const
+const VEC3 MyTransform::get_VEC3ToLocal_RotateToDeg()const
 {
-    VEC3 res = VEC3(
-        XMVectorGetX(m_LocalOffset_Rotation),
-        XMVectorGetY(m_LocalOffset_Rotation),
-        XMVectorGetZ(m_LocalOffset_Rotation)
-    );
-    res.x = RadToDeg(res.x);
-    res.y = RadToDeg(res.y);
-    res.z = RadToDeg(res.z);
+    VEC3 res = VEC3();
+    res.x = RadToDeg(m_Local_EulerAngles.x);
+    res.y = RadToDeg(m_Local_EulerAngles.y);
+    res.z = RadToDeg(m_Local_EulerAngles.z);
     return res;
 }
 
 /*--------------- Scale ---------------*/
-const VEC3 MyTransform::get_VEC3ToLocalOffset_Scale()const
+const VEC3 MyTransform::get_VEC3ToLocal_Scale()const
 {
     return VEC3(
-        XMVectorGetX(m_LocalOffset_Scale),
-        XMVectorGetY(m_LocalOffset_Scale),
-        XMVectorGetZ(m_LocalOffset_Scale)
+        XMVectorGetX(m_Local_Scale),
+        XMVectorGetY(m_Local_Scale),
+        XMVectorGetZ(m_Local_Scale)
     );
 }
 
@@ -303,8 +354,8 @@ XMMATRIX MyTransform::get_MtxPos()const{
 /// 回転行列取得
 /// </summary>
 XMMATRIX MyTransform::get_MtxRotate()const{
-    return XMMatrixRotationRollPitchYawFromVector(
-        m_Rotation
+    return XMMatrixRotationQuaternion(
+        m_RotationQ
     );
 }
 
@@ -326,12 +377,12 @@ XMMATRIX MyTransform::get_MtxScale()const{
 XMMATRIX MyTransform::get_WorldMtx()const {
 
     // オフセットを加算
-    XMVECTOR scl = m_Scale    + m_LocalOffset_Scale;
-    XMVECTOR rot = m_Rotation + m_LocalOffset_Rotation;
-    XMVECTOR pos = m_Position + m_LocalOffset_Position;
+    XMVECTOR scl = m_Scale    + m_Local_Scale;
+    XMVECTOR rot = XMQuaternionMultiply(m_Local_RotationQ, m_RotationQ);
+    XMVECTOR pos = m_Position + m_Local_Position;
 
     XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
-    XMMATRIX mtxRot = XMMatrixRotationRollPitchYawFromVector(rot);
+    XMMATRIX mtxRot = XMMatrixRotationQuaternion(rot);
     XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
 
     XMMATRIX localMtx = mtxS * mtxRot * mtxT;
@@ -375,8 +426,8 @@ XMMATRIX MyTransform::get_WorldMtx(const XMMATRIX &scl, const XMMATRIX &rot, con
 XMMATRIX MyTransform::get_ExcludingRotWorldMtx()const{
     // オフセットを加算
     // オフセットを加算
-    XMVECTOR scl = m_Scale + m_LocalOffset_Scale;
-    XMVECTOR pos = m_Position + m_LocalOffset_Position;
+    XMVECTOR scl = m_Scale + m_Local_Scale;
+    XMVECTOR pos = m_Position + m_Local_Position;
 
     XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
     XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
@@ -418,9 +469,7 @@ XMMATRIX MyTransform::get_ExcludingRotWorldMtx(const DirectX::XMMATRIX& _scl, co
 //*----------------------------------------------------------------------------------------
 const VEC3 MyTransform::get_Forward() const
 {
-    // オイラー角からクォータニオンを作成
-    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, quaternion));
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, m_RotationQ));
 }
 
 
@@ -432,9 +481,7 @@ const VEC3 MyTransform::get_Forward() const
 //*----------------------------------------------------------------------------------------
 VEC3 MyTransform::get_Up() const
 {
-    // オイラー角からクォータニオンを作成
-    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(UP, quaternion));
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(UP, m_RotationQ));
 }
 
 
@@ -446,9 +493,7 @@ VEC3 MyTransform::get_Up() const
 //*----------------------------------------------------------------------------------------
 VEC3 MyTransform::get_Right() const
 {
-    // オイラー角からクォータニオンを作成
-    XMVECTOR quaternion = XMQuaternionRotationRollPitchYawFromVector(m_Rotation);
-    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(RIGHT, quaternion));
+    return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(RIGHT, m_RotationQ));
 }
 
 std::weak_ptr<MyTransform> MyTransform::get_Parent()const

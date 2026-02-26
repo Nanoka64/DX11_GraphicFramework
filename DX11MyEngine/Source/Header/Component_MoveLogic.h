@@ -9,7 +9,7 @@ enum class MOVE_BEHAVIOUR_TYPE : unsigned char
 {
     NONE,
 
-    STRAIGHT,   // 直線移動
+    LINEAR,     // 直線移動
     HOMING,     // ホーミング移動
 };
 
@@ -27,16 +27,18 @@ enum class MOVE_BEHAVIOUR_TYPE : unsigned char
 class MoveLogic : public IComponent
 {
 private:
-    std::unique_ptr<class IMoveBehaviour> m_pMoveBehaviour;	// 移動の挙動クラス
+    std::unordered_map<MOVE_BEHAVIOUR_TYPE, std::unique_ptr<class IMoveBehaviour>> m_pMoveBehaviourMap;    // 移動挙動のマップ
+    IMoveBehaviour *m_pMoveBehaviour = nullptr;	// 現在の移動挙動
 
 public:
     MoveLogic(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
     ~MoveLogic();
 
     void Start(RendererEngine &renderer) override;		// 初期化
-    void Calculate(const MoveParam& _param);		    // 移動処理
+    void Calculate(const struct MoveParam& _param);		    // 移動処理
 
 
-    void set_MoveBehaviour(MOVE_BEHAVIOUR_TYPE _type);
+    void Register(MOVE_BEHAVIOUR_TYPE _type);
+    void ChangeBehaviour(MOVE_BEHAVIOUR_TYPE _type);
 };
 

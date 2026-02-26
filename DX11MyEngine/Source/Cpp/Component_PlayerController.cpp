@@ -428,11 +428,21 @@ void PlayerController::ChangeAnimation(PLAYER_ANIMATION_ID id)
 void PlayerController::ContinuousAngle(const VECTOR3::VEC3 &_crntRot)
 {
 	float angle_H = m_pCameraComp.lock()->get_Angle_H();	// 水平アングル取得
-	float angle_V = m_pCameraComp.lock()->get_Angle_V();	// 水平アングル取得
+	float angle_V = m_pCameraComp.lock()->get_Angle_V();	// 垂直アングル取得
 
 	POINT mousePos = Master::m_pInputManager->GetMousePos();
+	float targetAngleY = (angle_H - 1.57) * -1;
 
-	m_pMyTransformComp.lock()->set_RotateToRad(0.0f, (angle_H - 1.57) * -1, 0.0f);
+	// 目標とするクォータニオン
+	XMVECTOR targetRotQ = XMQuaternionRotationRollPitchYaw(0.0f, targetAngleY, 0.0f);
+
+	XMVECTOR crntRotQ = m_pMyTransformComp.lock()->get_RotationQuaternion();
+
+	// クォータニオンの球面線形補間
+	// 普通の線形補間だと、値が飛んでしまうためクォータニオンの場合は球面線形補間を使う
+	XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, 0.5f);
+
+	m_pMyTransformComp.lock()->set_RotationQuaternion(newRotQ);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -444,10 +454,17 @@ void PlayerController::ContinuousAngle(const VECTOR3::VEC3 &_crntRot)
 void PlayerController::MovedAngle(const VECTOR3::VEC3 &_crntRot, const VECTOR3::VEC3 &_velocity)
 {
 	//目標の方向ベクトルから角度値を算出c
-	float targetAngle = atan2(_velocity.x, _velocity.z);
-	targetAngle -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
+	float targetAngleY = atan2(_velocity.x, _velocity.z);
+	targetAngleY -= 3.14f;	// ※ プレイヤーモデルが前後反転してしまっているため
 
-	// 線形補間
-	targetAngle = Lerp(_crntRot.y, targetAngle, 0.5f);
-	m_pMyTransformComp.lock()->set_RotateToRad(0.0f, targetAngle, 0.0f);
+	// 目標とするクォータニオン
+	XMVECTOR targetRotQ = XMQuaternionRotationRollPitchYaw(0.0f, targetAngleY, 0.0f);
+	
+    XMVECTOR crntRotQ = m_pMyTransformComp.lock()->get_RotationQuaternion();
+
+	// クォータニオンの球面線形補間
+	// 普通の線形補間だと、値が飛んでしまうためクォータニオンの場合は球面線形補間を使う
+    XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, 0.5f);
+
+	m_pMyTransformComp.lock()->set_RotationQuaternion(newRotQ);
 }

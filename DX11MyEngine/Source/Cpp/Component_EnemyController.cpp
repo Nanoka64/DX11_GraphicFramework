@@ -226,15 +226,19 @@ void EnemyController::Update(RendererEngine& renderer)
 
 	myTransform->set_Pos(newPos);
 
-	if (m_MoveVelocity.LengthSq() > 0.01)
-	{
-		//目標の方向ベクトルから角度値を算出c
-		float targetAngle = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
+	//目標の方向ベクトルから角度値を算出c
+	float targetAngleY = atan2(m_MoveVelocity.x, m_MoveVelocity.z);
 
-		// 線形補間
-		//targetAngle = Tool::Lerp(crntRot.y, targetAngle, 0.1f);
-		myTransform->set_RotateToRad(0.0f, targetAngle, 0.0f);
-	}
+	// 目標とするクォータニオン
+	XMVECTOR targetRotQ = XMQuaternionRotationRollPitchYaw(0.0f, targetAngleY, 0.0f);
+
+	XMVECTOR crntRotQ = myTransform->get_RotationQuaternion();
+
+	// クォータニオンの球面線形補間
+	// 普通の線形補間だと、値が飛んでしまうためクォータニオンの場合は球面線形補間を使う
+	XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, 0.1f);
+
+	myTransform->set_RotationQuaternion(newRotQ);
 
 
 }

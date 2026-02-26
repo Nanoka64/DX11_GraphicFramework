@@ -8,7 +8,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include "LightFunctions_H.hlsli"           // ライトヘッダー
-SamplerState g_sSampler : register(s0);
+SamplerState g_sSampler : register(s2);
 Texture2D g_tDiffuseTex : register(t0);     // ディフューズ
 Texture2D g_tNormalTex : register(t1);      // ノーマル
 Texture2D g_tSpecularTex : register(t2);    // スペキュラ

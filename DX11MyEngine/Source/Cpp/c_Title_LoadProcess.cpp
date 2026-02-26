@@ -191,8 +191,8 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         auto trail = pPlayerObj->add_Component<TrailRenderer>();
         trail->set_MinVertexDistance(4.0f);
         trail->set_Width(5.0f);
-        trail->set_EmissivePower(5.0f);
-        trail->set_Color(VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+        trail->set_EmissivePower(2.0f);
+        trail->set_Color(VEC4(1.0f, 1.0f, 1.0f, 1.0f));
 
         // コライダーの追加
         auto collider = pPlayerObj->add_Component<BoxCollider>();

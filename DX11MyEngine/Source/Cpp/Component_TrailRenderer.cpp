@@ -57,7 +57,8 @@ void TrailRenderer::Start(RendererEngine &renderer)
 		MessageBox(NULL,"セットアップができませんでした","TrailRenderer Error",MB_OK);
 		return;
 	}
-	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
+	//m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
+	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Flame1.png");
 }
 
 

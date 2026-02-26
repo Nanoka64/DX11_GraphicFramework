@@ -204,22 +204,23 @@ void Debugger::DG_ColorEdit4(const std::string &label, VECTOR4::VEC4* col4V)
 //      5.最小値
 //      6.最大値
 //=======================================================================================
-void Debugger::DG_DragInt(const std::string &label, int valNum, int* val, float slideSpeed, int _min, int _max)
+bool Debugger::DG_DragInt(const std::string &label, int valNum, int* val, float slideSpeed, int _min, int _max)
 {
     switch (valNum)
     {
     case 1:
-        ImGui::DragInt(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragInt(label.c_str(), val, slideSpeed, _min, _max);
         break;
     case 2:
-        ImGui::DragInt2(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragInt2(label.c_str(), val, slideSpeed, _min, _max);
         break;
     case 3:
-        ImGui::DragInt3(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragInt3(label.c_str(), val, slideSpeed, _min, _max);
         break;
     default:
-        return;
+        return false;
     }
+    return false;
 }
 
 //**************************************************************************************
@@ -231,22 +232,23 @@ void Debugger::DG_DragInt(const std::string &label, int valNum, int* val, float 
 //      5.最小値
 //      6.最大値
 //=======================================================================================
-void Debugger::DG_DragFloat(const std::string &label, int valNum, float* val, float slideSpeed, float _min, float _max)
+bool Debugger::DG_DragFloat(const std::string &label, int valNum, float* val, float slideSpeed, float _min, float _max)
 {
     switch (valNum)
     {
     case 1:
-        ImGui::DragFloat(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragFloat(label.c_str(), val, slideSpeed, _min, _max);
         break;
     case 2:
-        ImGui::DragFloat2(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragFloat2(label.c_str(), val, slideSpeed, _min, _max);
         break;
     case 3:
-        ImGui::DragFloat3(label.c_str(), val, slideSpeed, _min, _max);
+        return ImGui::DragFloat3(label.c_str(), val, slideSpeed, _min, _max);
         break;
     default:
-        return;
+        return false;
     }
+    return false;
 }
 
 
@@ -258,7 +260,7 @@ void Debugger::DG_DragFloat(const std::string &label, int valNum, float* val, fl
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max)
+bool Debugger::DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max)
 {
     float temp[3] = { val->x, val->y,  val->z };
     if (ImGui::DragFloat3(label.c_str(), temp, slideSpeed, _min, _max))
@@ -266,7 +268,9 @@ void Debugger::DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float s
         val->x = temp[0];
         val->y = temp[1];
         val->z = temp[2];
+        return true;
     }
+    return false;
 }
 
 
@@ -279,25 +283,26 @@ void Debugger::DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float s
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max)
+bool Debugger::DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max)
 {
     switch (valNum)
     {
     case 1:
-        ImGui::SliderInt(label.c_str(), val, _min, _max);
+        return ImGui::SliderInt(label.c_str(), val, _min, _max);
         break;
     case 2:
-        ImGui::SliderInt2(label.c_str(), val, _min, _max);
+        return ImGui::SliderInt2(label.c_str(), val, _min, _max);
         break;
     case 3:
-        ImGui::SliderInt3(label.c_str(), val, _min, _max);
+        return ImGui::SliderInt3(label.c_str(), val, _min, _max);
         break;    
     case 4:
-        ImGui::SliderInt4(label.c_str(), val, _min, _max);
+        return ImGui::SliderInt4(label.c_str(), val, _min, _max);
         break;
     default:
-        return;
+        return false;
     }
+    return false;
 }
 
 //**************************************************************************************
@@ -308,25 +313,26 @@ void Debugger::DG_SliderInt(const std::string &label, int valNum, int* val, int 
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max)
+bool Debugger::DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max)
 {
     switch (valNum)
     {
     case 1:
-        ImGui::SliderFloat(label.c_str(), val, _min, _max);
+        return ImGui::SliderFloat(label.c_str(), val, _min, _max);
         break;
     case 2:
-        ImGui::SliderFloat2(label.c_str(), val, _min, _max);
+        return ImGui::SliderFloat2(label.c_str(), val, _min, _max);
         break;
     case 3:
-        ImGui::SliderFloat3(label.c_str(), val, _min, _max);
+        return ImGui::SliderFloat3(label.c_str(), val, _min, _max);
         break;   
     case 4:
-        ImGui::SliderFloat4(label.c_str(), val, _min, _max);
+        return ImGui::SliderFloat4(label.c_str(), val, _min, _max);
         break;
     default:
-        return;
+        return false;
     }
+    return false;
 }
 
 //**************************************************************************************
@@ -337,7 +343,7 @@ void Debugger::DG_SliderFloat(const std::string &label, int valNum, float* val, 
 //      4.最小値
 //      5.最大値
 //=======================================================================================
-void Debugger::DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max)
+bool Debugger::DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max)
 {
     float temp[3] = { val->x,val->y,val->z };
 
@@ -346,7 +352,9 @@ void Debugger::DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, floa
         val->x = temp[0];
         val->y = temp[1];
         val->z = temp[2];
+        return true;
     }
+    return false;
 }
 
 //**************************************************************************************

@@ -42,36 +42,58 @@ void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     VEC3 pos = pTransform->get_VEC3ToPos();
     VEC3 rot = pTransform->get_VEC3ToRotateToDeg();
     VEC3 scl = pTransform->get_VEC3ToScale();
+    VEC3 pos_L = pTransform->get_VEC3ToLocal_Pos();
+    VEC3 rot_L = pTransform->get_VEC3ToLocal_RotateToDeg();
+    VEC3 scl_L = pTransform->get_VEC3ToLocal_Scale();
 
     // beginはInspectorWindowで行っている
+
 
     // ノード
     if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"トランスフォーム")))
     {
+        Master::m_pDebugger->DG_Text(U8ToChar(u8"ワールド/ローカル"));
+
+        
         Master::m_pDebugger->DG_Separator();    // 区切り線
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"座標"));
-        Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragVec3("##Pos", &pos, m_SlideAccuRate, -100000.0f, 100000.0f);
+        if (Master::m_pDebugger->DG_DragVec3("##Pos", &pos, m_SlideAccuRate, -100000.0f, 100000.0f))
+        {
+            pTransform->set_Pos(pos);
+        }
+        if (Master::m_pDebugger->DG_DragVec3("##PosL", &pos_L, m_SlideAccuRate, -100000.0f, 100000.0f))
+        {
+            pTransform->set_VEC3ToLocal_Pos(pos_L);
+        }
 
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"回転"));
-        Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragVec3("##Rot", &rot, m_SlideAccuRate, -100000.0f, 100000.0f);
+        if (Master::m_pDebugger->DG_DragVec3("##Rot", &rot, m_SlideAccuRate, -180.0f, 180.0f))
+        {
+            pTransform->set_RotateToDeg(rot);
+        }
+        if (Master::m_pDebugger->DG_DragVec3("##RotL", &rot_L, m_SlideAccuRate, -180.0f, 180.0f))
+        {
+            pTransform->set_VEC3ToLocal_RotateToDeg(rot_L);
+        }
 
 
-        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"拡縮"));
-        Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_DragVec3("##Scale", &scl, m_SlideAccuRate, -100000.0f, 100000.0f);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"拡縮")); 
+        if (Master::m_pDebugger->DG_DragVec3("##Scale", &scl, m_SlideAccuRate, -100000.0f, 100000.0f))
+        {
+            pTransform->set_Scale(scl);
+        }
+        if (Master::m_pDebugger->DG_DragVec3("##ScaleL", &scl_L, m_SlideAccuRate, -100000.0f, 100000.0f))
+        {
+            pTransform->set_VEC3ToLocal_Scale(scl_L);
+        }
+
 
         Master::m_pDebugger->DG_SliderFloat(U8ToChar(u8"編集スライド精度"), 1, &m_SlideAccuRate, 0.001f, 2.0f);
 
         Master::m_pDebugger->DG_TreePop();
     }
 
-    // Transformに反映
-    pTransform->set_Pos(pos);
-    pTransform->set_RotateToDeg(rot);
-    pTransform->set_Scale(scl);
 }
 
 

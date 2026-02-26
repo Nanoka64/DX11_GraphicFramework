@@ -193,7 +193,7 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 
 		// TODO:UI用もソートされてしまっているため描画順が崩れる
 		// なので一旦オフセットのほうに位置を入れる
-		m_pMenuItemBackSpriteTransform[0]->set_VEC3ToLocalOffset_Pos(VEC3(spritePos.x, spritePos.y, 0.0f));
+		m_pMenuItemBackSpriteTransform[0]->set_VEC3ToLocal_Pos(VEC3(spritePos.x, spritePos.y, 0.0f));
 		m_pMenuItemBackSpriteTransform[0]->set_Scale(500.0f, 100.0f, 1.0f);
 
 		// 文字表示
