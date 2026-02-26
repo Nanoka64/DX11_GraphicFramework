@@ -187,6 +187,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\XML_Excel\XmlArrange.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Header\Ant_IdleState.h" />
     <ClInclude Include="Source\Header\Ant_TrackingState.h" />
@@ -325,6 +326,10 @@
     <Text Include="Source\CordingRules\CPP_CordingRule.txt">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </Text>
+    <ClCompile Include="..\XML_Excel\XmlArrange.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\Ant_IdleState.cpp" />
     <ClCompile Include="Source\Cpp\Ant_TrackingState.cpp" />
     <ClCompile Include="Source\Cpp\BitFlag.cpp" />

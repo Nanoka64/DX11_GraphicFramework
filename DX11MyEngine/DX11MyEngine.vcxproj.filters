@@ -573,6 +573,9 @@
     <ClCompile Include="Source\Cpp\LinearMove_Behaviour.cpp">
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClCompile>
+    <ClCompile Include="..\XML_Excel\XmlArrange.cpp">
+      <Filter>ソース ファイル\App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -943,6 +946,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\LinearMove_Behaviour.h">
       <Filter>ソース ファイル\Component\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\XML_Excel\XmlArrange.h">
+      <Filter>ソース ファイル\App</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

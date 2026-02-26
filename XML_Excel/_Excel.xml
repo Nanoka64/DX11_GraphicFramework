@@ -1,0 +1,630 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+    DX11MyEngine
+    </assembly>
+   <member className="CalcWeightsTableFromGaussian(System">
+   <functionName>Single*,System.Int32,System.Single)</functionName>
+   <explanations>
+※ 魔導書にあった関数
+ガウシアン関数を利用して重みテーブルを計算する
+   </explanations>
+   <variable0>重みテーブルの記録先</variable0>
+   <variable1>重みテーブルのサイズ</variable1>
+   <variable2>分散具合。この数値が大きくなると分散具合が強くなる</variable2>
+   </member>
+   <member className="__empty_global_delete(System">
+   <functionName>Void*)</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="c_Title_MainMenu">
+   <functionName>MenuItemInfo</functionName>
+   <explanations>
+タイトル項目
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_ExcludingRotWorldMtx</functionName>
+   <explanations>
+回転を含めないワールド行列
+パラメータを明示的に指定する
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_ExcludingRotWorldMtx</functionName>
+   <explanations>
+回転を含めないワールド行列
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_WorldMtx</functionName>
+   <explanations>
+ワールド行列取得
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_MtxScale</functionName>
+   <explanations>
+拡大縮小行列取得
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_MtxRotate</functionName>
+   <explanations>
+回転行列取得
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>get_MtxPos</functionName>
+   <explanations>
+座標行列取得
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>Release</functionName>
+   <explanations>
+解放
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>Dispose</functionName>
+   <explanations>
+デストラクタ
+   </explanations>
+   </member>
+   <member className="MyTransform">
+   <functionName>#ctor</functionName>
+   <explanations>
+コンストラクタ
+   </explanations>
+   </member>
+   <member className="QuaternionToEuler(__m128!System">
+   <functionName>Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)</functionName>
+   <explanations>
+クオータニオンからオイラー角を取得する関数
+   </explanations>
+   <variable0>描画エンジンの参照</variable0>
+   </member>
+   <member className="SceneFactory">
+   <functionName>CreateGameScene</functionName>
+   <explanations>
+ゲームシーンの作成
+   </explanations>
+   <variable0>出力先</variable0>
+   <variable1>描画エンジンの参照</variable1>
+   </member>
+   <member className="SceneFactory">
+   <functionName>CreateTitleScene</functionName>
+   <explanations>
+タイトルの作成
+   </explanations>
+   <variable0>出力先</variable0>
+   <variable1>描画エンジンの参照</variable1>
+   </member>
+   <member className="SceneFactory">
+   <functionName>Create</functionName>
+   <explanations>
+シーンステートを作成して挿入する
+   </explanations>
+   <variable0>出力先</variable0>
+   <variable1>作成するシーン</variable1>
+   <variable2>描画エンジンの参照</variable2>
+   </member>
+   <member className="GaussianBlur">
+   <functionName>InitSprites</functionName>
+   <explanations>
+スプライトを初期化。
+   </explanations>
+   </member>
+   <member className="GaussianBlur">
+   <functionName>InitRenderTargets</functionName>
+   <explanations>
+レンダリングターゲットを初期化。
+   </explanations>
+   </member>
+   <member className="GaussianBlur">
+   <functionName>get_AfterBlurTexture</functionName>
+   <explanations>
+ブラー実行後のテクスチャを取得
+   </explanations>
+   </member>
+   <member className="GaussianBlur">
+   <functionName>Setup</functionName>
+   <explanations>
+初期化
+   </explanations>
+   <variable0>ブラーを掛けるテクスチャ</variable0>
+   </member>
+   <member className="IMeshResource">
+   <functionName>Dispose</functionName>
+   <explanations>
+デストラクタ
+   </explanations>
+   </member>
+   <member className="c_Title_MissionSelect">
+   <functionName>MissionItemInfo</functionName>
+   <explanations>
+ミッション選択中のどの状態か
+   </explanations>
+   </member>
+   <member className="GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE,System">
+   <functionName>Int32,System.Int32)</functionName>
+   <explanations>
+長押しの場合の入力判定を取る
+最初の押し始めは入力判定になる
+その後、の入力判定間隔を指定できる
+   </explanations>
+   <variable0>></variable0>
+   <variable1>描画エンジンの参照</variable1>
+   </member>
+   <member className="EnemyStateFactory">
+   <functionName>Create</functionName>
+   <explanations>
+音声の種類
+   </explanations>
+   <variable0>出力先</variable0>
+   <variable1>作成するシーン</variable1>
+   <variable2>描画エンジンの参照</variable2>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader.Dispose</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader.#ctor</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SoundData</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>CurveLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>CurveLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>Curve</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>MaterialLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>MaterialLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>MaterialLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>MaterialLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>ModelLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>ModelLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>ModelLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>Model</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader.Dispose</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader.#ctor</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>EffectLoader.Unload</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>EffectLoader.Load</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>EffectLoader.Dispose</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>EffectLoader.#ctor</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>EffectLoader</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>NodeRendererTextureUVTypeParameter</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>TextureUVType</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SIMD.Int4</functionName>
+   <explanations>
+   </explanations>
+   </member>
+   <member className="Effekseer">
+   <functionName>SIMD.Float4</functionName>
+   <explanations>
+判定を行う
+   </explanations>
+   </member>
+   <member className="CollisionManager">
+   <functionName>CollisionProcess</functionName>
+   <explanations>
+衝突の判定分岐
+   </explanations>
+   </member>
+   <member className="GameObjectManager">
+   <functionName>add_Object</functionName>
+   <explanations>
+リストにオブジェクトを追加
+   </explanations>
+   <variable0>:座標</variable0>
+   <variable1>:文字の情報を格納した配列へのキー </variable1>
+   <variable2>:整形オプション</variable2>
+   </member>
+   <member className="LightManager">
+   <functionName>CreateDirectionLightCBuffer</functionName>
+   <explanations>
+ディレクションライト用の定数バッファを作成
+   </explanations>
+   <variable0>シェーダのエントリーポイント</variable0>
+   <variable1>シェーダモデル</variable1>
+   </member>
+   <member className="ShaderManager">
+   <functionName>CreateShader</functionName>
+   <explanations>
+シェーダの作成
+   </explanations>
+   <returnExplanation>
+作成出来たか
+   </returnExplanation>
+   <variable0>シェーダタイプ</variable0>
+   </member>
+   <member className="ShaderManager">
+   <functionName>Init</functionName>
+   <explanations>
+初期化
+   </explanations>
+   <returnExplanation>
+初期化出来たか
+   </returnExplanation>
+   </member>
+   <member className="BlendManager">
+   <functionName>BlendStateFactory</functionName>
+   <explanations>
+ブレンドステートの作成
+   </explanations>
+   <variable0>ブレンド種別</variable0>
+   <variable1>出力先</variable1>
+   </member>
+   <member className="BlendManager">
+   <functionName>DeviceToSetIndependentBlendState</functionName>
+   <explanations>
+レンダリングターゲットごとブレンドを設定する
+※まだ使ってなーい
+   </explanations>
+   <variable0>反映させるレンダリングターゲット番号</variable0>
+   <variable1>ブレンド種別</variable1>
+   </member>
+   <member className="BlendManager">
+   <functionName>DeviceToSetBlendState</functionName>
+   <explanations>
+ブレンドステートを設定する
+   </explanations>
+   <variable0>ブレンド種別</variable0>
+   </member>
+   <member className="BlendManager">
+   <functionName>Term</functionName>
+   <explanations>
+終了処理
+   </explanations>
+   </member>
+   <member className="BlendManager">
+   <functionName>Init</functionName>
+   <explanations>
+初期化
+   </explanations>
+   <returnExplanation>
+初期化出来たか
+   </returnExplanation>
+   </member>
+   <member className="ResourceManager">
+   <functionName>RegisterMaterialData</functionName>
+   <explanations>
+【?】ウインドウの初期化
+   </explanations>
+   <returnExplanation>
+初期化が成功したか
+   </returnExplanation>
+   <variable0>></variable0>
+   <variable1>ウインドウを表示するためのもの</variable1>
+   <variable2>ウインドウのインスタンスハンドル</variable2>
+   <variable3>ウインドウを表示するためのもの</variable3>
+   </member>
+   <member className="DXApp">
+   <functionName>MainLoop</functionName>
+   <explanations>
+【?】 更新処理
+   </explanations>
+   </member>
+   <member className="DXApp">
+   <functionName>Term</functionName>
+   <explanations>
+【?】 終了
+   </explanations>
+   </member>
+   <member className="DXApp">
+   <functionName>Init</functionName>
+   <explanations>
+【?】 初期化
+   </explanations>
+   <returnExplanation>
+初期化が成功したか
+   </returnExplanation>
+   <variable0>ウインドウのインスタンスハンドル</variable0>
+   <variable1>今は使用していない</variable1>
+   <variable2>ウインドウの表示状態</variable2>
+   <variable3>ウインドウのインスタンスハンドル</variable3>
+   <variable4>今は使用していない</variable4>
+   <variable5>ウインドウの表示状態</variable5>
+   </member>
+   <member className="DXApp">
+   <functionName>Run</functionName>
+   <explanations>
+【?】DXAppの実行（エントリーポイント的な）
+   </explanations>
+   <variable0>ウインドウのインスタンスハンドル</variable0>
+   <variable1>コマンドライン（今は使用していない）</variable1>
+   <variable2>ウインドウを表示するためのもの</variable2>
+   <variable3>ウインドウのインスタンスハンドル</variable3>
+   <variable4>コマンドライン（今は使用していない）</variable4>
+   <variable5>ウインドウを表示するためのもの</variable5>
+   </member>
+   <member className="DXApp">
+   <functionName>OnClose</functionName>
+   <explanations>
+終了フラグを立てる
+   </explanations>
+   </member>
+   <member className="DXApp">
+   <functionName>Dispose</functionName>
+   <explanations>
+デストラクタ
+   </explanations>
+   </member>
+   <member className="DXApp">
+   <functionName>#ctor</functionName>
+   <explanations>
+【?】 コンストラクタ
+   </explanations>
+   <variable0>ウインドウの横幅</variable0>
+   <variable1>ウインドウの縦幅</variable1>
+   <variable2>ウインドウの横幅</variable2>
+   <variable3>ウインドウの縦幅</variable3>
+   </member>
+   <member className="BlendSetupDataInfo">
+   <functionName>RT_BlendDataInfo</functionName>
+   <explanations>
+レンダリングターゲットごとの設定
+独立設定にしていなければrenderTarget[0]のみ有効
+   </explanations>
+   </member>
+   <member className="BufferManeger">
+   <functionName>CreateBuffer</functionName>
+   <explanations>
+シェーダの作成
+   </explanations>
+   <returnExplanation>
+作成出来たか
+   </returnExplanation>
+   <variable0>シェーダタイプ</variable0>
+   </member>
+   <member className="BufferManeger">
+   <functionName>Init</functionName>
+   <explanations>
+初期化
+   </explanations>
+   <returnExplanation>
+初期化出来たか
+   </returnExplanation>
+   </member>
+   <member className="BufferManeger">
+   <functionName>Instance</functionName>
+   <explanations>
+シングルトンインスタンス取得
+   </explanations>
+   </member>
+   <member className="RenderPipeline">
+   <functionName>CreateRenderTargetSprites</functionName>
+   <explanations>
+レンダーターゲット用スプライトの作成
+   </explanations>
+   <variable0>テクスチャの縦幅</variable0>
+   <variable1>テクスチャのフォーマット</variable1>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>CreateRenderTargetTexture</functionName>
+   <explanations>
+レンダーターゲットテクスチャの作成
+   </explanations>
+   <variable0>テクスチャの横幅</variable0>
+   <variable1>テクスチャの縦幅</variable1>
+   <variable2>ミップマップレベル</variable2>
+   <variable3>テクスチャ配列のサイズ</variable3>
+   <variable4>カラーバッファのフォーマット</variable4>
+   <variable5>深度ステンシルバッファのフォーマット</variable5>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>get_ClearColor</functionName>
+   <explanations>
+クリアカラーの取得 4要素
+   </explanations>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>HasDepthStencilBuffer</functionName>
+   <explanations>
+デプスステンシルバッファを保持しているか
+   </explanations>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>get_DepthSRV_ComPtr</functionName>
+   <explanations>
+デプスステンシル用のSRVのComポインタ取得
+   </explanations>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>get_SRV_ComPtr</functionName>
+   <explanations>
+SRVのComポインタ取得
+   </explanations>
+   </member>
+   <member className="DX_RenderTarget">
+   <functionName>get_RTTexture</functionName>
+   <explanations>
+レンダーターゲットテクスチャの取得
+   </explanations>
+   </member>
+   <member className="TrailRenderer">
+   <functionName>CalcTrailSegment</functionName>
+   <explanations>
+向き固定ver
+   </explanations>
+   </member>
+   <member className="IMeshResource">
+   <functionName>set_TextureMap</functionName>
+   <explanations>
+テクスチャマップ設定 Setup後に呼ぶ
+   </explanations>
+   <variable0>></variable0>
+   </member>
+   <member className="SpriteRenderer">
+   <functionName>VertexUpdate</functionName>
+   <explanations>
+頂点情報の更新
+   </explanations>
+   </member>
+   <member className="SpriteRenderer">
+   <functionName>setToGPU_ExtendUserPS_CBuffer</functionName>
+   <explanations>
+初期化時に設定したユーザー拡張用ピクセル定数バッファをGPUにセットする
+あくまで臨時の初期化時のデータ更新用なので全く違うものを入れないでね
+   </explanations>
+   <variable0>初期化時にセットした配列番号</variable0>
+   <variable1>データ</variable1>
+   </member>
+   <member className="SpriteRenderer">
+   <functionName>setToGPU_ExtendUserVS_CBuffer</functionName>
+   <explanations>
+スプライト種別
+   </explanations>
+   <variable0>初期化時にセットした配列番号</variable0>
+   <variable1>データ</variable1>
+   </member>
+   <member className="BillboardResource">
+   <functionName>Dispose</functionName>
+   <explanations>
+デストラクタ
+   </explanations>
+   </member>
+   <member className="BillboardResource">
+   <functionName>CreateCBuffer</functionName>
+   <explanations>
+定数バッファの作成
+   </explanations>
+   <variable0>デバイス</variable0>
+   </member>
+   <member className="BillboardResource">
+   <functionName>set_TextureMap</functionName>
+   <explanations>
+描画パス
+   </explanations>
+   <variable0>></variable0>
+   <variable1>スクリーン座標（出力先）</variable1>
+   </member>
+</doc>
