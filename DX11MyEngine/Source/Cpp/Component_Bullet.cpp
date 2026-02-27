@@ -150,7 +150,7 @@ void Bullet::Start(RendererEngine& renderer)
             VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
             int spark_handle = Master::m_pEffectManager->PlayEffect("Spark");   // ‰Î‰Ô
             int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke");   // ‰Œ
-            int exp_handle = Master::m_pEffectManager->PlayEffect("Exp_Plasma_01");   // ”š”­
+            int exp_handle = Master::m_pEffectManager->PlayEffect("Explosion_01");   // ”š”­
             int exp_smoke_handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_01");   // ‰Œ
             
             
@@ -173,9 +173,9 @@ void Bullet::Start(RendererEngine& renderer)
             Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
 
             // ”š”­‰Œ
-            //Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, expSize, expSize, expSize);
-            //Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
-            //Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
+            Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, expSize, expSize, expSize);
+            Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
         };
 }
 
@@ -194,8 +194,6 @@ void Bullet::Update(RendererEngine &renderer)
     
     m_PrevPos = crntPos;
     crntPos = crntPos - m_MoveVelocity * 20.0f;
-
-
 
     transform->set_Pos(crntPos);
 

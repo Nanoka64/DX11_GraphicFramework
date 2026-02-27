@@ -235,6 +235,9 @@
     <Filter Include="ソース ファイル\Singleton">
       <UniqueIdentifier>{1e12f4f9-01e9-43b3-a45a-8ab752c8a575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Weapon">
+      <UniqueIdentifier>{7f4d5bfc-2228-4ce9-9bf8-039edfcb9cd9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -561,9 +564,6 @@
     <ClCompile Include="Source\Cpp\ObjectPool.cpp">
       <Filter>ソース ファイル\Obj</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\BulletManager.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\IMoveBehaviour.cpp">
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClCompile>
@@ -575,6 +575,9 @@
     </ClCompile>
     <ClCompile Include="..\XML_Excel\XmlArrange.cpp">
       <Filter>ソース ファイル\App</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\BulletManager.cpp">
+      <Filter>ソース ファイル\Game\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -935,9 +938,6 @@
     <ClInclude Include="Source\Header\ObjectPool.h">
       <Filter>ソース ファイル\Obj</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\BulletManager.h">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\IMoveBehaviour.h">
       <Filter>ソース ファイル\Component\Move</Filter>
     </ClInclude>
@@ -949,6 +949,15 @@
     </ClInclude>
     <ClInclude Include="..\XML_Excel\XmlArrange.h">
       <Filter>ソース ファイル\App</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BulletManager.h">
+      <Filter>ソース ファイル\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ConstantBulletData.h">
+      <Filter>ソース ファイル\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ConstantWeaponData.h">
+      <Filter>ソース ファイル\Game\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

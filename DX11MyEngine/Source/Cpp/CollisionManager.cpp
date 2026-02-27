@@ -22,7 +22,7 @@ CollisionManager::~CollisionManager()
 //* [ˆø”] pCol : “o˜^‚·‚éƒRƒ‰ƒCƒ_[
 //* [•Ô’l] ‚È‚µ
 //*----------------------------------------------------------------------------------------
-void CollisionManager::RegisterCollider(std::shared_ptr<class Collider> pCol)
+void CollisionManager::RegisterCollider(std::shared_ptr<Collider> pCol)
 {
     m_pCollidersList.push_back(pCol);
 }
@@ -152,11 +152,11 @@ void CollisionManager::CollisionProcess()
 //* false : ¸”s
 //*----------------------------------------------------------------------------------------
 bool CollisionManager::HitCheck(
-    std::shared_ptr<class Collider> _colA, 
-    std::shared_ptr<class Collider> _colB, 
-    std::shared_ptr<class MyTransform> _transA, 
-    std::shared_ptr<class MyTransform> _transB, 
-    class CollisionInfo *info
+    std::shared_ptr<Collider> _colA, 
+    std::shared_ptr<Collider> _colB, 
+    std::shared_ptr<MyTransform> _transA, 
+    std::shared_ptr<MyTransform> _transB, 
+    CollisionInfo *info
 )
 {
     COLLIDER_TYPE colA_Type = _colA->get_ColliderType();

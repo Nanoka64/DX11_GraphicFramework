@@ -222,6 +222,8 @@
     <ClInclude Include="Source\Header\Component_TimerDestruction.h" />
     <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
     <ClInclude Include="Source\Header\CompositeState.h" />
+    <ClInclude Include="Source\Header\ConstantBulletData.h" />
+    <ClInclude Include="Source\Header\ConstantWeaponData.h" />
     <ClInclude Include="Source\Header\c_Game_LoadProcess.h" />
     <ClInclude Include="Source\Header\c_Game_Play.h" />
     <ClInclude Include="Source\Header\c_Result_GetItemCheck.h" />
