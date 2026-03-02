@@ -72,6 +72,7 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
             m_AnimProcTime += 0.023f;
         }
 
+
         BoneTransformsUpdate(renderer, m_AnimProcTime, m_CurrentAnimIndex);
     }
     // シャドウパス
@@ -112,6 +113,12 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
     float tickPerSecond = 0.0f;
     float timeInTicks = 0.0f;
     float animTimeTicks = 0.0f;
+
+    //// 範囲外チェック
+    //if (animIdx > m_Animations.size()) {
+    //    OutputDebugString("アニメーションインデックスが範囲外です。");
+    //    return;
+    //}
 
     // アニメーションがあるなら ***********************************
     if (!m_Animations.empty() && animIdx != -1) {

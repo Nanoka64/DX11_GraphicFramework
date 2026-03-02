@@ -5,6 +5,7 @@
 #include "DirectWriteManager.h"
 #include "ResourceManager.h"
 #include "GameObjectManager.h"
+#include "GameManager.h"
 #include "InputFactory.h"
 #include "SceneFactory.h"
 #include "MeshFactory.h"
@@ -530,70 +531,6 @@ void SceneManager::Update(RendererEngine& renderer)
 
     // オブジェクト更新
     Master::m_pGameObjectManager->ObjectUpdate(renderer);
-
-    ////-----------------------------------------------------------------------------
-    //// ■ アリの移動処理
-    ////-----------------------------------------------------------------------------
-    //for (int i = 0; i < 2; i++)
-    //{
-    //    auto antTransform = m_pAnt[i]->get_Transform().lock();
-    //    if (antTransform)
-    //    {
-    //        VEC3 pos = VEC3();
-    //        pos.y = 15.0f;
-    //        VEC3 crntPos = antTransform->get_VEC3ToPos();
-    //        VEC3 crntRot = antTransform->get_VEC3ToRotateToRad();
-
-    //        if (i % 2 == 0) {
-    //            pos.z = sin(counter) * 300.0f;
-    //        }
-    //        else{
-    //            pos.x = cos(counter) * 300.0f;
-    //        }
-
-    //        VEC3 velocity = pos - crntPos;
-
-    //        // 移動ベクトルから、Y軸周りの回転角度を求める
-    //        float targetAngle = atan2(velocity.x, velocity.z);
-
-    //        targetAngle = Lerp(crntRot.y, targetAngle, 0.1f);
-
-    //        antTransform->set_Pos(pos);
-    //        antTransform->set_RotateToRad(0, targetAngle, 0);
-    //    }
-    //}
-    //
-    ////-----------------------------------------------------------------------------
-    //// ■ 爆撃機の移動処理
-    ////-----------------------------------------------------------------------------
-    //static VEC3 B2PrevPos[3]{};
-    //VEC3 center = VEC3(0.0f, 0.0f, 0.0f);
-    //float radius = 700.0f;
-    //for (int i = 0; i < 3; i++)
-    //{
-    //    auto B2Transform = m_pBomber[i]->get_Transform().lock();
-    //    if (B2Transform)
-    //    {
-    //        float intervalDist = 200.0f * i;
-
-    //        VEC3 pos = VEC3(0.0f, 0.0f, 0.0f);
-    //        pos.x = center.x + (radius - intervalDist) * cos(counter);
-    //        pos.y = 300.0f + i * 100.0f;
-    //        pos.z = center.z + (radius - intervalDist) * sin(counter);
-
-    //        // 速度 = 今の座標 - 前の座標
-    //        VEC3 velocity = pos - B2PrevPos[i];
-
-    //        // 移動ベクトルから、Y軸周りの回転角度を求める
-    //        float targetAngle = atan2(velocity.x, velocity.z);
-
-    //        // 前の座標として保持
-    //        B2PrevPos[i] = pos;
-
-    //        B2Transform->set_Pos(pos);
-    //        B2Transform->set_RotateToRad(0.0f, targetAngle, 0.0f);
-    //    }
-    //}
 
     // 衝突判定
     Master::m_pCollisionManager->CollisionProcess();

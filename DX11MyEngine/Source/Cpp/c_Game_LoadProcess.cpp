@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "c_Game_LoadProcess.h"
+#include "GameManager.h"
 #include "ResourceManager.h"
 #include "RendererEngine.h"
 #include "SceneStateEnums.h"
@@ -54,6 +55,14 @@ void c_Game_LoadProcess::OnEnter(SceneManager *pOwner)
 //*----------------------------------------------------------------------------------------
 void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 {
+    // 弾管理クラスの初期化
+    if (!GameManager::get_BulletManager()->Init(*m_pRenderer))
+    {
+        MessageBox(NULL, "弾管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        assert(false);
+    }
+
+
     /* 兵士 */
     {
         // マテリアル取得

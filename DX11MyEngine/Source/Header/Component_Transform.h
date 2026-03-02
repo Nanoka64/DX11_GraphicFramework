@@ -56,7 +56,7 @@ public:
     /// –Ú•W•ûŒü‚ÖŒü‚©‚¹‚é
     /// </summary>
     /// <param name="target"></param>
-    void LookAt(const VECTOR3::VEC3 &target);
+    void LookAt(const VECTOR3::VEC3 &_targetPos);
 
 
     /// <summary>

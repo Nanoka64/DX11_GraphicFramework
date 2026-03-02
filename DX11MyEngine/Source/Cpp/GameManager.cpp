@@ -4,6 +4,10 @@
 #include "RendererEngine.h"
 #include "DirectWriteManager.h"
 
+
+BulletManager *GameManager::m_pBulletManager = nullptr;  // 弾管理クラス
+
+
 //*---------------------------------------------------------------------------------------
 //* @:GameManager Class 
 //*【?】コンストラクタ
@@ -35,12 +39,16 @@ GameManager::~GameManager()
 //*----------------------------------------------------------------------------------------
 bool GameManager::Init(RendererEngine& renderer)
 {
+	// シーン管理クラスの生成
 	m_pSceneManager = new SceneManager();
 
 	if (!m_pSceneManager->Init(renderer))
 	{
 		return false;
 	}
+
+	// 弾管理クラスの生成
+	GameManager::m_pBulletManager = new BulletManager();
 
 	return true;
 }
@@ -54,7 +62,11 @@ bool GameManager::Init(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameManager::Update(RendererEngine& renderer)
 {
+	// シーンの更新
 	m_pSceneManager->Update(renderer);
+
+	// 弾の更新
+	m_pBulletManager->Update(renderer);
 
 	// シーンが終了していたら終わらせる
 	if (m_pSceneManager->get_IsSceneClose())

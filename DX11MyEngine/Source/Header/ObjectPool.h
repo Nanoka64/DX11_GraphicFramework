@@ -24,7 +24,7 @@ public:
         std::function<T* (void)> _createFunc,       // オブジェクトの生成時に実行  戻り値：T*   引数：void
         int _defaultCapacity,                       // デフォルトのプールサイズ
         int _maxPoolSize)                           // プールの最大数
-        :                          
+        :
         m_pGetFunc(_getFunc),
         m_pReleaseFunc(_releaseFunc),
         m_pCreateFunc(_createFunc),

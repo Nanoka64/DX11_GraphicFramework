@@ -12,6 +12,7 @@
 #include "EffectManager.h"
 #include "SoundManager.h"
 #include "TimeManager.h"
+#include "BulletManager.h"
 
 class Master
 {

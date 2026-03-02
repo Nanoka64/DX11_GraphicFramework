@@ -14,6 +14,15 @@ struct CreateBulletInfo
 
 };
 
+/// <summary>
+/// 弾のトランスフォーム情報
+/// </summary>
+struct BulletTransformData {
+    VECTOR3::VEC3 _pos;
+    VECTOR3::VEC3 _rotRad;
+    VECTOR3::VEC3 _scale;
+};
+
 class GameObject;
 
 // ---------------------------------------------------------------------------------------
@@ -29,6 +38,8 @@ class BulletManager
 {
 private:
     std::unordered_map<BulletData::BULLET_TYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;
+    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_pExtractedBulletMap;   // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
+
 
 public:
     BulletManager();
@@ -47,6 +58,12 @@ public:
     /// <param name="renderer">描画エンジンの参照</param>
     void Update(RendererEngine &renderer);  
 
+    /// <summary>
+    /// 描画
+    /// </summary>
+    /// <param name="renderer">描画エンジンの参照</param>
+    void Draw(RendererEngine &renderer);  
+
 
     /// <summary>
     /// 弾の登録
@@ -54,6 +71,9 @@ public:
     /// <param name="pBullet"></param>
     void RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::shared_ptr<GameObject> pBullet);
 
+    void Shot(RendererEngine &renderer, const BulletTransformData& _transformData, const BulletData::NormalBulletData &_param);
+    void Shot(RendererEngine &renderer, const BulletTransformData& _transformData, const BulletData::ExplosionBulletData &_param);
+    void Shot(RendererEngine &renderer, const BulletTransformData& _transformData, const BulletData::HormingExplosionBulletData &_param);
 
 private:
     // コピー禁止

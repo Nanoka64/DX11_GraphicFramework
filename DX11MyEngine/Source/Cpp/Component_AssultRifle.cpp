@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Component_AssultRifle.h"
 #include "Component_Transform.h"
-#include "Component_Bullet.h"
+#include "Component_NormalBullet.h"
 #include "RendererEngine.h"
 #include "GameObjectManager.h"
 #include "GameObject.h"
@@ -13,10 +13,12 @@
 #include "Component_3DCamera.h"
 #include "Component_LineRenderer.h"
 #include "Component_PointLight.h"
+#include "GameManager.h"
 
 using namespace GIGA_Engine;
 using namespace Input;
 using namespace VECTOR3;
+using namespace BulletData;
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -101,71 +103,30 @@ void AssultRifle::Update(RendererEngine &renderer)
         // ****************************************************
         Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE02), 300);
 
-        // フラッシュライト
-        m_pFlashPointLight.lock()->set_Range(30.0f);
-        m_pFlashPointLight.lock()->set_Intensity(1.5f);
-        m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
 
-        // マテリアル取得
-        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
-
-        SetupMaterialInfo matInfo[1];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr1; // 頭
-
-        CreateModelInfo model;
-        model.pRenderer = &renderer;
-        model.Path = "Resource/Model/Weapon/bullet.fbx";
-        model.ObjTag = "Bullet";
-        model.IsAnim = false;
-        model.MatNum = 1;
-        model.SetupMaterial = matInfo;
-        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-        auto obj = MeshFactory::CreateModel(model);
-        if (obj == nullptr)
-        {
-            assert(false);
-            return;
-        }
-
-        // バレットコンポーネントの追加
-        auto bulletComp = obj->add_Component<Bullet>();
-        auto bullet_transform = obj->get_Transform().lock();
-        
-
+        // 親の向き等を参照
         VEC3 rad;
         rad.x = (c_AngleV) * -1;
         rad.y = (c_AngleH - 1.57f) * -1;
         rad.z = 0.0f;
 
-        // 親の向きと位置を参照
-        bullet_transform->set_Pos(pos);
-        bullet_transform->set_RotateToRad(rad);
-        bullet_transform->set_Scale(VEC3(0.01f, 0.01f, 0.01f));
+        // トランスフォームパラメータ
+        BulletTransformData bulletTransform;
+        bulletTransform._pos = pos;
+        bulletTransform._rotRad = rad;
+        bulletTransform._scale = VEC3(0.01f, 0.01f, 0.01f);
 
-        // コライダーの追加
-        auto collider = obj->add_Component<BoxCollider>();
-        collider->set_Size(VEC3(5.0f, 5.0f, 5.0f));
-        collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
+        // 弾自身のパラメータ
+        NormalBulletData param;
+        param._range = 2000.0f;
+        param._speed = 20.0f;
 
-        // 軌跡
-        auto trail = obj->add_Component<TrailRenderer>();
-        trail->set_Width(2.0f);
-        trail->set_MinVertexDistance(5.0f);
-        trail->set_DrawTime(5);
-        trail->set_EmissivePower(10.0f);
-        trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+        GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
 
-
-        auto lig = obj->add_Component<PointLight>();
-        lig->set_LightColor(VEC3(0.0f, 0.5f, 1.0f));
-        lig->set_Intensity(10.0f);
-
-        // コライダーの登録
-        Master::m_pCollisionManager->RegisterCollider(collider);
-
-        // 初期化
-        bulletComp->Start(renderer);
+        // フラッシュライト
+        m_pFlashPointLight.lock()->set_Range(30.0f);
+        m_pFlashPointLight.lock()->set_Intensity(1.5f);
+        m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
 	}
 }
 
@@ -180,17 +141,5 @@ void AssultRifle::Update(RendererEngine &renderer)
 void AssultRifle::Draw(RendererEngine &renderer)
 {
 
-}
-
-//*---------------------------------------------------------------------------------------
-//*【?】弾になるオブジェクトの設定
-//*
-//* [引数]
-//* pObj : 弾オブジェクト
-//* [返値]なし
-//*----------------------------------------------------------------------------------------
-void AssultRifle::set_BulletObject(std::shared_ptr<GameObject> pObj)
-{
-	m_pBulletObject = pObj;
 }
 

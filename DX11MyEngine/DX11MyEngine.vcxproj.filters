@@ -435,7 +435,7 @@
     <ClCompile Include="Source\Cpp\Component_AssultRifle.cpp">
       <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
+    <ClCompile Include="Source\Cpp\Component_NormalBullet.cpp">
       <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_Collider.cpp">
@@ -578,6 +578,12 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\BulletManager.cpp">
       <Filter>ソース ファイル\Game\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ExplosionBullet.cpp">
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_BulletBase.cpp">
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -800,7 +806,7 @@
     <ClInclude Include="Source\Header\Component_AssultRifle.h">
       <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_Bullet.h">
+    <ClInclude Include="Source\Header\Component_NormalBullet.h">
       <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Collider.h">
@@ -958,6 +964,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantWeaponData.h">
       <Filter>ソース ファイル\Game\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ExplosionBullet.h">
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_BulletBase.h">
+      <Filter>ソース ファイル\Component\Game\Weapon\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

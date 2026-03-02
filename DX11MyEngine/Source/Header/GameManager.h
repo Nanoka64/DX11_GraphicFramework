@@ -2,6 +2,7 @@
 //--------------------------------------------------------------------------------------
 //      * Includes *
 //--------------------------------------------------------------------------------------
+#include "BulletManager.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -15,6 +16,7 @@ class GameManager
 {
 private:
 	SceneManager* m_pSceneManager;
+	static BulletManager *m_pBulletManager;		// 弾管理
 	bool m_IsClose;	// 終了フラグ
 
 public:
@@ -29,5 +31,7 @@ public:
 	/* ゲームの終了フラグ */
 	void OnGameClose() { m_IsClose = true; };
 	bool get_IsGameClose()const { return m_IsClose; }
+
+	static BulletManager *get_BulletManager() { return m_pBulletManager; }
 };
 
