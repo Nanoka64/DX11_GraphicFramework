@@ -170,6 +170,11 @@ void BulletManager::Update(RendererEngine &renderer)
             {
                 // •Ô‹p
                 auto pool = m_BulletObjectPoolMap.find(mapIt->first);
+                if(pool == m_BulletObjectPoolMap.end())
+                {
+                    OutputDebugString("Žw’è‚³‚ê‚½’e‚Ìƒv[ƒ‹‚ª‘¶Ý‚µ‚Ü‚¹‚ñ");
+                    break;
+                }
                 pool->second.release(bullet);
 
                 bulletIt = bulletArray.erase(bulletIt); // ŽŸ‚Ì—v‘f‚Ö
@@ -179,6 +184,8 @@ void BulletManager::Update(RendererEngine &renderer)
                 ++bulletIt;
             }
         }
+
+        ++mapIt;
     }
 }
 
