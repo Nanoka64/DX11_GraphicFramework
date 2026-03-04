@@ -38,7 +38,7 @@ class BulletManager
 {
 private:
     std::unordered_map<BulletData::BULLET_TYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;
-    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_pExtractedBulletMap;   // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
+    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_ExtractedBulletMap;   // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
 
 
 public:

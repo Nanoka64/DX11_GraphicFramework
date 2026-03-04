@@ -5,6 +5,10 @@
 /* --- @:ObjectPool Class --- */
 //
 // 【?】オブジェクトプール
+//      ObjectManagerがオブジェクトの生成、破棄を行うため、このクラスでは
+//      あくまでプールの仕組み飲み提供して、生成破棄などは行わない。
+//      生ポインタで扱っているのは、shared_ptrでObjectManagerから渡されるようにしてしまうと、
+//      アクセスにオーバーヘッドが生じてしまい、プールの大量オブジェクトの管理という利点をそがれてしまうため。
 //
 // ***************************************************************************************
 template <typename T>
@@ -67,6 +71,9 @@ public:
 
             // 足りない場合は生成
             obj = m_pCreateFunc();
+            if (obj == nullptr) {
+                return nullptr;
+            }
 
             // 生成カウンタ加算
             m_CreateCounter++;  
@@ -95,4 +102,28 @@ public:
 
         m_pPoolArray.push_back(obj);
     }
+
+    /// <summary>
+    /// プールを空にする（所有権を持っていないので、中身をクリアするだけ）
+    /// シーン終了時やマネージャが全削除した際に呼ぶ
+    /// </summary>
+    void clear()
+    {
+        m_pPoolArray.clear();
+        m_CreateCounter = 0; 
+    }
+
+
+    /// <summary>
+    /// 最大生成数の取得
+    /// </summary>
+    /// <returns></returns>
+    int get_MaxNum()const { return m_MaxPoolSize; };
+
+
+    /// <summary>
+    /// 現在の生成数の取得
+    /// </summary>
+    /// <returns></returns>
+    int get_CrntCreateNum()const { return m_CreateCounter; }
 };

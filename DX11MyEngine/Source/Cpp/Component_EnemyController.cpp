@@ -266,11 +266,10 @@ void EnemyController::Draw(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void EnemyController::OnCollisionEnter(const class CollisionInfo& _other)
 {
-	if (_other.get_HitObject().lock()->get_Tag() == "Bullet")
+	if (_other.get_HitObject().lock()->get_Tag() == "Bullet_Normal")
 	{
 		m_pHealthComp->TakeDamage(40.0f);
 	}
-
 }
 
 //*---------------------------------------------------------------------------------------

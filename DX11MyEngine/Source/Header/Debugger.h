@@ -33,8 +33,11 @@ public:
 	// 描画終了後の処理
 	void EndFrame();
 
-	bool BeginDebugWindow(const std::string &_label);
-	void EndDebugWindow();
+																		
+																		// No!サイズ!!				// No!ムーブ!!
+	bool BeginDebugWindow(const std::string& _label, ImGuiWindowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+	void EndDebugWindow();											   
 
 	void DG_Text(std::string tex);																			// テキスト表示
 	void DG_SameLine(float offsetStart_X = 0.0f);															// この関数の上と下のテキストを横につなげる

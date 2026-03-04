@@ -258,6 +258,8 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 
+	if (m_pCBMaterialDataSet == nullptr)return;
+
 	// GPUメモリにアクセス
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

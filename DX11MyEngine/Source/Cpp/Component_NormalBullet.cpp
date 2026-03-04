@@ -26,7 +26,7 @@ using namespace VECTOR3;
 NormalBullet::NormalBullet(std::weak_ptr<GameObject> pOwner, int updateRank)
     : BulletBase(pOwner, updateRank)
 {
-    this->set_Tag("Bullet");
+    this->set_Tag("NormalBullet");
 }
 
 
@@ -202,10 +202,10 @@ void NormalBullet::OnCollisionEnter(const class CollisionInfo &other)
 {
     if (m_CollisionTask)
     {
-        m_CollisionTask(other);
+        //m_CollisionTask(other);
     }
 
-    m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
+    //m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
 }
 
 

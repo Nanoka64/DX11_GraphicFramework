@@ -16,8 +16,8 @@ using namespace VECTOR2;
 // 
 //////////////////////////////////////////////////////////////////////////////////////////
 // 通常弾 =====================================================================
-constexpr int NUM_DEFAULT__NORMAL_BULLET    = 1;
-constexpr int NUM_MAX__NORMAL_BULLET        = 5;
+constexpr int NUM_DEFAULT__NORMAL_BULLET    = 100;
+constexpr int NUM_MAX__NORMAL_BULLET        = 150;
 
 // 爆発弾 =====================================================================
 constexpr int NUM_DEFAULT__EXPLOSION_BULLET = 50;
@@ -59,17 +59,24 @@ BulletManager::~BulletManager()
 bool BulletManager::Init(RendererEngine &renderer)
 {
     m_BulletObjectPoolMap.emplace(BULLET_TYPE::NORMAL,ObjectPool<GameObject>(
-        [](GameObject *obj) {           // 取得時に実行 **********************************************
+        [&renderer](GameObject *obj) {           // 取得時に実行 **********************************************
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 
             // コライダーの使用をオンに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(true); 
 
+            auto bulletComp = obj->get_Component<NormalBullet>();
+            bulletComp->Start(renderer);
         },
         [](GameObject *obj) {           // 返却時に実行 **********************************************
             auto bulletComp = obj->get_Component<NormalBullet>();
             bulletComp->Reset();
+
+             // 使用フラグオフに
+            auto collider = obj->get_Component<BoxCollider>();
+            collider->set_IsEnable(false); 
+
         },
         [&renderer]()->GameObject *{     // 生成時に実行 **********************************************
             //GameObject* obj = Instantiate(std::make_shared<GameObject>(), false).get(); 
@@ -157,9 +164,19 @@ bool BulletManager::Init(RendererEngine &renderer)
 void BulletManager::Update(RendererEngine &renderer)
 {
     // 取り出したオブジェクトのみ更新させる
-    for (auto mapIt = m_pExtractedBulletMap.begin(); mapIt != m_pExtractedBulletMap.end(); )
+    for (auto mapIt = m_ExtractedBulletMap.begin(); mapIt != m_ExtractedBulletMap.end(); )
     {
-        auto &bulletArray = mapIt->second;
+        // プールが存在するかどうかの確認
+        auto poolIt = m_BulletObjectPoolMap.find(mapIt->first);
+        if (poolIt == m_BulletObjectPoolMap.end())
+        {
+            OutputDebugString("指定された弾のプールが存在しません");
+            continue;
+        }
+
+        auto& pool = poolIt->second;        // プールの取り出し
+        auto &bulletArray = mapIt->second;  // 弾配列の取り出し
+
 
         for (auto bulletIt = bulletArray.begin(); bulletIt != bulletArray.end(); )
         {
@@ -169,15 +186,10 @@ void BulletManager::Update(RendererEngine &renderer)
             if (bullet->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == false) 
             {
                 // 返却
-                auto pool = m_BulletObjectPoolMap.find(mapIt->first);
-                if(pool == m_BulletObjectPoolMap.end())
-                {
-                    OutputDebugString("指定された弾のプールが存在しません");
-                    break;
-                }
-                pool->second.release(bullet);
+                pool.release(bullet);
 
-                bulletIt = bulletArray.erase(bulletIt); // 次の要素へ
+                // 次の要素へ
+                bulletIt = bulletArray.erase(bulletIt); 
             }
             else
             {
@@ -187,6 +199,40 @@ void BulletManager::Update(RendererEngine &renderer)
 
         ++mapIt;
     }
+
+    Master::m_pDebugger->BeginDebugWindow("BulletManager", 0);
+    Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プール"));
+    for (int i = 0; i < static_cast<int>(BULLET_TYPE::NUM); i++)
+    {
+        if (m_BulletObjectPoolMap.empty())break;
+
+        if (Master::m_pDebugger->DG_TreeNode(std::to_string(i)))
+        {
+            // プール本体の情報 **********************************************************
+            // プールが存在するかどうかチェック
+            auto it = m_BulletObjectPoolMap.find(static_cast<BULLET_TYPE>(i));
+            if (it != m_BulletObjectPoolMap.end())
+            {
+                Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プール最大数：%d"), it->second.get_MaxNum());
+                Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プールの現在の生成数：%d"), it->second.get_CrntCreateNum());
+
+
+                // プールから取り出して使用しているオブジェクトの情報 ********************************************************
+                auto& extractedIt = m_ExtractedBulletMap[static_cast<BULLET_TYPE>(i)];
+                Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"使用しているオブジェクト数：%d"), extractedIt.size());
+                
+            }
+            else
+            {
+                Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プールが存在しません。"));
+            }
+
+            // ツリー終了
+            Master::m_pDebugger->DG_TreePop();
+        }
+    }
+    Master::m_pDebugger->EndDebugWindow();
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -236,13 +282,16 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
         return;
     }
 
+
+    obj->get_Component<NormalBullet>()->set_Parameter(_param);
+
     auto transform = obj->get_Transform().lock();
     transform->set_Pos(_transformData._pos);
     transform->set_RotateToRad(_transformData._rotRad);
     transform->set_Scale(_transformData._scale);
 
     // 更新リストに登録
-    m_pExtractedBulletMap[BULLET_TYPE::NORMAL].push_back(obj);
+    m_ExtractedBulletMap[BULLET_TYPE::NORMAL].push_back(obj);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -270,7 +319,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     transform->set_Scale(_transformData._scale);
 
     // 更新リストに登録
-    m_pExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(obj);
+    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(obj);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -298,5 +347,5 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     transform->set_Scale(_transformData._scale);
 
     // 更新リストに登録
-    m_pExtractedBulletMap[BULLET_TYPE::HORMING].push_back(obj);
+    m_ExtractedBulletMap[BULLET_TYPE::HORMING].push_back(obj);
 }

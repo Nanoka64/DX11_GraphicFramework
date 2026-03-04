@@ -92,12 +92,13 @@ void Debugger::EndFrame()
 //      * Debugger Class - デバッグウインドウ - *
 // 引数：ラベル名
 //=======================================================================================
-bool Debugger::BeginDebugWindow(const std::string &_label)
+bool Debugger::BeginDebugWindow(const std::string &_label, ImGuiWindowFlags flags)
 {
     bool isOpen = true;
-    return ImGui::Begin(_label.c_str(), &isOpen,
-        ImGuiWindowFlags_NoResize |     // No!サイズ!!
-        ImGuiWindowFlags_NoMove         // No!ムーブ!!
+    return ImGui::Begin(
+        _label.c_str(), 
+        &isOpen, 
+        flags
     );
 }
 
