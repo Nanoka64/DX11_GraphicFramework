@@ -174,6 +174,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(20, 15, 20));
             collider->set_Center(VEC3(0, 10, 0));
+            // 衝突カテゴリ
+            collider->set_CollisionCategory(COLLISION_CATEGORY::ENEMY);
+
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
@@ -254,6 +257,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         collider->set_Size(VEC3(170.0f, 300.0f, 170.0f));
         collider->set_Center(VEC3(0.0f, 300.0f, 0.0f));
         collider->set_IsStatic(true);
+        // 衝突カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);   
+
 
         // コライダーの登録
         Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
@@ -349,6 +355,8 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         collider->set_Size(VEC3(1000, 1, 1000));
         collider->set_Center(VEC3(0, 0, 0));
         collider->set_IsStatic(true);
+        // 衝突カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
 
         // コライダーの登録
         Master::m_pCollisionManager->RegisterCollider(collider);
@@ -447,7 +455,6 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     // カメラ操作をオンに
     m_pRenderer->get_CameraComponent()->set_IsControl(true);
-
 
 
     // プレイヤーに操作コンポーネントつける

@@ -199,6 +199,12 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         collider->set_Size(VEC3(5, 10, 5));
         collider->set_Center(VEC3(0, 10, 0));
 
+        // カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER);
+
+        // 衝突マスクの設定
+        collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::ENEMY) | UINT_CAST(COLLISION_CATEGORY::BUILDING));
+
         auto health = pPlayerObj->add_Component<Health>();
 
         // コライダーの登録

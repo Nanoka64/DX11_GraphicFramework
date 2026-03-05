@@ -21,9 +21,9 @@ m_pCBMaterialDataSet(nullptr)
 	this->set_Tag("BillboardResource");
 
 	// TODO:ビットフラグ、関数内で演算が効かない問題を直す
-	BitFlag::SetFlag((int)FIXED_AXIS_BITFLAG_X, (int&)m_FixedAxisBitFlag);
-	BitFlag::SetFlag((int)FIXED_AXIS_BITFLAG_Y, (int&)m_FixedAxisBitFlag);
-	BitFlag::SetFlag((int)FIXED_AXIS_BITFLAG_Z, (int&)m_FixedAxisBitFlag);
+	BitFlag::SetFlag((unsigned)FIXED_AXIS_BITFLAG_X, (unsigned&)m_FixedAxisBitFlag);
+	BitFlag::SetFlag((unsigned)FIXED_AXIS_BITFLAG_Y, (unsigned&)m_FixedAxisBitFlag);
+	BitFlag::SetFlag((unsigned)FIXED_AXIS_BITFLAG_Z, (unsigned&)m_FixedAxisBitFlag);
 
 }
 

@@ -49,20 +49,6 @@ NormalBullet::~NormalBullet()
 //*----------------------------------------------------------------------------------------
 void NormalBullet::Start(RendererEngine& renderer)
 {
-    auto transform = m_pOwner.lock()->get_Transform().lock();
-
-    // 開始位置
-    m_StartPos = transform->get_VEC3ToPos();
-    m_PrevPos = m_StartPos;
-
-    m_MoveVelocity = transform->get_Forward(); // 前方向ベクトル
-
-    m_MoveVelocity.x += Tool::RandRange(-0.03f, 0.03f);
-    m_MoveVelocity.y += Tool::RandRange(-0.03f, 0.03f);
-    m_MoveVelocity.z += Tool::RandRange(-0.03f, 0.03f);
-
-    m_MoveVelocity = m_MoveVelocity.Normalize();
-
     //////////////////////////////////////////////////////////////////////////////////////////
     //
 	//						衝突時処理の設定
@@ -102,7 +88,7 @@ void NormalBullet::Start(RendererEngine& renderer)
 
             // 当たった方向に伸ばそうとしたけど上手くいかなかった
             {
-                //VEC3 moveVel = -m_MoveVelocity.Normalize();
+                //VEC3 moveVel = -m_MoveDir.Normalize();
                 //// 法線と弾の移動ベクトルの内積
                 //float dot_HitNormToMoveVel = abs(VEC3::Dot(hitNormal, moveVel));
 
@@ -140,15 +126,12 @@ void NormalBullet::Start(RendererEngine& renderer)
             obj->get_Transform().lock()->set_RotateToRad(angleX, angleY, angleZ);
             obj->set_Tag("BulletHole");
             auto timer = obj->add_Component<TimerDestruction>();
-            timer->set_LifeTime(2.0f);  // 生存時間
+            timer->set_LifeTime(6.0f);  // 生存時間
 
             // エフェクト
             VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
             int spark_handle = Master::m_pEffectManager->PlayEffect("Spark");   // 火花
             int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke");   // 煙
-            int exp_handle = Master::m_pEffectManager->PlayEffect("Explosion_01");   // 爆発
-            int exp_smoke_handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_01");   // 煙
-            
             
             // 火花
             Master::m_pEffectManager->SetScaleEffect(spark_handle, 5.0f, 5.0f, 5.0f);
@@ -159,19 +142,6 @@ void NormalBullet::Start(RendererEngine& renderer)
             Master::m_pEffectManager->SetScaleEffect(smoke_handle, 5.0f, 5.0f, 5.0f);
             Master::m_pEffectManager->SetPositionEffect(smoke_handle, pos.x, pos.y, pos.z);
             Master::m_pEffectManager->SetRotationEffect(smoke_handle, effectRot.x, effectRot.y, effectRot.z);
-
-            float expSize = 10.0f;
-			VEC3 expRot = VEC3(Tool::RandRange(0.0f, 3.14f), Tool::RandRange(0.0f, 3.14f), Tool::RandRange(0.0f, 3.14f));
-
-            // 爆発
-            Master::m_pEffectManager->SetScaleEffect(exp_handle, expSize, expSize, expSize);
-            Master::m_pEffectManager->SetPositionEffect(exp_handle, pos.x, pos.y, pos.z);
-            Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
-
-            // 爆発煙
-            Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, expSize, expSize, expSize);
-            Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
-            Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
         };
 }
 
@@ -187,13 +157,27 @@ void NormalBullet::Update(RendererEngine &renderer)
 {
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 crntPos = transform->get_VEC3ToPos();
-    
+    float deltaTime = Master::m_pTimeManager->get_DeltaTime();
+    auto moveComp = m_pOwner.lock()->get_Component<MoveLogic>();
+
+    MoveParam param;
+    param._moveDirection = -m_MoveDir;// ※マイナスにしているのはプレイヤーの方向がおかしいせい（後で直す）
+    param._moveSpeed = m_Parameter._speed;
+    moveComp->Calculate(param);
+
     m_PrevPos = crntPos;
-    crntPos = crntPos - m_MoveVelocity * m_Parameter._speed;
-    transform->set_Pos(crntPos);
+
+
+    //// 移動ベクトルを求める
+    //VEC3 moveVec = m_MoveDir * (m_Parameter._speed * deltaTime);
+
+    //// ※マイナスにしているのはプレイヤーの方向がおかしいせい（後で直す）
+    //crntPos = crntPos - moveVec;
+    //transform->set_Pos(crntPos);
 
     // 射程距離外で削除
-    if (VEC3::Distance(crntPos, m_StartPos) > m_Parameter._range){
+    float distSq =  VEC3::DistanceSq(crntPos, m_StartPos);
+    if (distSq > m_Parameter._range * m_Parameter._range) {
         m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
     }
 }
@@ -202,10 +186,34 @@ void NormalBullet::OnCollisionEnter(const class CollisionInfo &other)
 {
     if (m_CollisionTask)
     {
-        //m_CollisionTask(other);
+        m_CollisionTask(other);
     }
 
-    //m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
+    m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】パラメータ等の設定
+//*     発射時に呼ぶ 
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void NormalBullet::Setup()
+{
+    auto transform = m_pOwner.lock()->get_Transform().lock();
+
+    // 開始位置
+    m_StartPos = transform->get_VEC3ToPos();
+    m_PrevPos = m_StartPos;
+
+    m_MoveDir = transform->get_Forward(); // 前方向ベクトル
+
+    m_MoveDir.x += Tool::RandRange(-0.03f, 0.03f);
+    m_MoveDir.y += Tool::RandRange(-0.03f, 0.03f);
+    m_MoveDir.z += Tool::RandRange(-0.03f, 0.03f);
+
+    m_MoveDir = m_MoveDir.Normalize();
 }
 
 

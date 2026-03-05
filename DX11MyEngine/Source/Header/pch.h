@@ -11,6 +11,11 @@
 #define CHECK_HRESULT(hr)       do { if (FAILED(hr)) { assert(false); return hr; } } while(0)    // HRESULTチェック do while(0)は複数行マクロの定石らしい？
 #define CHECK_HRESULT_NO_BOOL(hr)       do { if (FAILED(hr)) { assert(false); return; } } while(0)    // HRESULTチェック do while(0)は複数行マクロの定石らしい？
 
+#define INT_CAST(x)		(static_cast<int>(x))		// intにキャスト
+#define UINT_CAST(x)	(static_cast<unsigned>(x))	// unsignedにキャスト
+#define FLOAT_CAST(x)	(static_cast<float>(x))		// floatにキャスト
+#define DOUBLE_CAST(x)	(static_cast<double>(x))	// doubleにキャスト
+
 #define DEBUG_MODE false	// 内部的にデバッグモードにするかどうか
 
 #define NOMINMAX    // min STLとwindows.hのマクロがかぶっているのを回避する

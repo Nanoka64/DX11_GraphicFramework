@@ -1,5 +1,6 @@
 #pragma once
 #include "IComponent.h"
+#include "IMoveBehaviour.h"
 
 
 /// <summary>
@@ -27,7 +28,7 @@ enum class MOVE_BEHAVIOUR_TYPE : unsigned char
 class MoveLogic : public IComponent
 {
 private:
-    std::unordered_map<MOVE_BEHAVIOUR_TYPE, std::unique_ptr<class IMoveBehaviour>> m_pMoveBehaviourMap;    // 移動挙動のマップ
+    std::unordered_map<MOVE_BEHAVIOUR_TYPE, std::unique_ptr<IMoveBehaviour>> m_pMoveBehaviourMap;    // 移動挙動のマップ
     IMoveBehaviour *m_pMoveBehaviour = nullptr;	// 現在の移動挙動
 
 public:

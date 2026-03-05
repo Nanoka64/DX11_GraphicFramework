@@ -9,11 +9,11 @@ namespace GIGA_Engine
 		/// <summary>
 		/// フラグを立てる
 		/// </summary>
-		/// <typeparam name="Type"></typeparam>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="_flag">確認するフラグ</param>
 		/// <param name="outFlag">出力フラグの参照</param>
-		template<typename Type>
-		void SetFlag(Type _flag, Type &outFlag)
+		template<typename T, typename = typename std::enable_if<std::is_integral<T>::value&& std::is_unsigned<T>::value>::type>
+		void SetFlag(T _flag, T&outFlag)
 		{
 			outFlag |= _flag;
 		};
@@ -21,11 +21,11 @@ namespace GIGA_Engine
 		/// <summary>
 		/// フラグを降ろす
 		/// </summary>
-		/// <typeparam name="Type">確認するフラグ</typeparam>
+		/// <typeparam name="T">確認するフラグ</typeparam>
 		/// <param name="_flag"></param>
 		/// <param name="outFlag"> 出力フラグの参照 </param>
-		template<typename Type>
-		void UnsetFlag(Type _flag, Type& outFlag)
+		template<typename T, typename = typename std::enable_if<std::is_integral<T>::value&& std::is_unsigned<T>::value>::type>
+		void UnsetFlag(T _flag, T& outFlag)
 		{
 			outFlag &= ~_flag;
 		};
@@ -33,11 +33,11 @@ namespace GIGA_Engine
 		/// <summary>
 		/// フラグを反転させる
 		/// </summary>
-		/// <typeparam name="Type"></typeparam>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="_flag">確認するフラグ</param>
 		/// <param name="outFlag"> 出力フラグの参照 </param>
-		template<typename Type>
-		void ToggleFlag(Type _flag, Type& outFlag)
+		template<typename T, typename = typename std::enable_if<std::is_integral<T>::value&& std::is_unsigned<T>::value>::type>
+		void ToggleFlag(T _flag, T& outFlag)
 		{
 			outFlag ^= _flag;
 		};	
@@ -45,14 +45,27 @@ namespace GIGA_Engine
 		/// <summary>
 		/// フラグが立っているかどうか
 		/// </summary>
-		/// <typeparam name="Type"></typeparam>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="_flag">確認するフラグ</param>
 		/// <param name="serchFlag">確認するフラグの参照</param>
 		/// <returns></returns>
-		template<typename Type>
-		bool IsFlag(Type _flag, Type serchFlag)
+		template<typename T, typename = typename std::enable_if<std::is_integral<T>::value&& std::is_unsigned<T>::value>::type>
+		bool CheckAny(T _flag, T serchFlag)
 		{
 			return (serchFlag & _flag) != 0;
+		};
+
+		/// <summary>
+		/// 指定フラグが全て立っているかどうか
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="_flag">確認するフラグ</param>
+		/// <param name="serchFlag">確認するフラグの参照</param>
+		/// <returns></returns>
+		template<typename T, typename = typename std::enable_if<std::is_integral<T>::value&& std::is_unsigned<T>::value>::type>
+		bool CheckAll(T _flag, T serchFlag)
+		{
+			return (serchFlag & _flag) == _flag;
 		};
 
 

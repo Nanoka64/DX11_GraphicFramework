@@ -82,6 +82,13 @@ void CollisionManager::CollisionProcess()
                 continue;
             }
 
+            // 衝突マスクのチェック
+            if ((colA->get_CollisionBitMask() & static_cast<unsigned>(colB->get_CollisionCategory())) == 0 ||
+                (colB->get_CollisionBitMask() & static_cast<unsigned>(colA->get_CollisionCategory())) == 0)
+            {
+                continue;
+            }
+
             // トランスフォームの取得
             auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
             auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();

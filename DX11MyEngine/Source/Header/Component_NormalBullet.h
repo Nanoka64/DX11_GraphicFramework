@@ -26,6 +26,7 @@ public:
 	void OnCollisionEnter(const class CollisionInfo &other);	// Õ“Ëˆ—
 	void set_Parameter(const BulletData::NormalBulletData &_param) { m_Parameter = _param; };	// ƒpƒ‰ƒ[ƒ^İ’è
 	void Reset()override;
+	void Setup()override;
 
 };
 

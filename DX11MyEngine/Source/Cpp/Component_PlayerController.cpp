@@ -16,7 +16,7 @@ using namespace VECTOR2;
 using namespace DirectX;
 using namespace Tool;
 
-constexpr float MOVE_SPEED = 3.0f;		// プレイヤーの移動速度
+constexpr float MOVE_SPEED = 150.0f;		// プレイヤーの移動速度
 constexpr float ROLLING_SPEED = 10.0f;	// ローリング時のスピード
 constexpr int ROLLING_DURATION = 60;	// ローリング時間
 
@@ -119,6 +119,8 @@ void PlayerController::Update(RendererEngine &renderer)
 		RollingUpdate();
 		return;
 	}
+
+	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
 	auto pOwner = m_pOwner.lock();
 	VEC3 upVec = VEC3(0.0f, 1.0f, 0.0f);					// カメラから取得
@@ -247,7 +249,7 @@ void PlayerController::Update(RendererEngine &renderer)
 		//m_MoveVelocity = m_MoveVelocity.Normalize();
 
 		// 移動計算
-		newPos = (crntPos + (m_MoveVelocity * m_MoveSpeed));
+		newPos = (crntPos + (m_MoveVelocity * (m_MoveSpeed * deltaTime)));
 
 		if (m_IsJump)
 		{

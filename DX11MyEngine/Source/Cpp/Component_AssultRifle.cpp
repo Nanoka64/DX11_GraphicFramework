@@ -96,7 +96,7 @@ void AssultRifle::Update(RendererEngine &renderer)
         renderer.get_CameraComponent()->set_Fov(40.0f);
     }
     // 左クリックで発射
-	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 4, 4))
+	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 5, 5))
     {
         // ****************************************************
         //				 発射音再生
@@ -119,7 +119,13 @@ void AssultRifle::Update(RendererEngine &renderer)
         // 弾自身のパラメータ
         NormalBulletData param;
         param._range = 2000.0f;
-        param._speed = 20.0f;
+        param._speed = 500.0f;
+
+        //ExplosionBulletData param;
+        //param._range = 2000.0f;
+        //param._speed = 500.0f;
+        //param._explosionRadius = 50.0f;
+        //param._explosionEffectHandle;
 
         GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
 

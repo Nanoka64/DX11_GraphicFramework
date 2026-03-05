@@ -29,7 +29,7 @@ private:
     DirectX::XMVECTOR m_RotationQ;	// 回転 クオータニオンで保持するようにしたが、set/getではオイラーで指定できるようにする
 	DirectX::XMVECTOR m_Scale;		// 拡縮
     
-    DirectX::XMVECTOR m_Local_Position;	// ローカル空間オフセット位置
+    DirectX::XMVECTOR m_Local_Position;	    // ローカル空間オフセット位置
     DirectX::XMVECTOR m_Local_RotationQ;	// ローカル空間オフセット回転 ラジアンで保持
     DirectX::XMVECTOR m_Local_Scale;		// ローカル空間オフセット拡縮
 

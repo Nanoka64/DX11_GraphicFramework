@@ -31,7 +31,7 @@ m_Angle_H(1.57f),
 m_Angle_V(0.f),
 m_Fov(90.0f),
 m_NearClipDist(1.0f),
-m_FarClipDist(8000.0f),
+m_FarClipDist(6000.0f),
 m_IsControl(true)
 {
 	this->set_Tag("Camera3D"); 

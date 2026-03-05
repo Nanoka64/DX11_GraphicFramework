@@ -14,7 +14,8 @@ using namespace VECTOR3;
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
 MoveLogic::MoveLogic(std::weak_ptr<GameObject> pOwner, int updateRank)
-    :IComponent(pOwner, updateRank)
+    :IComponent(pOwner, updateRank),
+    m_pMoveBehaviour(nullptr)
 {
     this->set_Tag("MoveLogic");
 }
@@ -38,7 +39,7 @@ MoveLogic::~MoveLogic()
 void MoveLogic::Start(RendererEngine &renderer)
 {
     // デフォルトは直線移動
-    Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
+    ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
 }
 
 //*---------------------------------------------------------------------------------------

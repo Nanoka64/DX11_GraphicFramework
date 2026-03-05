@@ -21,7 +21,9 @@ Collider::Collider(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_IsHit(false),
     m_IsStatic(false),
     m_Center(VEC3()),
-    m_ColliderType(COLLIDER_TYPE::BOX)
+    m_ColliderType(COLLIDER_TYPE::BOX),
+    m_CategoryBits(COLLISION_CATEGORY::NONE),
+    m_CollisionBitMask(static_cast<unsigned>(COLLISION_CATEGORY::EVERY))    // ‰Šú’l‚Í‘SÕ“Ë‚É‚·‚é
 {
     this->set_Tag("Collider");
 }

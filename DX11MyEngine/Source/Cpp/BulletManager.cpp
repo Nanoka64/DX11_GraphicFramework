@@ -2,10 +2,12 @@
 #include "RendererEngine.h"
 #include "BulletManager.h"
 #include "Component_NormalBullet.h"
+#include "Component_ExplosionBullet.h"
 #include "Component_BoxCollider.h"
 #include "Component_TrailRenderer.h"
 #include "MeshFactory.h"
 #include "ResourceManager.h"
+#include "Component_MoveLogic.h"
 
 using namespace VECTOR3;
 using namespace VECTOR2;
@@ -58,29 +60,37 @@ BulletManager::~BulletManager()
 //*----------------------------------------------------------------------------------------
 bool BulletManager::Init(RendererEngine &renderer)
 {
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //
+    //						通常弾のプール
+    // 
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////
     m_BulletObjectPoolMap.emplace(BULLET_TYPE::NORMAL,ObjectPool<GameObject>(
-        [&renderer](GameObject *obj) {           // 取得時に実行 **********************************************
+        // 取得時に実行 ******************************************************************************************
+        [&renderer](GameObject *obj) {          
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 
             // コライダーの使用をオンに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(true); 
-
-            auto bulletComp = obj->get_Component<NormalBullet>();
-            bulletComp->Start(renderer);
+        // 取得時に実行 ******************************************************************************************
         },
-        [](GameObject *obj) {           // 返却時に実行 **********************************************
+        // 返却時に実行 ******************************************************************************************
+        [](GameObject *obj) 
+        {
             auto bulletComp = obj->get_Component<NormalBullet>();
             bulletComp->Reset();
 
-             // 使用フラグオフに
+             // コライダーの使用をオフに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(false); 
 
         },
-        [&renderer]()->GameObject *{     // 生成時に実行 **********************************************
-            //GameObject* obj = Instantiate(std::make_shared<GameObject>(), false).get(); 
-            
+        // 生成時に実行 ******************************************************************************************
+        [&renderer]()->GameObject *
+        {            
             // マテリアル取得
             auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
             SetupMaterialInfo matInfo[1];
@@ -107,19 +117,28 @@ bool BulletManager::Init(RendererEngine &renderer)
             // バレットコンポーネントの追加
             auto bulletComp = obj->add_Component<NormalBullet>();
 
+            auto moveComp = obj->add_Component<MoveLogic>();
+            moveComp->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
+            moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
+
             // 軌跡
-            auto trail = obj->add_Component<TrailRenderer>();
-            trail->set_Width(2.0f);
-            trail->set_MinVertexDistance(5.0f);
-            trail->set_DrawTime(5);
-            trail->set_EmissivePower(10.0f);
-            trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+            //auto trail = obj->add_Component<TrailRenderer>();
+            //trail->set_Width(2.0f);
+            //trail->set_MinVertexDistance(5.0f);
+            //trail->set_DrawTime(5);
+            //trail->set_EmissivePower(10.0f);
+            //trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(5.0f, 5.0f, 5.0f));
             collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
             collider->set_IsEnable(false);  // 初期化時は使用フラグオフに
+
+            // カテゴリ
+            collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER_BULLET);
+            // 衝突マスク
+            collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::ENEMY) | UINT_CAST(COLLISION_CATEGORY::BUILDING));
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
@@ -133,13 +152,96 @@ bool BulletManager::Init(RendererEngine &renderer)
         NUM_MAX__NORMAL_BULLET
     ));
 
-    //m_BulletObjectPoolMap.emplace(BULLET_TYPE::EXPLOSION, ObjectPool<GameObject>(
-    //    [](GameObject *obj) {},
-    //    [](GameObject *obj) {},
-    //    []()->GameObject *{ return Instantiate(std::make_shared<GameObject>(), false).get(); },
-    //    NUM_DEFAULT__EXPLOSION_BULLET,
-    //    NUM_MAX__EXPLOSION_BULLET
-    //));
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //
+    //						爆発弾のプール
+    // 
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////
+    m_BulletObjectPoolMap.emplace(BULLET_TYPE::EXPLOSION, ObjectPool<GameObject>(
+        // 取得時に実行 ******************************************************************************************
+        [&renderer](GameObject* obj)   
+        {          
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+            // コライダーの使用をオンに
+            auto collider = obj->get_Component<BoxCollider>();
+            collider->set_IsEnable(true);
+        },
+        // 返却時に実行 ******************************************************************************************
+        [](GameObject* obj)          
+        {                  
+            auto bulletComp = obj->get_Component<ExplosionBullet>();
+            bulletComp->Reset();
+
+            // コライダーの使用をオフに
+            auto collider = obj->get_Component<BoxCollider>();
+            collider->set_IsEnable(false);
+        },
+        // 生成時に実行 ******************************************************************************************
+        [&renderer]()->GameObject*  
+        {            
+            // マテリアル取得
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
+            SetupMaterialInfo matInfo[1];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr1;
+
+            // メッシュ作成
+            CreateModelInfo model;
+            model.pRenderer = &renderer;
+            model.Path = "Resource/Model/Weapon/bullet.fbx";
+            model.ObjTag = "Bullet_Normal";
+            model.IsAnim = false;
+            model.MatNum = 1;
+            model.SetupMaterial = matInfo;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            auto obj = MeshFactory::CreateModel(model);
+            if (obj == nullptr) {
+                assert(false);
+                return nullptr;
+            }
+
+            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブ
+
+            // バレットコンポーネントの追加
+            auto bulletComp = obj->add_Component<ExplosionBullet>();
+
+            auto moveComp = obj->add_Component<MoveLogic>();
+            moveComp->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
+            moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
+
+            // 軌跡
+            //auto trail = obj->add_Component<TrailRenderer>();
+            //trail->set_Width(2.0f);
+            //trail->set_MinVertexDistance(5.0f);
+            //trail->set_DrawTime(5);
+            //trail->set_EmissivePower(10.0f);
+            //trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+
+            // コライダーの追加
+            auto collider = obj->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(5.0f, 5.0f, 5.0f));
+            collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
+            collider->set_IsEnable(false);  // 初期化時は使用フラグオフに
+
+            // カテゴリ
+            collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER_BULLET);
+            // 衝突マスク
+            collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::ENEMY) | UINT_CAST(COLLISION_CATEGORY::BUILDING));
+
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(collider);
+
+            // 初期化
+            bulletComp->Start(renderer);
+
+            return obj.get();
+        },
+        NUM_DEFAULT__EXPLOSION_BULLET,
+        NUM_MAX__EXPLOSION_BULLET
+    ));
 
     //m_BulletObjectPoolMap.emplace(BULLET_TYPE::HORMING, ObjectPool<GameObject>(
     //    [](GameObject *obj) {},
@@ -282,13 +384,17 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
         return;
     }
 
-
-    obj->get_Component<NormalBullet>()->set_Parameter(_param);
-
+    // トランスフォームの設定
     auto transform = obj->get_Transform().lock();
     transform->set_Pos(_transformData._pos);
     transform->set_RotateToRad(_transformData._rotRad);
     transform->set_Scale(_transformData._scale);
+
+
+    // 弾コンポーネントのセットアップ
+    auto bulletComp = obj->get_Component<NormalBullet>();
+    bulletComp->set_Parameter(_param);
+    bulletComp->Setup();
 
     // 更新リストに登録
     m_ExtractedBulletMap[BULLET_TYPE::NORMAL].push_back(obj);
@@ -313,10 +419,18 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
         return;
     }
 
+    // トランスフォームの設定
     auto transform = obj->get_Transform().lock();
     transform->set_Pos(_transformData._pos);
     transform->set_RotateToRad(_transformData._rotRad);
     transform->set_Scale(_transformData._scale);
+
+
+    // 弾コンポーネントのセットアップ
+    auto bulletComp = obj->get_Component<ExplosionBullet>();
+    bulletComp->set_Parameter(_param);
+    bulletComp->Setup();
+
 
     // 更新リストに登録
     m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(obj);
