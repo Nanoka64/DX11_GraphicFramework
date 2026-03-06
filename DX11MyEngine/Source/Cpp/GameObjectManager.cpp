@@ -137,6 +137,17 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
     // •`‰æ
     for (auto& obj : m_pObjectList)
     {
+        // *** Ã“I ***
+        if (obj->get_State() == OBJECT_STATE::STATIC)
+        {
+            renderer.RegisterDefaultDepthStencilState(1);
+        }
+        // *** “®“I ***
+        else if (obj->get_State() == OBJECT_STATE::DYNAMIC)
+        {
+            renderer.RegisterDefaultDepthStencilState(0);
+        }
+
         if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) {
             obj->Draw(renderer);
             obj->ComponentRender(renderer);

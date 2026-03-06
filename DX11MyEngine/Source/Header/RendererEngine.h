@@ -305,6 +305,6 @@ public:
     /// <summary>
     /// デフォルトのデプスステンシルステートの登録
     /// </summary>
-    void RegisterDefaultDepthStencilState();
+    void RegisterDefaultDepthStencilState(UINT _ref);
 };
 

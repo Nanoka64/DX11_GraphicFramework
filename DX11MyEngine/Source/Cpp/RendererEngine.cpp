@@ -1169,9 +1169,9 @@ void RendererEngine::RegisterDepthStencilState(ID3D11DepthStencilState* pDss, UI
 //* 引数：なし
 //* 戻値：デフォルトの深度ステンシルを登録
 //*----------------------------------------------------------------------------------------
-void RendererEngine::RegisterDefaultDepthStencilState()
+void RendererEngine::RegisterDefaultDepthStencilState(UINT _ref)
 {
-    m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, 0);
+    m_pImmediateContext->OMSetDepthStencilState(m_pDepthStencilState, _ref);
 }
 
 

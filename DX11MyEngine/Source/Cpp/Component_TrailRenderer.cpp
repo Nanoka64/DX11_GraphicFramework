@@ -200,8 +200,9 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 		// メッシュの広がる方向ベクトルを作る
 		VEC3 dir = VEC3::Cross(headDir, viewDir);
 
-		VEC3 r_NewPos = tail + (dir * (m_Width * w_t));
+		VEC3 r_NewPos = tail + (dir * ( m_Width * w_t));
 		VEC3 l_NewPos = tail + (dir * (-m_Width * w_t));
+
 
 		VERTEX_Static r_V = VERTEX_Static();
 		VERTEX_Static l_V = VERTEX_Static();
@@ -228,7 +229,7 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 	}
 
 	// データのコピー 
-	memcpy(mappedResource.pData, pVertices, sizeof(VERTEX_Static) * m_TrailInfoList.size() * 2);
+	//memcpy(mappedResource.pData, pVertices, sizeof(VERTEX_Static) * m_TrailInfoList.size() * 2);
 
 	// アクセス終了
 	pContext->Unmap(m_pVertesBuffer.Get(), 0);
@@ -267,7 +268,7 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	m_pCBMaterialDataSet->Data.Diffuse		 = m_Color;
 	m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
 	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
-	m_pCBMaterialDataSet->Data.Specular		 = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pCBMaterialDataSet->Data.Specular		 = VEC4(1.0f, 1.0f, 1.0f, 0.1f);
 	m_pCBMaterialDataSet->Data.SpecularPower = 150.0f;
 
 	// データのコピー 

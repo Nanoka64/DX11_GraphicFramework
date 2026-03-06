@@ -114,6 +114,9 @@ bool BulletManager::Init(RendererEngine &renderer)
             
             obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブ
             
+            // 動的オブジェクトとして設定
+            obj->set_State(OBJECT_STATE::DYNAMIC);
+
             // バレットコンポーネントの追加
             auto bulletComp = obj->add_Component<NormalBullet>();
 
@@ -181,7 +184,7 @@ bool BulletManager::Init(RendererEngine &renderer)
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject*  
-        {            
+        {
             // マテリアル取得
             auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
             SetupMaterialInfo matInfo[1];
@@ -203,6 +206,9 @@ bool BulletManager::Init(RendererEngine &renderer)
                 return nullptr;
             }
 
+            // 動的オブジェクトとして設定
+            obj->set_State(OBJECT_STATE::DYNAMIC);
+
             obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブ
 
             // バレットコンポーネントの追加
@@ -213,12 +219,12 @@ bool BulletManager::Init(RendererEngine &renderer)
             moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
 
             // 軌跡
-            //auto trail = obj->add_Component<TrailRenderer>();
-            //trail->set_Width(2.0f);
-            //trail->set_MinVertexDistance(5.0f);
-            //trail->set_DrawTime(5);
-            //trail->set_EmissivePower(10.0f);
-            //trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+            auto trail = obj->add_Component<TrailRenderer>();
+            trail->set_Width(2.0f);
+            trail->set_MinVertexDistance(5.0f);
+            trail->set_DrawTime(120);
+            trail->set_EmissivePower(10.0f);
+            trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();

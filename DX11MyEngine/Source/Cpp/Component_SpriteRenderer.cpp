@@ -153,7 +153,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
     pContext->DrawIndexed(6, 0, 0);
 
 	// default‚É–ß‚·
-	renderer.RegisterDefaultDepthStencilState();
+	renderer.RegisterDefaultDepthStencilState(0);
 
 	for (int i = 0; i < m_pTextureMap.size(); i++)
 	{

@@ -145,6 +145,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             auto obj  = MeshFactory::CreateModel(model);
             auto transform = obj->get_Component<MyTransform>();
 
+            // 動的オブジェクト
+            obj->set_State(OBJECT_STATE::DYNAMIC);
+
             obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
             obj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(0);
             

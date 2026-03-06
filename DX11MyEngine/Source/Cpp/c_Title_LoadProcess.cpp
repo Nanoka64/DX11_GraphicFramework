@@ -183,6 +183,9 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         // 破棄しない
         pPlayerObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
 
+        // 動的オブジェクト
+        pPlayerObj->set_State(OBJECT_STATE::DYNAMIC);
+
         pPlayerObj->get_Transform().lock()->set_Pos(-900.0f, 0.0f, 900.0f);
         //pPlayerObj->add_Component<PlayerController>(1);
         //pPlayerObj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);

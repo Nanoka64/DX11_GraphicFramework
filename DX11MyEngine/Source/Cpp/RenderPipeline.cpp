@@ -375,7 +375,7 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
     renderer.RegisterDepthStencilState(NULL, 0);
 
     // デフォルトの深度ステンシル設定に戻す
-    renderer.RegisterDefaultDepthStencilState();
+    renderer.RegisterDefaultDepthStencilState(0);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
@@ -456,7 +456,7 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     
 
     // デフォルトの深度ステンシル設定に戻す
-    renderer.RegisterDefaultDepthStencilState();
+    renderer.RegisterDefaultDepthStencilState(0);
 
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
