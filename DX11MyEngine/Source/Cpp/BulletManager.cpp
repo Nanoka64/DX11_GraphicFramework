@@ -431,6 +431,8 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     bulletComp->set_Parameter(_param);
     bulletComp->Setup();
 
+    auto collider = obj->get_Component<BoxCollider>();
+    collider->set_Size(VEC3(_transformData._scale));
 
     // 更新リストに登録
     m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(obj);

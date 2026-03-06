@@ -17,6 +17,7 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pDepthStencilTexture;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pReadOnlyDepthStencilView; // 読み取り専用DSV
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDepthShaderResourceView;
 
     int m_Width;
@@ -52,6 +53,7 @@ public:
     ID3D11RenderTargetView *get_RTV() { return m_pRendertargetView.Get(); }
     ID3D11ShaderResourceView *get_SRV() { return m_pShaderResouceView.Get(); }
     ID3D11DepthStencilView *get_DSV() { return m_pDepthStencilView.Get(); };
+    ID3D11DepthStencilView *get_ReadOnryDSV() { return m_pReadOnlyDepthStencilView.Get(); };
 
     /// <summary>
     /// SRVのComポインタ取得

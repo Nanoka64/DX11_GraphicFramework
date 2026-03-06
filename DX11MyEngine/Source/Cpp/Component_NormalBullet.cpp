@@ -17,6 +17,10 @@ using namespace GIGA_Engine;
 using namespace Input;
 using namespace VECTOR3;
 
+constexpr float DECAL_SIZE_FACTOR        = 25.0f;   // デカールの大きさの補正値（transformのスケールだと小さすぎるため）
+constexpr float DECAL_Z_AXIS_SIZE_FACTOR = 40.0f;    // デカールの奥行に加算する補正値
+constexpr float DECAL_LIFE_TIME          = 10.0f;    // デカールの生存時間
+
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
 //* [引数]
@@ -114,10 +118,10 @@ void NormalBullet::Start(RendererEngine& renderer)
 
             float angleZ = Tool::RandRange(0.0f, 6.14f);
 
-            VEC3 scale;
-            scale.x = 20.0f;
-            scale.y = 20.0f;
-            scale.z = 40.0f;
+            VEC3 scale = transform->get_VEC3ToScale();
+            scale += DECAL_SIZE_FACTOR;
+            scale.z += DECAL_Z_AXIS_SIZE_FACTOR;
+
 
             auto obj = MeshFactory::CreateDecal(decal);
             obj->get_Component<DecalRenderer>()->Start(renderer);
@@ -126,20 +130,22 @@ void NormalBullet::Start(RendererEngine& renderer)
             obj->get_Transform().lock()->set_RotateToRad(angleX, angleY, angleZ);
             obj->set_Tag("BulletHole");
             auto timer = obj->add_Component<TimerDestruction>();
-            timer->set_LifeTime(6.0f);  // 生存時間
+            timer->set_LifeTime(DECAL_LIFE_TIME);  // 生存時間
 
             // エフェクト
             VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
             int spark_handle = Master::m_pEffectManager->PlayEffect("Spark");   // 火花
             int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke");   // 煙
             
+            VEC3 effectScale = 5.0f;
+
             // 火花
-            Master::m_pEffectManager->SetScaleEffect(spark_handle, 5.0f, 5.0f, 5.0f);
+            Master::m_pEffectManager->SetScaleEffect(spark_handle, effectScale.x, effectScale.y, effectScale.z);
             Master::m_pEffectManager->SetPositionEffect(spark_handle, pos.x, pos.y, pos.z);
             Master::m_pEffectManager->SetRotationEffect(spark_handle, effectRot.x, effectRot.y, effectRot.z);
 
             // 煙
-            Master::m_pEffectManager->SetScaleEffect(smoke_handle, 5.0f, 5.0f, 5.0f);
+            Master::m_pEffectManager->SetScaleEffect(smoke_handle, effectScale.x, effectScale.y, effectScale.z);
             Master::m_pEffectManager->SetPositionEffect(smoke_handle, pos.x, pos.y, pos.z);
             Master::m_pEffectManager->SetRotationEffect(smoke_handle, effectRot.x, effectRot.y, effectRot.z);
         };

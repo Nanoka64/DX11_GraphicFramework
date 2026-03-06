@@ -9,7 +9,8 @@
 //*----------------------------------------------------------------------------------------
 GameObject::GameObject():
 	m_IsCalcUpdate(false),
-	m_IsShadow(false)
+	m_IsShadow(false),
+	m_State(OBJECT_STATE::STATIC)
 {
 
 }

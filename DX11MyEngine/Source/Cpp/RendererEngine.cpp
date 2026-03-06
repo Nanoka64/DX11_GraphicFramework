@@ -38,7 +38,7 @@ RendererEngine::RendererEngine() :
     m_pRasterState_FrontCull(nullptr),
     m_pRasterState_BackCull(nullptr),
     m_pDepthStencilState(nullptr),
-    m_pDepthTestDisabled_DSS(nullptr),
+    m_pDepthWriteDisabled_DSS(nullptr),
     m_pRendererPipeline(nullptr),
     m_pClampShadow(nullptr),
     m_CrntRenderPass(RENDER_PASS::MAIN),
@@ -426,25 +426,66 @@ HRESULT RendererEngine::InitDX11_ZBuff()
     //
     /* Ｚテストの設定 */
     //
-    D3D11_DEPTH_STENCIL_DESC depthSD;
-    ZeroMemory(&depthSD, sizeof(D3D11_DEPTH_STENCIL_DESC));
+    D3D11_DEPTH_STENCIL_DESC depthDesc;
+    ZeroMemory(&depthDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
     // D3D11_DEPTH_WRITE_MASK_ZERO  = 0, Z(depth)Test OFF
     // D3D11_DEPTH_WRITE_MASK_ALL   = 1  Z(depth)Test ON
 
     // Zテスト有りver
-    depthSD.DepthEnable = TRUE;                            // 深度テスト有効化
-    depthSD.StencilEnable   = false;                       // ステンシルテスト無効
-    depthSD.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ALL;  // 深度書き込み
-    depthSD.DepthFunc       = D3D11_COMPARISON_LESS;       // ＜ 小なり(描画対象のＺ値が既存ピクセルより手前なら描画)
-    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthStencilState); // ステート作成
+    // 通常================================================================
+    // ******** 深度テスト設定 ********
+    depthDesc.DepthEnable = TRUE;                            // 深度テスト有効化
+    depthDesc.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ALL;  // 深度書き込み
+    depthDesc.DepthFunc       = D3D11_COMPARISON_LESS;       // ＜ 小なり(描画対象のＺ値が既存ピクセルより手前なら描画)
+
+    // ******** ステンシルテスト設定 ********
+    depthDesc.StencilEnable   = TRUE;                       // ステンシルテスト無効
+    depthDesc.StencilReadMask = 0xFF;
+    depthDesc.StencilWriteMask = 0xFF;
+    // ポリゴンの前面（FrontFace）の設定
+    depthDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;        // ステンシルテストの失敗時（KEEP : 今の値を保持）
+    depthDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;   // 深度テストの失敗時（KEEP : 値の書き換えをしない）
+    depthDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;     // 両方合格した場合は書き換え
+    depthDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;        // 常にテストに合格させる（建物とか）
+    depthDesc.BackFace = depthDesc.FrontFace;   // 裏面も同じ
+
+    hr = m_pd3dDevice->CreateDepthStencilState(&depthDesc, &m_pDepthStencilState); // ステート作成
     if (FAILED(hr))return hr;
     
-    // Zテストなしver
-    depthSD.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // 深度書き込みなし
-    depthSD.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    hr = m_pd3dDevice->CreateDepthStencilState(&depthSD, &m_pDepthTestDisabled_DSS); // ステート作成
-     if (FAILED(hr))return hr;
+
+    // デカール用================================================================
+    D3D11_DEPTH_STENCIL_DESC decalDesc;
+    ZeroMemory(&decalDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+    // ******** 深度テスト設定 ********
+    decalDesc.DepthEnable = FALSE;                            // 深度テスト無効
+    decalDesc.DepthWriteMask  = D3D11_DEPTH_WRITE_MASK_ZERO;  // 書き込みなし
+    decalDesc.DepthFunc       = D3D11_COMPARISON_LESS_EQUAL;
+
+    // ******** ステンシルテスト設定 ********
+    decalDesc.StencilEnable = TRUE;
+    decalDesc.StencilReadMask = 0xFF;  // 全ビット読み取り対象
+    decalDesc.StencilWriteMask = 0x00; // デカール描画でステンシルバッファを書き換えない
+    // 前面（FrontFace）の設定
+    decalDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;       // バッファの値が参照値と一致すれば描画
+    decalDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;      // 失敗しても値の書き換えをしない
+    decalDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP; // 失敗しても値の書き換えをしない
+    decalDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;      // 成功しても値を変えない
+    // 裏面も同じ
+    decalDesc.BackFace = decalDesc.FrontFace;
+    hr = m_pd3dDevice->CreateDepthStencilState(&decalDesc, &m_pDecal_DSS); // ステート作成
+    if (FAILED(hr))return hr;
+
+
+    // 深度書き込みなしver================================================================
+    D3D11_DEPTH_STENCIL_DESC noWriteDesc;
+    ZeroMemory(&noWriteDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+    noWriteDesc.DepthEnable = TRUE;
+    noWriteDesc.StencilEnable = FALSE;
+    noWriteDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;  // 書き込みなし
+    noWriteDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    hr = m_pd3dDevice->CreateDepthStencilState(&noWriteDesc, &m_pDepthWriteDisabled_DSS); // ステート作成
+    if (FAILED(hr))return hr;
 
     return hr;
 }
@@ -1125,8 +1166,8 @@ void RendererEngine::RegisterDepthStencilState(ID3D11DepthStencilState* pDss, UI
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】RendererEngine内で定義しているデフォルトのものを設定する
-//* 引数：1.ID3D11DepthStencilState*
-//* 戻値：void
+//* 引数：なし
+//* 戻値：デフォルトの深度ステンシルを登録
 //*----------------------------------------------------------------------------------------
 void RendererEngine::RegisterDefaultDepthStencilState()
 {
@@ -1137,11 +1178,22 @@ void RendererEngine::RegisterDefaultDepthStencilState()
 
 //*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
-//*【?】深度テストなしの深度ステンシルを取得
-//* 引数：1.ID3D11DepthStencilState*
-//* 戻値：void
+//*【?】深度書き込みなしの深度ステンシルを取得
+//* 引数：なし
+//* 戻値：ID3D11DepthStencilState *
 //*----------------------------------------------------------------------------------------
-ID3D11DepthStencilState* RendererEngine::get_DepthTestDisabled_DSS()const
+ID3D11DepthStencilState* RendererEngine::get_DepthWriteDisabled_DSS()const
 {
-    return m_pDepthTestDisabled_DSS;
+    return m_pDepthWriteDisabled_DSS;
+}
+
+//*---------------------------------------------------------------------------------------
+//* @:RendererEngine Class 
+//*【?】デカール用の深度ステンシルを取得
+//* 引数：なし
+//* 戻値：ID3D11DepthStencilState *
+//*----------------------------------------------------------------------------------------
+ID3D11DepthStencilState *RendererEngine::get_Decal_DSS()const
+{
+    return m_pDecal_DSS;
 }

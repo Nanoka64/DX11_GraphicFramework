@@ -11,7 +11,9 @@
 #include "CollisionInfo.h"
 #include "ResourceManager.h"
 
-
+constexpr float DECAL_SIZE_FACTOR        = 100.0f;   // デカールの大きさの補正値
+constexpr float DECAL_Z_AXIS_SIZE_FACTOR = 40.0f;    // デカールの奥行に加算する補正値
+constexpr float DECAL_LIFE_TIME = 10.0f;             // デカールの生存時間
 using namespace VECTOR3;
 
 //*---------------------------------------------------------------------------------------
@@ -45,8 +47,6 @@ ExplosionBullet::~ExplosionBullet()
 //*----------------------------------------------------------------------------------------
 void ExplosionBullet::Start(RendererEngine &renderer)
 {
-
-
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //						衝突時処理の設定
@@ -86,25 +86,25 @@ void ExplosionBullet::Start(RendererEngine &renderer)
             float angleZ = Tool::RandRange(0.0f, 6.14f);
 
             VEC3 scale;
-            scale.x = 20.0f;
-            scale.y = 20.0f;
-            scale.z = 40.0f;
+            scale.x = m_Parameter._explosionRadius;
+            scale.y = m_Parameter._explosionRadius;
+            scale.z = m_Parameter._explosionRadius + DECAL_Z_AXIS_SIZE_FACTOR;
 
             auto obj = MeshFactory::CreateDecal(decal);
             obj->get_Component<DecalRenderer>()->Start(renderer);
             obj->get_Transform().lock()->set_Pos(pos);
-            obj->get_Transform().lock()->set_Scale(scale);
+            obj->get_Transform().lock()->set_Scale(scale + DECAL_SIZE_FACTOR);
             obj->get_Transform().lock()->set_RotateToRad(angleX, angleY, angleZ);
             obj->set_Tag("BulletHole");
             auto timer = obj->add_Component<TimerDestruction>();
-            timer->set_LifeTime(6.0f);  // 生存時間
+            timer->set_LifeTime(10.0f);  // 生存時間
 
             // エフェクト
             VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
-            int exp_handle = Master::m_pEffectManager->PlayEffect("Explosion_01");   // 爆発
+            int exp_handle = Master::m_pEffectManager->PlayEffect(m_Parameter._explosionEffectHandleTag);   // 爆発
             int exp_smoke_handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_01");   // 煙
 
-            float expSize = 10.0f;
+            float expSize = m_Parameter._explosionRadius;   // 爆発半径
             VEC3 expRot = VEC3(Tool::RandRange(0.0f, 3.14f), Tool::RandRange(0.0f, 3.14f), Tool::RandRange(0.0f, 3.14f));
 
             // 爆発

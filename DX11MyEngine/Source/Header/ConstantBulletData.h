@@ -56,7 +56,7 @@ namespace BulletData
     struct ExplosionBulletData : NormalBulletData
     {
         float _explosionRadius = 0.0f;             // 爆発の半径
-        int _explosionEffectHandle = -1;           // 爆発エフェクトのハンドル
+        std::string _explosionEffectHandleTag;     // 爆発エフェクトのハンドル
 
 
         /// <summary>

@@ -22,6 +22,9 @@ using namespace Tool;
 constexpr float DOF_MAX_RANGE = 2800.0f;
 constexpr float DOF_MIN_RANGE = 300.0f;
 
+constexpr const UINT STENCIL_REF_DECAL   = 1;   // デカールの参照値
+constexpr const UINT STENCIL_REF_STATIC  = 1;   // 静的オブジェクトの参照値
+constexpr const UINT STENCIL_REF_DYNAMIC = 2;   // 動的オブジェクトの参照値
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -332,14 +335,14 @@ void RenderPipeline::Decal_PathRender(RendererEngine &renderer)
         m_pNormal_RT,
     };
 
-    // アルベドと法線に上書き
-    renderer.RegisterRenderTargets(ARRAYSIZE(decalMRT), decalMRT, nullptr);
+    // アルベドと法線に上書き（読み取り専用の深度ビューも渡す）
+    renderer.RegisterRenderTargets(ARRAYSIZE(decalMRT), decalMRT, m_pDepth_RT->get_ReadOnryDSV());
 
     // 表カリング
     renderer.RegisterCullMode(CULL_MODE::FRONT);
 
     // デプスステンシル登録
-    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+    renderer.RegisterDepthStencilState(renderer.get_Decal_DSS(), STENCIL_REF_DECAL);
 
     // 深度テクスチャをスロット2渡す
     auto depthTex = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
@@ -433,7 +436,7 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // 
     // ************************************************************************
     // スカイボックス用のデプスステンシル登録
-    renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+    renderer.RegisterDepthStencilState(renderer.get_DepthWriteDisabled_DSS(), 0);
 
     // 表カリング スカイボックスはボックスの内側に表示しているため
     renderer.RegisterCullMode(CULL_MODE::FRONT);    
@@ -694,7 +697,7 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         1,
         1,
         DXGI_FORMAT_UNKNOWN,
-        DXGI_FORMAT_D32_FLOAT
+        DXGI_FORMAT_D24_UNORM_S8_UINT
     );
     if (result == false)return false;
 

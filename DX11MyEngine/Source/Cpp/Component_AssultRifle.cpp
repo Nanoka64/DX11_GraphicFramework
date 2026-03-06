@@ -117,19 +117,19 @@ void AssultRifle::Update(RendererEngine &renderer)
         bulletTransform._scale = VEC3(0.01f, 0.01f, 0.01f);
 
         // 弾自身のパラメータ
-        NormalBulletData param;
-        param._range = 2000.0f;
-        param._speed = 500.0f;
-
-        //ExplosionBulletData param;
+        //NormalBulletData param;
         //param._range = 2000.0f;
-        //param._speed = 500.0f;
-        //param._explosionRadius = 50.0f;
-        //param._explosionEffectHandle;
+        //param._speed = 400.0f;
+
+        ExplosionBulletData param;
+        param._range = 2000.0f;
+        param._speed = 300.0f;
+        param._explosionRadius = 50.0f;
+        param._explosionEffectHandleTag = "Explosion_01";
 
         GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
 
-        // フラッシュライト
+        // フラッシュ
         m_pFlashPointLight.lock()->set_Range(30.0f);
         m_pFlashPointLight.lock()->set_Intensity(1.5f);
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));

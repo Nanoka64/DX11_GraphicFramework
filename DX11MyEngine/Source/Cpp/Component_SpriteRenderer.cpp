@@ -147,7 +147,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	Master::m_pBlendManager->DeviceToSetBlendState(m_BlendMode);
 
 	// UIの描画の際は深度テストをオフにする
-	renderer.RegisterDepthStencilState(renderer.get_DepthTestDisabled_DSS(), 0);
+	renderer.RegisterDepthStencilState(renderer.get_DepthWriteDisabled_DSS(), 0);
 
     // 描画コール：インデックス数は6（三角形2個 × 3頂点） ==========================
     pContext->DrawIndexed(6, 0, 0);

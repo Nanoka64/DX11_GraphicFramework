@@ -32,6 +32,7 @@ namespace VECTOR3
 
 		VEC3() : x(0.f), y(0.f), z(0.f) {};
 		VEC3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {};
+		VEC3(float _scl) :x(_scl), y(_scl), z(_scl) {};
 		VEC3(const DirectX::XMFLOAT3& v) :x(v.x), y(v.y), z(v.z) {};    // XMFLOAT3を受け取る際の変換
 
 		// オーバーロード

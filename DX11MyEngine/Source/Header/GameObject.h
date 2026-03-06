@@ -2,6 +2,15 @@
 //#include "Object.h"
 #include "Component_Transform.h"
 
+/// <summary>
+/// オブジェクトの状態定義
+/// </summary>
+enum class OBJECT_STATE
+{
+	STATIC,		// 静的
+	DYNAMIC		// 動的
+};
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -27,6 +36,7 @@ private:
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
 	bool m_IsShadow;		// シャドウをかけるかどうか
+	OBJECT_STATE m_State;	// オブジェクトの状態（静的か動的か）
 
 	/* オブジェクトマネージャをフレンドとして登録 */
 	friend class GameObjectManager;
@@ -45,6 +55,9 @@ public:
 
 	bool get_IsShadow()const { return m_IsShadow; }
 	void set_IsShadow(bool _flag) { m_IsShadow = _flag; }
+
+	OBJECT_STATE get_State()const { return m_State; }
+	void set_State(const OBJECT_STATE& _state) { m_State = _state; }
 
 	// ****************************************************************************************************************************************
 	/* コンポーネント関連 */

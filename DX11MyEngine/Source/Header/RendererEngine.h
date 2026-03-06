@@ -58,8 +58,9 @@ private:
     ID3D11RenderTargetView                  * m_pRenderTargetView;      // 絵を描く領域を切り替える(メモリ領域を覗く、眼鏡みたいなもの)
     ID3D11Texture2D                         * m_pDepthStencil;          // 画像を読み込んで使えるようにするもの
     ID3D11DepthStencilView                  * m_pDepthStencilView;      // 深度バッファ(ZBuffer)奥行き
-    ID3D11DepthStencilState                 * m_pDepthStencilState;     // Z比較をするための設定
-    ID3D11DepthStencilState                 * m_pDepthTestDisabled_DSS; // Z比較をしないための設定
+    ID3D11DepthStencilState                 * m_pDepthStencilState;      // Z比較をするための設定
+    ID3D11DepthStencilState                 * m_pDepthWriteDisabled_DSS; // Z比較をしないための設定
+    ID3D11DepthStencilState                 *m_pDecal_DSS;               // デカール用の深度ステンシル
 
     ID3D11SamplerState                      * m_pSamplerLinear;         // テクスチャからどうピクセルをもらうか、サンプルをどうするか
     ID3D11SamplerState                      * m_pSamplerShadow;         // シャドウマップ用サンプラー
@@ -283,10 +284,16 @@ public:
     // ************************************************************************
 
     /// <summary>
-    /// 深度テストなしの深度ステンシルを取得
+    /// 深度書き込みなしの深度ステンシルを取得
     /// </summary>
     /// <returns></returns>
-    ID3D11DepthStencilState* get_DepthTestDisabled_DSS()const;
+    ID3D11DepthStencilState*get_DepthWriteDisabled_DSS()const;
+
+    /// <summary>
+    /// デカール用の深度ステンシルを取得
+    /// </summary>
+    /// <returns></returns>
+    ID3D11DepthStencilState*get_Decal_DSS()const;
 
     /// <summary>
     /// デプスステンシルステートの登録
