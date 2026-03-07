@@ -88,7 +88,7 @@ bool EffectManager::Setup(RendererEngine& renderer)
     LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
     LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
     LoadEffect(u"Resource/Effect/Explosion_Smoke_01.efkefc", "Explosion_Smoke_01");
-    LoadEffect(u"Resource/Effect/Explosion_Plasma01.efkefc", "Exp_Plasma_01");
+    LoadEffect(u"Resource/Effect/Explosion_Plasma01.efkefc", "Explosion_Plasma_01");
 
     return true;
 }

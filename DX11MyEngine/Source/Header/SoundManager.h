@@ -33,7 +33,7 @@ enum class SOUND_TYPE : char
 };
 
 /// <summary>
-/// ‰¹º‚ÌÄ¶—p‚ÌID
+/// Œø‰Ê‰¹‚ÌÄ¶—p‚ÌID
 /// </summary>
 enum class SOUND_ID
 {
@@ -43,6 +43,9 @@ enum class SOUND_ID
     /* eº */
     GUN_FIRE01,            
     GUN_FIRE02,
+
+    /* ”š”­ */
+    EXPLOSION01,
 
 
     /* •ºm */

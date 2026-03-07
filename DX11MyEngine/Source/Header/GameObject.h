@@ -49,9 +49,12 @@ public:
 	virtual void Draw(RendererEngine& renderer) {};
 	virtual bool Term(RendererEngine& renderer) { return true; };
 
-	void OnCollisionEnter(const class CollisionInfo &info);
-	void OnCollisionStay(const class CollisionInfo &info);
-	void OnCollisionExit(const class CollisionInfo &info);
+	void OnCollisionEnter(const class CollisionInfo& _other);	// “–‚½‚Á‚½uŠÔ
+	void OnCollisionStay(const class CollisionInfo& _other);	// “–‚½‚Á‚Ä‚¢‚éŠÔ
+	void OnCollisionExit(const class CollisionInfo& _other);	// —£‚ê‚½uŠÔ
+	void OnTriggerEnter(const class CollisionInfo& _other);		// ƒgƒŠƒK[ “–‚½‚Á‚½uŠÔ
+	void OnTriggerStay(const class CollisionInfo& _other);		// ƒgƒŠƒK[ “–‚½‚Á‚Ä‚¢‚éŠÔ
+	void OnTriggerExit(const class CollisionInfo& _other);		// ƒgƒŠƒK[ —£‚ê‚½uŠÔ
 
 	bool get_IsShadow()const { return m_IsShadow; }
 	void set_IsShadow(bool _flag) { m_IsShadow = _flag; }

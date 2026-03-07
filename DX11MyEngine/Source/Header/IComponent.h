@@ -29,6 +29,9 @@ public:
 	virtual void OnCollisionEnter(const class CollisionInfo &_other) {} // “–‚½‚Á‚½uŠÔ
 	virtual void OnCollisionStay(const class CollisionInfo &_other) {}	// “–‚½‚Á‚Ä‚¢‚éŠÔ
 	virtual void OnCollisionExit(const class CollisionInfo &_other) {}	// —£‚ê‚½uŠÔ
+	virtual void OnTriggerEnter(const class CollisionInfo &_other) {}	// ƒgƒŠƒK[ “–‚½‚Á‚½uŠÔ
+	virtual void OnTriggerStay(const class CollisionInfo& _other) {}	// ƒgƒŠƒK[ “–‚½‚Á‚Ä‚¢‚éŠÔ
+	virtual void OnTriggerExit(const class CollisionInfo& _other) {}	// ƒgƒŠƒK[ —£‚ê‚½uŠÔ
 
 	int get_UpdateRank() const { return m_UpdateRank; }	// XV‚Ì‡”Ôæ“¾
 	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };

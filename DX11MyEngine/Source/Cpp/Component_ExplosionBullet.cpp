@@ -3,6 +3,8 @@
 #include "Component_MoveLogic.h"
 #include "Component_TimerDestruction.h"
 #include "Component_DecalRenderer.h"
+#include "Component_SphereCollider.h"
+#include "Component_Health.h"
 #include "RendererEngine.h"
 
 #include "GameObject.h"
@@ -25,7 +27,7 @@ using namespace VECTOR3;
 ExplosionBullet::ExplosionBullet(std::weak_ptr<GameObject> pOwner, int updateRank) : 
     BulletBase(pOwner, updateRank)
 {
-	this->set_Tag("ExplosionBullet");
+	this->set_Tag("Bullet_Explosion");
 }
 
 
@@ -55,6 +57,17 @@ void ExplosionBullet::Start(RendererEngine &renderer)
     m_CollisionTask =
         [this, &renderer](const class CollisionInfo& _other)
         {
+
+            auto transform = m_pOwner.lock()->get_Transform().lock();
+            VEC3 pos = transform->get_VEC3ToPos();
+
+            // ****************************************************
+            //				 爆発音再生
+            // ****************************************************
+            Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01), pos);
+
+
+            // デカールの作成
             auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_BulletHole");
 
             SetupMaterialInfo matInfo[1];
@@ -70,9 +83,6 @@ void ExplosionBullet::Start(RendererEngine &renderer)
             decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
             decal.IsNormalMap = false;
             decal.IsDynamic = true;
-
-            auto transform = m_pOwner.lock()->get_Transform().lock();
-            VEC3 pos = transform->get_VEC3ToPos();
 
             VEC3 hitNormal = _other.get_HitNormal();    // 衝突相手の法線
 
@@ -116,6 +126,7 @@ void ExplosionBullet::Start(RendererEngine &renderer)
             Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, expSize, expSize, expSize);
             Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
             Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
+
         };
 }
 
@@ -140,6 +151,7 @@ void ExplosionBullet::Update(RendererEngine &renderer)
 
     m_PrevPos = crntPos;
 
+
     // 射程距離外で削除
     float distSq = VEC3::DistanceSq(crntPos, m_StartPos);
     if (distSq > m_Parameter._range * m_Parameter._range) {
@@ -147,11 +159,36 @@ void ExplosionBullet::Update(RendererEngine &renderer)
     }
 }
 
-void ExplosionBullet::OnCollisionEnter(const class CollisionInfo &other)
+
+//*---------------------------------------------------------------------------------------
+//*【?】トリガー衝突
+//*     
+//* [引数]
+//*  &other : 衝突相手の情報
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void ExplosionBullet::OnTriggerEnter(const class CollisionInfo &other)
 {
     if (m_CollisionTask)
     {
         m_CollisionTask(other);
+    }    
+    
+    if (m_pOwner.expired())return;
+
+    auto owner = m_pOwner.lock();
+    auto transform = owner->get_Transform().lock();
+    VEC3 pos = transform->get_VEC3ToPos();
+
+    unsigned mask = UINT_CAST(COLLISION_CATEGORY::ENEMY);   // 敵のみ
+    
+    // 範囲内チェック
+    auto targets = Master::m_pCollisionManager->CheckSphere(pos, m_Parameter._explosionRadius * 2, mask);
+
+    // 範囲内の全員にダメージ
+    for (auto target : targets) {
+        auto obj = target->get_OwnerObj().lock();
+        obj->get_Component <Health>()->TakeDamage(100.0f);
     }
 
     m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
@@ -166,7 +203,9 @@ void ExplosionBullet::OnCollisionEnter(const class CollisionInfo &other)
 //*----------------------------------------------------------------------------------------
 void ExplosionBullet::Setup()
 {
-    auto transform = m_pOwner.lock()->get_Transform().lock();
+    if (m_pOwner.expired())return;
+    auto owner = m_pOwner.lock();
+    auto transform = owner->get_Transform().lock();
 
     // 開始位置
     m_StartPos = transform->get_VEC3ToPos();

@@ -103,6 +103,27 @@ void GameObject::OnCollisionEnter(const CollisionInfo &info)
 }
 
 //*---------------------------------------------------------------------------------------
+//*【?】衝突判定を受け取る
+//*
+//* [引数]
+//* &info : 衝突情報
+//*
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void GameObject::OnTriggerEnter(const CollisionInfo &info)
+{
+	// 自身が持っている全てのコンポーネントに対してループ処理を行う
+	for (auto &component : m_pComponentList)
+	{
+		// アクティブなもののみ
+		if (component->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+		{
+			component->OnTriggerEnter(info);
+		}
+	}
+}
+
+//*---------------------------------------------------------------------------------------
 //* @:Object Class 
 //*【?】Transformの取得
 //* 引数：なし

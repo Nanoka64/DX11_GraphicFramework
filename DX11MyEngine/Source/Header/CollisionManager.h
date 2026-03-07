@@ -95,6 +95,11 @@ public:
     /// <returns></returns>
     bool HitCheck(std::shared_ptr<class Collider> _colA,std::shared_ptr<class Collider> _colB, std::shared_ptr<class MyTransform> _transA,std::shared_ptr<class MyTransform> _transB, class CollisionInfo* info);
     
+    /// <summary>
+    /// 範囲内のオブジェクトを取得する
+    /// </summary>
+    std::vector<std::shared_ptr<class Collider>> CheckSphere(const VECTOR3::VEC3& _center, float _radius, unsigned _mask);
+
     // 3D --------------------------------------------------------
     // 箱と箱 物理的判定
     bool HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info);

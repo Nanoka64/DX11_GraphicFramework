@@ -63,6 +63,8 @@ public:
 	void set_Color(const VECTOR4::VEC4& _col) { m_Color = _col; }			//カラー設定
 	VECTOR4::VEC4 get_Color()const { return m_Color; }						//カラー取得
 
+	void clear_TrailInfoList() { m_TrailInfoList.clear(); }	// 軌跡情報をクリア
+
 private:
 	bool Setup(RendererEngine& renderer);
 	bool CreateConstantBuffer(RendererEngine &renderer);

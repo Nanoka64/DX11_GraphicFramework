@@ -30,7 +30,7 @@ constexpr float DECAL_LIFE_TIME          = 10.0f;    // ƒfƒJ[ƒ‹‚Ì¶‘¶ŠÔ
 NormalBullet::NormalBullet(std::weak_ptr<GameObject> pOwner, int updateRank)
     : BulletBase(pOwner, updateRank)
 {
-    this->set_Tag("NormalBullet");
+    this->set_Tag("Bullet_Normal");
 }
 
 

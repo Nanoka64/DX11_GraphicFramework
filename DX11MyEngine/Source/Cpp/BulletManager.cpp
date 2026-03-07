@@ -4,6 +4,7 @@
 #include "Component_NormalBullet.h"
 #include "Component_ExplosionBullet.h"
 #include "Component_BoxCollider.h"
+#include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
 #include "MeshFactory.h"
 #include "ResourceManager.h"
@@ -83,14 +84,17 @@ bool BulletManager::Init(RendererEngine &renderer)
             auto bulletComp = obj->get_Component<NormalBullet>();
             bulletComp->Reset();
 
-             // コライダーの使用をオフに
+            // コライダーの使用をオフに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(false); 
 
+            // 軌跡データをクリア
+            auto trail = obj->get_Component<TrailRenderer>();
+            trail->clear_TrailInfoList();
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject *
-        {            
+        {
             // マテリアル取得
             auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
             SetupMaterialInfo matInfo[1];
@@ -125,12 +129,12 @@ bool BulletManager::Init(RendererEngine &renderer)
             moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
 
             // 軌跡
-            //auto trail = obj->add_Component<TrailRenderer>();
-            //trail->set_Width(2.0f);
-            //trail->set_MinVertexDistance(5.0f);
-            //trail->set_DrawTime(5);
-            //trail->set_EmissivePower(10.0f);
-            //trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+            auto trail = obj->add_Component<TrailRenderer>();
+            trail->set_Width(2.0f);
+            trail->set_MinVertexDistance(5.0f);
+            trail->set_DrawTime(5);
+            trail->set_EmissivePower(5.0f);
+            trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
@@ -181,6 +185,10 @@ bool BulletManager::Init(RendererEngine &renderer)
             // コライダーの使用をオフに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(false);
+
+            // 軌跡データをクリア
+            auto trail = obj->get_Component<TrailRenderer>();
+            trail->clear_TrailInfoList();
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject*  
@@ -195,7 +203,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             CreateModelInfo model;
             model.pRenderer = &renderer;
             model.Path = "Resource/Model/Weapon/bullet.fbx";
-            model.ObjTag = "Bullet_Normal";
+            model.ObjTag = "Bullet_Explosion";
             model.IsAnim = false;
             model.MatNum = 1;
             model.SetupMaterial = matInfo;
@@ -214,24 +222,26 @@ bool BulletManager::Init(RendererEngine &renderer)
             // バレットコンポーネントの追加
             auto bulletComp = obj->add_Component<ExplosionBullet>();
 
+            // 移動用コンポーネントの追加
             auto moveComp = obj->add_Component<MoveLogic>();
             moveComp->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
             moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
 
-            // 軌跡
+            // 軌跡コンポーネントの追加
             auto trail = obj->add_Component<TrailRenderer>();
             trail->set_Width(2.0f);
             trail->set_MinVertexDistance(5.0f);
-            trail->set_DrawTime(120);
+            trail->set_DrawTime(10.0f);
             trail->set_EmissivePower(10.0f);
             trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
 
-            // コライダーの追加
+            // 衝突用コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(5.0f, 5.0f, 5.0f));
             collider->set_Center(VEC3(0.0f, 2.0f, 0.0f));
             collider->set_IsEnable(false);  // 初期化時は使用フラグオフに
-
+            collider->set_IsTrigger(true);  // トリガーとして設定
+            
             // カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER_BULLET);
             // 衝突マスク

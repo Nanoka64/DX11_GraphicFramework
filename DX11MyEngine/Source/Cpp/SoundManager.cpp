@@ -263,6 +263,7 @@ bool SoundManager::InitXA2Sound(void)
 	// ïêäÌ
 	Load_Wav("Resource/Sound/SE/Weapon/GunFire_01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE01));
 	Load_Wav("Resource/Sound/SE/Weapon/GunFire_02.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE02));
+	Load_Wav("Resource/Sound/SE/Weapon/Explosion01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01));
 
 	// ï∫ém
 	Load_Wav("Resource/Sound/SE/Ranger/ÉpÉìÉ`ÇÃàﬂéCÇÍ1.wav",SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_IN));

@@ -15,6 +15,7 @@ CollisionManager::CollisionManager()
 
 CollisionManager::~CollisionManager()
 {
+    m_pCollidersList.clear();
 }
 
 //*---------------------------------------------------------------------------------------
@@ -58,6 +59,11 @@ void CollisionManager::CollisionProcess()
         auto &colA = m_pCollidersList[i];
         bool isStaticA = false;
         bool isStaticB = false;
+        auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
+        if (transA == nullptr) {
+            MessageBox(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            continue;
+        }
 
         // 使用フラグチェック
         if (colA->get_IsEnable() == false) {
@@ -90,11 +96,10 @@ void CollisionManager::CollisionProcess()
             }
 
             // トランスフォームの取得
-            auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
             auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();
 
-            if (transA == nullptr || transB == nullptr){
-                MessageBox(NULL, "トランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            if (transB == nullptr) {
+                MessageBox(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
                 continue;
             }
 
@@ -103,40 +108,62 @@ void CollisionManager::CollisionProcess()
             // 衝突チェック
             if (HitCheck(colA, colB, transA, transB, &info))
             {
-                VEC3 pushVector;    // 押し出しベクトル
-                VEC3 currentPos;    // 押し出し反映用
-
                 // 衝突
                 colA->set_IsHit(true);
                 colB->set_IsHit(true);
 
-                // 押し出すベクトル = 法線 * めり込み量
-                pushVector = info.get_HitNormal() * info.get_PenetrationDepth();
+                // トリガー判定
+                bool isTriggerHit = (colA->get_IsTrigger() || colB->get_IsTrigger());
+
+                // トリガーでない場合は押し出し処理を行う
+                if (isTriggerHit == false)
+                {
+                    VEC3 pushVector;    // 押し出しベクトル
+                    VEC3 currentPos;    // 押し出し反映用
+
+                    // 押し出すベクトル = 法線 * めり込み量
+                    pushVector = info.get_HitNormal() * info.get_PenetrationDepth();
+
+                    // 静的オブジェクトの場合は0.0にする（押し出さない）
+                    float ratioA = isStaticA ? 0.0f : 0.5f;
+                    float ratioB = isStaticB ? 0.0f : 0.5f;
 
 
-                // 静的オブジェクトの場合は0.0にする（押し出さない）
-                float ratioA = isStaticA ? 0.0f : 0.5f;
-                float ratioB = isStaticB ? 0.0f : 0.5f;
+                    // Aは法線方向に押し出す *******************************************
+                    currentPos = transA->get_VEC3ToPos();
+                    transA->set_Pos(currentPos + (pushVector * ratioA));
 
+                    // Bは衝突された側なので法線とは逆方向に押し出す ********************
+                    currentPos = transB->get_VEC3ToPos();
+                    transB->set_Pos(currentPos + (-pushVector * ratioB));
+                }
 
-                // Aは法線方向に押し出す *******************************************
-                currentPos = transA->get_VEC3ToPos();
-                transA->set_Pos(currentPos + (pushVector * ratioA));
-
-                // Bは衝突された側なので法線とは逆方向に押し出す ********************
-                currentPos = transB->get_VEC3ToPos();
-                transB->set_Pos(currentPos + (-pushVector * ratioB));
-
-                
                 // Bと衝突したことをAオブジェクト側に伝える
-                info.set_HitObject(colB->get_OwnerObj());
-                info.set_HitCollider(colB);
-                colA->get_OwnerObj().lock()->OnCollisionEnter(info);
+                CollisionInfo infoA = info;
+                infoA.set_HitObject(colB->get_OwnerObj());
+                infoA.set_HitCollider(colB);
+
 
                 // Aと衝突したことをBオブジェクト側に伝える
-                info.set_HitObject(colA->get_OwnerObj());
-                info.set_HitCollider(colA);
-                colB->get_OwnerObj().lock()->OnCollisionEnter(info);
+                CollisionInfo infoB = info;
+                infoB.set_HitObject(colA->get_OwnerObj());
+                infoB.set_HitCollider(colA);
+                infoB.set_HitNormal(-info.get_HitNormal()); // そのままだとぶつかった側の押し出し法線なので、法線を反転させる
+
+
+                // イベント通知
+                if (colA->get_IsTrigger() || colB->get_IsTrigger())
+                {
+                    colA->get_OwnerObj().lock()->OnTriggerEnter(infoA);
+                    colB->get_OwnerObj().lock()->OnTriggerEnter(infoB);
+                }
+                else
+                {
+                    colA->get_OwnerObj().lock()->OnCollisionEnter(infoA);
+                    colB->get_OwnerObj().lock()->OnCollisionEnter(infoB);
+
+                }
+
             }
         }
     }
@@ -169,7 +196,11 @@ bool CollisionManager::HitCheck(
     COLLIDER_TYPE colA_Type = _colA->get_ColliderType();
     COLLIDER_TYPE colB_Type = _colB->get_ColliderType();
 
-    // ボックス同士 ********************************************************************
+    //=========================================================================================
+    //
+    //						 ボックス同士
+    //
+    //=========================================================================================
     if (colA_Type == COLLIDER_TYPE::BOX && colB_Type == COLLIDER_TYPE::BOX)
     {
         // 一旦キャストして実装（TODO: キャストしないように実装したい）
@@ -222,8 +253,11 @@ bool CollisionManager::HitCheck(
             return true;
         }
     }
-    
-    // スフィア同士 ********************************************************************
+    //=========================================================================================
+    //
+    //						スフィア同士
+    //
+    //=========================================================================================
     else if (colA_Type == COLLIDER_TYPE::SPHERE && colB_Type == COLLIDER_TYPE::SPHERE)
     {
         // 一旦キャストして実装（TODO: キャストしないように実装したい）
@@ -281,8 +315,11 @@ bool CollisionManager::HitCheck(
             return true;
         }
     }
-    
-    // ボックスとスフィア ********************************************************************
+    //=========================================================================================
+    //
+    //						ボックスとスフィア
+    //
+    //=========================================================================================
     else if (colA_Type == COLLIDER_TYPE::BOX && colB_Type == COLLIDER_TYPE::SPHERE)
     {
         // 一旦キャストして実装（TODO: キャストしないように実装したい）
@@ -349,6 +386,40 @@ bool CollisionManager::HitCheck(
 }
 
 //*---------------------------------------------------------------------------------------
+//*【?】範囲内のオブジェクトを取得する
+//*
+//* [引数]
+//* &_center : 中心座標
+//* _radius  : 範囲
+//* _mask    : 衝突判定用マスク
+//* [返値]
+//* 範囲内オブジェクトのリスト 
+//*----------------------------------------------------------------------------------------
+std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTOR3::VEC3& _center, float _radius, unsigned _mask)
+{
+    std::vector<std::shared_ptr<Collider>> hitList;
+
+    for (auto& col : m_pCollidersList) {
+        if (!col->get_IsEnable()) continue;
+
+        // マスクチェック
+        if (!(UINT_CAST(col->get_CollisionCategory()) & _mask)) continue;
+
+        // トランスフォーム取得
+        auto trans = col->get_OwnerObj().lock()->get_Component<MyTransform>();
+        VEC3 pos = trans->get_VEC3ToPos();
+        CollInData_Sphere srcA = { _center,_radius };
+        CollInData_Sphere srcB = { pos,    _radius };
+
+        if (HitCheck_SphereVsSphere(srcA, srcB))
+        {
+            hitList.push_back(col);
+        }
+    }
+    return hitList;
+}
+
+//*---------------------------------------------------------------------------------------
 //*【?】ボックスとボックスの物理的な判定
 //*
 //* [引数]
@@ -360,9 +431,6 @@ bool CollisionManager::HitCheck(
 //*----------------------------------------------------------------------------------------
 bool CollisionManager::HitCheck_BoxVsBox_Physics(const CollInData_AABB &_src, const CollInData_AABB &_dst, class CollisionInfo *info)
 {
-
-
-
     return true;
 }
 
