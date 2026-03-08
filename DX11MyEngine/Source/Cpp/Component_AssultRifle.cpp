@@ -26,7 +26,9 @@ using namespace BulletData;
 //* pOwner : オーナーオブジェクト
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
-AssultRifle::AssultRifle(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank)
+AssultRifle::AssultRifle(std::weak_ptr<GameObject> pOwner, int updateRank) 
+    : IComponent(pOwner, updateRank),
+    m_FireRate(0)
 {
 	this->set_Tag("AssultRifle");
 }
@@ -89,6 +91,16 @@ void AssultRifle::Update(RendererEngine &renderer)
     m_pLineRendererComp.lock()->set_Dir(VEC3::FromXMVECTOR(XMVector3Normalize(forward)));
     m_pLineRendererComp.lock()->set_StartPos(pos);
 
+
+
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾の切り替え"), 0);
+    Master::m_pDebugger->DG_CheckBox(Tool::U8ToChar(u8"爆発弾"), &m_IsExplosionBullet);
+    Master::m_pDebugger->DG_SliderFloat(Tool::U8ToChar(u8"爆発範囲"), 1, &m_ExplosionSize, 1.0f, 100.0f);
+    Master::m_pDebugger->EndDebugWindow();
+
+    // 発射レートの切り替え
+    m_FireRate = m_IsExplosionBullet ? 20 : 5;
+
     // 右クリックでズーム
     renderer.get_CameraComponent()->set_Fov(90.0f);
     if (GetMouseClick(MOUSE_BUTTON_STATE::RIGHT))
@@ -96,7 +108,7 @@ void AssultRifle::Update(RendererEngine &renderer)
         renderer.get_CameraComponent()->set_Fov(40.0f);
     }
     // 左クリックで発射
-	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, 5, 5))
+	if(GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, m_FireRate, m_FireRate))
     {
         // ****************************************************
         //				 発射音再生
@@ -116,18 +128,23 @@ void AssultRifle::Update(RendererEngine &renderer)
         bulletTransform._rotRad = rad;
         bulletTransform._scale = VEC3(0.01f, 0.01f, 0.01f);
 
-        // 弾自身のパラメータ
-        //NormalBulletData param;
-        //param._range = 2000.0f;
-        //param._speed = 400.0f;
-
-        ExplosionBulletData param;
-        param._range = 2000.0f;
-        param._speed = 300.0f;
-        param._explosionRadius = 50.0f;
-        param._explosionEffectHandleTag = "Explosion_01";
-
-        GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
+        if (m_IsExplosionBullet)
+        {
+            ExplosionBulletData param;
+            param._range = 2000.0f;
+            param._speed = 300.0f;
+            param._explosionRadius = m_ExplosionSize;
+            param._explosionEffectHandleTag = "Explosion_01";
+            GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
+        }
+        else
+        {
+            // 弾自身のパラメータ
+            NormalBulletData param;
+            param._range = 800.0f;
+            param._speed = 1000.0f;
+            GameManager::get_BulletManager()->Shot(renderer, bulletTransform, param);
+        }
 
         // フラッシュ
         m_pFlashPointLight.lock()->set_Range(30.0f);

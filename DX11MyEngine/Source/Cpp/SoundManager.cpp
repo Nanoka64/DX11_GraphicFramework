@@ -20,7 +20,10 @@ constexpr float DEFAULT_VOICE_VOL = 0.7f;	// ボイスのデフォルトの音量
 // ※AIに頼んだ
 // 距離減衰のプリセット（直線的な減衰）
 // Point(距離, 音量)
-static X3DAUDIO_DISTANCE_CURVE_POINT LinearCurvePoints[2] = { 0.0f, 1.0f, 300.0f, 0.0f }; // 300mで音量0
+// 距離：0.0 音量 = 1.0
+// 距離：1.0 音量 = 0.0
+//															  距離  音量  距離  音量
+static X3DAUDIO_DISTANCE_CURVE_POINT LinearCurvePoints[2] = { 0.0f, 1.0f, 1.0f, 0.0f }; 
 static X3DAUDIO_DISTANCE_CURVE LinearCurve = { (X3DAUDIO_DISTANCE_CURVE_POINT *)&LinearCurvePoints[0], 2 };
 
 
@@ -407,7 +410,7 @@ bool SoundManager::Update(RendererEngine &renderer)
 		// エミッター
 		X3DAUDIO_EMITTER emitter = {};
 		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
-		emitter.CurveDistanceScaler = 2.0f;
+		emitter.CurveDistanceScaler = slot._radius;
 		emitter.DopplerScaler = 1.0f;
 		emitter.ChannelRadius = 0.0f;
 		emitter.Position.x = slot._pos.x;
@@ -644,9 +647,9 @@ bool SoundManager::Play(SOUND_TYPE _type, int _id, bool _loop)
 // true:成功
 // false:失敗
 //*----------------------------------------------------------------------------------------
-bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel, bool _loop)
+bool SoundManager::Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, float _radius, const VECTOR3::VEC3 &_vel, bool _loop)
 {
-	return Internal_SoundPlay_3D(_type, _id, _pos, _vel, _loop);
+	return Internal_SoundPlay_3D(_type, _id, _pos, _radius, _vel, _loop);
 	//return Internal_SoundPlay_3D(_type, _id, _pos, _vel, _loop);
 }
 
@@ -875,7 +878,7 @@ bool SoundManager::Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _
 // true:成功
 // false:失敗
 //*---------------------------------------------------------------------------------------
-bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel, bool _loop)
+bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, float _radius, const VECTOR3::VEC3 &_vel, bool _loop)
 {
     HRESULT hr = S_OK;
 
@@ -906,12 +909,12 @@ bool SoundManager::Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR
         slot._isUsed = true;	 // スロット使用中にする
         slot._volumeDefault = get_Volume(_type);	// 音量のデフォルト値をセット
         slot._volumeFactor = 1.0f;					// 音量の倍率を初期化
-		
+		slot._radius = _radius;	 // 音の聞こえる範囲
 
 		// エミッター
 		X3DAUDIO_EMITTER emitter = {};
 		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
-		emitter.CurveDistanceScaler = 2.0f;
+		emitter.CurveDistanceScaler = _radius;
 		emitter.DopplerScaler = 1.0f;
 		emitter.ChannelRadius = 0.0f;
 		emitter.Position.x = slot._pos.x;

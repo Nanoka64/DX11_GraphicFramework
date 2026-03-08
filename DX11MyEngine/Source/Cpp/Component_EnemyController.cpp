@@ -77,7 +77,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			//				 ”í’e‰¹Ä¶
 			// ****************************************************
 			//Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), 300);
-			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), pos);
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), pos, 1000.0f);
 
 			int handle = Master::m_pEffectManager->PlayEffect("Hit");
 			Master::m_pEffectManager->SetScaleEffect(handle, 10.0f, 10.0f, 10.0f);
@@ -129,7 +129,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			//				 Ž€–S‰¹Ä¶
 			// ****************************************************
 			//Master::m_pSoundManager->Play_RandPitch(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), 300);
-			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos);
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos, 1000.0f);
 
             // Ž€–SƒGƒtƒFƒNƒg
 			int handle = Master::m_pEffectManager->PlayEffect("DeadExplosion");
@@ -138,7 +138,7 @@ void EnemyController::Start(RendererEngine& renderer)
 			m_IsDead = true;
 			m_IsAnim = false;
 
-			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos);
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos, 1000.0f);
 
 
 			auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");

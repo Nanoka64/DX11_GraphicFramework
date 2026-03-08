@@ -28,9 +28,10 @@ void CollisionManager::RegisterCollider(std::shared_ptr<Collider> pCol)
     m_pCollidersList.push_back(pCol);
 }
 
+
 //*---------------------------------------------------------------------------------------
 //*【?】衝突判定を行う
-//* [引数]
+//* [引数] なし
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
 void CollisionManager::CollisionProcess()
@@ -142,13 +143,13 @@ void CollisionManager::CollisionProcess()
                 CollisionInfo infoA = info;
                 infoA.set_HitObject(colB->get_OwnerObj());
                 infoA.set_HitCollider(colB);
+                infoA.set_HitNormal(-info.get_HitNormal()); // そのままだとぶつかった側の押し出し法線なので、法線を反転させる
 
 
                 // Aと衝突したことをBオブジェクト側に伝える
                 CollisionInfo infoB = info;
                 infoB.set_HitObject(colA->get_OwnerObj());
                 infoB.set_HitCollider(colA);
-                infoB.set_HitNormal(-info.get_HitNormal()); // そのままだとぶつかった側の押し出し法線なので、法線を反転させる
 
 
                 // イベント通知
@@ -161,9 +162,7 @@ void CollisionManager::CollisionProcess()
                 {
                     colA->get_OwnerObj().lock()->OnCollisionEnter(infoA);
                     colB->get_OwnerObj().lock()->OnCollisionEnter(infoB);
-
                 }
-
             }
         }
     }

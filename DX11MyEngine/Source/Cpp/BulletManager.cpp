@@ -116,8 +116,9 @@ bool BulletManager::Init(RendererEngine &renderer)
                 return nullptr;
             }
             
-            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブ
-            
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);    // ノンデストロイ
+            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);        // ノンアクティブ
+
             // 動的オブジェクトとして設定
             obj->set_State(OBJECT_STATE::DYNAMIC);
 
@@ -195,6 +196,7 @@ bool BulletManager::Init(RendererEngine &renderer)
         {
             // マテリアル取得
             auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
+            matPtr1->m_EmissiveColor = VEC3(1.0f, 1.0f, 0.0f);
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
             matInfo[0].pMaterialData = matPtr1;
@@ -217,7 +219,8 @@ bool BulletManager::Init(RendererEngine &renderer)
             // 動的オブジェクトとして設定
             obj->set_State(OBJECT_STATE::DYNAMIC);
 
-            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブ
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);    // ノンデストロイ
+            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);        // ノンアクティブ
 
             // バレットコンポーネントの追加
             auto bulletComp = obj->add_Component<ExplosionBullet>();
@@ -233,7 +236,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             trail->set_MinVertexDistance(5.0f);
             trail->set_DrawTime(10.0f);
             trail->set_EmissivePower(10.0f);
-            trail->set_Color(VECTOR4::VEC4(0.0f, 1.0f, 0.0f, 1.0f));
+            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.0f, 1.0f));
 
             // 衝突用コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();

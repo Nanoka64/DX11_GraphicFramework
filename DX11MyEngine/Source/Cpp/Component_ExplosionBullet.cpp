@@ -64,7 +64,7 @@ void ExplosionBullet::Start(RendererEngine &renderer)
             // ****************************************************
             //				 ”š”­‰¹Ä¶
             // ****************************************************
-            Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01), pos);
+            Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01), pos, 1500.0f);
 
 
             // ƒfƒJ[ƒ‹‚Ìì¬

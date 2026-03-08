@@ -136,6 +136,7 @@ struct SoundInstance
     bool _isLoop;                       // ループ再生するかどうか
     float _volumeFactor;                // 音量調整用の係数（0.0f～1.0f  1.0fなら元の音量）
     float _volumeDefault;               // デフォルト音量
+    float _radius;                      // 音が聞こえる半径
     SOUND_TYPE _soundType;              // 音声の種類（SE、BGM、ボイス）
     int _soundID;                       // どの音声データを再生しているかのID
 
@@ -148,7 +149,8 @@ struct SoundInstance
         _soundID(-1),
         _soundType(SOUND_TYPE::SE),
         _volumeFactor(1.0f),
-        _volumeDefault(0.0f)
+        _volumeDefault(0.0f),
+        _radius(0.0f)
     {
     };
     ~SoundInstance() {};
@@ -237,7 +239,7 @@ public:
     // 再生関数
     //
     bool Play(SOUND_TYPE _type, int _id, bool _loop = false);                               // 再生
-    bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, const VECTOR3::VEC3 &_vel = VECTOR3::VEC3(), bool _loop = false); // 再生（3D空間で鳴らす）
+    bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, float _radius, const VECTOR3::VEC3 &_vel = VECTOR3::VEC3(), bool _loop = false); // 再生（3D空間で鳴らす）
     bool Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);    // 再生（ピッチをランダムに揺らす）
     bool Play_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);         // 指定範囲のサウンドからランダムに再生 _beginIDから音声データが連続している必要あり
     bool PlayBGM(BGM_ID _id, bool _loop = true);    // BGMの再生
@@ -262,7 +264,7 @@ private:
     bool Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop = false);
     bool Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);
     bool Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);
-    bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);
+    bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);
 
     bool BaseSoundPlay(SOUND_TYPE _type, int _id, const XAUDIO2_BUFFER &_buff, bool _is3D, const VECTOR3::VEC3 &_pos, int _pitch, bool _loop);
 
