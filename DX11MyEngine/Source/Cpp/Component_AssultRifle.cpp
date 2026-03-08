@@ -93,7 +93,7 @@ void AssultRifle::Update(RendererEngine &renderer)
 
 
 
-    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"’e‚ÌØ‚è‘Ö‚¦"), 0);
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"’e‚ÌØ‚è‘Ö‚¦"));
     Master::m_pDebugger->DG_CheckBox(Tool::U8ToChar(u8"”š”­’e"), &m_IsExplosionBullet);
     Master::m_pDebugger->DG_SliderFloat(Tool::U8ToChar(u8"”š”­”ÍˆÍ"), 1, &m_ExplosionSize, 1.0f, 100.0f);
     Master::m_pDebugger->EndDebugWindow();

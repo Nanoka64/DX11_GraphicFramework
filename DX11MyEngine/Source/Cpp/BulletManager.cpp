@@ -321,8 +321,7 @@ void BulletManager::Update(RendererEngine &renderer)
         ++mapIt;
     }
 
-    Master::m_pDebugger->BeginDebugWindow("BulletManager", 0);
-    Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プール"));
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾プールの確認"));
     for (int i = 0; i < static_cast<int>(BULLET_TYPE::NUM); i++)
     {
         if (m_BulletObjectPoolMap.empty())break;
