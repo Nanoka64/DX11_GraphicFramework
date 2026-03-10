@@ -25,7 +25,7 @@ constexpr int NUM_SOUND_3D_SVPOOL   = 64;  // 3Dóp
 /// <summary>
 /// âπê∫ÇÃéÌóﬁ
 /// </summary>
-enum class SOUND_TYPE : char
+enum class SOUND_TYPE
 {
     SE = 0,     
     BGM,

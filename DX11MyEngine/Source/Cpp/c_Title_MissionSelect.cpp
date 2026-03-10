@@ -149,8 +149,6 @@ int c_Title_MissionSelect::Update(SceneManager *pOwner)
 	}
 
 	return m_NextState;
-
-	return c_TITLE::c_TITLE_MISSION_SELECT;
 }
 
 

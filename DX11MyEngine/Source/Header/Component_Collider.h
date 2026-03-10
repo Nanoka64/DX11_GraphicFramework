@@ -21,7 +21,7 @@ enum class COLLISION_CATEGORY : unsigned
 	ENEMY_BULLET	= 1 << 3,
 	BUILDING		= 1 << 4,
 
-	EVERY = 0xFFFFFFFF
+	EVERY = 0xFFFFFFFF	// ‘S‚Ä‚ÉÕ“Ë
 };
 
 // ***************************************************************************************
