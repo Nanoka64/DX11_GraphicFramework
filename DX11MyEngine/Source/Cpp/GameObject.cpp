@@ -22,7 +22,7 @@ GameObject::GameObject():
 //*----------------------------------------------------------------------------------------
 GameObject::~GameObject()
 {
-	m_pComponentList.clear();	// 解放
+	m_pComponentMap.clear();	// 解放
 	m_pTransform.reset();
 }
 
@@ -38,15 +38,15 @@ void GameObject::ComponentUpdate(RendererEngine& renderer)
 	// 初めての更新の場合はコンポーネントのStartメソッドを呼ぶようにする
 	if (m_IsCalcUpdate == false)
 	{
-		for (auto &comp : m_pComponentList)
+		for (auto &comp : m_pComponentMap)
 		{
-			comp.get()->Start(renderer);
+			comp.second->Start(renderer);
 		}
 	}
 
-	for (auto& comp : m_pComponentList)
+	for (auto& comp : m_pComponentMap)
 	{
-		comp.get()->Update(renderer);
+		comp.second->Update(renderer);
 	}
 
 	m_IsCalcUpdate = true;
@@ -60,9 +60,9 @@ void GameObject::ComponentUpdate(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameObject::ComponentLateUpdate(RendererEngine& renderer)
 {
-	for (auto& comp : m_pComponentList)
+	for (auto& comp : m_pComponentMap)
 	{
-		comp.get()->LateUpdate(renderer);
+		comp.second->LateUpdate(renderer);
 	}
 }
 
@@ -75,9 +75,9 @@ void GameObject::ComponentLateUpdate(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameObject::ComponentRender(RendererEngine &renderer)
 {
-	for (auto &comp : m_pComponentList)
+	for (auto &comp : m_pComponentMap)
 	{
-		comp.get()->Draw(renderer);
+		comp.second->Draw(renderer);
 	}
 }
 
@@ -92,12 +92,12 @@ void GameObject::ComponentRender(RendererEngine &renderer)
 void GameObject::OnCollisionEnter(const CollisionInfo &info)
 {
 	// 自身が持っている全てのコンポーネントに対してループ処理を行う
-	for (auto &component : m_pComponentList)
+	for (auto & comp : m_pComponentMap)
 	{
 		// アクティブなもののみ
-		if (component->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+		if (comp.second->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
 		{
-			component->OnCollisionEnter(info);
+			comp.second->OnCollisionEnter(info);
 		}
 	}
 }
@@ -113,12 +113,12 @@ void GameObject::OnCollisionEnter(const CollisionInfo &info)
 void GameObject::OnTriggerEnter(const CollisionInfo &info)
 {
 	// 自身が持っている全てのコンポーネントに対してループ処理を行う
-	for (auto &component : m_pComponentList)
+	for (auto & comp : m_pComponentMap)
 	{
 		// アクティブなもののみ
-		if (component->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+		if (comp.second->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
 		{
-			component->OnTriggerEnter(info);
+			comp.second->OnTriggerEnter(info);
 		}
 	}
 }
@@ -146,9 +146,9 @@ std::weak_ptr<MyTransform> GameObject::get_Transform() const
 //* 引数：なし
 //* 戻値：弱参照ポインタ
 //*----------------------------------------------------------------------------------------
-std::vector<std::shared_ptr<IComponent>> GameObject::get_ComponentList()const
+std::unordered_map<std::type_index, std::shared_ptr<IComponent>> GameObject::get_ComponentMap()const
 {
-	return m_pComponentList;
+	return m_pComponentMap;
 }
 
 

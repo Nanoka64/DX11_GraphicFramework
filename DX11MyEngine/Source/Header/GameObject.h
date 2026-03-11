@@ -26,12 +26,21 @@ enum class OBJECT_STATE
 //		なので、安全に取得するにはenable_shared_from_thisを継承させ、
 //		shared_from_this()メソッドを使用して渡すことによって解決できるらしい。
 //		コンストラクタが呼ばれた後に適用されるため、コンストラクタ内でコンポーネントの追加は出来ない。
+// 
+//  ※3/12
+//　　　コンポーネントを連想配列で持つようにした。ダイナミックキャストするよりも多分こっちの方が速い（寧ろなんで最初からこうしなかったんだ……）
+//　　　ただし、親クラスから子クラスを取得することは出来ない。
+//		↓みたいなこと
+//		obj->add_Component<BoxCollider>();
+//      obj->get_Component<Collider>();
 //
 // ***************************************************************************************
 class GameObject : public std::enable_shared_from_this<GameObject> , public Object
 {
 private:	
-	std::vector<std::shared_ptr<IComponent>> m_pComponentList;	// コンポーネントリスト
+	std::unordered_map<std::type_index, std::shared_ptr<IComponent>> m_pComponentMap;	// コンポーネント配列
+
+
     std::shared_ptr<MyTransform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
@@ -99,24 +108,25 @@ public:
 	/// コンポーネントのリストを取得
 	/// </summary>
 	/// <returns></returns>
-	std::vector<std::shared_ptr<IComponent>> get_ComponentList()const;
+	std::unordered_map<std::type_index, std::shared_ptr<IComponent>> get_ComponentMap()const;
 
 	/// <summary>
 	/// コンポーネントの取得
+	/// ※ 型が完全に一致していないと取得できない
+	/// 　 子クラスから親クラスへの変換取得などは不可
 	/// </summary>
-	/// <typeparam name="T">取得するコンポーネントの種類</typeparam>
+	/// <typeparam name="T">取得するコンポーネントの型</typeparam>
 	/// <returns></returns>
 	template<typename T>
 	std::shared_ptr<T> get_Component() const
 	{
-		for (auto& comp : m_pComponentList)
+		auto it = m_pComponentMap.find(std::type_index(typeid(T)));
+
+		if (it != m_pComponentMap.end())
 		{
-			std::shared_ptr<T> resComp = std::dynamic_pointer_cast<T>(comp);
-			if (resComp != nullptr)
-			{
-				return resComp;
-			}
+			return std::static_pointer_cast<T>(it->second);
 		}
+
 		return nullptr;
 	};
 
@@ -129,31 +139,18 @@ public:
 	template<typename T>
 	std::shared_ptr<T> add_Component(int updateRank = 100)
 	{
-		for (auto& comp : m_pComponentList)
-		{
-			std::shared_ptr<T> resComp = std::dynamic_pointer_cast<T>(comp);
+		auto typeIdx = std::type_index(typeid(T));
+		auto it = m_pComponentMap.find(typeIdx);
 
-			// すでにあるならそれを返す
-			if (resComp != nullptr)
-			{
-				return resComp;
-			}
+		// 既に存在するならキャストして返す
+		if (it != m_pComponentMap.end())
+		{
+			return std::static_pointer_cast<T>(it->second);
 		}
 
-
-		// 見つからなければ追加
+		// 生成
 		auto newComp = std::make_shared<T>(shared_from_this(), updateRank);
-
-		// 更新レイヤーから挿入位置を探索
-		auto it = std::find_if(m_pComponentList.begin(), m_pComponentList.end(),
-			[&](const std::shared_ptr<IComponent> &comp)
-			{
-				return newComp->get_UpdateRank() < comp->get_UpdateRank();
-			}
-		);
-
-		// 挿入
-		m_pComponentList.insert(it, newComp);
+		m_pComponentMap[typeIdx] = newComp;
 
 		return newComp;
 	}
@@ -166,16 +163,7 @@ public:
 	template<typename T>
 	void remove_Component()
 	{
-		auto begin = m_pComponentList.begin();
-		auto end = m_pComponentList.end();
-
-		m_pComponentList.erase(std::remove_if(begin, end,
-			[](const std::shared_ptr<IComponent>& comp)
-			{
-				return (std::dynamic_pointer_cast<T>(comp) != nullptr);
-			}),
-			end
-		);
+		m_pComponentMap.erase(std::type_index(typeid(T)));
 	}
 };
 

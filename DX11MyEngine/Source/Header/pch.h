@@ -75,6 +75,7 @@
 
 // 標準ヘッダ
 #include <unordered_map>    // 連想配列用
+#include <typeindex>		// 型をキーに出来るようにするもの
 #include <map>      // 連想配列用
 #include <memory>   // スマートポインタ用
 #include <string>   // 文字列

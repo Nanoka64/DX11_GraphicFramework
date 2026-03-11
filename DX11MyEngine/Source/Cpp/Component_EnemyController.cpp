@@ -5,6 +5,7 @@
 #include "Component_DecalRenderer.h"
 #include "Component_TimerDestruction.h"
 #include "Component_Collider.h"
+#include "Component_BoxCollider.h"
 #include "Component_Health.h"
 #include "RendererEngine.h"
 #include "CollisionInfo.h"
@@ -54,7 +55,7 @@ void EnemyController::Start(RendererEngine& renderer)
     m_pAnimatorComp = m_pOwner.lock()->get_Component<SkinnedMeshAnimator>();
 
 	// コライダーの取得
-	m_pColliderComp = m_pOwner.lock()->get_Component<Collider>();
+	m_pColliderComp = m_pOwner.lock()->get_Component<BoxCollider>();
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();

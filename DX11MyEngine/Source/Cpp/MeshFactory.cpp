@@ -63,10 +63,6 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     // リソースにモデル情報を持たせる
     meshResource->set_ModelData(modeldata);
 
-    // 描画コンポーネント追加
-    std::weak_ptr<ModelMeshRenderer> meshRenderer = pModelObj->add_Component<ModelMeshRenderer>();
-    meshRenderer.lock()->set_MeshResource(meshResource);
-
     // スキニングモデルの場合、アニメーションコンポーネントを追加
     if (info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED_N || info.ShaderType == SHADER_TYPE::_DEFERRED_STD_SKINNED)
     {
@@ -78,6 +74,13 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
             pModelObj->get_Component<SkinnedMeshAnimator>()->set_AnimIndex(info.InitAnimIndex);
         }
     }
+
+
+    // 描画コンポーネント追加
+    std::weak_ptr<ModelMeshRenderer> meshRenderer = pModelObj->add_Component<ModelMeshRenderer>();
+    meshRenderer.lock()->set_MeshResource(meshResource);
+
+
     return pModelObj;
 }
 

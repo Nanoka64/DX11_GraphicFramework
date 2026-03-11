@@ -163,9 +163,9 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
         if (Master::m_pDebugger->DG_TreeNode(label))
         {
             // オブジェクトが持つコンポーネントを一覧表示
-            for (auto& component : obj->get_ComponentList())
+            for (auto& component : obj->get_ComponentMap())
             {
-                Master::m_pDebugger->DG_BulletText(component->get_Tag().c_str());
+                Master::m_pDebugger->DG_BulletText(component.second->get_Tag().c_str());
             }
             Master::m_pDebugger->DG_TreePop();
         }
