@@ -31,8 +31,10 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // テクスチャ座標はそのまま頂点位置を入れる
     float4 skyTex = g_tSkyboxTexture.Sample(g_sSampler, input.TexCoord.xyz);
     
-    skyTex += 0.15f;
+    //skyTex += 0.15f;
+    skyTex.rgb *= cb_DirLightData[0].DiffuseColor;
+    
     //skyTex.r += 1.8f;
     
-    return float4(skyTex.xyz, 1.0f);
+    return float4(skyTex.rgb, 1.0f);
 }
