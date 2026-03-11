@@ -74,7 +74,7 @@ struct CollInData_OBB
 class CollisionManager
 {
 private:
-    // 衝突計算をするコライダーのリスト
+    // 衝突計算をするコライダーの配列
     std::vector<std::shared_ptr<class Collider>> m_pCollidersList;
 
 public:

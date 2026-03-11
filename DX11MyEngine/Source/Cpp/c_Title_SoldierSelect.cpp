@@ -16,9 +16,9 @@ static const VECTOR2::VEC2 g_ItemSize = VECTOR2::VEC2(400.0f, 70.0f);
 // çÄñ⁄ÇÃà íu
 static const VECTOR2::VEC2 g_ItemPosArray[UINT_CAST(SOLDIER_TYPE::NUM)] =
 {
-	VEC2(400.0f,600.0f),
+	VEC2( 400.0f,600.0f),
 	VEC2(1000.0f,600.0f),
-	VEC2(400.0f,800.0f),
+	VEC2( 400.0f,800.0f),
 	VEC2(1000.0f,800.0f),
 };
 

@@ -205,6 +205,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_Button.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\Header\Component_NormalBullet.h" />
     <ClInclude Include="Source\Header\Component_Collider.h" />
     <ClInclude Include="Source\Header\Component_DecalRenderer.h">
@@ -223,6 +227,10 @@
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h" />
     <ClInclude Include="Source\Header\Component_MoveLogic.h" />
     <ClInclude Include="Source\Header\Component_PlayerController.h" />
+    <ClInclude Include="Source\Header\Component_RectTransform.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h" />
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
@@ -356,6 +364,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Button.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_NormalBullet.cpp" />
     <ClCompile Include="Source\Cpp\Component_Collider.cpp" />
     <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
@@ -374,6 +386,10 @@
     <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp" />
     <ClCompile Include="Source\Cpp\Component_MoveLogic.cpp" />
     <ClCompile Include="Source\Cpp\Component_PlayerController.cpp" />
+    <ClCompile Include="Source\Cpp\Component_RectTransform.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp" />
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp" />
     <ClCompile Include="Source\Cpp\Component_SphereCollider.cpp" />

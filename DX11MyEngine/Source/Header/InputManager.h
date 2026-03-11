@@ -19,7 +19,6 @@
 // 参考サイト：https://yttm-work.jp/directx/directx_0028.html
 //           ：https://cammy.co.jp/technical/%e3%83%9e%e3%82%a6%e3%82%b9%e3%81%ae%e7%8a%b6%e6%85%8b%e5%8f%96%e5%be%97directinput/
 // =======================================================================================
-
 class InputManager
 {
 private:

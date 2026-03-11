@@ -106,9 +106,6 @@
     <Filter Include="ソース ファイル\Component\Light">
       <UniqueIdentifier>{2f0323dd-a2e0-4ba8-9884-89a0b94d8278}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Component\Game">
-      <UniqueIdentifier>{b598440f-021b-44bc-8794-732f95361152}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Component\Collision">
       <UniqueIdentifier>{a8973ed6-677a-4fee-9557-46e33ba05d2b}</UniqueIdentifier>
     </Filter>
@@ -243,6 +240,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Game\Scene\Result">
       <UniqueIdentifier>{cb343d01-e87d-425e-ba78-85e3a10a87e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Component\UI">
+      <UniqueIdentifier>{c7047aca-94d7-478d-b2ba-35e6b8e0cbed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -590,6 +590,12 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_NormalBullet.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Button.cpp">
+      <Filter>ソース ファイル\Component\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_RectTransform.cpp">
+      <Filter>ソース ファイル\Component\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -976,6 +982,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_NormalBullet.h">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Button.h">
+      <Filter>ソース ファイル\Component\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_RectTransform.h">
+      <Filter>ソース ファイル\Component\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
