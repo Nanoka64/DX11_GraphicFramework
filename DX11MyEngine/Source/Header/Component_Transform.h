@@ -107,12 +107,9 @@ public:
     DirectX::XMMATRIX get_MtxRotate()const; // 回転行列取得
     DirectX::XMMATRIX get_MtxScale()const;  // 拡大行列取得
 
-    DirectX::XMMATRIX get_WorldMtx()const;  // ワールド行列取得
-    DirectX::XMMATRIX get_ExcludingRotWorldMtx()const; // 回転を除くワールド行列取得
-
-
-
-    std::weak_ptr<MyTransform> get_Parent()const;
+    
+    virtual DirectX::XMMATRIX get_WorldMtx()const;              // ワールド行列取得
+    virtual DirectX::XMMATRIX get_ExcludingRotWorldMtx()const;  // 回転を除くワールド行列取得
 
     /// <summary>
     /// パラメータを個別に設定するver
@@ -124,6 +121,8 @@ public:
     DirectX::XMMATRIX get_WorldMtx(const DirectX::XMMATRIX &scl, const DirectX::XMMATRIX &rot, const DirectX::XMMATRIX &trans)const;
     DirectX::XMMATRIX get_ExcludingRotWorldMtx(const DirectX::XMMATRIX &scl, const DirectX::XMMATRIX &trans)const;
 
+    std::weak_ptr<MyTransform> get_Parent()const;
+
     const VECTOR3::VEC3 get_Forward()const;
     VECTOR3::VEC3 get_Up()const;
     VECTOR3::VEC3 get_Right()const;
@@ -131,6 +130,14 @@ public:
     static const DirectX::XMVECTOR FORWARD;
     static const DirectX::XMVECTOR UP;
     static const DirectX::XMVECTOR RIGHT;
+
+    
+    /// <summary>
+    /// RectTransformかどうかの確認
+    /// RectTransformはTransformを継承しているので、安全に型チェックを行うために作成
+    /// </summary>
+    /// <returns></returns>
+    virtual bool get_IsRectTransform()const { return false; }
 
 
     void Release(); // 解放

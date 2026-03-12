@@ -42,7 +42,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
 
     /* ƒJƒƒ‰‚Ìì¬ */
     {
-        auto obj = Instantiate(std::move(std::make_shared<GameObject>()), false);
+        auto obj = Instantiate3D(std::move(std::make_shared<GameObject>()), false);
         if (obj == nullptr)
         {
             assert(false);
@@ -234,7 +234,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         mesh.MaterialData = matInfo;
 
         auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //auto obj = Instantiate(std::move(std::make_shared<GameObject>()));
+        //auto obj = Instantiate3D(std::move(std::make_shared<GameObject>()));
         obj->set_Tag("DirLight");
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);// ”jŠü‚µ‚È‚¢

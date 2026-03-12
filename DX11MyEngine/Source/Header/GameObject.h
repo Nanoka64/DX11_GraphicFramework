@@ -1,6 +1,7 @@
 #pragma once
 //#include "Object.h"
 #include "Component_Transform.h"
+#include "Component_RectTransform.h"
 
 /// <summary>
 /// オブジェクトの状態定義
@@ -41,7 +42,7 @@ private:
 	std::unordered_map<std::type_index, std::shared_ptr<IComponent>> m_pComponentMap;	// コンポーネント配列
 
 
-    std::shared_ptr<MyTransform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ
+    std::shared_ptr<MyTransform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ（2DならRectTransformを持つ）
 
 	bool m_IsCalcUpdate;	// 更新処理がすでに呼ばれたかどうか
 	bool m_IsShadow;		// シャドウをかけるかどうか
@@ -96,7 +97,13 @@ public:
 	/// Transformの取得
 	/// </summary>
 	/// <returns></returns>
-	std::weak_ptr<class MyTransform> get_Transform()const;
+	std::weak_ptr<MyTransform> get_Transform()const;
+
+	/// <summary>
+	/// RectTransformの取得
+	/// </summary>
+	/// <returns></returns>
+	std::weak_ptr<RectTransform> get_RectTransform()const;
 
 
 	// 生ポで書いたほうがいいかも

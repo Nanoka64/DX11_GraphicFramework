@@ -38,7 +38,7 @@ GameObjectManager::~GameObjectManager()
 //*----------------------------------------------------------------------------------------
 bool GameObjectManager::Init(RendererEngine &renderer)
 {
-    m_pObjectList.clear();
+    m_3DOpaqueList.clear();
     return true;
 }
 
@@ -53,7 +53,7 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 {
     std::vector<std::shared_ptr<GameObject>> collisionList;    // 衝突判定用
 
-    for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
+    for (auto it = m_3DOpaqueList.begin(); it != m_3DOpaqueList.end(); it++)
     {
         if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
         {
@@ -79,7 +79,7 @@ void GameObjectManager::ObjectLateUpdate(RendererEngine &renderer)
     // 不透明オブジェクト
     // 
     // ******************************************************************
-    for (auto it = m_pObjectList.begin(); it != m_pObjectList.end(); it++)
+    for (auto it = m_3DOpaqueList.begin(); it != m_3DOpaqueList.end(); it++)
     {
         if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
         {
@@ -98,7 +98,7 @@ void GameObjectManager::ObjectLateUpdate(RendererEngine &renderer)
     //  透明度有りオブジェクト
     // 
     // ******************************************************************
-    for (auto it = m_pTransparent_ObjectList.begin(); it != m_pTransparent_ObjectList.end(); it++)
+    for (auto it = m_3DTranslucentList.begin(); it != m_3DTranslucentList.end(); it++)
     {
         if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
         {
@@ -132,10 +132,10 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
     Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"コンポーネント確認"));
     Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"こちらでは追加されている\nすべてのコンポーネントを確認できます。"));
     Master::m_pDebugger->DG_Separator();
-    Master::m_pDebugger->DG_BulletText("Count : %d", m_pObjectList.size());
+    Master::m_pDebugger->DG_BulletText("Count : %d", m_3DOpaqueList.size());
 
     // 描画
-    for (auto& obj : m_pObjectList)
+    for (auto& obj : m_3DOpaqueList)
     {
         // *** 静的 ***
         if (obj->get_State() == OBJECT_STATE::STATIC)
@@ -184,7 +184,7 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine &renderer)
 void GameObjectManager::ObjectShadowRenderPass(RendererEngine &renderer)
 {
     // 描画
-    for (auto &obj : m_pObjectList)
+    for (auto &obj : m_3DOpaqueList)
     {
         if (!obj->get_IsShadow() ||
             !obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
@@ -208,7 +208,7 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
     VEC3 camPos = renderer.get_CameraPosition();    // カメラ座標
     
     // カメラ座標から遠い順にソートする
-    m_pTransparent_ObjectList.sort(
+    m_3DTranslucentList.sort(
         [camPos](const std::shared_ptr<GameObject>& a, const std::shared_ptr<GameObject>& b)
         {
             float a_CamDist = VEC3::DistanceSq(a->get_Transform().lock()->get_VEC3ToPos(), camPos);
@@ -218,7 +218,7 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
     );
 
     // 描画
-    for (auto &obj : m_pTransparent_ObjectList)
+    for (auto &obj : m_3DTranslucentList)
     {
         if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
         {
@@ -238,7 +238,8 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 bool GameObjectManager::Term(RendererEngine &renderer)
 {
-    m_pObjectList.clear();
+    m_3DOpaqueList.clear();
+    m_3DTranslucentList.clear();
     return true;
 }
 
@@ -250,7 +251,7 @@ bool GameObjectManager::Term(RendererEngine &renderer)
 //* 引数：1.RendererEngine
 //* 返値：生成したオブジェクトの共有ポインタ
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<MyTransform> parent)
+std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate3D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<MyTransform> parent)
 {
     // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
     // (Unity風に)
@@ -276,6 +277,38 @@ std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate(std::shared_
     return pObj;
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
+//*【?】2Dオブジェクトの生成
+//      この関数を通じてオブジェクトを生成する。
+//* 引数：1.RendererEngine
+//* 返値：生成したオブジェクトの共有ポインタ
+//*----------------------------------------------------------------------------------------
+std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<MyTransform> parent)
+{
+    // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
+    // (Unity風に)
+    pObj->add_Component<RectTransform>();
+    pObj->m_pTransform = pObj->get_Component<RectTransform>();
+    pObj->m_pTransform->set_Pos(pos);
+    pObj->m_pTransform->set_RotateToDeg(rot);
+
+    // 透明度があるならフラグ立てる
+    if (isTransparent){
+        pObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_TRANSPARENT);
+    }
+
+    // 親が設定されているか
+    if (parent.lock() != nullptr) {
+        pObj->m_pTransform->set_Parent(parent);
+    }
+
+    // リストに追加
+    this->add_Object(pObj);   
+
+    return pObj;
+}
+
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
@@ -288,16 +321,16 @@ void GameObjectManager::add_Object(std::shared_ptr<GameObject> object)
     // 透明度のあるオブジェクト
     if (object->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_TRANSPARENT))
     {
-        m_pTransparent_ObjectList.push_back(object);
+        m_3DTranslucentList.push_back(object);
     }
     // 不透明オブジェクト
     else
     {
-        m_pObjectList.push_back(object);
+        m_3DOpaqueList.push_back(object);
     }
 
     // 更新順にソート
-    m_pObjectList.sort(
+    m_3DOpaqueList.sort(
         [](const std::shared_ptr<GameObject> &a, const std::shared_ptr<GameObject> &b) {
             return a->get_LayerRank() < b->get_LayerRank();
         });
@@ -313,10 +346,10 @@ void GameObjectManager::add_Object(std::shared_ptr<GameObject> object)
 void GameObjectManager::remove_Object(std::shared_ptr<GameObject> object)
 {
     // 不透明オブジェクト**********************
-    auto begin = m_pObjectList.begin();
-    auto end = m_pObjectList.end();
+    auto begin = m_3DOpaqueList.begin();
+    auto end = m_3DOpaqueList.end();
 
-    m_pObjectList.erase(std::remove_if(begin, end,
+    m_3DOpaqueList.erase(std::remove_if(begin, end,
         [object](const std::shared_ptr<GameObject> &obj)
         {
             return (obj == object);
@@ -325,10 +358,10 @@ void GameObjectManager::remove_Object(std::shared_ptr<GameObject> object)
     );    
     
     // 透明度のあるオブジェクト**********************
-    begin = m_pTransparent_ObjectList.begin();
-    end = m_pTransparent_ObjectList.end();
+    begin = m_3DTranslucentList.begin();
+    end = m_3DTranslucentList.end();
 
-    m_pTransparent_ObjectList.erase(std::remove_if(begin, end,
+    m_3DTranslucentList.erase(std::remove_if(begin, end,
         [object](const std::shared_ptr<GameObject> &obj)
         {
             return (obj == object);
@@ -347,10 +380,10 @@ void GameObjectManager::remove_Object(std::shared_ptr<GameObject> object)
 void GameObjectManager::remove_ObjectByTag(const std::string &tag)
 {
     // 不透明オブジェクト**********************
-    auto begin = m_pObjectList.begin();
-    auto end = m_pObjectList.end();
+    auto begin = m_3DOpaqueList.begin();
+    auto end = m_3DOpaqueList.end();
 
-    m_pObjectList.erase(std::remove_if(begin, end,
+    m_3DOpaqueList.erase(std::remove_if(begin, end,
         [tag](const std::shared_ptr<GameObject> &obj)
         {
             return (obj->get_Tag() == tag);
@@ -359,10 +392,10 @@ void GameObjectManager::remove_ObjectByTag(const std::string &tag)
     );    
     
     // 透明度のあるオブジェクト**********************
-    begin = m_pTransparent_ObjectList.begin();
-    end = m_pTransparent_ObjectList.end();
+    begin = m_3DTranslucentList.begin();
+    end = m_3DTranslucentList.end();
 
-    m_pTransparent_ObjectList.erase(std::remove_if(begin, end,
+    m_3DTranslucentList.erase(std::remove_if(begin, end,
         [tag](const std::shared_ptr<GameObject> &obj)
         {
             return (obj->get_Tag() == tag);
@@ -381,8 +414,8 @@ void GameObjectManager::remove_ObjectByTag(const std::string &tag)
 std::shared_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string& tag)
 {
     // 最初に不透明オブジェクトを走査**********************
-    auto begin = m_pObjectList.begin();
-    auto end = m_pObjectList.end();
+    auto begin = m_3DOpaqueList.begin();
+    auto end = m_3DOpaqueList.end();
 
     auto it = std::find_if(begin, end,
         [tag](const std::shared_ptr<GameObject>& obj)
@@ -398,8 +431,8 @@ std::shared_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string
     // 見つからなければ透明度のあるオブジェクトの方も走査**********************
     else
     {
-        begin = m_pTransparent_ObjectList.begin();
-        end = m_pTransparent_ObjectList.end();
+        begin = m_3DTranslucentList.begin();
+        end = m_3DTranslucentList.end();
 
         it = std::find_if(begin, end,
             [tag](const std::shared_ptr<GameObject>& obj)
@@ -429,7 +462,7 @@ std::list<std::shared_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(co
     std::list<std::shared_ptr<GameObject>> resList;
 
     // 不透明オブジェクト**********************
-    for (auto &obj : m_pObjectList)
+    for (auto &obj : m_3DOpaqueList)
     {
         if (obj->get_Tag() == tag)
         {
@@ -438,7 +471,7 @@ std::list<std::shared_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(co
     }
 
     // 透明度のあるオブジェクト**********************
-    for (auto &obj : m_pTransparent_ObjectList)
+    for (auto &obj : m_3DTranslucentList)
     {
         if (obj->get_Tag() == tag)
         {
@@ -458,7 +491,7 @@ std::list<std::shared_ptr<GameObject>> GameObjectManager::get_ObjectListByTag(co
 //*----------------------------------------------------------------------------------------
 size_t GameObjectManager::get_ObjectNum()const
 {
-    size_t res = m_pObjectList.size() + m_pTransparent_ObjectList.size();
+    size_t res = m_3DOpaqueList.size() + m_3DTranslucentList.size();
     return res;
 }
 
@@ -471,7 +504,7 @@ size_t GameObjectManager::get_ObjectNum()const
 //*----------------------------------------------------------------------------------------
 std::list<std::shared_ptr<GameObject>> GameObjectManager::get_Opaque_ObjectList()
 {
-    return m_pObjectList;
+    return m_3DOpaqueList;
 }
 
 
@@ -483,7 +516,7 @@ std::list<std::shared_ptr<GameObject>> GameObjectManager::get_Opaque_ObjectList(
 //*----------------------------------------------------------------------------------------
 std::list<std::shared_ptr<GameObject>> GameObjectManager::get_Transparent_ObjectList()
 {
-    return m_pTransparent_ObjectList;
+    return m_3DTranslucentList;
 }
 
 
@@ -497,8 +530,8 @@ void GameObjectManager::clear_AllObject()
 {
     // スマートポインタの場合、
     // デストラクタで破棄されるのでdelete要らない（便利だね！）
-    m_pObjectList.clear();  
-    m_pTransparent_ObjectList.clear();
+    m_3DOpaqueList.clear();  
+    m_3DTranslucentList.clear();
 }
 
 
@@ -510,13 +543,13 @@ void GameObjectManager::clear_AllObject()
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::clear_NotIsDontDestroyObject()
 {
-    m_pObjectList.remove_if(
+    m_3DOpaqueList.remove_if(
         [](const std::shared_ptr<GameObject> &obj)
         {
             return (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY) == false);
         }
     );
-    m_pTransparent_ObjectList.remove_if(
+    m_3DTranslucentList.remove_if(
         [](const std::shared_ptr<GameObject> &obj)
         {
             return (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY) == false);
@@ -526,9 +559,13 @@ void GameObjectManager::clear_NotIsDontDestroyObject()
 
 namespace GIGA_Engine
 {
-    std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<MyTransform> parent )
+    std::shared_ptr<GameObject>Instantiate3D(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<MyTransform> parent )
     {
-        return Master::m_pGameObjectManager->Internal_Instantiate(pObj, isTransparent, pos, rot, parent);
+        return Master::m_pGameObjectManager->Internal_Instantiate3D(pObj, isTransparent, pos, rot, parent);
+    }
+    std::shared_ptr<GameObject>Instantiate2D(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<MyTransform> parent )
+    {
+        return Master::m_pGameObjectManager->Internal_Instantiate2D(pObj, isTransparent, pos, rot, parent);
     }
 };
 

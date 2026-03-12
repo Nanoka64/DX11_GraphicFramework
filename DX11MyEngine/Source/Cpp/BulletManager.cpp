@@ -265,7 +265,7 @@ bool BulletManager::Init(RendererEngine &renderer)
     //m_BulletObjectPoolMap.emplace(BULLET_TYPE::HORMING, ObjectPool<GameObject>(
     //    [](GameObject *obj) {},
     //    [](GameObject *obj) {},
-    //    []()->GameObject *{ return Instantiate(std::make_shared<GameObject>(), false).get(); },
+    //    []()->GameObject *{ return Instantiate3D(std::make_shared<GameObject>(), false).get(); },
     //    NUM_DEFAULT__HORMING_BULLET,
     //    NUM_MAX__HORMING_BULLET
     //));

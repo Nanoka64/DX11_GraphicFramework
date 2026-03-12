@@ -18,8 +18,9 @@
 class GameObjectManager
 {
 private:
-	std::list<std::shared_ptr<class GameObject>> m_pObjectList;
-	std::list<std::shared_ptr<class GameObject>> m_pTransparent_ObjectList;	// 透明度ありオブジェクト
+	std::list<std::shared_ptr<class GameObject>> m_3DOpaqueList;		// 3D 透明度なし
+	std::list<std::shared_ptr<class GameObject>> m_3DTranslucentList;	// 3D 透明度あり
+	std::list<std::shared_ptr<class GameObject>> m_2DTranslucentList;	// 2D 透明度あり
 
 public:
 	GameObjectManager();
@@ -33,7 +34,6 @@ public:
 	void ObjectMainRenderPass(RendererEngine &renderer);	// 通常描画パス
 	void ObjectShadowRenderPass(RendererEngine &renderer);	// シャドウ描画パス
 	void Alpha_ObjectRenderPass(RendererEngine& renderer);	// 透明度ありオブジェクトの描画パス
-
 	
 	/// <summary>
 	/// オブジェクトの内部的生成
@@ -42,7 +42,8 @@ public:
 	/// <param name="pos"></param>
 	/// <param name="rot"></param>
 	/// <returns></returns>
-	std::shared_ptr<GameObject>Internal_Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
+	std::shared_ptr<GameObject>Internal_Instantiate3D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
+	std::shared_ptr<GameObject>Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
 
 
 	/// <summary>
@@ -127,7 +128,7 @@ public:
 	{
 		std::list<std::shared_ptr<GameObject>> resList;
 
-		for (auto &obj : m_pObjectList)
+		for (auto &obj : m_3DOpaqueList)
 		{
 			if (ifFunc(obj))
 			{
@@ -156,7 +157,7 @@ namespace GIGA_Engine
 {
 	//*---------------------------------------------------------------------------------------
 	//* @:ObjectManager Class 
-	//*【?】オブジェクトの生成（外部公開）
+	//*【?】3Dオブジェクトの生成（外部公開）
 	//* 引数：1.追加するオブジェクトの共有ポインタ
 	//* 引数：2.透明度があるか
 	//* 引数：3.位置
@@ -164,6 +165,18 @@ namespace GIGA_Engine
 	//* 引数：5.親
 	//* 返値：void
 	//*----------------------------------------------------------------------------------------
-	std::shared_ptr<GameObject>Instantiate(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
+	std::shared_ptr<GameObject>Instantiate3D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
+	
+	//*---------------------------------------------------------------------------------------
+	//* @:ObjectManager Class 
+	//*【?】2Dオブジェクトの生成（外部公開）
+	//* 引数：1.追加するオブジェクトの共有ポインタ
+	//* 引数：2.透明度があるか
+	//* 引数：3.位置
+	//* 引数：4.回転
+	//* 引数：5.親
+	//* 返値：void
+	//*----------------------------------------------------------------------------------------
+	std::shared_ptr<GameObject>Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<RectTransform> parent = {});
 }
 

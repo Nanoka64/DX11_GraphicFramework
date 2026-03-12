@@ -134,6 +134,22 @@ std::weak_ptr<MyTransform> GameObject::get_Transform() const
 	return m_pTransform;
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:Object Class 
+//*【?】RectTransformの取得
+//* 引数：なし
+//* 戻値：弱参照ポインタ
+//*----------------------------------------------------------------------------------------
+std::weak_ptr<RectTransform> GameObject::get_RectTransform()const
+{
+	if (m_pTransform->get_IsRectTransform())
+	{
+		return std::static_pointer_cast<RectTransform>(m_pTransform);
+	}
+
+	return {};
+}
+
 
 //Transform* GameObject::get_Transform() const
 //{
