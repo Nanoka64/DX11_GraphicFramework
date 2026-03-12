@@ -48,21 +48,25 @@ void HierarchyWindow::Update(RendererEngine &renderer)
     using namespace Tool;
 
     std::shared_ptr<GameObject> selectedObject = nullptr;   // 選択されたオブジェクトのポインタ
-    std::list<std::shared_ptr<GameObject>> opawueObjList = Master::m_pGameObjectManager->get_Opaque_ObjectList();
-    std::list<std::shared_ptr<GameObject>> transparentObjList = Master::m_pGameObjectManager->get_Transparent_ObjectList();
+    std::vector<std::shared_ptr<GameObject>> opawueObjects3D = Master::m_pGameObjectManager->get_3DOpaque_ObjectList();
+    std::vector<std::shared_ptr<GameObject>> transparentObjects3D = Master::m_pGameObjectManager->get_3DTransparent_ObjectList();
     
-    std::list<std::shared_ptr<GameObject>> objList;
+    std::vector<std::shared_ptr<GameObject>> objects;
+
+    // 合体 vectorバージョン
+    objects.insert(objects.begin(),opawueObjects3D.begin(), opawueObjects3D.end());
+    objects.insert(objects.end(), transparentObjects3D.begin(), transparentObjects3D.end());
 
     // 透明/不透明オブジェクトリスト合体
-    objList.splice(objList.end(), transparentObjList);
-    objList.splice(objList.end(), opawueObjList); 
+    //objects.splice(objects.end(), transparentObjList);
+    //objects.splice(objects.end(), opawueObjList); 
 
     Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"));
-    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"数 : %d"), objList.size());
+    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"数 : %d"), objects.size());
 
     int id = 0;
 
-    for (auto& obj : objList)
+    for (auto& obj : objects)
     {
         if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
         {

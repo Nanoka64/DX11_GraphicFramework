@@ -29,7 +29,7 @@ private:
 	std::shared_ptr<MeshResourceData>m_pMeshData;	// マテリアルは使わない
 
 	CB_TRANSFORM_SET *m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
-	CB_SPRITE_SET *m_pCBSpritDataSet;		// 定数バッファ(スプライト情報)
+	CB_SPRITE_SET *m_pCBSpritDataSet;			// 定数バッファ(スプライト情報)
 	std::map<int , std::weak_ptr<class Texture>> m_pTextureMap;	// スロット番号とtexture
 
 	float m_Width;

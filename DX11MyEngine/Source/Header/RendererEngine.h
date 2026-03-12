@@ -112,7 +112,7 @@ private:
     HRESULT InitDX11_ZBuff();                   // ＤＸ１１ Ｚバッファ初期化
     HRESULT InitDX11_Rasterizer();              // ＤＸ１１ ラスタライザ初期化
     HRESULT InitDX11_Sampler();                 // ＤＸ１１ サンプラー初期化
-    //HRESULT InitDX11_BlendState();              // ＤＸ１１ ブレンドステート初期化
+    //HRESULT InitDX11_BlendState();            // ＤＸ１１ ブレンドステート初期化
     void CleanupDX11();                         // ＤＸ１１ 開放
     void EnableDebugLayer();                    // デバッグレイヤーの有効化
 

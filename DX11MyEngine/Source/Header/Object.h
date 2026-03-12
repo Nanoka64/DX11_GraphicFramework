@@ -9,7 +9,7 @@ enum class OBJECT_STATUS_BITFLAG : unsigned
 {
 	IS_ACTIVE		= 1 << 0,	// 1	アクティブか
 	IS_DELETE		= 1 << 1,	// 2	削除するか
-	IS_DONT_DESTROY	= 1 << 2,	// 4	
+	IS_DONT_DESTROY	= 1 << 2,	// 4	削除しないでね
 	IS_TRANSPARENT	= 1 << 3,	// 8	透明度があるか
 	IS_TIME_DESTROY	= 1 << 4,	// 16	時間で削除するか
 };

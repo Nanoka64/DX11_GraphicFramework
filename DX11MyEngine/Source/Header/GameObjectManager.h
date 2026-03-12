@@ -18,9 +18,12 @@
 class GameObjectManager
 {
 private:
-	std::list<std::shared_ptr<class GameObject>> m_3DOpaqueList;		// 3D 透明度なし
-	std::list<std::shared_ptr<class GameObject>> m_3DTranslucentList;	// 3D 透明度あり
-	std::list<std::shared_ptr<class GameObject>> m_2DTranslucentList;	// 2D 透明度あり
+	// オブジェクトの種類    
+	enum class OBJECT_TYPE { OPAQUE_3D, TRANSLICENT_3D, TRANSLICENT_2D };
+
+	std::vector<std::shared_ptr<class GameObject>> m_3DOpaqueList;		// 3D 透明度なし
+	std::vector<std::shared_ptr<class GameObject>> m_3DTranslucentList;	// 3D 透明度あり
+	std::vector<std::shared_ptr<class GameObject>> m_2DTranslucentList;	// 2D 透明度あり
 
 public:
 	GameObjectManager();
@@ -64,7 +67,7 @@ public:
 
 	/// <summary>
 	/// 指定タグのオブジェクトを一つ取得
-	/// ※ 透明/不透明両方
+	/// ※ 2D&3D 透明/不透明両方
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
@@ -73,30 +76,34 @@ public:
 
 	/// <summary>
 	/// 指定タグのオブジェクトをすべてリストにして取得
-	/// ※ 透明/不透明両方
+	/// ※ 2D&3D 透明/不透明両方
 	/// </summary>
 	/// <param name="tag"></param>
 	/// <returns></returns>
-	std::list<std::shared_ptr<GameObject>>get_ObjectListByTag(const std::string &tag);
-
+	std::vector<std::shared_ptr<GameObject>>get_ObjectListByTag(const std::string &tag);
 
 	/// <summary>
 	/// 不透明オブジェクトリストを取得
 	/// </summary>
 	/// <returns></returns>
-	std::list<std::shared_ptr<GameObject>>get_Opaque_ObjectList();
-
+	std::vector<std::shared_ptr<GameObject>>get_3DOpaque_ObjectList() { return m_3DOpaqueList; };
 
 	/// <summary>
 	/// 透明度のあるオブジェクトリスト取得
 	/// </summary>
 	/// <returns></returns>
-	std::list<std::shared_ptr<GameObject>>get_Transparent_ObjectList();
+	std::vector<std::shared_ptr<GameObject>>get_3DTransparent_ObjectList() { return m_3DTranslucentList; };
+
+	/// <summary>
+	/// 透明度のある2Dオブジェクトリストの取得
+	/// </summary>
+	/// <returns></returns>
+	std::vector<std::shared_ptr<GameObject>>get_2DTransparent_ObjectList() { return m_2DTranslucentList; };
 
 
 	/// <summary>
 	/// オブジェクト数取得
-	/// ※ 透明/不透明両方の数
+	/// ※ 2D&3D 透明/不透明両方の数
 	/// </summary>
 	/// <returns></returns>
 	size_t get_ObjectNum()const;
@@ -128,7 +135,24 @@ public:
 	{
 		std::list<std::shared_ptr<GameObject>> resList;
 
+		// 不透明 3D
 		for (auto &obj : m_3DOpaqueList)
+		{
+			if (ifFunc(obj))
+			{
+				resList.push_back(obj);
+			}
+		}
+		// 透明 3D
+		for (auto &obj : m_3DTranslucentList)
+		{
+			if (ifFunc(obj))
+			{
+				resList.push_back(obj);
+			}
+		}
+		// 透明 2D
+		for (auto &obj : m_2DTranslucentList)
 		{
 			if (ifFunc(obj))
 			{
@@ -149,8 +173,8 @@ private:
 	/// <summary>
 	/// リストにオブジェクトを追加
 	/// </summary>
-	/// <param name="object"></param>
-	void add_Object(std::shared_ptr<GameObject> object);
+	/// <param name="object">追加するオブジェクト</param>
+	void add_Object(OBJECT_TYPE _type, std::shared_ptr<GameObject> _object);
 };
 
 namespace GIGA_Engine
@@ -163,7 +187,7 @@ namespace GIGA_Engine
 	//* 引数：3.位置
 	//* 引数：4.回転
 	//* 引数：5.親
-	//* 返値：void
+	//* 返値：生成したオブジェクト
 	//*----------------------------------------------------------------------------------------
 	std::shared_ptr<GameObject>Instantiate3D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
 	
@@ -175,7 +199,7 @@ namespace GIGA_Engine
 	//* 引数：3.位置
 	//* 引数：4.回転
 	//* 引数：5.親
-	//* 返値：void
+	//* 返値：生成したオブジェクト
 	//*----------------------------------------------------------------------------------------
 	std::shared_ptr<GameObject>Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<RectTransform> parent = {});
 }

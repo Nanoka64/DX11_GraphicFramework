@@ -29,18 +29,22 @@ enum class OBJECT_STATE
 //		コンストラクタが呼ばれた後に適用されるため、コンストラクタ内でコンポーネントの追加は出来ない。
 // 
 //  ※3/12
-//　　　コンポーネントを連想配列で持つようにした。ダイナミックキャストするよりも多分こっちの方が速い（寧ろなんで最初からこうしなかったんだ……）
+//　　　コンポーネントを連想配列で持つようにした。ダイナミックキャストするよりも多分こっちの方が速い
 //　　　ただし、親クラスから子クラスを取得することは出来ない。
 //		↓みたいなこと
 //		obj->add_Component<BoxCollider>();
 //      obj->get_Component<Collider>();
+// 
+//	※検証した結果
+//		コンポーネントの数が多いほど、unordered_mapの力が発揮されるけど、少ないとvectorでdynamic_cast回してたのと
+//		ほぼ同等の速度になる。Updateを回すだけなら多分vectorのほうが速い。
+//		なので更新はvector、取得時にはunordered_mapとかでもいいかもしれない。
 //
 // ***************************************************************************************
 class GameObject : public std::enable_shared_from_this<GameObject> , public Object
 {
 private:	
 	std::unordered_map<std::type_index, std::shared_ptr<IComponent>> m_pComponentMap;	// コンポーネント配列
-
 
     std::shared_ptr<MyTransform> m_pTransform;	// トランスフォームコンポーネントはデフォルトで持つ（2DならRectTransformを持つ）
 
