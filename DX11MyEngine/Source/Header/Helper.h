@@ -95,23 +95,43 @@ namespace Tool
     namespace Easing
     {
         // 軽い加速
-        inline float InQuad(float t) {
-            return t * t;
+        inline float InQuad(float _t) {
+            return _t * _t;
         }
 
         // 強い加速
-        inline float InCubic(float t) {
-            return t * t * t;
+        inline float InCubic(float _t) {
+            return _t * _t * _t;
         }
 
         // 自然な加速
-        inline float InSine(float t) {
-            return 1.0f - cosf((t * DirectX::XM_PI) / 2.0f);
+        inline float InSine(float _t) {
+            return 1.0f - cosf((_t * DirectX::XM_PI) / 2.0f);
         }
 
         // ヒュッ...シュタッって感じ
-        inline float EaseOutCubic(float t) {
-            return pow(1.0f - t, 2.0f);
+        // 2乗
+        inline float EaseOutQuad(float _t){
+            float invT = 1.0f - _t;
+            return 1.0f - (invT * invT);
+        }
+
+        // 3乗
+        inline float EaseOutCubic(float _t) {
+            float invT = 1.0f - _t;
+            return 1.0f - (invT * invT * invT);
+        }
+
+        // 4乗
+        inline float EaseOutQuart(float _t){
+            float invT = 1.0f - _t;
+            return 1.0f - (invT * invT * invT * invT);
+        }
+
+        // 5乗
+        inline float EaseOutQuint(float _t){
+            float invT = 1.0f - _t;
+            return 1.0f - (invT * invT * invT * invT * invT);
         }
     }
 

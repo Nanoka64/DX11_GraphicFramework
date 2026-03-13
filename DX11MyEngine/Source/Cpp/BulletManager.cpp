@@ -3,6 +3,8 @@
 #include "BulletManager.h"
 #include "Component_NormalBullet.h"
 #include "Component_ExplosionBullet.h"
+#include "Component_ExplosionLightController.h"
+#include "Component_PointLight.h"
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
@@ -25,6 +27,10 @@ constexpr int NUM_MAX__NORMAL_BULLET        = 150;
 // 爆発弾 =====================================================================
 constexpr int NUM_DEFAULT__EXPLOSION_BULLET = 50;
 constexpr int NUM_MAX__EXPLOSION_BULLET     = 100;
+
+// 爆発ライト
+constexpr int NUM_DEFAULT__EXPLOSION_LIG_BULLET = 25;
+constexpr int NUM_MAX__EXPLOSION_LIG_BULLET     = 50;
 
 // 誘導弾 =====================================================================
 constexpr int NUM_DEFAULT__HORMING_BULLET   = 50;
@@ -64,6 +70,53 @@ bool BulletManager::Init(RendererEngine &renderer)
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //
+    //						爆発弾用ライトのプール
+    // 
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////
+    m_pExplosionBulletLightPool = std::make_unique<ObjectPool<GameObject>>(
+        // 取得時に実行 ******************************************************************************************
+        [&renderer](GameObject *obj)
+        {
+            // アクティブに
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+            auto ligController = obj->get_Component<ExplosionLightController>();
+            ligController->Setup();
+        },
+        // 返却時に実行 ******************************************************************************************
+        [](GameObject *obj)
+        {
+            auto ligController = obj->get_Component<ExplosionLightController>();
+            ligController->Reset();
+        },
+        // 生成時に実行 ******************************************************************************************
+        [&renderer]()->GameObject *
+        {
+            auto obj = Instantiate3D(std::make_shared<GameObject>(), false);
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);    // ノンデストロイ
+            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);        // ノンアクティブ
+
+
+            //*****************************************************************************************
+            //						コンポーネントの追加
+            //*****************************************************************************************
+            auto light = obj->add_Component<PointLight>();                          // ポイントライト
+            auto lightController = obj->add_Component<ExplosionLightController>();  // ポイントライトの制御
+
+            light->set_Intensity(0.0f);
+            light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+            light->set_Range(0.0f);
+
+            return obj.get();
+        },
+        NUM_DEFAULT__EXPLOSION_LIG_BULLET,  // デフォルト数
+        NUM_MAX__EXPLOSION_LIG_BULLET       // 最大数
+    );
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //
     //						通常弾のプール
     // 
     //
@@ -76,7 +129,6 @@ bool BulletManager::Init(RendererEngine &renderer)
             // コライダーの使用をオンに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(true); 
-        // 取得時に実行 ******************************************************************************************
         },
         // 返却時に実行 ******************************************************************************************
         [](GameObject *obj) 
@@ -171,16 +223,18 @@ bool BulletManager::Init(RendererEngine &renderer)
         // 取得時に実行 ******************************************************************************************
         [&renderer](GameObject* obj)   
         {          
-            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+            // アクティブに
+            obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE); 
 
             // コライダーの使用をオンに
             auto collider = obj->get_Component<BoxCollider>();
             collider->set_IsEnable(true);
         },
         // 返却時に実行 ******************************************************************************************
-        [](GameObject* obj)          
-        {                  
+        [this](GameObject* obj)          
+        {
             auto bulletComp = obj->get_Component<ExplosionBullet>();
+            float explosionRadius = bulletComp->get_Parameter()._explosionRadius;   // 爆発半径を取得
             bulletComp->Reset();
 
             // コライダーの使用をオフに
@@ -190,6 +244,31 @@ bool BulletManager::Init(RendererEngine &renderer)
             // 軌跡データをクリア
             auto trail = obj->get_Component<TrailRenderer>();
             trail->clear_TrailInfoList();
+
+            auto transform = obj->get_Transform().lock();
+            transform->get_VEC3ToPos();
+            transform->get_VEC3ToScale();
+
+            //*****************************************************************************************
+            //						爆発用ライトをプールから取り出し
+            //*****************************************************************************************
+            auto lightObj = m_pExplosionBulletLightPool->get();
+            if (lightObj == nullptr) {
+                OutputDebugString("ライトプールに空きがありません");
+                return;
+            }
+
+            auto ligController = lightObj->get_Component<ExplosionLightController>();
+            lightObj->get_Transform().lock()->set_Pos(transform->get_VEC3ToPos());
+
+            ExplosionLightData expLigData;
+            expLigData._explosionLightRadius = explosionRadius;
+            expLigData._normalRadius = transform->get_VEC3ToScale().x;  // 一旦、xスケールを元に
+            expLigData._explosionDuration = 8.0f;
+            ligController->set_Parameter(expLigData);
+
+            // 取り出したオブジェクトとして追加
+            m_ExtractedExplosionLightArray.push_back(lightObj);
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject*  
@@ -284,7 +363,15 @@ bool BulletManager::Init(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void BulletManager::Update(RendererEngine &renderer)
 {
-    // 取り出したオブジェクトのみ更新させる
+    //=========================================================================================
+    //
+    //						取り出されたオブジェクトのみ更新
+    //
+    //=========================================================================================
+
+    //*****************************************************************************************
+    //						弾
+    //*****************************************************************************************
     for (auto mapIt = m_ExtractedBulletMap.begin(); mapIt != m_ExtractedBulletMap.end(); )
     {
         // プールが存在するかどうかの確認
@@ -321,7 +408,42 @@ void BulletManager::Update(RendererEngine &renderer)
         ++mapIt;
     }
 
+    //*****************************************************************************************
+    //						爆発ライト
+    //*****************************************************************************************
+    for (auto it = m_ExtractedExplosionLightArray.begin(); it != m_ExtractedExplosionLightArray.end();)
+    {
+        auto obj = *it;
+
+        // アクティブフラグが降りていれば、プールへ返却
+        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == false)
+        {
+            // 返却
+            m_pExplosionBulletLightPool->release(obj);
+
+            // 次の要素へ
+            it = m_ExtractedExplosionLightArray.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    if (m_pExplosionBulletLightPool)
+    {
+        Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"a弾プールの確認"), 0);
+        Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"aプール最大数：%d"), m_pExplosionBulletLightPool->get_MaxNum());
+        Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"aプールの現在の生成数：%d"), m_pExplosionBulletLightPool->get_CrntCreateNum());
+        Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"a使用しているオブジェクト数：%d"), m_ExtractedExplosionLightArray.size());
+        Master::m_pDebugger->EndDebugWindow();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //						デバッグ用
+    //////////////////////////////////////////////////////////////////////////////////////////
     Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾プールの確認"));
+
     for (int i = 0; i < static_cast<int>(BULLET_TYPE::NUM); i++)
     {
         if (m_BulletObjectPoolMap.empty())break;
@@ -429,31 +551,36 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
 //*----------------------------------------------------------------------------------------
 void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::ExplosionBulletData &_param)
 {
-    auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::EXPLOSION)->second;
-    auto obj = pool.get();
-    if (obj == nullptr)
+    //*****************************************************************************************
+    //						弾の取り出し
+    //*****************************************************************************************
+    auto &bulletPool = m_BulletObjectPoolMap.find(BULLET_TYPE::EXPLOSION)->second;
+    auto bulletObj = bulletPool.get();
+    if (bulletObj == nullptr)
     {
         OutputDebugString("プールに空きがありません");
         return;
     }
 
     // トランスフォームの設定
-    auto transform = obj->get_Transform().lock();
+    auto transform = bulletObj->get_Transform().lock();
     transform->set_Pos(_transformData._pos);
     transform->set_RotateToRad(_transformData._rotRad);
     transform->set_Scale(_transformData._scale);
 
 
     // 弾コンポーネントのセットアップ
-    auto bulletComp = obj->get_Component<ExplosionBullet>();
+    auto bulletComp = bulletObj->get_Component<ExplosionBullet>();
     bulletComp->set_Parameter(_param);
     bulletComp->Setup();
 
-    auto collider = obj->get_Component<BoxCollider>();
+    auto collider = bulletObj->get_Component<BoxCollider>();
     collider->set_Size(VEC3(_transformData._scale));
 
     // 更新リストに登録
-    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(obj);
+    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(bulletObj);
+
+
 }
 
 //*---------------------------------------------------------------------------------------

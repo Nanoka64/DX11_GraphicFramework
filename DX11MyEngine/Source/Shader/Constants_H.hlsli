@@ -9,7 +9,7 @@
 #define CONSTANTS_HLSLI
 
 
-static const int POINTLIGHT_MAX_NUM        = 500; // ポイントライトの最大数
+static const int POINTLIGHT_MAX_NUM        = 100; // ポイントライトの最大数
 static const int DIRECTIONLIGHT_MAX_NUM    = 1;   // ディレクションライトの最大数
 
 

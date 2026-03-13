@@ -37,8 +37,10 @@ class GameObject;
 class BulletManager
 {
 private:
-    std::unordered_map<BulletData::BULLET_TYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;
-    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_ExtractedBulletMap;   // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
+    std::unordered_map<BulletData::BULLET_TYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;      // 弾の連想配列プール
+    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_ExtractedBulletMap;  // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
+    std::unique_ptr<ObjectPool<GameObject>> m_pExplosionBulletLightPool;                            // 爆発弾用のライトプール
+    std::vector<GameObject *> m_ExtractedExplosionLightArray;                                           // 取り出した爆発ライトオブジェクトを一時的に保持する（役割が終わっていたら返す）
 
 
 public:

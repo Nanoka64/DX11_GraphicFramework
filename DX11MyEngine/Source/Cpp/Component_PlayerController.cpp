@@ -349,8 +349,8 @@ void PlayerController::RollingUpdate()
 		1.0f); 
 
 	// イージング関数でカウンタに合わせて速度を落としていく
-	float factor = Tool::Easing::EaseOutCubic(t);
-	newPos = crntPos + (m_MoveVelocity * (ROLLING_SPEED * factor));
+	float easeOut = 1.0f - Tool::Easing::EaseOutQuad(t);
+	newPos = crntPos + (m_MoveVelocity * (ROLLING_SPEED * easeOut));
 
 	// 時間で止める
 	if (m_RollingCounter >= m_RollingDuration)

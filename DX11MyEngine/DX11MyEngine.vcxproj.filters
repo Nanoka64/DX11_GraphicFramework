@@ -597,6 +597,9 @@
     <ClCompile Include="Source\Cpp\Component_RectTransform.cpp">
       <Filter>ソース ファイル\Component\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_ExplosionLightController.cpp">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -988,6 +991,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_RectTransform.h">
       <Filter>ソース ファイル\Component\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_ExplosionLightController.h">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

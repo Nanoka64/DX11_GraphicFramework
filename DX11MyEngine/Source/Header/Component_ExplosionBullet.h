@@ -24,6 +24,7 @@ public:
 
 	void OnTriggerEnter(const class CollisionInfo &other);		//　衝突時の処理
 	void set_Parameter(const BulletData::ExplosionBulletData &_param) { m_Parameter = _param; };	// パラメータの設定
+	BulletData::ExplosionBulletData get_Parameter()const { return m_Parameter; }					// パラメータの取得
 	void Reset()override;
 	void Setup()override;
 };

@@ -99,7 +99,7 @@ void AssultRifle::Update(RendererEngine &renderer)
     Master::m_pDebugger->EndDebugWindow();
 
     // 発射レートの切り替え
-    m_FireRate = m_IsExplosionBullet ? 20 : 5;
+    m_FireRate = m_IsExplosionBullet ? 5 : 5;
 
     // 右クリックでズーム
     renderer.get_CameraComponent()->set_Fov(90.0f);
