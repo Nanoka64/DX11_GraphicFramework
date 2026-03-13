@@ -264,6 +264,7 @@
     <ClInclude Include="Source\Header\IMoveBehaviour.h" />
     <ClInclude Include="Source\Header\InspectorEditors.h" />
     <ClInclude Include="Source\Header\InspectorWindow.h" />
+    <ClInclude Include="Source\Header\KeyState.h" />
     <ClInclude Include="Source\Header\LightManager.h" />
     <ClInclude Include="Source\Header\LinearMove_Behaviour.h" />
     <ClInclude Include="Source\Header\Master.h" />
@@ -594,6 +595,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\KeyState.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

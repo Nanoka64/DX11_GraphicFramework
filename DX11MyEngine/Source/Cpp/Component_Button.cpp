@@ -48,7 +48,7 @@ void Button::Start(RendererEngine &renderer)
 		assert(false);
 		return;
 	}
-	m_pMyTransform = m_pOwner.lock()->get_Transform();
+	m_pMyTransform = m_pOwner.lock()->get_RectTransform();
 }
 
 

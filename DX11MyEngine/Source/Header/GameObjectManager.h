@@ -40,6 +40,7 @@ public:
 	
 	/// <summary>
 	/// オブジェクトの内部的生成
+	/// ！！！イワツキ参上！！！
 	/// </summary>
 	/// <param name=""></param>
 	/// <param name="pos"></param>

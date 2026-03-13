@@ -600,6 +600,9 @@
     <ClCompile Include="Source\Cpp\Component_ExplosionLightController.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\KeyState.cpp">
+      <Filter>ソース ファイル\Tool\KeyInput</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -994,6 +997,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_ExplosionLightController.h">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\KeyState.h">
+      <Filter>ソース ファイル\Tool\KeyInput</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

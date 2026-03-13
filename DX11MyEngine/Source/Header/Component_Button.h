@@ -22,7 +22,7 @@ private:
 	std::function<void()> m_OnClick;	// クリックされた際の処理
 	bool m_IsInteractable;				// 入力を受け付けるかどうか
 	std::string m_Text;					// テキスト
-	std::weak_ptr<class MyTransform> m_pMyTransform;	// 自分のトランスフォーム
+	std::weak_ptr<RectTransform> m_pMyTransform;	// 自分のトランスフォーム
 
 public:
 	Button(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

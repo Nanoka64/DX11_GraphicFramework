@@ -492,7 +492,7 @@ size_t GameObjectManager::get_ObjectNum()const
 void GameObjectManager::clear_AllObject()
 {
     // スマートポインタの場合、
-    // デストラクタで破棄されるのでdelete要らない（便利だね！）
+    // デストラクタで破棄されるのでdelete要らない（便利！）
     m_3DOpaqueList.clear();  
     m_3DTranslucentList.clear();
     m_2DTranslucentList.clear();
