@@ -25,7 +25,8 @@ m_pPSUserExpandCBuffers(nullptr),
 m_VSUserExpandCBNum(0),
 m_PSUserExpandCBNum(0),
 m_UVOffset(VECTOR2::VEC2()),
-m_BlendMode(BLEND_MODE::ALPHA)
+m_BlendMode(BLEND_MODE::ALPHA),
+m_pCBSpritDataSet(nullptr)
 {
     this->set_Tag("SpriteRenderer");
 }
@@ -81,7 +82,7 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	// 頂点情報の更新
 	//VertexUpdate(renderer);
 
-	auto transform = m_pOwner.lock()->get_Component<MyTransform>();
+	auto transform = m_pOwner.lock()->get_Transform().lock();
 	
 	// ワールド変換行列の作成 ====================================================
 	XMMATRIX world = transform->get_WorldMtx();

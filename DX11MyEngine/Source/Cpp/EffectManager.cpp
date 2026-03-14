@@ -109,12 +109,15 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     // 視点位置を確定
     VECTOR3::VEC3 viewPos = renderer.get_CameraPosition();
     float fov = renderer.get_CameraComponent()->get_Fov();
+    float camera_near = renderer.get_CameraComponent()->get_Near();
+    float camera_far = renderer.get_CameraComponent()->get_Far();
+
     ::Effekseer::Vector3D viewerPosition = ::Effekseer::Vector3D(viewPos.x, viewPos.y, viewPos.z);
 
     // Specify a projection matrix
     // 投影行列を設定
     ::Effekseer::Matrix44 projectionMatrix;
-    projectionMatrix.PerspectiveFovLH(XMConvertToRadians(fov),(float)screenW / (float)screenH, 1.0f, 5000.0f);
+    projectionMatrix.PerspectiveFovLH(XMConvertToRadians(fov),(float)screenW / (float)screenH, camera_near, camera_far);
 
     VECTOR3::VEC3 forcus = renderer.get_CameraComponent()->get_FocusPoint();
 

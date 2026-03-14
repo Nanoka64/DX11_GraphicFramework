@@ -24,7 +24,7 @@
 // *************************************************************************************************************
 class MyTransform : public IComponent
 {
-private:
+protected:
 	DirectX::XMVECTOR m_Position;	// 位置
     DirectX::XMVECTOR m_RotationQ;	// 回転 クオータニオンで保持するようにしたが、set/getではオイラーで指定できるようにする
 	DirectX::XMVECTOR m_Scale;		// 拡縮

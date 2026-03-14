@@ -67,6 +67,12 @@ BulletManager::~BulletManager()
 //*----------------------------------------------------------------------------------------
 bool BulletManager::Init(RendererEngine &renderer)
 {
+    // ä˘Ç…çÏê¨Ç≥ÇÍÇƒÇ¢ÇÈÇ»ÇÁï‘Ç∑
+    if (!m_BulletObjectPoolMap.empty() || m_pExplosionBulletLightPool != nullptr)
+    {
+        return true;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //
