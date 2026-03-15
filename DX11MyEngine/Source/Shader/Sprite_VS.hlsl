@@ -13,9 +13,9 @@
 struct VS_IN
 {
     float3 Pos      : POSITION; // 頂点座標
-    float2 UV       : TEXCOORD; // 法線（cpp側の都合で入れているが基本使わない）
+    float2 UV       : TEXCOORD; //テクスチャ座標
     float4 Color    : COLOR;    // 頂点色
-    float3 Normal   : NORMAL;   // テクスチャ座標
+    float3 Normal : NORMAL;     //  法線（cpp側の都合で入れているが基本使わない）
 };
 /* =========================================================================
 /* - @:スプライト出力構造体 - */

@@ -36,7 +36,7 @@ static constexpr const char* g_SoldierNames[UINT_CAST(SOLDIER_TYPE::NUM)] =
 /// <summary>
 /// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
 /// </summary>
-static const float g_MouseHoveredItemSlideOffset = 20.0f;
+static const float g_MouseHoveredItemSlideOffset = 30.0f;
 
 
 using namespace SceneStateEnums;
@@ -75,7 +75,7 @@ void c_Title_SoldierSelect::OnEnter(SceneManager *pOwner)
 		if (obj)
 		{
 			obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
-			m_pMenuItemBackSpriteTransform[i] = obj->get_Transform().lock();
+			m_pMenuItemBackSpriteTransform[i] = obj->get_RectTransform().lock();
 		}
 
 		m_Items[i]._pos = g_ItemPosArray[i];
@@ -175,10 +175,11 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 		// 項目の位置
 		VEC2 menuItemPos = item._pos;
 
-		// スプライトの位置（アンカー座標を画面の中心にしてしまっているため、補正している）
+		// スプライトの位置（文字の少し左側になるよう補正している）
 		VEC2 spritePos;
-		spritePos.x = -menuItemPos.x;
-		spritePos.y = -menuItemPos.y + 480;
+		spritePos.x = menuItemPos.x - 100.0f;
+		spritePos.y = menuItemPos.y;
+
 
 		// マウスが乗ってるならずらす
 		if (item._isHovered)
@@ -201,8 +202,8 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 
 		// TODO:UI用もソートされてしまっているため描画順が崩れる
 		// なので一旦オフセットのほうに位置を入れる
-		m_pMenuItemBackSpriteTransform[counter]->set_VEC3ToLocal_Pos(VEC3(spritePos.x, spritePos.y, 0.0f));
-		m_pMenuItemBackSpriteTransform[counter]->set_Scale(500.0f, 100.0f, 1.0f);
+		m_pMenuItemBackSpriteTransform[counter]->set_RectPosition(VEC2(spritePos.x, spritePos.y));
+		m_pMenuItemBackSpriteTransform[counter]->set_Size(500.0f, 100.0f);
 
 		// 文字表示
 		Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos, "White_40_STD");

@@ -197,7 +197,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
         lit_Factor = lerp(1.0f, lit_Factor, vignette);
         
         // 現在のカラーより暗く
-        shadowColor = finalCol.xyz * 0.3f;
+        shadowColor = finalCol.xyz * 0.5f;
         
         // 通常カラーとシャドウカラーで線形補間
         finalCol.xyz = lerp(shadowColor, finalCol.xyz, lit_Factor);

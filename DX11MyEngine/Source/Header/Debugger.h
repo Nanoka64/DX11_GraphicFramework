@@ -53,9 +53,11 @@ public:
 
 	bool DG_DragInt(const std::string &label, int valNum, int* val, float slideSpeed, int _min, int _max);			// int
 	bool DG_DragFloat(const std::string &label, int valNum, float* val, float slideSpeed, float _min, float _max);	// float
+	bool DG_DragVec2(const std::string &label, VECTOR2::VEC2* val, float slideSpeed, float _min, float _max);		// VEC3
 	bool DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max);		// VEC3
 	bool DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max);							// スライダー -int-
 	bool DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max);					// スライダー -float-
+	bool DG_SliderFloat(const std::string &label, VECTOR2::VEC2* val, float _min, float _max);						// スライダー -VEC3-
 	bool DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max);						// スライダー -VEC3-
 	bool DG_Button(const std::string &label, VECTOR2::VEC2 size = { 0.0f,0.0f });									// ボタン
 	bool DG_RadioButton(const std::string &label, bool active);													// ラジオボタン

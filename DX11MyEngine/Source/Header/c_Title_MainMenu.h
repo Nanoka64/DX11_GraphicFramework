@@ -58,7 +58,7 @@ private:
 
 
 	//static const VECTOR2::VEC2 m_MenuItemPosArray[static_cast<int>(TITLEMENU_ITEM::NUM)];
-	std::shared_ptr<class MyTransform> m_pMenuItemBackSpriteTransform[static_cast<int>(TITLEMENU_ITEM::NUM)];
+	std::shared_ptr<class RectTransform> m_pMenuItemBackSpriteTransform[static_cast<int>(TITLEMENU_ITEM::NUM)];
 
 
 public:

@@ -62,7 +62,7 @@ void c_Title_MissionSelect::OnEnter(SceneManager *pOwner)
 		if (obj)
 		{
 			obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
-			m_pMenuItemBackSpriteTransform[i] = obj->get_Transform().lock();
+			m_pMenuItemBackSpriteTransform[i] = obj->get_RectTransform().lock();
 		}
 
 		m_MissionItems[i]._pos = g_MissionItemPosArray[i];
@@ -165,10 +165,11 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 		// 項目の位置
 		VEC2 menuItemPos = item._pos;
 
-		// スプライトの位置（アンカー座標を画面の中心にしてしまっているため、補正している）
+		// スプライトの位置（文字の少し左側になるよう補正している）
 		VEC2 spritePos;
-		spritePos.x = -menuItemPos.x;
-		spritePos.y = -menuItemPos.y + 480;
+		spritePos.x = menuItemPos.x - 100.0f;
+		spritePos.y = menuItemPos.y;
+
 
 		// マウスが乗ってるならずらす
 		if (item._isHovered)
@@ -191,8 +192,8 @@ void c_Title_MissionSelect::Draw(SceneManager *pOwner)
 
 		// TODO:UI用もソートされてしまっているため描画順が崩れる
 		// なので一旦オフセットのほうに位置を入れる
-		m_pMenuItemBackSpriteTransform[0]->set_VEC3ToLocal_Pos(VEC3(spritePos.x, spritePos.y, 0.0f));
-		m_pMenuItemBackSpriteTransform[0]->set_Scale(500.0f, 100.0f, 1.0f);
+		m_pMenuItemBackSpriteTransform[0]->set_RectPosition(VEC2(spritePos.x, spritePos.y));
+		m_pMenuItemBackSpriteTransform[0]->set_Size(500.0f, 100.0f);
 
 		// 文字表示
 		Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos, "White_40_STD");

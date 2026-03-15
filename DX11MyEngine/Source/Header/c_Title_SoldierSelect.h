@@ -30,7 +30,7 @@ private:
 	int m_PrevHoveredMIssionItem;	// 前にマウスが乗っていた項目（SE用）
 	SceneStateEnums::c_TITLE m_NextState = SceneStateEnums::c_TITLE::c_TITLE_MAIN_MENU;
 	bool m_IsInit;	// 既に初期化済みか
-	std::shared_ptr<class MyTransform> m_pMenuItemBackSpriteTransform[UINT_CAST(SOLDIER_TYPE::NUM)];
+	std::shared_ptr<class RectTransform> m_pMenuItemBackSpriteTransform[UINT_CAST(SOLDIER_TYPE::NUM)];
 
 
 	/// <summary>

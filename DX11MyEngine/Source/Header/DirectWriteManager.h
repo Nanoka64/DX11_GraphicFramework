@@ -5,6 +5,8 @@
 #include <string>
 #include <format>
 
+#define IS_ENABLE   // DirectWriteを使用しているとRenderDocが使用できないのでそういう時にこれを消す
+
 // =======================================================================================
 //
 // *---     DirectWriteManager Class         ---*
@@ -80,6 +82,9 @@ public:
     template <typename... Args>
     void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, const std::string& formatTag,  Args&&... args)
     {
+#ifndef IS_ENABLE
+        return;
+#else
         HRESULT hr = S_OK;
 
         Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
@@ -117,6 +122,7 @@ public:
             m_pSolidBrush,
             D2D1_DRAW_TEXT_OPTIONS_NONE
         );
+#endif
     }
 };
 

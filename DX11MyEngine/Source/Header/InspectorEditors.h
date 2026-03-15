@@ -32,6 +32,34 @@ public:
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
+/* --- @:RectTransformEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】2D用トランスフォーム編集用エディタ
+//
+// ***************************************************************************************
+class RectTransformEditor : public EditorBase
+{
+private:
+    float m_SlideAccuRate; // 位置の入力精度
+
+public:
+    RectTransformEditor()
+        : EditorBase(),
+        m_SlideAccuRate(0.001f) 
+    {};
+    ~RectTransformEditor()
+    {
+    };
+
+    bool Init(RendererEngine& renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+
+};
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
 /* --- @:DirectionLightEditor Class --- */
 //
 //  ★継承：EditorBase ★

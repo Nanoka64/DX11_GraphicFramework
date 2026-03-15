@@ -252,6 +252,26 @@ bool Debugger::DG_DragFloat(const std::string &label, int valNum, float* val, fl
     return false;
 }
 
+//**************************************************************************************
+//      * Debugger Class - VEC2 ドラッグして値を変えたり、直接入力で変えることも出来る - *
+// 引数 1.ラベル名
+//      2.値の参照＆格納先
+//      3.値の変更スピード
+//      4.最小値
+//      5.最大値
+//=======================================================================================
+bool Debugger::DG_DragVec2(const std::string &label, VECTOR2::VEC2* val, float slideSpeed, float _min, float _max)
+{
+    float temp[2] = { val->x, val->y};
+    if (ImGui::DragFloat2(label.c_str(), temp, slideSpeed, _min, _max))
+    {
+        val->x = temp[0];
+        val->y = temp[1];
+        return true;
+    }
+    return false;
+}
+
 
 //**************************************************************************************
 //      * Debugger Class - VEC3 ドラッグして値を変えたり、直接入力で変えることも出来る - *
@@ -332,6 +352,27 @@ bool Debugger::DG_SliderFloat(const std::string &label, int valNum, float* val, 
         break;
     default:
         return false;
+    }
+    return false;
+}
+
+//**************************************************************************************
+//      * Debugger Class - float スライダー - *
+// 引数 1.ラベル名
+//      2.値の数（４まで対応）  
+//      3.値の参照＆格納先
+//      4.最小値
+//      5.最大値
+//=======================================================================================
+bool Debugger::DG_SliderFloat(const std::string &label, VECTOR2::VEC2* val, float _min, float _max)
+{
+    float temp[2] = { val->x,val->y};
+
+    if (ImGui::SliderFloat2(label.c_str(), temp, _min, _max))
+    {
+        val->x = temp[0];
+        val->y = temp[1];
+        return true;
     }
     return false;
 }

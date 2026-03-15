@@ -3,6 +3,7 @@
 #include "RendererEngine.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "Component_RectTransform.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
 #include "Component_PlayerController.h"
@@ -35,7 +36,6 @@ void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
     if (pTransform == nullptr)
     {
-        MessageBoxA(NULL, "Transformコンポーネントがアタッチされていません。", "Error", MB_OK | MB_ICONERROR);
         return;
     }
 
@@ -93,7 +93,88 @@ void TransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
         Master::m_pDebugger->DG_TreePop();
     }
+}
 
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:RectTransformEditor Class --- */
+//
+// ***************************************************************************************
+bool RectTransformEditor::Init(RendererEngine &renderer)
+{
+    return true;
+}
+
+void RectTransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
+{
+    auto pTransform = pObj.get_Component<RectTransform>();
+
+    if (pTransform == nullptr)
+    {
+        return;
+    }
+
+    float width = pTransform->get_SizeDelta().x;
+    float height = pTransform->get_SizeDelta().y;
+    VEC2 anchorMax = pTransform->get_AnchorMax();
+    VEC2 anchorMin = pTransform->get_AnchorMin();
+    VEC2 pivot = pTransform->get_Pivot();
+    VEC2 pos = pTransform->get_RectPosition();
+    VEC3 rot = pTransform->get_VEC3ToRotateToDeg();
+
+
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"UIトランスフォーム")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"座標"));
+        if (Master::m_pDebugger->DG_DragVec2("##Pos", &pos, m_SlideAccuRate, -100000.0f, 100000.0f))
+        {
+            pTransform->set_RectPosition(pos);
+        }
+
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"アンカー"))) {
+            if (Master::m_pDebugger->DG_DragVec2(U8ToChar(u8"最小"), &anchorMin, 0.01f, -100000.0f, 100000.0f)) {
+                pTransform->set_AnchorMin(anchorMin);
+            }
+            if (Master::m_pDebugger->DG_DragVec2(U8ToChar(u8"最大"), &anchorMax, 0.01f, -100000.0f, 100000.0f)) {
+                pTransform->set_AnchorMax(anchorMax);
+            }
+            Master::m_pDebugger->DG_TreePop();  // ツリー終了
+        }
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ピボット"));
+        Master::m_pDebugger->DG_SameLine(); // くっつける
+        if (Master::m_pDebugger->DG_DragVec2("##Pivot", &pivot, 0.01f, -100000.0f, 100000.0f)) {
+            pTransform->set_Pivot(pivot);
+        }
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"幅"));
+        Master::m_pDebugger->DG_SameLine(); // くっつける
+        if (Master::m_pDebugger->DG_DragFloat("##SizeX", 1, &width, m_SlideAccuRate, -100000.0f, 100000.0f)) {
+            pTransform->set_SizeDelta(VEC2(width, height));
+        }
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"高さ"));
+        Master::m_pDebugger->DG_SameLine(); // くっつける
+        if (Master::m_pDebugger->DG_DragFloat("##SizeY", 1, &height, m_SlideAccuRate, -100000.0f, 100000.0f)) {
+            pTransform->set_SizeDelta(VEC2(width, height));
+        }
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"回転"));
+        if (Master::m_pDebugger->DG_DragVec3("##Rot", &rot, m_SlideAccuRate, -180.0f, 180.0f))
+        {
+            pTransform->set_RotateToDeg(rot);
+        }
+
+
+        Master::m_pDebugger->DG_SliderFloat(U8ToChar(u8"編集スライド精度"), 1, &m_SlideAccuRate, 0.001f, 2.0f);
+
+        Master::m_pDebugger->DG_TreePop();
+    }
 }
 
 

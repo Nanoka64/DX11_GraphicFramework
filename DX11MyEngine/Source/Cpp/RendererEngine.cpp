@@ -851,8 +851,16 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg,
     psProj = XMMatrixTranspose(psProj);   // 転置
 
     // 正射投影行列作成
-    XMMATRIX ohProjMat = XMMatrixOrthographicLH(_w, _h, _near, _far);
-    //ohProjMat = XMMatrixTranspose(ohProjMat);   // 転置
+    // 左上原点 Y軸下向き
+    XMMATRIX ohProjMat = XMMatrixOrthographicOffCenterLH(
+        0.0f,  // ViewLeft
+        _w,    // ViewRight
+        _h,    // ViewBottom (下に高さを入れる)
+        0.0f,  // ViewTop    (上に0を入れる)
+       -1.0f,  // NearZ を -1.0f にする！ (0.0fだとZ=0の板がクリップされて消える可能性があるため)
+        1.0f
+    );
+    ohProjMat = XMMatrixTranspose(ohProjMat);   // 転置
 
     // 透視投影行列
     auto& cb = m_RenderParam.cbProjectionSet;

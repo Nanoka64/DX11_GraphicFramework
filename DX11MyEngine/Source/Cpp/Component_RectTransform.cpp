@@ -17,9 +17,10 @@ RectTransform::RectTransform(std::weak_ptr<GameObject> pOwner, int updateRank) :
 	m_AnchoredPosition(VEC2()),
 	m_SizeDelta(VEC2(100.0f,100.0f)),
 	m_RectSize(VEC2(1.0f, 1.0f)),
-	m_AnchorMin(VEC2(0.5f, 0.5f)),
-	m_AnchorMax(VEC2(0.5f, 0.5f)),
-	m_Pivot(VEC2()),
+    // 左上を基準に
+	m_AnchorMin(VEC2(0.0f, 0.0f)),  
+	m_AnchorMax(VEC2(0.0f, 0.0f)),
+	m_Pivot(VEC2(0.0f, 0.0f)),
 	m_WorldMatrix( XMMatrixIdentity()),
 	m_CalculatedWidth(0.0f),
 	m_CalculatedHeight(0.0f)
@@ -34,6 +35,34 @@ RectTransform::RectTransform(std::weak_ptr<GameObject> pOwner, int updateRank) :
 RectTransform::~RectTransform()
 {
 
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】幅と高さの設定
+//* 
+//* [引数] なし
+//*
+//* [返値]
+//* ワールド変換行列 
+//*----------------------------------------------------------------------------------------
+void RectTransform::set_Size(float width, float height)
+{
+    // 親のサイズを取得（親がない場合はキャンバスのサイズ）
+    float parentWidth = Master::m_pDataManager->get_ScreenWidth();
+    float parentHeight = Master::m_pDataManager->get_ScreenHeight();
+    if (auto parent = m_pParentRect.lock())
+    {
+        parentWidth = parent->get_Width();
+        parentHeight = parent->get_Height();
+    }
+
+    // 現在のアンカーによって確保されている幅と高さを計算
+    float anchorWidth = parentWidth * (m_AnchorMax.x - m_AnchorMin.x);
+    float anchorHeight = parentHeight * (m_AnchorMax.y - m_AnchorMin.y);
+
+    // 指定された幅・高さになるように、SizeDelta（余白または絶対サイズ）を逆算してセット
+    m_SizeDelta.x = width - anchorWidth;
+    m_SizeDelta.y = height - anchorHeight;
 }
 
 
@@ -51,7 +80,7 @@ void RectTransform::UpdateUILocalMatrix()
     // スクリーンの大きさをまずは親とする
 	float parentWidth =  Master::m_pDataManager->get_ScreenWidth();
 	float parentHeight = Master::m_pDataManager->get_ScreenHeight();
-	VEC2 parentPivot = { 0.5f, 0.5f };
+	VEC2 parentPivot = { 0.0f, 0.0f };  // 左上基準
 
     // 親が設定されていればそっちに入れ替え
 	if (auto parent = m_pParentRect.lock())
@@ -84,8 +113,8 @@ void RectTransform::UpdateUILocalMatrix()
     // UI用ローカル変換行列の構築 (DirectX 11用)
     // 1x1のメッシュを想定しているため、ピボット位置を基準にメッシュをずらす
     XMMATRIX offsetMtx = XMMatrixTranslation(
-        -m_CalculatedWidth * m_Pivot.x,
-        -m_CalculatedHeight * m_Pivot.y,
+        -m_Pivot.x,
+        -m_Pivot.y,
         0.0f
     );
 

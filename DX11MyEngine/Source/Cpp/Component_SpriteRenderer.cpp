@@ -82,7 +82,8 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	// 頂点情報の更新
 	//VertexUpdate(renderer);
 
-	auto transform = m_pOwner.lock()->get_Transform().lock();
+	auto transform = m_pOwner.lock()->get_RectTransform().lock();
+	transform->UpdateUILocalMatrix();
 	
 	// ワールド変換行列の作成 ====================================================
 	XMMATRIX world = transform->get_WorldMtx();
@@ -149,6 +150,8 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 
 	// UIの描画の際は深度テストをオフにする
 	renderer.RegisterDepthStencilState(renderer.get_DepthWriteDisabled_DSS(), 0);
+
+	renderer.RegisterCullMode(CULL_MODE::BACK);
 
     // 描画コール：インデックス数は6（三角形2個 × 3頂点） ==========================
     pContext->DrawIndexed(6, 0, 0);
@@ -239,10 +242,11 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 	m_Width = info.Width;
 	m_Height = info.Height;
 
-	auto transform = m_pOwner.lock()->get_Transform().lock();
-	transform->set_Scale(m_Width, m_Height, 1.0f);
-	transform->set_Pos(0, 0, 0);
-	transform->set_RotateToRad(0, 0, 0);
+	auto transform = m_pOwner.lock()->get_RectTransform().lock();
+	transform->set_Size(m_Width, m_Height);
+	//transform->set_Scale(m_Width, m_Height, 1.0f);
+	//transform->set_Pos(0, 0, 0);
+	//transform->set_RotateToRad(0, 0, 0);
 
 	if (m_pMeshData == nullptr){
 		assert(false);
@@ -281,7 +285,7 @@ void SpriteRenderer::VertexUpdate(RendererEngine& renderer)
 
 	float hw = m_Width;
 	float hh = m_Height;
-	VEC3 centerPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
+	VEC3 centerPos = m_pOwner.lock()->get_RectTransform().lock()->get_VEC3ToPos();
 
 	VERTEX_Static vertices[4];
 

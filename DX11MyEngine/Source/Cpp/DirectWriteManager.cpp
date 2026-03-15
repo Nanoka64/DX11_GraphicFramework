@@ -5,7 +5,6 @@
 
 
 
-
 //--------------------------------------------------------------------------------------
 //      * DirectWriteManager Class - コンストラクタ - *
 //--------------------------------------------------------------------------------------
@@ -37,6 +36,9 @@ DirectWriteManager::~DirectWriteManager()
 HRESULT DirectWriteManager::Init(RendererEngine &render)
 {
     HRESULT hr = S_OK;
+#ifndef IS_ENABLE
+    return hr;
+#else
 
     // Direct2D初期化
     hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pD2DFactory);
@@ -109,6 +111,8 @@ HRESULT DirectWriteManager::Init(RendererEngine &render)
     //CHECK_HRESULT(hr);
 
     return hr;
+#endif // IS_ENABLE
+
 }
 
 
@@ -137,7 +141,11 @@ void DirectWriteManager::Term()
 //*----------------------------------------------------------------------------------------
 void DirectWriteManager::BeginDraw()
 {
+#ifndef IS_ENABLE
+    return;
+#else
     m_pRenderTarget->BeginDraw();
+#endif
 }
 
 //*---------------------------------------------------------------------------------------
@@ -148,7 +156,11 @@ void DirectWriteManager::BeginDraw()
 //*----------------------------------------------------------------------------------------
 HRESULT DirectWriteManager::EndDraw()
 {
+#ifndef IS_ENABLE
+    return S_OK;
+#else
     return m_pRenderTarget->EndDraw();
+#endif
 }
 
 //--------------------------------------------------------------------------------------
@@ -180,11 +192,16 @@ std::wstring DirectWriteManager::StringToWString(std::string oString)
 //--------------------------------------------------------------------------------------
 void DirectWriteManager::SetColor(const D2D1_COLOR_F& col)
 {
+#ifndef IS_ENABLE
+    return;
+#else
+
     // 使用する色の指定
     HRESULT hr = m_pRenderTarget->CreateSolidColorBrush(col, &m_pSolidBrush);
     if (FAILED(hr)) {
         assert(false);
     }
+#endif
 }
 
 
@@ -196,6 +213,9 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 {
     HRESULT hr = S_OK;
 
+#ifndef IS_ENABLE
+    return hr;
+#else
     // 既に登録済みなら返す
     auto it = m_pTextFormatMap.find(data->tag);
     if (it != m_pTextFormatMap.end()){
@@ -227,6 +247,7 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
     CHECK_HRESULT(hr);
 
     return hr;
+#endif
 }
 
 
@@ -240,8 +261,11 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA *data)
 void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, const std::string &formatTag,  D2D1_DRAW_TEXT_OPTIONS options)
 {
     HRESULT hr = S_OK;
-    //return;
-    
+
+
+#ifndef IS_ENABLE
+    return;
+#else
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
 
     // ワイド文字に変換
@@ -281,6 +305,6 @@ void DirectWriteManager::DrawString(std::string str, const VECTOR2::VEC2& _pos, 
         m_pSolidBrush,
         options
     );
-
+#endif
 }
 

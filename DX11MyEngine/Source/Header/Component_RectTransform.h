@@ -8,6 +8,9 @@
 //  ★継承：IComponent ★
 //
 // 【?】2D描画用のトランスフォーム
+// TODO:計算ロジック部分をほとんどAIに頼んでしまったので、復習して理解できるようにする！
+// 
+// 
 //	参考サイト：https://qiita.com/maple_22/items/4e81acec92ab44b31910
 //				https://taidanahibi.com/unity/rect-transform/#index_id0
 //		
@@ -42,6 +45,8 @@ public:
 	void set_AnchorMin(const VECTOR2::VEC2 &_v) { m_AnchorMin = _v; }
 	void set_AnchorMax(const VECTOR2::VEC2 &_v) { m_AnchorMax = _v; }
 	void set_Pivot(const VECTOR2::VEC2 &_v) { m_Pivot = _v; }
+	void set_SizeDelta(const VECTOR2::VEC2& _v) { m_SizeDelta = _v; }
+	void set_RectPosition(const VECTOR2::VEC2& _v) { m_AnchoredPosition = _v; }
 
 	//*----------------------------------------------------------------------------------------
 	//*【?】ゲッタ
@@ -49,9 +54,12 @@ public:
 	VECTOR2::VEC2 get_AnchorMin()const { return m_AnchorMin; }
 	VECTOR2::VEC2 get_AnchorMax()const { return m_AnchorMax; }
 	VECTOR2::VEC2 get_Pivot()const { return m_Pivot; }
+	VECTOR2::VEC2 get_SizeDelta()const { return m_SizeDelta; }
+	VECTOR2::VEC2 get_RectPosition()const { return m_AnchoredPosition; }
 	float get_Width()const { return m_CalculatedWidth; }
 	float get_Height()const { return m_CalculatedHeight; }
 
+	void set_Size(float _width, float _height);
 	void UpdateUILocalMatrix();
 
 	/// <summary>
