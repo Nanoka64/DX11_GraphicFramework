@@ -31,6 +31,7 @@ CollisionManager        *Master::m_pCollisionManager    = nullptr;   // 衝突管理
 EffectManager           *Master::m_pEffectManager       = nullptr;   // エフェクト管理
 SoundManager            *Master::m_pSoundManager        = nullptr;   // サウンド管理
 TimeManager             *Master::m_pTimeManager         = nullptr;   // 時間管理
+DataManager             *Master::m_pDataManager         = nullptr;   // データ管理
 
 
 //*---------------------------------------------------------------------------------------
@@ -94,11 +95,21 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pEffectManager        = new EffectManager();          // エフェクト管理
     Master::m_pSoundManager         = new SoundManager();           // サウンド管理
     Master::m_pTimeManager          = new TimeManager();            // 時間管理
+    Master::m_pDataManager          = new DataManager();            //データ管理
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/
     // *************************************************************************************************
     if (FAILED(this->InitWindow(hInstance, nCmdShow))) 
+    {
+        assert(false);
+        return false;
+    }
+
+    // *************************************************************************************************
+    /**  データマネージャの初期化 **/
+    // *************************************************************************************************
+    if (!Master::m_pDataManager->Init())
     {
         assert(false);
         return false;

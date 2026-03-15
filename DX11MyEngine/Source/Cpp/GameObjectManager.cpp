@@ -4,6 +4,7 @@
 #include "Component_Transform.h"
 #include "Master.h"
 #include "RendererEngine.h"
+#include "Component_RectTransform.h"
 #include  <algorithm>
 
 using namespace VECTOR3;
@@ -51,6 +52,11 @@ bool GameObjectManager::Init(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
 {
+    // ******************************************************************
+    //
+    // 不透明オブジェクト
+    // 
+    // ******************************************************************
     for (auto it = m_3DOpaqueList.begin(); it != m_3DOpaqueList.end(); it++)
     {
         if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
@@ -59,6 +65,34 @@ void GameObjectManager::ObjectUpdate(RendererEngine &renderer)
             (*it).get()->ComponentUpdate(renderer);
         }
     }
+    // ******************************************************************
+    //
+    //  透明度有りオブジェクト
+    // 
+    // ******************************************************************
+    for (auto it = m_3DTranslucentList.begin(); it != m_3DTranslucentList.end(); it++)
+    {
+        if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
+        {
+            (*it).get()->Update(renderer);
+            (*it).get()->ComponentUpdate(renderer);
+        }
+    }
+    // ******************************************************************
+    //
+    //  2Dオブジェクト
+    // 
+    // ******************************************************************
+    for (auto it = m_2DTranslucentList.begin(); it != m_2DTranslucentList.end(); it++)
+    {
+        if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
+        {
+            (*it).get()->Update(renderer);
+            (*it).get()->ComponentUpdate(renderer);
+        }
+    }
+
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -97,6 +131,25 @@ void GameObjectManager::ObjectLateUpdate(RendererEngine &renderer)
     // 
     // ******************************************************************
     for (auto it = m_3DTranslucentList.begin(); it != m_3DTranslucentList.end(); it++)
+    {
+        if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
+        {
+            (*it).get()->Update(renderer);
+            (*it).get()->ComponentLateUpdate(renderer);
+        }
+        // 削除フラグが立っていれば削除リストに追加
+        if ((*it).get()->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE) == true)
+        {
+            deleteList.push_back((*it));
+        }
+    }
+
+    // ******************************************************************
+    //
+    //  2Dオブジェクト
+    // 
+    // ******************************************************************
+    for (auto it = m_2DTranslucentList.begin(); it != m_2DTranslucentList.end(); it++)
     {
         if ((*it)->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) 
         {
@@ -230,6 +283,31 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObjectManager Class 
+//*【?】透明度あり2Dオブジェクトの描画パス
+//* 引数：1.RendererEngine
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void GameObjectManager::Alpha_2DObjectRenderPass(RendererEngine &renderer)
+{
+    VEC3 camPos = renderer.get_CameraPosition();    // カメラ座標
+    auto begin = m_2DTranslucentList.begin();
+    auto end = m_2DTranslucentList.end();
+
+    // 描画
+    for (auto &obj : m_2DTranslucentList)
+    {
+        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        {
+            continue;
+        }
+        //obj->Draw(renderer);
+        obj->ComponentRender(renderer);
+    }
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:GameObjectManager Class 
 //*【?】終了
 //* 引数：1.RendererEngine
 //* 返値：bool
@@ -238,6 +316,7 @@ bool GameObjectManager::Term(RendererEngine &renderer)
 {
     m_3DOpaqueList.clear();
     m_3DTranslucentList.clear();
+    m_2DTranslucentList.clear();
     return true;
 }
 
@@ -285,7 +364,7 @@ std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate3D(std::share
 //* 引数：1.RendererEngine
 //* 返値：生成したオブジェクトの共有ポインタ
 //*----------------------------------------------------------------------------------------
-std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<MyTransform> parent)
+std::shared_ptr<GameObject> GameObjectManager::Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos, VECTOR3::VEC3 rot, std::weak_ptr<RectTransform> parent)
 {
     // Transformは全てのオブジェクトに共通するコンポーネントとするため、生成時に追加する
     // (Unity風に)
@@ -355,6 +434,7 @@ void GameObjectManager::remove_Object(std::shared_ptr<GameObject> object)
 {
     std::erase(m_3DOpaqueList, object);
     std::erase(m_3DTranslucentList, object);
+    std::erase(m_2DTranslucentList, object);
 }
 
 
@@ -375,6 +455,13 @@ void GameObjectManager::remove_ObjectByTag(const std::string &tag)
 
     // 3D透明
     std::erase_if(m_3DTranslucentList, 
+        [&tag](const auto &obj) {
+        return obj->get_Tag() == tag;
+        }
+    );
+
+    // 2D透明
+    std::erase_if(m_2DTranslucentList, 
         [&tag](const auto &obj) {
         return obj->get_Tag() == tag;
         }
@@ -421,9 +508,24 @@ std::shared_ptr<GameObject> GameObjectManager::get_ObjectByTag(const std::string
         {
             return (*it);
         }
+
+        // それでも見つからなければ2Dオブジェクトの方も走査**********************
+        begin = m_2DTranslucentList.begin();
+        end = m_2DTranslucentList.end();
+
+        it = std::find_if(begin, end,
+            [tag](const std::shared_ptr<GameObject>& obj)
+            {
+                return (obj->get_Tag() == tag);
+            }
+        );
+        if (it != end)
+        {
+            return (*it);
+        }
     }
 
-    return {};  // 最終的に見つからなければ空を返す
+    return nullptr;  // 最終的に見つからなければ空を返す
 }
 
 
@@ -541,7 +643,7 @@ namespace GIGA_Engine
     {
         return Master::m_pGameObjectManager->Internal_Instantiate3D(pObj, isTransparent, pos, rot, parent);
     }
-    std::shared_ptr<GameObject>Instantiate2D(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<MyTransform> parent )
+    std::shared_ptr<GameObject>Instantiate2D(std::shared_ptr<GameObject> pObj,bool isTransparent, VECTOR3::VEC3 pos , VECTOR3::VEC3 rot , std::weak_ptr<RectTransform> parent )
     {
         return Master::m_pGameObjectManager->Internal_Instantiate2D(pObj, isTransparent, pos, rot, parent);
     }

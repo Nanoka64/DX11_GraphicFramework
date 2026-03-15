@@ -21,11 +21,17 @@ private:
 
 
 	// 親に対しての基準点 0.0～1.0の座標
-	// 左下が（0.0,1.0）
-	// 右上が（1.0,0.0）
+	// 左上が（0.0,0.0）
+	// 右下が（1.0,1.0）
 	VECTOR2::VEC2 m_AnchorMin;	
 	VECTOR2::VEC2 m_AnchorMax;	 
-	VECTOR2::VEC2 m_Pivot;		// 自分自身の基準点的な感じのやつ（0.5,0.5で中心 0.0,1.0で左上）
+	VECTOR2::VEC2 m_Pivot;		// 自分自身の基準点的な感じのやつ（0.5,0.5で中心 0.0,0.0で左上）
+
+	float m_CalculatedWidth ;
+	float m_CalculatedHeight;
+	DirectX::XMMATRIX m_WorldMatrix;
+	std::weak_ptr<RectTransform> m_pParentRect;
+
 public:
 	RectTransform(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~RectTransform();
@@ -43,13 +49,16 @@ public:
 	VECTOR2::VEC2 get_AnchorMin()const { return m_AnchorMin; }
 	VECTOR2::VEC2 get_AnchorMax()const { return m_AnchorMax; }
 	VECTOR2::VEC2 get_Pivot()const { return m_Pivot; }
+	float get_Width()const { return m_CalculatedWidth; }
+	float get_Height()const { return m_CalculatedHeight; }
+
+	void UpdateUILocalMatrix();
 
 	/// <summary>
 	/// ワールド変換行列の取得
 	/// </summary>
 	/// <returns>ワールド変換行列</returns>
 	DirectX::XMMATRIX get_WorldMtx()const override;
-
 
 	/// <summary>
 	/// RectTransformかどうか

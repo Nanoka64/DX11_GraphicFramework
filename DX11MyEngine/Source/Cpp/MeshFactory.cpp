@@ -132,7 +132,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateUtilityMesh(const CreateUti
 std::shared_ptr<class GameObject> MeshFactory::CreateSprite(const CreateSpriteInfo &info)
 {
     // オブジェクトの生成
-    std::shared_ptr<GameObject> pObj = Instantiate3D(std::move(std::make_shared<GameObject>()), info.IsTransparent);
+    std::shared_ptr<GameObject> pObj = Instantiate2D(std::move(std::make_shared<GameObject>()), info.IsTransparent);
     pObj->Init(*info.pRenderer);
     pObj->set_Tag(info.ObjTag.c_str());
 

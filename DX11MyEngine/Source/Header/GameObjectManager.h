@@ -37,6 +37,7 @@ public:
 	void ObjectMainRenderPass(RendererEngine &renderer);	// 通常描画パス
 	void ObjectShadowRenderPass(RendererEngine &renderer);	// シャドウ描画パス
 	void Alpha_ObjectRenderPass(RendererEngine& renderer);	// 透明度ありオブジェクトの描画パス
+	void Alpha_2DObjectRenderPass(RendererEngine& renderer);// 透明度あり2Dオブジェクト描画パス
 	
 	/// <summary>
 	/// オブジェクトの内部的生成
@@ -47,7 +48,7 @@ public:
 	/// <param name="rot"></param>
 	/// <returns></returns>
 	std::shared_ptr<GameObject>Internal_Instantiate3D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
-	std::shared_ptr<GameObject>Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<MyTransform> parent = {});
+	std::shared_ptr<GameObject>Internal_Instantiate2D(std::shared_ptr<GameObject> pObj, bool isTransparent, VECTOR3::VEC3 pos = { 0.f,0.f,0.f }, VECTOR3::VEC3 rot = { 0.f,0.f,0.f }, std::weak_ptr<RectTransform> parent = {});
 
 
 	/// <summary>

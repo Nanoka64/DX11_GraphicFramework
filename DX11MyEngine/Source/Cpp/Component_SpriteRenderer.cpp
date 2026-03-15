@@ -217,8 +217,11 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 			m_pPSUserExpandCBuffers[i].Slot = info.pPSConstantBuffers[i].SetSlot;
 		}
 	}
+
+	// ベースになるメッシュは1x1の大きさで作る
 	m_Width = 1.0f;
 	m_Height = 1.0f;
+
 	// クアッド生成
 	switch (info.Type)
 	{

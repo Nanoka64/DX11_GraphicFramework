@@ -102,6 +102,9 @@ bool RendererEngine::Init(HWND hWnd)
     m_ScreenWidth = client_rc.right - client_rc.left;
     m_ScreenHeight = client_rc.bottom - client_rc.top;
 
+    // データ管理にスクリーンの大きさを設定する
+    Master::m_pDataManager->set_ScreenWidth(m_ScreenWidth);
+    Master::m_pDataManager->set_ScreenHeight(m_ScreenHeight);
 
     // 正常に初期化されたか
     if (!InitDx11()) {

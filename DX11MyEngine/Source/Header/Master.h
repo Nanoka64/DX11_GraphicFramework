@@ -13,6 +13,7 @@
 #include "SoundManager.h"
 #include "TimeManager.h"
 #include "BulletManager.h"
+#include "DataManager.h"
 
 class Master
 {
@@ -30,4 +31,5 @@ public:
 	static EffectManager		* m_pEffectManager;		// エフェクト管理
 	static SoundManager			* m_pSoundManager;		// サウンド管理
 	static TimeManager			* m_pTimeManager;		// 時間管理
+	static DataManager			* m_pDataManager;		// データ管理
 };

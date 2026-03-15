@@ -220,9 +220,6 @@
     <Filter Include="ソース ファイル\BaseComponent\Mesh\Sky">
       <UniqueIdentifier>{a002f88e-90e5-42e9-90ec-d0d7e75b918c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\BaseComponent\Mesh\Trail">
-      <UniqueIdentifier>{5e3f931a-e597-4b35-9b4e-654bb18a44c0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\BaseComponent\Camera">
       <UniqueIdentifier>{fb43e8a1-5573-4ccd-bd25-3ff510b7fdb1}</UniqueIdentifier>
     </Filter>
@@ -243,6 +240,9 @@
     </Filter>
     <Filter Include="ソース ファイル\BaseComponent\UI">
       <UniqueIdentifier>{c7047aca-94d7-478d-b2ba-35e6b8e0cbed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\BaseComponent\Mesh\Effect">
+      <UniqueIdentifier>{0e4c2e38-3120-443c-81ec-5b7bd4387c46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -465,9 +465,6 @@
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp">
       <Filter>ソース ファイル\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
-      <Filter>ソース ファイル\BaseComponent\Mesh\Trail</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp">
       <Filter>ソース ファイル\Game\Scene\Title</Filter>
     </ClCompile>
@@ -521,9 +518,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Ant_TrackingState.cpp">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Ant</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp">
-      <Filter>ソース ファイル\BaseComponent\Mesh\Trail</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
       <Filter>ソース ファイル\BaseComponent\Mesh\UtilityMesh</Filter>
@@ -602,6 +596,15 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_RectTransform.cpp">
       <Filter>ソース ファイル\BaseComponent\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\DataManager.cpp">
+      <Filter>ソース ファイル\Tool\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -854,9 +857,6 @@
     <ClInclude Include="Source\Header\RenderPipeline.h">
       <Filter>ソース ファイル\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_TrailRenderer.h">
-      <Filter>ソース ファイル\BaseComponent\Mesh\Trail</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Root_TitleSceneState.h">
       <Filter>ソース ファイル\Game\Scene\Title</Filter>
     </ClInclude>
@@ -910,9 +910,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Ant_TrackingState.h">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Ant</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Component_LineRenderer.h">
-      <Filter>ソース ファイル\BaseComponent\Mesh\Trail</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_DecalRenderer.h">
       <Filter>ソース ファイル\BaseComponent\Mesh\UtilityMesh</Filter>
@@ -1000,6 +997,15 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_RectTransform.h">
       <Filter>ソース ファイル\BaseComponent\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\DataManager.h">
+      <Filter>ソース ファイル\Tool\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_LineRenderer.h">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_TrailRenderer.h">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

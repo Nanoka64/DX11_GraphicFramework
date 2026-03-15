@@ -90,8 +90,8 @@ void CollisionManager::CollisionProcess()
             }
 
             // 衝突マスクのチェック
-            if ((colA->get_CollisionBitMask() & static_cast<unsigned>(colB->get_CollisionCategory())) == 0 ||
-                (colB->get_CollisionBitMask() & static_cast<unsigned>(colA->get_CollisionCategory())) == 0)
+            if ((colA->get_CollisionBitMask() & UINT_CAST(colB->get_CollisionCategory())) == 0 ||
+                (colB->get_CollisionBitMask() & UINT_CAST(colA->get_CollisionCategory())) == 0)
             {
                 continue;
             }
@@ -202,7 +202,7 @@ bool CollisionManager::HitCheck(
     //=========================================================================================
     if (colA_Type == COLLIDER_TYPE::BOX && colB_Type == COLLIDER_TYPE::BOX)
     {
-        // 一旦キャストして実装（TODO: キャストしないように実装したい）
+        // 一旦キャストして実装
         auto boxA = std::static_pointer_cast<BoxCollider>(_colA);
         auto boxB = std::static_pointer_cast<BoxCollider>(_colB);
 
