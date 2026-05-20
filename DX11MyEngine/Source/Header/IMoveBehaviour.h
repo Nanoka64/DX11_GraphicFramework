@@ -25,7 +25,7 @@ struct MoveParam
         _turnSpeed(0.0f),
         _moveSpeed(0.0f),
         _isAcceleration(false),
-        _gravity(0.0f)
+        _gravity(1.0f)
     {
     }
 };
