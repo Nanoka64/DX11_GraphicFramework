@@ -189,6 +189,13 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
     _outData._zoomLength = j.value("zoomLength", 0.0f);
     _outData._isLaserSight = j.value("isLaserSight", false);
     _outData._soundID = j.value("soundID", -1);
+    _outData._muzzleFlashEffectTag = j.value("muzzleFlashEffectTag", "");
+
+    if (j["muzzleFlashEffectScale"].is_array()) {                                                         // ‘å‚«‚³
+        _outData._muzzleFlashEffectScale.x = j["muzzleFlashEffectScale"][0].get<float>();
+        _outData._muzzleFlashEffectScale.y = j["muzzleFlashEffectScale"][1].get<float>();
+        _outData._muzzleFlashEffectScale.z = j["muzzleFlashEffectScale"][2].get<float>();
+    }
 
     // ’e‚ÌŽí—Þ‚ð•¶Žš—ñ‚©‚ç”»’è
     std::string typeStr = j.value("bulletType", "NORMAL");

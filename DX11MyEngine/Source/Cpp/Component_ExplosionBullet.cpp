@@ -141,17 +141,11 @@ void ExplosionBullet::Start(RendererEngine& renderer)
                 Master::m_pRandomManager->GetFloatRandom(0.0f, 3.14f)
             );
 
-            // 爆発
-            Master::m_pEffectManager->SetScaleEffect(exp_handle, effectExpSize, effectExpSize, effectExpSize);
-            Master::m_pEffectManager->SetPositionEffect(exp_handle, pos.x, pos.y, pos.z);
-            Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
-            // 動的パラメータの設定
-            Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, bulletParam->_explosionEffectAliveTime); // 生存時間を変更
 
             if (bulletParam->_isSmoke)
             {
                 int exp_smoke_handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_01");   // 煙
-            
+
                 // 爆発煙
                 Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, effectExpSize, effectExpSize, effectExpSize);
                 Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
@@ -159,6 +153,14 @@ void ExplosionBullet::Start(RendererEngine& renderer)
 
                 Master::m_pEffectManager->SetDynamicParameter(exp_smoke_handle, 1, bulletParam->_explosionEffectAliveTime); // 生存時間を変更
             }
+
+            // 爆発
+            Master::m_pEffectManager->SetScaleEffect(exp_handle, effectExpSize, effectExpSize, effectExpSize);
+            Master::m_pEffectManager->SetPositionEffect(exp_handle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
+            // 動的パラメータの設定
+            Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, bulletParam->_explosionEffectAliveTime); // 生存時間を変更
+
         };
 }
 

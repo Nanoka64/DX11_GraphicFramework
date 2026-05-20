@@ -48,7 +48,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     float2 distortedUV = screenUV + (distortion * cb_DistortionPower);
     
-    float sceneDepth = SceneDepth.Sample(PointSampler, distortedUV).r; // 歪ませたUVでシーンの深度値を取得
+    //float sceneDepth = SceneDepth.Sample(PointSampler, distortedUV).r; // 歪ませたUVでシーンの深度値を取得
     
     // シーンテクスチャを歪ませたUVでサンプリング
     finalColor = g_tSceneTexture.Sample(g_sSampler, distortedUV);

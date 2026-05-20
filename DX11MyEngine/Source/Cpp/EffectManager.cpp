@@ -102,6 +102,9 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");
     LoadEffect(u"Resource/Effect/BulletHit_Acid.efkefc", "BulletHit_Acid");
     LoadEffect(u"Resource/Effect/BulletHit_Flame.efkefc", "BulletHit_Flame");
+    LoadEffect(u"Resource/Effect/MuzzleEffect_01.efkefc", "MuzzleEffect_01");
+    LoadEffect(u"Resource/Effect/MuzzleEffect_Rocket_01.efkefc", "MuzzleEffect_Rocket_01");
+    LoadEffect(u"Resource/Effect/MuzzleEffect_Flame_01.efkefc", "MuzzleEffect_Flame_01");
 
     return true;
 }

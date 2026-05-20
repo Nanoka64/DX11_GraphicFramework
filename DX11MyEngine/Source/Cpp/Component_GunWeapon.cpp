@@ -339,6 +339,38 @@ void GunWeapon::Fire(RendererEngine& renderer)
     auto gunParam = get_GunWeaponData();
 
 
+    // ワールド変換行列から方向をとる
+    XMMATRIX worldMtx = transform->get_WorldMtx();
+    DirectX::XMVECTOR scale;
+    DirectX::XMVECTOR rotQuat;
+    DirectX::XMVECTOR trans;
+    // 変換行列の分解しクォータニオンを取得する
+    DirectX::XMMatrixDecompose(&scale, &rotQuat, &trans, worldMtx);
+
+
+    // 基準となる前方ベクトル
+    DirectX::XMVECTOR baseForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+    // 武器の回転クオータニオンで、前方ベクトルを回転させる
+    DirectX::XMVECTOR forwardVec = DirectX::XMVector3Rotate(baseForward, rotQuat);
+    
+    VEC3 fw = VEC3::FromXMVECTOR(forwardVec);
+
+    // 水平方向の向きを求める (Yaw)
+    float yaw = atan2(fw.x, fw.z);
+
+    // 水平成分の長さ
+    float xzLen = sqrtf(fw.x * fw.x + fw.z * fw.z);
+
+    // 垂直方向の角度を求める (Pitch)
+    float pitch = atan2(-fw.y, xzLen);
+
+	/* そのままだとプレイヤーの位置から発射されてしまうので、前方に少しオフセットした位置を発射位置とする */
+    VEC3 firePos;
+    firePos.x = pos.x + (fw.x * 1.0f);
+    firePos.y = pos.y + (fw.y * 1.0f);
+    firePos.z = pos.z + (fw.z * 1.0f);
+
+
     // 同時発射
     for (int i = 0; i < gunParam->_bulletSimultaneousNum; i++)
     {
@@ -346,15 +378,6 @@ void GunWeapon::Fire(RendererEngine& renderer)
         //rad.x = (c_AngleV);
         //rad.y = (c_AngleH - 1.57f);
         //rad.z = 0.0f;
-
-        // ワールド変換行列から方向をとる
-        XMMATRIX worldMtx = transform->get_WorldMtx();
-        DirectX::XMVECTOR scale;
-        DirectX::XMVECTOR rotQuat; 
-        DirectX::XMVECTOR trans;
-        // 変換行列の分解しクォータニオンを取得する
-        DirectX::XMMatrixDecompose(&scale, &rotQuat, &trans, worldMtx);
-
 
         // 弾のバラつき
         float accuracy = gunParam->_accuracy;
@@ -372,7 +395,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
         // トランスフォームパラメータ
         BulletTransformData bulletTransform;
-        bulletTransform._pos = pos;
+        bulletTransform._pos = firePos;
         bulletTransform._rotQ = finalRotQuat;
         bulletTransform._scale;
 
@@ -391,6 +414,19 @@ void GunWeapon::Fire(RendererEngine& renderer)
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 0.8f, 0.0f));
     }
 
+    //*****************************************************************************************
+    //						マズルフラッシュエフェクトの再生
+    //*****************************************************************************************
+    if (gunParam->_muzzleFlashEffectTag.empty() == false)
+    {
+		VEC3 muzzleScale = gunParam->_muzzleFlashEffectScale;   // エフェクトの大きさ
+
+        auto handle = Master::m_pEffectManager->PlayEffect(gunParam->_muzzleFlashEffectTag);
+        Master::m_pEffectManager->SetPositionEffect(handle, firePos.x, firePos.y, firePos.z);
+        Master::m_pEffectManager->SetScaleEffect(handle, muzzleScale.x, muzzleScale.y, muzzleScale.z);
+        Master::m_pEffectManager->SetRotationEffect(handle, pitch, yaw, 0.0f);
+    }
+    
     // 弾数減らす
     m_AmmoRemaining--;
 }

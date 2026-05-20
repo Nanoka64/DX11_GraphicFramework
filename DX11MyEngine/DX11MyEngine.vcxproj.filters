@@ -759,6 +759,9 @@
     <ClCompile Include="Source\Cpp\Component_DistortionEffect.cpp">
       <Filter>ソース ファイル\BaseComponent\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1213,6 +1216,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\IConstantBuffer.h">
       <Filter>ソース ファイル\Tool\CBuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_MuzzleFlashEffect.h">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

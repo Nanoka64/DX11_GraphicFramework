@@ -42,14 +42,16 @@ namespace WeaponData
     /// </summary>
     struct GunWeaponData : BaseWeaponData
     {
-        int _bulletMaxNum = 0;          // 弾数
-        int _bulletSimultaneousNum = 1; // 弾の同時発射数
-        float _fireRate = 0.0f;         // 連射速度
-        float _reloadTime = 0.0f;       // リロード時間
-        float _accuracy = 0.0f;         // 精度（ラジアン）
-        float _zoomLength = 0.0f;       // ズーム倍率（0.0以外の時に作動）
-        bool _isLaserSight = true;      // レーザーサイトはあるか
-        int _soundID = -1;              // 発射音のID
+        int _bulletMaxNum = 0;                  // 弾数
+        int _bulletSimultaneousNum = 1;         // 弾の同時発射数
+        float _fireRate = 0.0f;                 // 連射速度
+        float _reloadTime = 0.0f;               // リロード時間
+        float _accuracy = 0.0f;                 // 精度（ラジアン）
+        float _zoomLength = 0.0f;               // ズーム倍率（0.0以外の時に作動）
+        bool _isLaserSight = true;              // レーザーサイトはあるか
+        int _soundID = -1;                      // 発射音のID
+		std::string _muzzleFlashEffectTag;      // マズルフラッシュエフェクトのタグ
+		VECTOR3::VEC3 _muzzleFlashEffectScale = VECTOR3::VEC3(1.0f); // マズルフラッシュエフェクトの大きさ
 
         BulletData::BULLET_TYPE _bulletType = BulletData::BULLET_TYPE::NORMAL;  // 弾の種類
 

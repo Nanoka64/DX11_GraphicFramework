@@ -9,6 +9,8 @@
   "zoomLength": 1.5,
   "isLaserSight": true,
   "soundID": 0,
+  "muzzleFlashEffectTag" : "MuzzleEffect_Rocket_01",
+  "muzzleFlashEffectScale" : [1.0, 1.0, 1.0],
   "bulletType": "EXPLOSION",
   "bulletParam": {
     "damage": 50.0,

@@ -18,7 +18,6 @@ private:
 	float m_DistortionSpeed;   // 歪みの速度
 	float m_DistortionScale;   // 歪みのスケール
 	CB_DISTORTION m_CBDistortion;	// 定数バッファ用データ
-
 	std::shared_ptr<MeshResourceData> m_pMeshData;	// メッシュ情報
 
 public:

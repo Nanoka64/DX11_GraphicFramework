@@ -9,6 +9,8 @@
   "zoomLength": 1.0,
   "isLaserSight": false,
   "soundID": 0,
+  "muzzleFlashEffectTag" : "MuzzleEffect_01",
+  "muzzleFlashEffectScale" : [3.0, 3.0, 3.0],
   "bulletType": "NORMAL",
   "bulletParam": {
     "damage": 50.0,
