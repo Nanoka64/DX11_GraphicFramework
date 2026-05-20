@@ -91,6 +91,9 @@ public:
 	bool get_IsAnim() const { return m_IsAnim; }
 	void set_IsAnim(bool _flag) { m_IsAnim = _flag; }
 
+	/* 接地フラグ */
+	bool get_IsGrounded() const { return m_IsGrounded; }
+
 	/* 攻撃目標 */
 	const GameObject* get_Target() const { return m_pTarget; }
 	//void set_Target(std::shared_ptr<GameObject> _pObj) { m_pTarget = _pObj; }

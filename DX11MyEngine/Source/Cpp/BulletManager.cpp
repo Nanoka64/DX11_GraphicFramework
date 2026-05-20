@@ -291,7 +291,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             //*****************************************************************************************
             auto lightObj = m_pExplosionBulletLightPool->get();
             if (lightObj == nullptr) {
-                OutputDebugString("ライトプールに空きがありません");
+                OutputDebugString(L"ライトプールに空きがありません");
                 return;
             }
 
@@ -349,9 +349,9 @@ bool BulletManager::Init(RendererEngine &renderer)
 
             // 軌跡コンポーネントの追加
             auto trail = obj->add_Component<TrailRenderer>();
-            trail->set_Width(3.0f);
+            trail->set_Width(2.0f);
             trail->set_MinVertexDistance(0.1f);
-            trail->set_DrawTime(10);
+            trail->set_DrawTime(30);
             trail->set_EmissivePower(5.0f);
             trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.0f, 1.0f));
             //trail->set_PosRandVec(VEC3(0.5f));
@@ -418,7 +418,7 @@ void BulletManager::Update(RendererEngine &renderer)
         auto poolIt = m_BulletObjectPoolMap.find(mapIt->first);
         if (poolIt == m_BulletObjectPoolMap.end())
         {
-            OutputDebugString("指定された弾のプールが存在しません");
+            OutputDebugString(L"指定された弾のプールが存在しません");
             continue;
         }
 
@@ -551,7 +551,7 @@ void BulletManager::clear_CrntActiveBullet()
         auto poolIt = m_BulletObjectPoolMap.find(mapIt->first);
         if (poolIt == m_BulletObjectPoolMap.end())
         {
-            OutputDebugString("指定された弾のプールが存在しません");
+            OutputDebugString(L"指定された弾のプールが存在しません");
             continue;
         }
         auto& pool = poolIt->second;        // プールの取り出し
@@ -616,7 +616,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugString(L"プールに空きがありません");
         return;
     }
 
@@ -662,7 +662,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto bulletObj = bulletPool.get();
     if (bulletObj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugString(L"プールに空きがありません");
         return;
     }
 
@@ -700,7 +700,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return;
     }
 

@@ -63,7 +63,7 @@ void CollisionManager::CollisionProcess()
         bool isStaticB = false;
         auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
         if (transA == nullptr) {
-            MessageBox(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            MessageBoxA(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
             continue;
         }
 
@@ -101,7 +101,7 @@ void CollisionManager::CollisionProcess()
             auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();
 
             if (transB == nullptr) {
-                MessageBox(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+                MessageBoxA(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
                 continue;
             }
 
@@ -584,7 +584,7 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
 
         auto trans = col->get_OwnerObj().lock()->get_Component<MyTransform>();
         if (trans == nullptr) {
-            MessageBox(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            MessageBoxA(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
             continue;
         }
 

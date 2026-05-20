@@ -205,7 +205,7 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA* data)
     // Šù‚É“o˜^Ï‚İ‚È‚ç•Ô‚·
     auto it = m_pTextFormatMap.find(data->tag);
     if (it != m_pTextFormatMap.end()) {
-        MessageBox(NULL, "Šù‚É“o˜^Ï‚İ‚ÌƒtƒHƒ“ƒg‚Å‚·", "DirectWriteManager", MB_OK);
+        MessageBoxA(NULL, "Šù‚É“o˜^Ï‚İ‚ÌƒtƒHƒ“ƒg‚Å‚·", "DirectWriteManager", MB_OK);
         return S_FALSE;
     }
 

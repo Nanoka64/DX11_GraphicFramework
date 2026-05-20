@@ -788,7 +788,7 @@ void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type, 
 
     // ビュー変換し定数バッファへ送る
     if (!SetupViewTransform(viewMatrix)) {
-        MessageBox(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
+        MessageBoxA(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
         return;
     };
 

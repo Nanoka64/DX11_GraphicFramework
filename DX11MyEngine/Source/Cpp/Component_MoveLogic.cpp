@@ -97,7 +97,7 @@ void MoveLogic::Calculate(const MoveParam& _param)
                 m_GravityVelocity -= _param._gravity * deltaTime;
 
                 newPos.y += m_GravityVelocity * deltaTime;
-                if (newPos.y < 0.0f)
+                if (newPos.y < -100.0f)
                 {
                     newPos.y = 0.0f;
                     m_GravityVelocity = 0.0f;

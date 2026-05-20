@@ -31,7 +31,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     std::shared_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.Path.c_str());
     if (modeldata == nullptr)
     {
-        MessageBox(NULL, "モデルが読み込めませんでした", "Error", MB_OK);
+        MessageBoxA(NULL, "モデルが読み込めませんでした", "Error", MB_OK);
         return{};
     }
 
@@ -55,7 +55,7 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     {
         if (!modeldata->SetupTextureMap(info.SetupMaterial[i].pMaterialData,info.SetupMaterial[i].Index))
         {
-            MessageBox(NULL, "マテリアルが設定できませんでした", "Error", MB_OK);
+            MessageBoxA(NULL, "マテリアルが設定できませんでした", "Error", MB_OK);
         }
     }
     

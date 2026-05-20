@@ -390,7 +390,7 @@ bool ShaderManager::InputLayoutFactory(SHADER_TYPE type, ShaderInfo* out, ID3DBl
     );
 
     if (target == end) {
-        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        MessageBoxA(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
         return false;
     }
 
@@ -410,7 +410,7 @@ bool ShaderManager::InputLayoutFactory(SHADER_TYPE type, ShaderInfo* out, ID3DBl
     );
 
     if (FAILED(hr)){
-        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        MessageBoxA(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
         return false;
     }
 
@@ -446,7 +446,7 @@ bool ShaderManager::InputLayoutFactory_CSO(SHADER_TYPE type, ShaderInfo *out, st
     );
 
     if (target == end) {
-        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        MessageBoxA(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
         return false;
     }
 
@@ -466,7 +466,7 @@ bool ShaderManager::InputLayoutFactory_CSO(SHADER_TYPE type, ShaderInfo *out, st
     );
 
     if (FAILED(hr)) {
-        MessageBox(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
+        MessageBoxA(NULL, "入力レイアウトの作成に失敗しました", "Error", MB_OK);
         return false;
     }
 
@@ -501,7 +501,7 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         switch (type)
         {  
         case SHADER_TYPE::NONE:
-            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
         ///////////////////////////////////////////////////
         // ディファードシェーディング
@@ -572,13 +572,13 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             hr = this->CompileShader(HLSL__Distortion_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break;     
         default:
-            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
         }
 
         // 失敗
         if (FAILED(hr)) {
-            MessageBox(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
+            MessageBoxA(NULL, "頂点シェーダーがコンパイルできませんでした", "Error", MB_OK);
             return false;
         }
 
@@ -613,7 +613,7 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         switch (type)
         {      
         case SHADER_TYPE::NONE:
-            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
         case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:           // RT用スプライト
             this->LoadCSOFile(HLSL_CSO__Sprite_VS_PATH.c_str(), &csoByteCode);
@@ -673,7 +673,7 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             this->LoadCSOFile(HLSL_CSO__Distortion_VS_PATH.c_str(), &csoByteCode);
             break;     
         default:
-            MessageBox(NULL, "不明な頂点シェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明な頂点シェーダ", "Error", MB_OK);
             break;
         }
 
@@ -735,7 +735,7 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         switch (type)
         {   
         case SHADER_TYPE::NONE:
-            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
 
         ///////////////////////////////////////////////////
@@ -809,20 +809,20 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
 
 
         default:
-            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
         }
 
 
         // 失敗
         if (FAILED(hr)) {
-            MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
+            MessageBoxA(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
             return false;
         }
 
         if (pPSBlob == nullptr)
         {
-            MessageBox(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
+            MessageBoxA(NULL, "ピクセルシェーダーがコンパイルできませんでした", "Error", MB_OK);
             return false;
         }
         // ピクセルシェーダーの作成
@@ -846,7 +846,7 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         switch (type)
         {
         case SHADER_TYPE::NONE:
-            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
         case SHADER_TYPE::DEFERRED_STD_RT_SPRITE:
             this->LoadCSOFile(HLSL_CSO__LightingPath_Standard_PS_PATH.c_str(), &csoByteCode);
@@ -907,7 +907,7 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             break;     
         
         default:
-            MessageBox(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
+            MessageBoxA(NULL, "不明なピクセルシェーダ", "Error", MB_OK);
             break;
         }
 

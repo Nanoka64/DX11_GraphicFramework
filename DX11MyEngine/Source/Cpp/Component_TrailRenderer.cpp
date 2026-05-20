@@ -59,7 +59,7 @@ void TrailRenderer::Start(RendererEngine &renderer)
 {
 	if (!Setup(renderer))
 	{
-		MessageBox(NULL,"セットアップができませんでした","TrailRenderer Error",MB_OK);
+		MessageBoxA(NULL,"セットアップができませんでした","TrailRenderer Error",MB_OK);
 		return;
 	}
 	//m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
@@ -320,13 +320,13 @@ bool TrailRenderer::Setup(RendererEngine &renderer)
 	// 頂点バッファの作成
 	if (!CreateVertexBuffer(renderer))
 	{
-		MessageBox(NULL, "頂点バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
+		MessageBoxA(NULL, "頂点バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
 		return false;
 	}
 	// 定数バッファの作成
 	if (!CreateConstantBuffer(renderer))
 	{
-		MessageBox(NULL, "定数バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
+		MessageBoxA(NULL, "定数バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
 		return false;
 	}
 

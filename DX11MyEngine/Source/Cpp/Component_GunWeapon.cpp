@@ -244,7 +244,7 @@ bool GunWeapon::Setup(const WeaponData::BaseWeaponData* _pWeaponData)
     m_pWeaponData = static_cast<const GunWeaponData*>(_pWeaponData);
     if (!m_pWeaponData)
     {
-        MessageBox(NULL, "武器のパラメータが一致しません", "GunWeapon", MB_OK);
+        MessageBoxA(NULL, "武器のパラメータが一致しません", "GunWeapon", MB_OK);
         return false;
     }
 
