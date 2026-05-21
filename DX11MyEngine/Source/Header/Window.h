@@ -8,7 +8,7 @@
 
 
 // ウインドウのタイトルバーのとこ
-constexpr LPCWSTR g_WindowTitle = L"InsectArmageddon";
+constexpr LPCWSTR g_WindowTitle = L"THE INSECT ATTACK";
 
 // ウインドウクラス名 内部的な識別名？
 constexpr LPCWSTR g_WindowClassNameW = L"DX11_3DGAME_SL";

@@ -22,6 +22,7 @@ private:
     VECTOR3::VEC3 m_CrntMoveVelocity;           // 現在の移動ベクトル
     float m_GravityVelocity;
 	MoveParam m_MoveParam;                      // 移動パラメータ
+    bool m_IsGrounded;                          // 接地しているか
 
 public:
     MoveLogic(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
