@@ -34,21 +34,21 @@ bool InputManager::Init(HWND hWnd)
 
     hr = DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pDInput, nullptr);
     if (FAILED(hr)) {
-        MessageBox(NULL, "DirectInput8Create", "Error", MB_OK);
+        MessageBoxA(NULL, "DirectInput8Create", "Error", MB_OK);
         return false;
     }
 
     // キーデバイスのセットアップ
     if (SetupKeyDevice(hWnd) == false)
     {
-        MessageBox(NULL, "キーデバイスの作成ができませんでした", "Error", MB_OK);
+        MessageBoxA(NULL, "キーデバイスの作成ができませんでした", "Error", MB_OK);
         return false;
     }
 
     // マウスデバイスのセットアップ
     if (SetupMouseDevice(hWnd) == false)
     {
-        MessageBox(NULL, "マウスデバイスの作成ができませんでした", "Error", MB_OK);
+        MessageBoxA(NULL, "マウスデバイスの作成ができませんでした", "Error", MB_OK);
         return false;
     }
 
@@ -81,7 +81,7 @@ void InputManager::Update()
     GetCursorPos(&m_MousePos);
 
     // マウス座標をスクリーン座標からウインドウ座標へ変換
-    ScreenToClient(FindWindowA(g_WindowClassNameA, nullptr), &m_MousePos);
+    ScreenToClient(FindWindowW(g_WindowClassNameA, nullptr), &m_MousePos);
 
 
     //Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"マウス情報"),0);
@@ -420,14 +420,14 @@ bool InputManager::SetupKeyDevice(HWND hWnd)
     // デバイスの作成
     hr = m_pDInput->CreateDevice(GUID_SysKeyboard, &m_pKeyDevice, nullptr);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Key CreateDevice", "Error", MB_OK);
+        MessageBoxA(NULL, "Key CreateDevice", "Error", MB_OK);
         return false;
     }
 
     // フォーマットの設定（どんな情報を受け取るか）
     hr = m_pKeyDevice->SetDataFormat(&c_dfDIKeyboard);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Key SetDataFormat", "Error", MB_OK);
+        MessageBoxA(NULL, "Key SetDataFormat", "Error", MB_OK);
         return false;
     }
 
@@ -444,7 +444,7 @@ bool InputManager::SetupKeyDevice(HWND hWnd)
     // DISCL_EXCLUSIVE : デバイスを占有する
     hr = m_pKeyDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Key SetCooperativeLevel", "Error", MB_OK);
+        MessageBoxA(NULL, "Key SetCooperativeLevel", "Error", MB_OK);
         return false;
     }
 
@@ -468,21 +468,21 @@ bool InputManager::SetupMouseDevice(HWND hWnd)
     // デバイスの作成（マウス用）
     hr = m_pDInput->CreateDevice(GUID_SysMouse, &m_pMouseDevice, nullptr);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Mouse CreateDevice", "Error", MB_OK);
+        MessageBoxA(NULL, "Mouse CreateDevice", "Error", MB_OK);
         return false;
     }
 
     // フォーマットの設定（どんな情報を受け取るか）
     hr = m_pMouseDevice->SetDataFormat(&c_dfDIMouse);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Mouse SetDataFormat", "Error", MB_OK);
+        MessageBoxA(NULL, "Mouse SetDataFormat", "Error", MB_OK);
         return false;
     }
 
     // 協調モードの設定（詳しくは SetupKeyDevice の方に書いてある）
     hr = m_pMouseDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND);
     if (FAILED(hr)) {
-        MessageBox(NULL, "Mouse SetCooperativeLevel", "Error", MB_OK);
+        MessageBoxA(NULL, "Mouse SetCooperativeLevel", "Error", MB_OK);
         return false;
     }
     return true;

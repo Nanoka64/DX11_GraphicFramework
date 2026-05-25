@@ -92,7 +92,7 @@ int c_Game_Play::Update(SceneManager *pOwner)
     if (m_pPlayerObj.expired())
     {
 		MessageBeep(MB_ICONEXCLAMATION);
-        MessageBox(NULL, "プレイヤーが存在しない", "c_Game_Play", MB_OK);
+        MessageBoxA(NULL, "プレイヤーが存在しない", "c_Game_Play", MB_OK);
         pOwner->OnSceneClose();
     }
 

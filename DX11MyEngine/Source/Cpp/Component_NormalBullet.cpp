@@ -340,6 +340,9 @@ void NormalBullet::Reset()
     //m_pWeaponData->Reset();
 
     m_CrntPenetrationCount = 0;
+
+    auto moveLogic = m_pOwner.lock()->get_Component<MoveLogic>();
+    moveLogic->ParamReset();
 }
 
 //*---------------------------------------------------------------------------------------

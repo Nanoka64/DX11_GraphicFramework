@@ -75,7 +75,7 @@ bool SoundManager::InitXA2Sound(void)
 	//COMインターフェースの初期化------------------------------------------
 	//hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	if (FAILED(hr)){
-		MessageBox(NULL, "初期化エラー", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "初期化エラー", "SoundManager", MB_OK);
 		return false;
 	}
 
@@ -501,7 +501,7 @@ bool SoundManager::Load_Wav(const char *_filename, SOUND_TYPE _type, int _id)
 
 		auto it = m_SE_WaveResourceMap.find(id);
 		if (it != m_SE_WaveResourceMap.end()) {
-			MessageBox(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
 			return false;
 		}
 
@@ -517,7 +517,7 @@ bool SoundManager::Load_Wav(const char *_filename, SOUND_TYPE _type, int _id)
 
 		auto it = m_BGM_WaveResourceMap.find(id);
 		if (it != m_BGM_WaveResourceMap.end()) {
-			MessageBox(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
 			return false;
 		}
 
@@ -533,7 +533,7 @@ bool SoundManager::Load_Wav(const char *_filename, SOUND_TYPE _type, int _id)
 
 		auto it = m_Voice_WaveResourceMap.find(id);
 		if (it != m_Voice_WaveResourceMap.end()) {
-			MessageBox(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "既に登録されたIDです", "SoundManager", MB_OK);
 			return false;
 		}
 
@@ -1108,10 +1108,10 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 	strcpy_s(str_buffer, _filename);
 
 	//	ファイルを開く
-	mmio_handle = mmioOpen(str_buffer, NULL, MMIO_ALLOCBUF | MMIO_READ);
+	mmio_handle = mmioOpenA(str_buffer, NULL, MMIO_ALLOCBUF | MMIO_READ);
 
 	if (!mmio_handle) {
-		MessageBox(NULL, "wavファイルを開けませんでした", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "wavファイルを開けませんでした", "SoundManager", MB_OK);
 		return false;
 	}
 
@@ -1122,7 +1122,7 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 
 	// fccType が 'WAVE' であることを確認
 	if (mmhr != MMSYSERR_NOERROR || rifckInfo.fccType != mmioFOURCC('W', 'A', 'V', 'E')) {
-		MessageBox(NULL, "RIFFチャンクへの進入失敗", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "RIFFチャンクへの進入失敗", "SoundManager", MB_OK);
 		mmioClose(mmio_handle, 0);
 		return false;
 	}
@@ -1135,7 +1135,7 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
 	if (mmhr != MMSYSERR_NOERROR) {
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		MessageBox(NULL, "fmtチャンクへの進入失敗", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "fmtチャンクへの進入失敗", "SoundManager", MB_OK);
 		return false;
 	}
 
@@ -1145,25 +1145,25 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 
 	// フォーマットチェック
 	if (wfx.wFormatTag != WAVE_FORMAT_PCM) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
 		return false;
 	}
 	// チャンネル数チェック
 	if (wfx.nChannels != _channelNum) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
 		return false;
 	}
 	// サンプル数チェック
 	if (wfx.nSamplesPerSec != _sampleLate) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
 		return false;
 	}
 	// ビット数チェック
 	if (wfx.wBitsPerSample != _bitsPersample) {
-		MessageBox(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "フォーマットエラーです", "SoundManager", MB_OK);
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
 		return false;
 	}
@@ -1178,7 +1178,7 @@ bool SoundManager::Internal_Load_Wav(const char* _filename, WaveResource& _out, 
 	mmhr = mmioDescend(mmio_handle, &ckInfo, &rifckInfo, MMIO_FINDCHUNK);
 	if (mmhr != MMSYSERR_NOERROR) {
 		mmioClose(mmio_handle, MMIO_FHOPEN);	// ファイルを閉じる
-		MessageBox(NULL, "dataチャンクへの進入失敗", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "dataチャンクへの進入失敗", "SoundManager", MB_OK);
 		return false;
 	}
 
@@ -1294,7 +1294,7 @@ bool SoundManager::SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outR
 		auto it = m_SE_WaveResourceMap.find(static_cast<SOUND_ID>(_id));
 		if (it == m_SE_WaveResourceMap.end())
 		{
-			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "見つからないIDです", "SoundManager", MB_OK);
 			return false;
 		}
 		_outResource = &it->second;
@@ -1305,7 +1305,7 @@ bool SoundManager::SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outR
 		auto it = m_BGM_WaveResourceMap.find(static_cast<BGM_ID>(_id));
 		if (it == m_BGM_WaveResourceMap.end())
 		{
-			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "見つからないIDです", "SoundManager", MB_OK);
 			return false;
 		}
 		_outResource = &it->second;
@@ -1316,14 +1316,14 @@ bool SoundManager::SerchResource(SOUND_TYPE _type, int _id, WaveResource *&_outR
 		auto it = m_Voice_WaveResourceMap.find(static_cast<VOICE_ID>(_id));
 		if (it == m_Voice_WaveResourceMap.end())
 		{
-			MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+			MessageBoxA(NULL, "見つからないIDです", "SoundManager", MB_OK);
 			return false;
 		}
 		_outResource = &it->second;
 	}
 	break;
 	default:
-		MessageBox(NULL, "見つからないIDです", "SoundManager", MB_OK);
+		MessageBoxA(NULL, "見つからないIDです", "SoundManager", MB_OK);
 		break;
 	}
 	return true;

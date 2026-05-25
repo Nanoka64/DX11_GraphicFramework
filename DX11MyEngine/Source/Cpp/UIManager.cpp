@@ -43,7 +43,7 @@ bool UIManager::Init(RendererEngine &renderer)
     // 既に作成されているなら返す
     if (!m_UIObjectPoolMap.empty())
     {
-        MessageBox(NULL, "プールはすでに生成済み", "UIManager", MB_OK);
+        MessageBoxA(NULL, "プールはすでに生成済み", "UIManager", MB_OK);
         return true;
     }
 
@@ -186,7 +186,7 @@ void UIManager::Update(RendererEngine &renderer)
         auto poolIt = m_UIObjectPoolMap.find(mapIt->first);
         if (poolIt == m_UIObjectPoolMap.end())
         {
-            OutputDebugString("指定されたプールが存在しません");
+            OutputDebugStringA("指定されたプールが存在しません");
             continue;
         }
 
@@ -285,7 +285,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return nullptr;
     }
 
@@ -293,7 +293,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     auto transform = obj->get_RectTransform().lock();
     if (transform == nullptr)
     {
-        MessageBox(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
 
@@ -307,7 +307,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     // スプライトの初期化 *********************************************************************
     auto sprite = obj->get_Component<SpriteRenderer>();
     if (sprite == nullptr) {
-        MessageBox(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetSpriteData(*sprite.get(), _param); // データのセット
@@ -334,14 +334,14 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return nullptr;
     }
 
     // トランスフォームの設定 *********************************************************************
     auto transform = obj->get_RectTransform().lock();
     if (transform == nullptr){
-        MessageBox(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::RectTransformData::SetRectTransformData(*transform.get(), _transformData); // データのセット
@@ -352,7 +352,7 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     // スプライトの初期化 *********************************************************************
     auto sprite = obj->get_Component<SpriteRenderer>();
     if (sprite == nullptr) {
-        MessageBox(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetSpriteData(*sprite.get(), _param); // データのセット
@@ -361,7 +361,7 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     //ボタンの初期化 *********************************************************************
     auto button = obj->get_Component<ButtonUI>();
     if (button == nullptr) {
-        MessageBox(NULL, "ボタンコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "ボタンコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetButtonData(*button.get(), _param); // データのセット

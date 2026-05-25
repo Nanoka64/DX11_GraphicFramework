@@ -218,7 +218,7 @@ void ItemManager::SpawnItem(UtilityData::ITEM_TYPE _type, const VECTOR3::VEC3& _
     auto obj = m_pItemObjectPool->get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return;
     }
 
@@ -281,7 +281,7 @@ void ItemManager::SpawnItemRand(int _minNum, int _maxNum, const VECTOR3::VEC3& _
         // プールから取り出し
         auto obj = m_pItemObjectPool->get();
         if (obj == nullptr){
-            OutputDebugString("プールに空きがありません");
+            OutputDebugStringA("プールに空きがありません");
             return;
         }
 

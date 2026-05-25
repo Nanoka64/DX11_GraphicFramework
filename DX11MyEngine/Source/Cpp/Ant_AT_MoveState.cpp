@@ -33,6 +33,7 @@ void Ant_AT_MoveState::OnEnter(class EnemyController* pOwner)
 
 	// 移動方向
 	m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
+	m_MoveDir.y = 0.0f;
 
 	m_IsDirChange = false;
 }
@@ -85,6 +86,7 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	{
 		m_IsDirChange = true;
 		m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
+		m_MoveDir.y = 0.0f;
 	}
 
 	/* 親の移動コンポーネントを使い、移動処理を行う */

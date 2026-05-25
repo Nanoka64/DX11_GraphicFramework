@@ -162,7 +162,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 		// 頂点バッファの作成
 		if (CreateVertexBuffer(render, vertices.data(), m_VertexNum, m_VertexStride) == false)
 		{
-			MessageBox(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
+			MessageBoxA(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
 			return false;
 		}
 	}
@@ -207,7 +207,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 		// 頂点バッファの作成
 		if (CreateVertexBuffer(render, vertices.data(), m_VertexNum, m_VertexStride) == false)
 		{
-			MessageBox(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
+			MessageBoxA(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
 			return false;
 		}
 	}	
@@ -249,7 +249,7 @@ bool ModelMesh:: Setup(RendererEngine& render, aiMesh* pMeshData)
 		// 頂点バッファの作成
 		if (CreateVertexBuffer(render, vertices.data(), m_VertexNum, m_VertexStride) == false)
 		{
-			MessageBox(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
+			MessageBoxA(NULL, "頂点バッファが作成できませんでした", "Error", MB_OK);
 			return false;
 		}
 	}

@@ -82,7 +82,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     // *************************************************************************************************
     if (!Master::m_pBulletManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "弾管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "弾管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -91,7 +91,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     // *************************************************************************************************
     if (!Master::m_pItemManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "アイテム管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "アイテム管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 

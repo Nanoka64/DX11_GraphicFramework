@@ -141,7 +141,7 @@ std::unique_ptr<IDX_BlendState>  BlendManager::BlendStateFactory(BLEND_MODE type
 		break;
 	}
 	default:
-		MessageBox(NULL, "ブレンドステートの種別が見つかりません", "Error", MB_OK);
+		MessageBoxA(NULL, "ブレンドステートの種別が見つかりません", "Error", MB_OK);
 		assert(false);
 		return {};
 	}
@@ -151,7 +151,7 @@ std::unique_ptr<IDX_BlendState>  BlendManager::BlendStateFactory(BLEND_MODE type
 	// 作成
 	if (pOut->Create(*m_pRenderer.lock(), info) == false)
 	{
-		MessageBox(NULL, "ブレンドステートの作成ができませんでした", "Error", MB_OK);
+		MessageBoxA(NULL, "ブレンドステートの作成ができませんでした", "Error", MB_OK);
 		assert(false);
 		return {};
 	}

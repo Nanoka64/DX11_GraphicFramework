@@ -341,6 +341,8 @@ void ExplosionBullet::Reset()
     //Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
 
 
+    auto moveLogic = m_pOwner.lock()->get_Component<MoveLogic>();
+    moveLogic->ParamReset();
 
     //m_Parameter.Reset();
 }

@@ -62,7 +62,7 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 {
 	if (pOwner->get_OwnerObj().expired())
 	{
-		MessageBox(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
+		MessageBoxA(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
 		assert(false);
 	}
 	else

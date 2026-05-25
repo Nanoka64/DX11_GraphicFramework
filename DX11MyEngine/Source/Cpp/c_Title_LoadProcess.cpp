@@ -46,7 +46,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
     // *************************************************************************************************
     if (!Master::m_pUIManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "UI管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "UI管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -107,7 +107,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
     // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
     {
-        MessageBox(NULL, "CSVの読み込みに失敗", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "CSVの読み込みに失敗", "GameLoad", MB_OK);
         assert(false);
     }
 
