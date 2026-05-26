@@ -236,6 +236,7 @@
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h" />
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h" />
     <ClInclude Include="Source\Header\Component_MoveLogic.h" />
+    <ClInclude Include="Source\Header\Component_Physics.h" />
     <ClInclude Include="Source\Header\Component_PlayerController.h" />
     <ClInclude Include="Source\Header\Component_Player_HPBar.h" />
     <ClInclude Include="Source\Header\Component_RectTransform.h">
@@ -385,6 +386,7 @@
     <ClCompile Include="Source\Cpp\Component_DistortionEffect.cpp" />
     <ClCompile Include="Source\Cpp\Component_Item.cpp" />
     <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp" />
+    <ClCompile Include="Source\Cpp\Component_Physics.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Config.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Manual.cpp" />
     <ClCompile Include="Source\Cpp\c_MissionSelect_DifficultSelect.cpp" />

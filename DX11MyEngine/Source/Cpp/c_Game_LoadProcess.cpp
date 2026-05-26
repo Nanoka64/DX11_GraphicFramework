@@ -34,6 +34,7 @@
 #include "Component_Faction.h"
 #include "Component_Item.h"
 #include "Component_DistortionEffect.h"
+#include "Component_Physics.h"
 
 using namespace UtilityData;
 using namespace EnemyData;
@@ -160,6 +161,12 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             transform->set_Pos(pos);
             transform->set_RotateToDeg(rot);
             transform->set_Scale(1);
+
+            //
+            // 物理コンポーネント追加
+            //
+            auto physics = obj->add_Component<Physics>();
+
 
             //
             // コライダーの追加
@@ -413,7 +420,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsNormalMap = true;
         mesh.ObjLayer = 90;
 
-        for (int i = 0; i < 0; i++)
+        for (int i = 0; i < 5; i++)
         {
             VEC3 pt;
             pt.x = static_cast<float>(rand() % 1000) - 500.0f;
@@ -425,19 +432,21 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             col.z = static_cast<float>(rand() % 255) / 255.0f;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Pos(VEC3(-100.0f, 0.0f, 100.0f));
+            obj->get_Transform().lock()->set_Pos(VEC3(-150.0f, 0.0f, 100.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(1.0f, 1.0f, 1.0f));
             obj->set_Tag("PointLight" + std::to_string(i));
             auto light = obj->add_Component<PointLight>();
             light->set_LightColor(col);
-            light->set_Range(100.0f);
-            light->set_Intensity(25.0f);
+            light->set_Range(1.0f);
+            light->set_Intensity(1.0f);
+
+            auto physics = obj->add_Component<Physics>();
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
             collider->set_Center(VEC3(0, 0, 0));
-            collider->set_IsStatic(true);
+            collider->set_IsStatic(false);
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
 

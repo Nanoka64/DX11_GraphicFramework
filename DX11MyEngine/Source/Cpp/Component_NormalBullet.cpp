@@ -14,6 +14,7 @@
 #include "CollisionInfo.h"
 #include "ResourceManager.h"
 #include "Component_Collider.h"
+#include "Component_Physics.h"
 
 using namespace GIGA_Engine;
 using namespace UtilityData;
@@ -257,6 +258,23 @@ void NormalBullet::LateUpdate(RendererEngine& renderer)
         {
             m_CollisionTask(hitInfo);
         }
+
+        VEC3 pos = transform->get_VEC3ToPos();
+
+        auto obj = hitInfo.get_HitObject().lock();
+
+        // 吹っ飛び
+        if (auto physics = obj->get_Component<Physics>())
+        {
+            auto targetTransform = obj->get_Transform().lock();
+            VEC3 targetPos = targetTransform->get_VEC3ToPos();
+            VECTOR3::VEC3 knockbackDir = m_MoveDir;     // 移動ベクトルをそのまま衝撃のベクトルにする
+
+            // 衝撃ベクトルの設定
+            physics->AddImpulse(knockbackDir * m_pWeaponData->_knockbackForce);
+        }
+
+
     }
 }
 

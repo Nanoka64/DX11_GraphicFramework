@@ -216,9 +216,10 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
         normalData._speed = paramJson.value("speed", 0.0f);                                         // 速度
         normalData._acceleration = paramJson.value("acceleration", 0.0f);                           // 加速度
         normalData._range = paramJson.value("range", 0.0f);                                         // 射程
-        normalData._penetrationsCount = paramJson.value("penetrationsCount", 0);                 // 貫通可能回数
+        normalData._penetrationsCount = paramJson.value("penetrationsCount", 0);                    // 貫通可能回数
         normalData._collisionSize = paramJson.value("collisionSize", 0.0f);                         // 当たり判定
         normalData._gravityScale = paramJson.value("gravityScale", 0.0f);                           // 重力
+        normalData._knockbackForce = paramJson.value("knockbackForce", 0.0f);                       // 吹っ飛び力
 
         if (paramJson.contains("collisionMask") && paramJson["collisionMask"].is_array()) {         // 衝突マスク
             // 衝突マスク（配列を回してOR演算）
@@ -257,6 +258,7 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
         expData._penetrationsCount = paramJson.value("penetrationsCount", 0);
         expData._collisionSize = paramJson.value("collisionSize", 0.0f);
         expData._gravityScale = paramJson.value("gravityScale", 0.0f);
+        expData._knockbackForce = paramJson.value("knockbackForce", 0.0f);                       // 吹っ飛び力
 
         if (paramJson.contains("collisionMask") && paramJson["collisionMask"].is_array()) {
             // 衝突マスク（配列を回してOR演算）

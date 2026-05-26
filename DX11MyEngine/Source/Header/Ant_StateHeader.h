@@ -178,9 +178,7 @@ class Ant_AT_DeadState : public IState<class EnemyController>
 {
 private:
 	const float OVERTURN_TIME = 0.5f;		// ひっくり返るまでの時間
-	const float FALL_END_TIME = 2.0f;		// 死亡後、裏世界に落ちるまでの時間
-	const float FALL_SPEED = 20.0f;
-	const float DELETE_POS_Y = -30.0f;		// 削除されるY座標
+	const float DELETE_TIME = 10.0f;		// 死亡までの時間
 
 	DirectX::XMVECTOR m_TargetRotQ;	// ひっくり返った後のクオータニオン
 	DirectX::XMVECTOR m_StartRotQ;	// ひっくり返った後のクオータニオン

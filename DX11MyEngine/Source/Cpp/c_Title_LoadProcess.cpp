@@ -17,6 +17,7 @@
 #include "Component_Health.h"
 #include "Component_PointLight.h"
 #include "Component_Faction.h"
+#include "Component_Physics.h"
 #include "GameObject.h"
 #include "MeshFactory.h"
 #include "InputFactory.h"

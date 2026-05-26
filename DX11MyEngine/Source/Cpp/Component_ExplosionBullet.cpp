@@ -6,6 +6,7 @@
 #include "Component_SphereCollider.h"
 #include "Component_Health.h"
 #include "Component_3DCamera.h"
+#include "Component_Physics.h"
 #include "RendererEngine.h"
 
 #include "GameObject.h"
@@ -252,9 +253,31 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
 
             if (auto obj = target->get_OwnerObj().lock())
             {
+                // ダメージ
                 if (auto health = obj->get_Component<Health>())
                 {
                     health->TakeDamage(bulletParam->_damage);
+                }
+
+                // 吹っ飛び
+                if (auto physics = obj->get_Component<Physics>())
+                {
+                    auto targetTransform = obj->get_Transform().lock();
+                    VEC3 targetPos = targetTransform->get_VEC3ToPos();
+
+                    VECTOR3::VEC3 knockbackDir = targetPos - pos;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
+                    knockbackDir = knockbackDir.Normalize();
+
+
+                    // 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
+                    knockbackDir.y += 0.5f;
+                    knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
+                    knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
+
+                    knockbackDir = knockbackDir.Normalize();
+
+                    // 衝撃ベクトルの設定
+                    physics->AddImpulse(knockbackDir * m_pWeaponData->_knockbackForce);
                 }
             }
         }

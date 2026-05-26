@@ -762,6 +762,9 @@
     <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Physics.cpp">
+      <Filter>ソース ファイル\BaseComponent\Move</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1219,6 +1222,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_MuzzleFlashEffect.h">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Physics.h">
+      <Filter>ソース ファイル\BaseComponent\Move</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

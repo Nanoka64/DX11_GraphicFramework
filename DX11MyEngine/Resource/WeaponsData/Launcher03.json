@@ -21,6 +21,7 @@
     "penetrationsCount": 0,
     "collisionSize": 0.0,
     "gravityScale": 0.0,
+    "knockbackForce" : 100.0,
     "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
     "bulletMaterialTag" : "Bullet_01",
     "decalMaterialTag" : "Decal_BulletHole",
