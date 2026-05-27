@@ -42,7 +42,8 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	// コライダーの判定をオフに
 	//pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>()->set_IsEnable(false);	
 	auto collider = pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>();
-	collider->set_Center(VEC3(0.0f, -1.0f, 0.0f));
+	collider->set_Center(VEC3(0.0f, -0.5f, 0.0f));
+	collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
 }
 
 //*---------------------------------------------------------------------------------------

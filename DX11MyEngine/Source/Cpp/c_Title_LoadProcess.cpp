@@ -212,6 +212,9 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         auto faction = pPlayerObj->add_Component<Faction>();
         faction->set_Faction(FACTION::PLAYER);
 
+        auto physics = pPlayerObj->add_Component<Physics>();
+        //physics->set_GravityScale(0.0f);
+
         // コライダーの追加
         auto collider = pPlayerObj->add_Component<BoxCollider>();
         collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));

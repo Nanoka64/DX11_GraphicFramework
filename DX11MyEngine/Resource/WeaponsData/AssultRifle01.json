@@ -20,7 +20,7 @@
     "range": 230.0,
     "penetrationsCount": 0,
     "collisionSize": 0.0,
-    "gravityScale": 0.0,
+    "gravityScale": 10.0,
     "knockbackForce" : 4.0,
     "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
     "bulletMaterialTag" : "Bullet_01",

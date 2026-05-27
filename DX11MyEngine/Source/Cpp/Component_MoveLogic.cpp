@@ -91,7 +91,7 @@ void MoveLogic::Calculate(const MoveParam& _param)
             VEC3 crntPos = pTransform->get_VEC3ToPos();
             VEC3 newPos = crntPos + (res._moveVelocity * deltaTime);
 
-            //// 重力があるなら、重力処理を行う
+            // 重力があるなら、重力処理を行う
             //if (_param._gravity > 0.0f)
             //{
             //    m_GravityVelocity -= _param._gravity * deltaTime;

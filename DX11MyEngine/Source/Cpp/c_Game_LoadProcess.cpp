@@ -420,7 +420,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsNormalMap = true;
         mesh.ObjLayer = 90;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 50; i++)
         {
             VEC3 pt;
             pt.x = static_cast<float>(rand() % 1000) - 500.0f;

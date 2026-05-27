@@ -19,6 +19,7 @@
     "penetrationsCount": 0,
     "collisionSize": 0.0,
     "gravityScale": 3.0,
+    "knockbackForce" : 0.0,
     "collisionMask": ["PLAYER", "BUILDING", "DESTRUCTION_BUILDING"],
     "bulletMaterialTag" : "Acid_01",
     "decalMaterialTag" : "Decal_Ant_Splash",

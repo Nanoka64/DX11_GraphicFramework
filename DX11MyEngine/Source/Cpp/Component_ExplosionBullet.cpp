@@ -268,9 +268,8 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
                     VECTOR3::VEC3 knockbackDir = targetPos - pos;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
                     knockbackDir = knockbackDir.Normalize();
 
-
                     // 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
-                    knockbackDir.y += 0.5f;
+                    knockbackDir.y += 1.0f;
                     knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
                     knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
 
@@ -278,14 +277,17 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
 
                     // 衝撃ベクトルの設定
                     physics->AddImpulse(knockbackDir * m_pWeaponData->_knockbackForce);
+
+                    knockbackDir.y = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    physics->AddAngularImpulse(knockbackDir * m_pWeaponData->_knockbackForce);
                 }
             }
         }
-
         m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
     }
 }
-
 
 //*---------------------------------------------------------------------------------------
 //*【?】トリガー衝突

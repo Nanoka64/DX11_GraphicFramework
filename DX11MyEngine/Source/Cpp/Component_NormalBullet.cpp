@@ -273,8 +273,6 @@ void NormalBullet::LateUpdate(RendererEngine& renderer)
             // ÕŒ‚ƒxƒNƒgƒ‹‚ÌÝ’è
             physics->AddImpulse(knockbackDir * m_pWeaponData->_knockbackForce);
         }
-
-
     }
 }
 

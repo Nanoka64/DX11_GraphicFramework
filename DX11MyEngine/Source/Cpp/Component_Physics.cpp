@@ -18,7 +18,8 @@ Physics::Physics(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_ForceAccumulator(VEC3()),
     m_Mass(1.0f),
     m_GravityScale(9.8f),
-    m_IsEnable(true)
+    m_IsEnable(true),
+    m_IsGrounded(false)
 {
     this->set_Tag("Physics");
 }
@@ -53,28 +54,58 @@ void Physics::Start(RendererEngine& renderer)
 void Physics::Update(RendererEngine& renderer)
 {
     if (m_IsEnable == false) return;
-
     float deltaTime = Master::m_pTimeManager->get_DeltaTime();
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 position = transform->get_VEC3ToPos();
 
-    // 1. 重力の適用
+    // 重力の適用
     VEC3 gravity = { 0.0f, -m_GravityScale * m_Mass, 0.0f };
     AddForce(gravity);
 
-    // 2. 加速度の計算 (a = F/m)
+    // 加速度の計算 (a = F/m)
     VEC3 acceleration = m_ForceAccumulator / m_Mass;
 
-    // 3. 速度と位置の更新 (オイラー積分)
+    // 速度と位置の更新 (オイラー積分)
     m_Velocity += acceleration * deltaTime;
     position += m_Velocity * deltaTime;
 
-    // ※バウンドや摩擦の処理は OnCollisionEnter で行うため、ここには何も書かない
-
     transform->set_Pos(position);
 
-    // 4. 次のフレームのために力をリセット
+    // 次のフレームのために力をリセット
     m_ForceAccumulator = { 0, 0, 0 };
+
+    // === 回転の物理演算 ===
+    if (m_AngularVelocity.LengthSq() > 0.001f)
+    {
+        // 現在の回転（クォータニオンとして保持している XMVECTOR）を取得
+        DirectX::XMVECTOR crntRotQ = transform->get_RotationQuaternion();
+
+        // このフレーム分の微小回転クォータニオンを作成
+        // 角速度ベクトルに deltaTime をかけて、このフレームの回転量を計算
+        VEC3 deltaRotation = m_AngularVelocity * deltaTime;
+
+        // 微小回転の近似公式： q = (x*0.5, y*0.5, z*0.5, 1.0)
+        DirectX::XMVECTOR dq = DirectX::XMVectorSet(
+            deltaRotation.x * 0.5f,
+            deltaRotation.y * 0.5f,
+            deltaRotation.z * 0.5f,
+            1.0f
+        );
+
+        // クォータニオンの掛け算（新しい回転 ＝ 微小回転 * 現在の回転）
+        DirectX::XMVECTOR newRotQ = DirectX::XMQuaternionMultiply(dq, crntRotQ);
+
+        // 誤差修正のために正規化（単位クォータニオンにする）
+        newRotQ = DirectX::XMQuaternionNormalize(newRotQ);
+
+        // トランスフォームに反映
+        transform->set_RotationQuaternion(newRotQ);
+
+        // 空気抵抗による回転の減衰
+        m_AngularVelocity *= m_AngularDrag;
+    }
+
+    m_IsGrounded = false;
 }
 
 //*---------------------------------------------------------------------------------------
@@ -100,15 +131,15 @@ void Physics::OnCollisionEnter(const CollisionInfo& info)
         // 反発係数 (0.0fなら完全に滑る/壁に張り付く、0.3fなら少し跳ねる)
         float restitution = 0.3f;
 
-        // 公式： V_new = V - (1 + e) * V_p に基づいて速度を補正（これ1行だけでOK！）
+        // 公式： V_new = V - (1 + e) * V_p に基づいて速度を補正
         m_Velocity = m_Velocity - (penetrationVelocity * (1.0f + restitution));
 
-
         // 【摩擦処理】床にぶつかった時だけ、XとZの速度を減衰させる
-        // HitNormal.y が 0.5f より大きい（＝だいたい上を向いている面）なら床とみなす
-        if (hitNorm.y > 0.1f)
+        // HitNormal.y が 0.5f より大きい（だいたい上を向いている面）なら床とみなす
+        if (hitNorm.y > 0.5f)
         {
-            m_Velocity.x *= 0.8f; // 摩擦係数（お好みで調整）
+            m_IsGrounded = true;
+            m_Velocity.x *= 0.8f; // 摩擦係数
             m_Velocity.z *= 0.8f;
         }
     }
@@ -136,4 +167,30 @@ void Physics::AddForce(const VECTOR3::VEC3& _force)
 void Physics::AddImpulse(const VECTOR3::VEC3& _impulse)
 {
     m_Velocity = _impulse / m_Mass;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】間的な回転力を加える
+//*
+//* [引数]
+//* &_impulse : 衝撃ベクトル
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void Physics::AddAngularImpulse(const VEC3& _angularImpulse)
+{
+    // 本来は慣性モーメント（回転のしにくさ）で割りますが、
+    // 簡易的にはそのまま角速度（Velocity）に加算してしまってOKです
+    m_AngularVelocity += _angularImpulse;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】移動ベクトルをクリア
+//*
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void Physics::SetZeroVelocity()
+{
+    m_Velocity = 0.0f;
+    m_AngularVelocity = 0.0f;
 }
