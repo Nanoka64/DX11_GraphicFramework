@@ -14,7 +14,8 @@ class ExplosionBullet : public BulletBase
 {
 private:
 	//BulletData::ExplosionBulletData m_Parameter;	// ’e‚ÉŠÖ‚·‚éƒpƒ‰ƒ[ƒ^
-
+	float m_SmokeSpwanTimer = 0.0f;
+	const GameObject* m_pTarget = nullptr;
 public:
 	ExplosionBullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~ExplosionBullet();

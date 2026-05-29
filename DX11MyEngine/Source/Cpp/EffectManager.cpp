@@ -98,6 +98,7 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Explosion_Plasma01.efkefc", "Explosion_Plasma_01");
     LoadEffect(u"Resource/Effect/Smoke_01.efkefc", "Smoke_01");
     LoadEffect(u"Resource/Effect/Smoke_02.efkefc", "Smoke_02");
+    LoadEffect(u"Resource/Effect/Smoke_03.efkefc", "Smoke_03");
     LoadEffect(u"Resource/Effect/Fragment.efkefc", "Fragment");
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");
     LoadEffect(u"Resource/Effect/BulletHit_Acid.efkefc", "BulletHit_Acid");
@@ -196,6 +197,7 @@ void EffectManager::DrawEffect()
     m_EfkManager->Draw(drawParameter);
     // エフェクトの描画終了処理
     m_EfkRenderer->EndRendering();
+
 }
 
 

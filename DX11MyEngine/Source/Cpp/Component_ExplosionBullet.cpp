@@ -184,7 +184,6 @@ void ExplosionBullet::Update(RendererEngine &renderer)
     // 爆発弾のパラメータ
     auto bulletParam = get_ExplosionParameter();
 
-
     MoveParam param;
     param._moveDirection = m_MoveDir;// ※マイナスにしているのはプレイヤーの方向がおかしいせい（後で直す）
     param._moveSpeed = bulletParam->_speed;
@@ -194,7 +193,6 @@ void ExplosionBullet::Update(RendererEngine &renderer)
     m_PrevPos = crntPos;  
 
     moveComp->set_MoveParam(param);	// 移動ロジックにパラメータを渡す
-
 }
 
 
@@ -210,9 +208,22 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
     auto transform = m_pOwner.lock()->get_Transform().lock();
     auto bulletParam = get_ExplosionParameter();
 
-
     // 移動後の位置
     VEC3 newPos = transform->get_VEC3ToPos();
+
+    m_SmokeSpwanTimer += Master::m_pTimeManager->get_DeltaTime();
+
+    if (m_SmokeSpwanTimer >= 0.05f)
+    {
+        int smoke_handle = Master::m_pEffectManager->PlayEffect("Smoke_03");   // 煙
+        float smokeSize = 1.0f;
+
+        // 爆発煙
+        Master::m_pEffectManager->SetScaleEffect(smoke_handle, smokeSize, smokeSize, smokeSize);
+        Master::m_pEffectManager->SetPositionEffect(smoke_handle, newPos.x, newPos.y, newPos.z);
+        m_SmokeSpwanTimer = 0.0f;
+    }
+
 
     // 射程距離外で削除
     float distSq = VEC3::DistanceSq(newPos, m_StartPos);

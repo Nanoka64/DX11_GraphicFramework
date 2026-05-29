@@ -38,6 +38,7 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	XMVECTOR targetQuat = XMQuaternionRotationAxis(axis, angle);
 	m_TargetRotQ = XMQuaternionMultiply(m_StartRotQ, targetQuat);
 
+	//auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
 
 	// コライダーの判定をオフに
 	//pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>()->set_IsEnable(false);	

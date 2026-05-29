@@ -40,6 +40,7 @@ public:
 
     void set_IsEnable(bool _flag) { m_IsEnable = _flag; }
     const bool get_IsEnable()const { return m_IsEnable; }
+    const bool get_IsGrounded()const { return m_IsGrounded; }
 
     const VECTOR3::VEC3& get_Velocity()const { return m_Velocity; }
     const VECTOR3::VEC3& get_ForceAccumulator()const { return m_ForceAccumulator; }

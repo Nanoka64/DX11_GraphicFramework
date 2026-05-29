@@ -356,11 +356,11 @@ bool BulletManager::Init(RendererEngine &renderer)
 
             // 軌跡コンポーネントの追加
             auto trail = obj->add_Component<TrailRenderer>();
-            trail->set_Width(2.0f);
+            trail->set_Width(1.0f);
             trail->set_MinVertexDistance(0.1f);
-            trail->set_DrawTime(30);
+            trail->set_DrawTime(20);
             trail->set_EmissivePower(5.0f);
-            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.0f, 1.0f));
+            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.5f, 1.0f));
             //trail->set_PosRandVec(VEC3(0.5f));
 
             auto physics = obj->add_Component<Physics>();

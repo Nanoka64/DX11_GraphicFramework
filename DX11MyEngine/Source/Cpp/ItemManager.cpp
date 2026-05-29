@@ -13,7 +13,7 @@ using namespace VECTOR2;
 using namespace UtilityData;
 
 
-constexpr int NUM_DEFAULT_ITEM = 50;    // デフォルトの生成数
+constexpr int NUM_DEFAULT_ITEM = 32;    // デフォルトの生成数
 constexpr int NUM_MAX_ITEM = 256;       // 最大アイテム数
 
 //*---------------------------------------------------------------------------------------
@@ -290,7 +290,7 @@ void ItemManager::SpawnItemRand(int _minNum, int _maxNum, const VECTOR3::VEC3& _
         transform->set_Pos(_pos + Master::m_pRandomManager->GetVEC3Random(-_radiuse, _radiuse));
 
         // アイテムがまだ回復しかないので
-        ITEM_TYPE type = static_cast<ITEM_TYPE>(Master::m_pRandomManager->GetIntRandom(0, 1)); 
+        ITEM_TYPE type = static_cast<ITEM_TYPE>(Master::m_pRandomManager->GetIntRandom(0, 3)); 
 
         // アイテムコンポーネントのセットアップ
         auto itemComp = obj->get_Component<Item>();
