@@ -432,7 +432,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             col.z = static_cast<float>(rand() % 255) / 255.0f;
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Pos(VEC3(-150.0f, 0.0f, 100.0f));
+            obj->get_Transform().lock()->set_Pos(VEC3(-150.0f, 10.0f, 100.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(1.0f, 1.0f, 1.0f));
             obj->set_Tag("PointLight" + std::to_string(i));
             auto light = obj->add_Component<PointLight>();
