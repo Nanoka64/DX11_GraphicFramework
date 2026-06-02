@@ -291,10 +291,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.IsAnim = false;
         model.MatNum = 1;
         model.IsActive = true;
-
         model.SetupMaterial = matInfo;
-
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+
         auto obj = MeshFactory::CreateModel(model);
 		obj->set_IsStatic(false);
         obj->get_Component<MyTransform>()->set_Scale(0.1f, 0.1f, 0.1f);
@@ -302,33 +301,33 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
-    ///* 八面体生成 */
-    //{
-    //    // マテリアル取得
-    //    auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
-    //    auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
+    /* 八面体生成 */
+    {
+        // マテリアル取得
+        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
+        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
 
-    //    SetupMaterialInfo matInfo[2];
-    //    matInfo[0].Index = 0;
-    //    matInfo[0].pMaterialData = matPtr1;
-    //    matInfo[1].Index = 1;
-    //    matInfo[1].pMaterialData = matPtr2;
+        SetupMaterialInfo matInfo[2];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr1;
+        matInfo[1].Index = 1;
+        matInfo[1].pMaterialData = matPtr2;
 
-    //    CreateModelInfo model;
-    //    model.pRenderer = m_pRenderer;
-    //    model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
-    //    model.ObjTag = "Octahedron";
-    //    model.IsAnim = false;
-    //    model.MatNum = 2;
-    //    model.IsActive = true;
-    //    model.SetupMaterial = matInfo;
-    //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-    //    auto obj = MeshFactory::CreateModel(model);
-    //    obj->set_IsStatic(false);
-    //    obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
-    //    obj->get_Component<MyTransform>()->set_Pos(-100.0f, 0.0f, 100);
-    //    obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
-    //}
+        CreateModelInfo model;
+        model.pRenderer = m_pRenderer;
+        model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
+        model.ObjTag = "Octahedron";
+        model.IsAnim = false;
+        model.MatNum = 2;
+        model.IsActive = true;
+        model.SetupMaterial = matInfo;
+        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        auto obj = MeshFactory::CreateModel(model);
+        obj->set_IsStatic(false);
+        obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
+        obj->get_Component<MyTransform>()->set_Pos(-100.0f, 100.0f, 100);
+        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+    }
 
     /* 地面の生成 */
     {

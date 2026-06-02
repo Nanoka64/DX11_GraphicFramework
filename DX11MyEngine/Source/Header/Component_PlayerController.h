@@ -134,6 +134,7 @@ private:
 	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;		// アニメータコンポーネント
 	std::weak_ptr<class Health> m_pHealthComp;						// 体力管理コンポーネント
 	std::weak_ptr<class WeaponController> m_pWeaponController;		// 武器制御用
+	std::weak_ptr<class Physics> m_pPhysicsComp;					// 物理コンポーネント
 
     bool m_IsAnim;					// アニメーション中かどうか
     float m_MoveSpeed;				// 移動速度

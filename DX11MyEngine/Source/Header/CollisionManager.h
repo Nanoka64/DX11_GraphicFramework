@@ -83,8 +83,8 @@ struct CollInData2D_AABB
 struct CollInData_OBB
 {
     VECTOR3::VEC3 _center;      // 中心位置
-    VECTOR3::VEC3 _slope[3];    // 各座標軸の傾き
-    VECTOR3::VEC3 _harfLength;  // 各座標軸に沿った長さの半分
+    VECTOR3::VEC3 _axis[3];     // 各座標軸の傾き
+    VECTOR3::VEC3 _harfLength;  //ローカルのx, y, z軸に沿ったハーフサイズ
 };
 
 // ***************************************************************************************
@@ -164,6 +164,9 @@ public:
 
     // 箱と箱
     bool HitCheck_BoxVsBox(const CollInData_AABB &_src, const CollInData_AABB &_dst);
+    
+    // 箱と箱（OBB）
+    bool HitCheck_OBBVsOBB(const CollInData_OBB &_src, const CollInData_OBB&_dst, class CollisionInfo* _hitInfo);
 
     // 箱と点
     bool HitCheck_BoxVsPoint(const CollInData_AABB &box, const VECTOR3::VEC3& _p);    

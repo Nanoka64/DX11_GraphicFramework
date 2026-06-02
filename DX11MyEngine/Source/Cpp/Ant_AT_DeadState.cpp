@@ -38,7 +38,15 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	XMVECTOR targetQuat = XMQuaternionRotationAxis(axis, angle);
 	m_TargetRotQ = XMQuaternionMultiply(m_StartRotQ, targetQuat);
 
-	//auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
+	VECTOR3::VEC3 knockbackDir;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
+
+	// 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
+	knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+	knockbackDir.y = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+
+	auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
+	physics->AddImpulse(knockbackDir);
 
 	// コライダーの判定をオフに
 	//pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>()->set_IsEnable(false);	

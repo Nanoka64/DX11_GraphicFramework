@@ -26,6 +26,7 @@ namespace UtilityData
 	{
 		NONE,
 		BOX,
+		BOX_OBB,
 		SPHERE,
 		RAY,
 	};

@@ -21,6 +21,11 @@ class BoxCollider : public Collider
 {
 private:
 	VECTOR3::VEC3 m_Size;							// 大きさ
+
+	// 追加：ワールド空間でのキャッシュデータ
+	CollInData_OBB m_WorldOBB;
+	CollInData_AABB m_BroadPhaseAABB;
+
 	std::unique_ptr<class DebugMesh> m_pBoxMesh;	// デバッグ用メッシュ
 	COLLISION_JUDGMENT m_CollisionJudgmentType;		// 衝突判定の種類
 public:
@@ -36,6 +41,9 @@ public:
 	// 大きさ
 	void set_Size(const VECTOR3::VEC3 &_vIn) { m_Size = _vIn; }
 	VECTOR3::VEC3 get_Size()const { return m_Size; }
+
+	const CollInData_OBB& get_WorldOBB() const { return m_WorldOBB; }
+	const CollInData_AABB& get_BroadPhaseAABB() const { return m_BroadPhaseAABB; }
 
 	// OBBフラグ
 	COLLISION_JUDGMENT get_CollisionJudgmentType()const { return m_CollisionJudgmentType; }

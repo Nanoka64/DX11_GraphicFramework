@@ -18,6 +18,10 @@ Physics::Physics(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_ForceAccumulator(VEC3()),
     m_Mass(1.0f),
     m_GravityScale(9.8f),
+    m_MaxSpeed(7.0f),
+    m_Restitution(0.3f),
+    m_MoveDrag(0.8f),
+    m_AirDrag(0.95f),
     m_IsEnable(true),
     m_IsGrounded(false)
 {
@@ -67,6 +71,27 @@ void Physics::Update(RendererEngine& renderer)
 
     // 速度と位置の更新 (オイラー積分)
     m_Velocity += acceleration * deltaTime;
+    
+    // =========================================================
+    // 空気抵抗（空中にいる間の水平ブレーキ）
+    // =========================================================
+    if (m_IsGrounded == false)
+    {
+        m_Velocity.x *= m_AirDrag;
+        m_Velocity.z *= m_AirDrag;
+    }
+    
+    VEC3 horizontalVel = VEC3(m_Velocity.x, 0.0f, m_Velocity.z); // 水平方向だけ取り出す
+    
+    // 現在のスピードが限界を超えていたら
+    if (horizontalVel.Length() > m_MaxSpeed)
+    {
+        // 限界の長さに縮める（向きはそのままに、長さをmaxSpeedにする）
+        horizontalVel = horizontalVel.Normalize() * m_MaxSpeed;
+        m_Velocity.x = horizontalVel.x;
+        m_Velocity.z = horizontalVel.z;
+    }
+    
     position += m_Velocity * deltaTime;
 
     transform->set_Pos(position);
@@ -129,18 +154,18 @@ void Physics::OnCollisionEnter(const CollisionInfo& info)
         VEC3 penetrationVelocity = hitNorm * dot_VelocityAndNormal;
 
         // 反発係数 (0.0fなら完全に滑る/壁に張り付く、0.3fなら少し跳ねる)
-        float restitution = 0.3f;
+        //float restitution = 0.0f;
 
         // 公式： V_new = V - (1 + e) * V_p に基づいて速度を補正
-        m_Velocity = m_Velocity - (penetrationVelocity * (1.0f + restitution));
+        m_Velocity = m_Velocity - (penetrationVelocity * (1.0f + m_Restitution));
 
-        // 【摩擦処理】床にぶつかった時だけ、XとZの速度を減衰させる
+        // 摩擦処理: 床にぶつかった時だけ、XとZの速度を減衰させる
         // HitNormal.y が 0.5f より大きい（だいたい上を向いている面）なら床とみなす
         if (hitNorm.y > 0.5f)
         {
             m_IsGrounded = true;
-            m_Velocity.x *= 0.8f; // 摩擦係数
-            m_Velocity.z *= 0.8f;
+            m_Velocity.x *= m_MoveDrag; // 摩擦係数
+            m_Velocity.z *= m_MoveDrag;
         }
     }
 }
@@ -166,7 +191,7 @@ void Physics::AddForce(const VECTOR3::VEC3& _force)
 //*----------------------------------------------------------------------------------------
 void Physics::AddImpulse(const VECTOR3::VEC3& _impulse)
 {
-    m_Velocity = _impulse / m_Mass;
+    m_Velocity += _impulse / m_Mass;
 }
 
 //*---------------------------------------------------------------------------------------

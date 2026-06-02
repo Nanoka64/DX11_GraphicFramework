@@ -655,6 +655,95 @@ bool CollisionManager::HitCheck_BoxVsBox(const CollInData_AABB &_src, const Coll
     return true;
 }
 
+// 軸上にOBBを投影した際の半径（長さ）を計算するヘルパー関数
+float GetProjectedRadius(const CollInData_OBB& obb, const VEC3& axis)
+{
+    // 各ローカル軸と分離軸の内積の絶対値にハーフサイズを掛けて足し合わせる
+    return  obb._harfLength.x * std::abs(VEC3::Dot(obb._axis[0], axis)) +
+            obb._harfLength.y * std::abs(VEC3::Dot(obb._axis[1], axis)) +
+            obb._harfLength.z * std::abs(VEC3::Dot(obb._axis[2], axis));
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】OBBとOBBの判定
+//*
+//* [引数]
+//* &_src : OBB 
+//* &_dst : OBB
+//* [返値]
+//* true : 当たった
+//* false : 当たってない
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck_OBBVsOBB(const CollInData_OBB& _src, const CollInData_OBB& _dst, CollisionInfo* _hitInfo)
+{
+    float minPenetration = FLT_MAX;
+    VEC3 bestAxis = VEC3(0, 0, 0);
+
+    // 15本の分離軸候補をリストアップ
+    std::vector<VEC3> axes;
+    axes.reserve(15);
+
+    // OBB A の各ローカル軸 (3本)
+    for (int i = 0; i < 3; ++i) axes.push_back(_src._axis[i]);
+    // OBB B の各ローカル軸 (3本)
+    for (int i = 0; i < 3; ++i) axes.push_back(_dst._axis[i]);
+
+    // 外積による軸 (3×3 = 9本)
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            VEC3 crossAxis = VEC3::Cross(_src._axis[i], _dst._axis[j]);
+            // 2つの軸が平行な場合、外積がゼロベクトルになるため除外する
+            if (crossAxis.LengthSq() > 0.0001f) {
+                axes.push_back(crossAxis.Normalize());
+            }
+        }
+    }
+
+    // AからBへの中心間ベクトル
+    VEC3 t = _dst._center - _src._center;
+
+    // 全ての軸に対して重なりをチェック
+    for (const auto& axis : axes)
+    {
+        // 各OBBの投影半径を計算
+        float rA = GetProjectedRadius(_src, axis);
+        float rB = GetProjectedRadius(_dst, axis);
+
+        // 中心間距離を軸に投影
+        float distance = std::abs(VEC3::Dot(t, axis));
+
+        // 分離している軸が1本でもあれば衝突していない
+        if (distance > rA + rB)
+        {
+            return false;
+        }
+
+        // めり込み量（オーバーラップ）の計算
+        float penetration = (rA + rB) - distance;
+        if (penetration < minPenetration)
+        {
+            minPenetration = penetration;
+            bestAxis = axis; // 最小のめり込みを起こしている軸が衝突法線となる
+        }
+    }
+
+    // 法線の向きを「AからBへ向かう方向」に統一する
+    if (VEC3::Dot(bestAxis, t) < 0.0f)
+    {
+        bestAxis = -bestAxis;
+    }
+
+    // 既存のシステムに合わせて衝突情報を格納
+    _hitInfo->set_PenetrationDepth(minPenetration);
+    _hitInfo->set_HitNormal(bestAxis);
+
+    return true;
+
+
+
+    return true;
+}
+
 //*---------------------------------------------------------------------------------------
 //*【?】ボックスとポイントの判定
 //*
