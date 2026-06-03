@@ -204,7 +204,7 @@ private:
 	/// アニメーションの変更
 	/// </summary>
 	/// <param name="id"></param>
-	void ChangeAnimation(PlayerData::PLAYER_RANGER_ANIM_ID id);
+	void ChangeAnimation(PlayerData::PLAYER_RANGER_ANIM_ID id, float _blendTime = 0.1f);
 
 
 	/// <summary>

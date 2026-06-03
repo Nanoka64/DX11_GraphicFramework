@@ -55,6 +55,12 @@ public:
     const VECTOR3::VEC3& get_ForceAccumulator()const { return m_ForceAccumulator; }
     const float get_Mass()const { return m_Mass; }
     const float get_GravityScale()const { return m_GravityScale; }
+	const float get_MaxSpeed()const { return m_MaxSpeed; }
+	const float get_Restitution()const { return m_Restitution; }
+	const float get_MoveDrag()const { return m_MoveDrag; }
+	const float get_AirDrag()const { return m_AirDrag; }
+
+
 
     /// <summary> 使用フラグ </summary>
     void set_IsEnable(bool _flag) { m_IsEnable = _flag; }

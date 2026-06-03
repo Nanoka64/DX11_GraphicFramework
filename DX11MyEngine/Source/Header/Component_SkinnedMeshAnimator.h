@@ -44,6 +44,13 @@ private:
 	float m_AimPitchAngle;
 	float m_AimYawAngle;
 
+
+	// --- アニメーションブレンド用 ---
+	bool  m_IsBlending = false;           // ブレンド中かどうかのフラグ
+	float m_BlendTime = 0.0f;             // ブレンド経過時間
+	float m_BlendDuration = 0.2f;         // ブレンド完了までの総時間（例: 0.2秒）
+	float m_PrevAnimProcTime = 0.0f;      // 一つ前のアニメーションの再生時間
+
 public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SkinnedMeshAnimator();
@@ -74,6 +81,8 @@ public:
 
 	std::vector<AnimationData *> get_AnimationDataList()const { return m_Animations; }
 
+	void CrossFadeAnim(int newAnimIndex, float blendDurationInSeconds);
+
 private:
 	void TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent, int animIdx); // ボーン変換行列の更新
 	const NodeAnimChannel *FindNodeAnim(const AnimationData *pAnim, const std::string &nodeName);	// アニメーションがあるか確認
@@ -83,5 +92,10 @@ private:
 	void CalcInterpolatedPosition(DirectX::XMMATRIX &out, float animTimeTicks, const NodeAnimChannel *pNodeAnimChannel);		// Pos補間
 	void CalcInterpolatedRotation(DirectX::XMMATRIX &out, float animTimeTicks, const NodeAnimChannel *pNodeAnimChannel);		// Rot補間
 	void CalcInterpolatedScaling(DirectX::XMMATRIX &out, float animTimeTicks, const NodeAnimChannel *pNodeAnimChannel);			// Scl補間
+
+
+	DirectX::XMVECTOR CalcInterpolatedScalingVec(float animTimeTicks, const NodeAnimChannel* pNodeAnim);
+	DirectX::XMVECTOR CalcInterpolatedRotationQuat(float animTimeTicks, const NodeAnimChannel* pNodeAnim);
+	DirectX::XMVECTOR CalcInterpolatedPositionVec(float animTimeTicks, const NodeAnimChannel* pNodeAnim);
 };
 

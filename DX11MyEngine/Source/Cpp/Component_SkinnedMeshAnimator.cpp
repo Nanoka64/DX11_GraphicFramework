@@ -142,9 +142,18 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void SkinnedMeshAnimator::PlayAnim(float _time)
 {
-    if (m_IsAnimationFlag)
-    {
+    if (m_IsAnimationFlag) {
         m_AnimProcTime += _time;
+
+        if (m_IsBlending) {
+            m_PrevAnimProcTime += _time; // 前のアニメも内部的に進める
+            m_BlendTime += _time;
+
+            // ブレンド終了判定
+            if (m_BlendTime >= m_BlendDuration) {
+                m_IsBlending = false;
+            }
+        }
     }
 }
 
@@ -230,32 +239,53 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
     localTransformMtx = m_NodeList[nodeIdx]->Transformation; // 初期姿勢で初期化
     std::string nodeName = m_NodeList[nodeIdx]->Name;
 
-    // アニメーションがあるなら
-    if (!m_Animations.empty() && animIdx != -1) {
-        const AnimationData* pAnim = m_Animations[animIdx];
+    if (m_IsAnimationFlag && !m_Animations.empty())
+    {
+        // === 1. 現在のアニメーションの SRT を計算 ===
+        const AnimationData* pAnimCrnt = m_Animations[m_CurrentAnimIndex];
+        const NodeAnimChannel* pNodeCrnt = FindNodeAnim(pAnimCrnt, nodeName);
 
-        const NodeAnimChannel* pNodeAnim = FindNodeAnim(pAnim, nodeName);  // アニメーション確認
+        XMVECTOR S_crnt, R_crnt, T_crnt;
+        bool hasCrntAnim = false;
 
-        // アニメーションがあるなら、キーフレーム間の値を補間させる（無かったら初期姿勢のまま）
-        if (pNodeAnim != nullptr)
+        if (pNodeCrnt) {
+            S_crnt = CalcInterpolatedScalingVec(animTimeTicks, pNodeCrnt);
+            R_crnt = CalcInterpolatedRotationQuat(animTimeTicks, pNodeCrnt);
+            T_crnt = CalcInterpolatedPositionVec(animTimeTicks, pNodeCrnt);
+            hasCrntAnim = true;
+        }
+
+        // === 2. ブレンド処理 ===
+        if (m_IsBlending && m_PrevAnimIndex != -1)
         {
-            if (m_IsAnimationFlag == true)
-            {
-                // スケール補間 ======================================
-                XMMATRIX scalingMtx = XMMatrixIdentity();
-                CalcInterpolatedScaling(scalingMtx, animTimeTicks, pNodeAnim);
+            const AnimationData* pAnimPrev = m_Animations[m_PrevAnimIndex];
+            const NodeAnimChannel* pNodePrev = FindNodeAnim(pAnimPrev, nodeName);
 
-                // 回転補間 ======================================
-                XMMATRIX RotationMtx = XMMatrixIdentity();
-                CalcInterpolatedRotation(RotationMtx, animTimeTicks, pNodeAnim);
+            if (pNodePrev && hasCrntAnim) {
+                // 前のアニメーションの Tick を計算 (PlayAnimで進めた時間をTick変換)
+                float tickPerSecPrev = pAnimPrev->TicksPerSecond != 0 ? pAnimPrev->TicksPerSecond : 25.0f;
+                float prevAnimTimeTicks = fmod(m_PrevAnimProcTime * tickPerSecPrev, pAnimPrev->Duration);
 
-                // 位置補間 ======================================
-                XMMATRIX TranslationMtx = XMMatrixIdentity();
-                CalcInterpolatedPosition(TranslationMtx, animTimeTicks, pNodeAnim);
+                XMVECTOR S_prev = CalcInterpolatedScalingVec(prevAnimTimeTicks, pNodePrev);
+                XMVECTOR R_prev = CalcInterpolatedRotationQuat(prevAnimTimeTicks, pNodePrev);
+                XMVECTOR T_prev = CalcInterpolatedPositionVec(prevAnimTimeTicks, pNodePrev);
 
-                // それぞれ合成する （スケール * 回転 * 移動）
-                localTransformMtx = scalingMtx * RotationMtx * TranslationMtx;
+                // ブレンド率 (0.0 ～ 1.0)
+                float blendFactor = std::clamp(m_BlendTime / m_BlendDuration, 0.0f, 1.0f);
+
+                // 各要素をブレンド (Slerp と Lerp)
+                XMVECTOR S_blend = XMVectorLerp(S_prev, S_crnt, blendFactor);
+                XMVECTOR R_blend = XMQuaternionSlerp(R_prev, R_crnt, blendFactor);
+                XMVECTOR T_blend = XMVectorLerp(T_prev, T_crnt, blendFactor);
+
+                // ブレンドされた SRT からローカル行列を作成
+                localTransformMtx = XMMatrixScalingFromVector(S_blend) * XMMatrixRotationQuaternion(R_blend) * XMMatrixTranslationFromVector(T_blend);
             }
+        }
+        else if (hasCrntAnim)
+        {
+            // === 3. 単体アニメーション (ブレンド非中) ===
+            localTransformMtx = XMMatrixScalingFromVector(S_crnt) * XMMatrixRotationQuaternion(R_crnt) * XMMatrixTranslationFromVector(T_crnt);
         }
     }
 
@@ -264,7 +294,7 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
     // 上半身のプロシージャル回転（エイムの上下対応）
     // =====================================================================
     // 曲げたいボーンの名前を指定
-    if (/*nodeName == "mixamorig:Spine" || nodeName == "mixamorig:Spine1" || nodeName == "mixamorig:Spine2" || */nodeName == "WeaponSocket_Right")
+    if (/*nodeName == "mixamorig:LeftShoulder" || nodeName == "mixamorig:RightShoulder" ||*//*nodeName == "mixamorig:Spine" || nodeName == "mixamorig:Spine1" || nodeName == "mixamorig:Spine2" || */nodeName == "WeaponSocket_Right")
     {
         // カメラのピッチ角（上下角）を取得する
         float pitchAngle = -m_AimPitchAngle;
@@ -277,6 +307,10 @@ void SkinnedMeshAnimator::TransformBone(float animTimeTicks, UINT nodeIdx, const
         if (nodeName == "mixamorig:Spine2") { pitchAngle *= 0.1f; yawAngle *= 0.3f; }
         // TODO:一旦ソケットも直接回転させる
         if (nodeName == "WeaponSocket_Right") { pitchAngle *= -1.0f; }
+
+
+        if (nodeName == "mixamorig:LeftShoulder") { localTransformMtx = m_NodeList[nodeIdx]->Transformation; }
+        if (nodeName == "mixamorig:RightShoulder") { localTransformMtx = m_NodeList[nodeIdx]->Transformation; }
 
 
         // 左右制限
@@ -501,6 +535,95 @@ void SkinnedMeshAnimator::CalcInterpolatedScaling(DirectX::XMMATRIX &out, float 
     //スケール行列を作成する
     out = XMMatrixScaling(tempVec.x, tempVec.y, tempVec.z);
 }
+
+DirectX::XMVECTOR SkinnedMeshAnimator::CalcInterpolatedScalingVec(float animTimeTicks, const NodeAnimChannel* pNodeAnim)
+{
+    if (pNodeAnim->ScalingKeys.size() < 2) {
+        return XMVectorSet(pNodeAnim->ScalingKeys[0].Value.x, pNodeAnim->ScalingKeys[0].Value.y, pNodeAnim->ScalingKeys[0].Value.z, 0.0f);
+    }
+    VEC3 startScl{};
+    VEC3 endScl{};
+    UINT sclIndex = FindScaling(animTimeTicks, pNodeAnim);
+    UINT nextSclIndex = sclIndex + 1;
+    startScl = pNodeAnim->ScalingKeys[sclIndex].Value;      // 現在位置
+    endScl = pNodeAnim->ScalingKeys[nextSclIndex].Value;    // 次の位置
+    double t1 = pNodeAnim->ScalingKeys[sclIndex].Time;
+    double t2 = pNodeAnim->ScalingKeys[nextSclIndex].Time;
+    double delta = t2 - t1;
+    double factor = (animTimeTicks - t1) / delta;
+    assert(factor >= 0.0f && factor <= 1.0f);
+
+    // 線形補間
+    VEC3 tempVec = VEC3::Lerp(startScl, endScl, static_cast<float>(factor));
+
+    return XMVectorSet(tempVec.x, tempVec.y, tempVec.z, 0.0f); 
+}
+DirectX::XMVECTOR SkinnedMeshAnimator::CalcInterpolatedRotationQuat(float animTimeTicks, const NodeAnimChannel* pNodeAnim)
+{
+    if (pNodeAnim->RotationKeys.size() < 2) {
+        return XMVectorSet(pNodeAnim->RotationKeys[0].Value.x, pNodeAnim->RotationKeys[0].Value.y, pNodeAnim->RotationKeys[0].Value.z, pNodeAnim->RotationKeys[0].Value.w);
+    }
+    aiQuaternion startRot{};
+    aiQuaternion endRot{};
+    UINT rotIndex = FindRotation(animTimeTicks, pNodeAnim);
+    UINT nextRotIndex = rotIndex + 1;
+    startRot = pNodeAnim->RotationKeys[rotIndex].Value;      // 現在位置
+    endRot = pNodeAnim->RotationKeys[nextRotIndex].Value;    // 次の位置
+    double t1 = pNodeAnim->RotationKeys[rotIndex].Time;
+    double t2 = pNodeAnim->RotationKeys[nextRotIndex].Time;
+    double delta = t2 - t1;
+    double factor = (animTimeTicks - t1) / delta;
+    assert(factor >= 0.0f && factor <= 1.0f);
+
+    aiQuaternion res;
+    aiQuaternion::Interpolate(res, startRot, endRot, static_cast<float>(factor));
+    res.Normalize();
+    return XMVectorSet(res.x, res.y, res.z, res.w); // QuaternionとしてXMVECTORを返す
+}
+DirectX::XMVECTOR SkinnedMeshAnimator::CalcInterpolatedPositionVec(float animTimeTicks, const NodeAnimChannel* pNodeAnim)
+{
+    if (pNodeAnim->PositionKeys.size() < 2) {
+        return XMVectorSet(pNodeAnim->PositionKeys[0].Value.x, pNodeAnim->PositionKeys[0].Value.y, pNodeAnim->PositionKeys[0].Value.z, 0.0f);
+    }
+    VEC3 startScl{};
+    VEC3 endScl{};
+    UINT sclIndex = FindPosition(animTimeTicks, pNodeAnim);
+    UINT nextSclIndex = sclIndex + 1;
+    startScl = pNodeAnim->PositionKeys[sclIndex].Value;      // 現在位置
+    endScl = pNodeAnim->PositionKeys[nextSclIndex].Value;    // 次の位置
+    double t1 = pNodeAnim->PositionKeys[sclIndex].Time;
+    double t2 = pNodeAnim->PositionKeys[nextSclIndex].Time;
+    double delta = t2 - t1;
+    double factor = (animTimeTicks - t1) / delta;
+    assert(factor >= 0.0f && factor <= 1.0f);
+
+    // 線形補間
+    VEC3 tempVec = VEC3::Lerp(startScl, endScl, static_cast<float>(factor));
+
+    return XMVectorSet(tempVec.x, tempVec.y, tempVec.z, 0.0f);
+}
+
+void SkinnedMeshAnimator::CrossFadeAnim(int newAnimIndex, float blendDurationInSeconds)
+{
+    if (m_CurrentAnimIndex == newAnimIndex) return; // 同じなら何もしない
+
+    // 現在の状態を「前のアニメーション」として退避
+    m_PrevAnimIndex = m_CurrentAnimIndex;
+    m_PrevAnimProcTime = m_AnimProcTime;
+
+    // 新しいアニメーションをセット
+    m_CurrentAnimIndex = newAnimIndex;
+    m_AnimProcTime = 0.0f; // 新しいアニメは0からスタート
+
+    // ブレンド設定を有効化
+    if (m_PrevAnimIndex != -1) {
+        m_IsBlending = true;
+        m_BlendTime = 0.0f;
+        m_BlendDuration = blendDurationInSeconds;
+    }
+}
+
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】ノード名からボーンのワールド変換行列を取得する

@@ -59,7 +59,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
             assert(false);
         }
         obj->set_LayerRank(LAYER_RANK_CAMERA);
-        obj->set_Tag("Camera");
+        obj->set_Tag("MainCamera");
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
         obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 1000.0f);

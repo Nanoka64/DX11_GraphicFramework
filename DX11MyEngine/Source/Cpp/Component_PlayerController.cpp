@@ -73,7 +73,7 @@ PlayerController::~PlayerController()
 void PlayerController::Start(RendererEngine& renderer)
 {
 	// カメラコンポーネントの取得
-	auto obj = Master::m_pGameObjectManager->get_ObjectByTag("Camera");
+	auto obj = Master::m_pGameObjectManager->get_ObjectByTag("MainCamera");
 	
 	if (obj == nullptr) 
 	{
@@ -179,7 +179,7 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 	VEC3 crntRot = m_pMyTransformComp.lock()->get_VEC3ToRotateToRad();	// 現在の回転
 
 	// 待機アニメーション
-	ChangeAnimation(PLAYER_RANGER_ANIM_ID::RIFLE_AMING_IDLE);
+	//ChangeAnimation(PLAYER_RANGER_ANIM_ID::RIFLE_AMING_IDLE);
 
 	// 前方向と右方向ベクトルを作る 
 	// 右方向ベクトルは上方向と前方向ベクトルの外積を取ることでできる
@@ -277,7 +277,7 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 			//				 ジャンプ - 着地音 再生
 			// ****************************************************
 			Master::m_pSoundManager->Play(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::SOLDIER_R_JUMP_LAND));
-			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_DOWN);
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_DOWN, 0.1f);
 
 			m_JumpVelocity = 0.0f;
 			m_IsJump = false;
@@ -299,13 +299,13 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 			Master::m_pSoundManager->Play_Rand(SOUND_TYPE::VOICE, SOUND_ID_TO_INT(VOICE_ID::SOLDIER_R_SHOUT_01), 3);
 
 			// ジャンプ開始アニメーション
-			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_UP);
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_UP, 0.5f);
 		}
 	}
 	else
 	{
 		// 空中にいる場合は重力をかけ続ける
-		ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_LOOP);
+		//ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_LOOP, 0.5f);
 		//m_JumpVelocity -= m_Gravity * deltaTime;
 
 		// 世界の裏側に落下した場合
@@ -317,6 +317,7 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 			return;
 		}
 	}
+
 	// 正規化後に入れる
 	m_MoveVelocity.y = m_JumpVelocity;
 
@@ -327,7 +328,8 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 	//-----------------------------------------------------------------------------
 	// ■ velocityをもとに実際に移動させ、回転も計算する
 	//-----------------------------------------------------------------------------
-	if (m_MoveVelocity.Length() > 0.001f)
+	bool isMoving = m_MoveVelocity.Length() > 0.001f;
+	if (isMoving)
 	{
 		// 水平方向の移動ベクトル
 		VEC3 horizontalMove = m_MoveVelocity;
@@ -338,10 +340,6 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 		// 移動計算
 		//newPos = (crntPos + (horizontalMove * m_MoveSpeed * deltaTime) + (VEC3(0, m_JumpVelocity, 0) * deltaTime));
 
-
-		// 動いているならアニメーション
-		m_IsAnim = true;
-
 		// =========================================================
 		// 空中にいるときは加える力を弱くする
 		// =========================================================
@@ -349,7 +347,7 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 		{
 			// 空中では地上より力を10%に抑える
 			// もっと空中で動かしたい場合は 0.5f などに調整してください
-			moveForce *= 0.2f;
+			moveForce *= 0.5f;
 		}
 
 		physics->AddForce(moveForce);
@@ -363,13 +361,13 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 			//!***********************************
 			// 方向の処理を外に出すとガタガタする
 			//!***********************************
-			float targetAngle = 0.0f;      //目標角度
+			float targetAngle = 0.0f;      //目標角度	
 
 			// ジャンプ中でないなら走る
 			if (m_IsJump == false)
 			{
 				// 走りアニメーション
-				ChangeAnimation(PLAYER_RANGER_ANIM_ID::RUNING);
+				//ChangeAnimation(PLAYER_RANGER_ANIM_ID::RUNING);
 			}
 
 			if (!m_IsContinuousAngle)
@@ -382,17 +380,46 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 	}
 
 
+
+	//-----------------------------------------------------------------------------
+	// ■ リロード状態によるアニメーション
+	//-----------------------------------------------------------------------------
 	if (m_pWeaponController.lock()->get_IsCrntWeaponReloading())
 	{
-
-		if (m_MoveVelocity.Length() > 0.001f) {
-			ChangeAnimation(PLAYER_RANGER_ANIM_ID::RUNNNING_RELOAD);
+		if (isMoving) {
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::RUNNNING_RELOAD, 0.5f);
 		}
 		else {
-			ChangeAnimation(PLAYER_RANGER_ANIM_ID::RELOADING_IDLE);
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::RELOADING_IDLE, 0.5f);
 		}
 	}
-
+	//-----------------------------------------------------------------------------
+	// ■ 空中にいる場合のアニメーション
+	//-----------------------------------------------------------------------------
+	else if (!m_IsGrounded)
+	{
+		ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_LOOP, 0.5f);
+	}
+	//-----------------------------------------------------------------------------
+	// ■ 地上にいる場合の「移動」と「待機」のアニメーション制御
+	//-----------------------------------------------------------------------------
+	else
+	{
+		if (m_IsGrounded && !m_IsJump) // 地上で、かつジャンプ中でないとき
+		{
+			if (isMoving)
+			{
+				// 移動しているなら走る
+				m_IsAnim = true;
+				ChangeAnimation(PLAYER_RANGER_ANIM_ID::RUNING, 0.5f);
+			}
+			else
+			{
+				// 移動していないなら待機
+				ChangeAnimation(PLAYER_RANGER_ANIM_ID::RIFLE_AMING_IDLE, 0.5f);
+			}
+		}
+	}
 
 	// 継続的に視点を変える
 	if (m_IsContinuousAngle)
@@ -515,27 +542,23 @@ void PlayerController::Reset()
 //* id : アニメーション番号
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-void PlayerController::ChangeAnimation(PlayerData::PLAYER_RANGER_ANIM_ID id)
+void PlayerController::ChangeAnimation(PlayerData::PLAYER_RANGER_ANIM_ID id, float _blendTime)
 {
-	// 同じ又はアニメーションが止まっているなら返す
+	// 同じアニメーションなら返す（ここで弾くのは今まで通りでOK）
 	if (id == m_CrntAnimID)
 	{
 		return;
 	}
 
 	auto animComp = m_pAnimatorComp.lock();
-
-	// ひとつ前のアニメーションIDセット
-	animComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
-
 	m_CrntAnimID = id;
 
-	// 現在のアニメーションIDセット
-	animComp->set_AnimIndex(static_cast<int>(m_CrntAnimID));
+	// アニメーションの切り替え
+	animComp->CrossFadeAnim(static_cast<int>(m_CrntAnimID), _blendTime);
 
+	// シャドウ用のタイマーリセット
 	if (m_CrntAnimID == PLAYER_RANGER_ANIM_ID::RUNING_DIVE_ROLL)
 	{
-		animComp->set_AnimProcTime(0.0f);
 		animComp->set_ShadowAnimProcTime(0.0f);
 	}
 }
