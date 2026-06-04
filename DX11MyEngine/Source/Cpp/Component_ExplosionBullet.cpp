@@ -280,9 +280,9 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
                     knockbackDir = knockbackDir.Normalize();
 
                     // ­‚µãiYŽ²j‚ÉŒü‚©‚¹‚é‚±‚Æ‚ÅAãY—í‚È•ú•¨ü‚ð•`‚¢‚Ä‚«”ò‚Ô
-                    knockbackDir.y += 1.0f;
-                    knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
-                    knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.4f);
+                    knockbackDir.y += 0.5f;
+                    knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);
+                    knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);
 
                     knockbackDir = knockbackDir.Normalize();
 

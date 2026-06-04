@@ -166,6 +166,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             // 物理コンポーネント追加
             //
             auto physics = obj->add_Component<Physics>();
+            physics->set_AirDrag(1.0f);
 
 
             //
@@ -433,13 +434,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
             obj->get_Transform().lock()->set_Pos(VEC3(-150.0f, 10.0f, 100.0f));
             obj->get_Transform().lock()->set_Scale(VEC3(1.0f, 1.0f, 1.0f));
-            obj->set_Tag("PointLight" + std::to_string(i));
+            obj->set_Tag("PointLight");
             auto light = obj->add_Component<PointLight>();
             light->set_LightColor(col);
             light->set_Range(1.0f);
             light->set_Intensity(1.0f);
 
             auto physics = obj->add_Component<Physics>();
+            physics->set_AirDrag(1.0f);
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
@@ -718,11 +720,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     auto dirLightObj = Master::m_pGameObjectManager->get_ObjectByTag("DirectionLight");
     auto dirLight = dirLightObj->get_Component<DirectionalLight>();
     VEC3 color = VEC3(1.0f);
+	float intensity = 2.5f;
     switch (crntDiffLevel)
     {
     case UtilityData::DIFFICULTY_LEVEL::EASY:
+		color = VEC3(0.8f, 0.8f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::NORMAL:
+        color = VEC3(0.8f, 0.8f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::HARD:
         color = VEC3(1.0f, 0.7f, 0.7f);
@@ -731,13 +736,13 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         color = VEC3(0.8f, 0.3f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::IMPOSSIBLE:
-        color = VEC3(1.0f, 0.0f, 0.0f);
+        color = VEC3(0.9f, 0.0f, 0.0f);
         break;
     default:
         break;
     }
     dirLight->set_LightColor(color);
-
+	dirLight->set_Intensity(intensity);
 
 
     // ロード画面用スプライトをオフに
