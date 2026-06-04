@@ -8,7 +8,7 @@ using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
 
-constexpr int WEAPON_CHANGE_INTERVAL = 10;	// 武器の切り替え間隔
+constexpr int WEAPON_CHANGE_INTERVAL = 5;	// 武器の切り替え間隔
 
 
 /* ----- 弾ゲージスプライト ----- */

@@ -55,6 +55,8 @@ bool InputManager::Init(HWND hWnd)
     // キー入力
     m_CrntInputType = INPUT_TYPE::KEYBORAD_AND_MOUSE;
 
+	m_hWnd = hWnd;
+
     // 正常終了
     return true;
 }
@@ -81,7 +83,7 @@ void InputManager::Update()
     GetCursorPos(&m_MousePos);
 
     // マウス座標をスクリーン座標からウインドウ座標へ変換
-    ScreenToClient(FindWindowW(g_WindowClassNameA, nullptr), &m_MousePos);
+    ScreenToClient(m_hWnd, &m_MousePos);
 
 
     //Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"マウス情報"),0);
@@ -138,7 +140,7 @@ bool InputManager::GetInput(GAME_CONFIG key)
 {
     if (m_InputStopFlag == true) return false;
 
-    if (m_CrntGameConfigCountersMap[key] > 0) return true;
+    if (m_CrntGameConfigCountersMap[(int)key] > 0) return true;
 
     return false;
 }
@@ -154,7 +156,7 @@ bool InputManager::GetInputDown(GAME_CONFIG key)
 
     //現在キーは押されている、かつ
     //一つ前のキーが押されていない
-    if (m_CrntGameConfigCountersMap[key] > 0 && m_PrevGameConfigCountersMap[key] == 0)
+    if (m_CrntGameConfigCountersMap[(int)key] > 0 && m_PrevGameConfigCountersMap[(int)key] == 0)
     {
         return true;
     }
@@ -174,7 +176,7 @@ bool InputManager::GetInputUp(GAME_CONFIG key)
 
     //現在キーは押されていない、かつ
     //一つ前のキーが押されていた
-    if (m_CrntGameConfigCountersMap[key] == 0 && m_PrevGameConfigCountersMap[key] > 0)
+    if (m_CrntGameConfigCountersMap[(int)key] == 0 && m_PrevGameConfigCountersMap[(int)key] > 0)
     {
         return true;
     }
@@ -196,7 +198,7 @@ bool InputManager::GetInputHold(GAME_CONFIG key, int repeatFrame)
 
     //現在キーは押されていない、かつ
     //一つ前のキーが押されていた
-    if (m_CrntGameConfigCountersMap[key] >= repeatFrame)
+    if (m_CrntGameConfigCountersMap[(int)key] >= repeatFrame)
     {
         return true;
     }
@@ -217,7 +219,7 @@ bool InputManager::GetInputHoldRepeat(GAME_CONFIG key, int waitFrame, int repeat
 {
     if (m_InputStopFlag == true) return false;
 
-    int frame = m_CrntGameConfigCountersMap[key];
+    int frame = m_CrntGameConfigCountersMap[(int)key];
 
     // 押し始め
     if (frame == 1) return true;
@@ -334,6 +336,27 @@ void InputManager::StopInput(int stopTime)
     m_InputStopTime = stopTime;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】入力状態をクリア
+//*
+//* [引数] なし
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void InputManager::ClearInputState()
+{
+	// ゲームシーンコンフィグのキー状態をクリア
+	for (int i = 0; i < (int)GAME_CONFIG::NUM; i++) {
+		int action = i;
+		m_PrevGameConfigCountersMap[action] = 0;
+		m_CrntGameConfigCountersMap[action] = 0;
+	}
+	// マウスの状態をクリア
+	for (int i = 0; i < (int)MOUSE_BUTTON_STATE::NUM; i++) {
+		m_PrevMouseState._count[i] = 0;
+		m_CrntMouseState._count[i] = 0;
+	}
+}
+
 //--------------------------------------------------------------------------------------
 //      * InputManager Class - デフォルトコンフィグ- *
 //--------------------------------------------------------------------------------------
@@ -344,54 +367,54 @@ void InputManager::InitDefaultKeyConfig()
     /* キーボード */
      
     // 移動
-    m_GameConfigMap[GAME_CONFIG::MOVE_FORWARD]._keys.push_back(DIK_W);               // 前進
-    m_GameConfigMap[GAME_CONFIG::MOVE_BACK]._keys.push_back(DIK_S);                  // 後退
-    m_GameConfigMap[GAME_CONFIG::MOVE_LEFT]._keys.push_back(DIK_A);                  // 左
-    m_GameConfigMap[GAME_CONFIG::MOVE_RIGHT]._keys.push_back(DIK_D);                 // 右
-    m_GameConfigMap[GAME_CONFIG::MOVE_JUMP]._keys.push_back(DIK_SPACE);              // ジャンプ
-    m_GameConfigMap[GAME_CONFIG::MOVE_DASH]._keys.push_back(DIK_LSHIFT);             // ダッシュ
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_FORWARD]._keys.push_back(DIK_W);               // 前進
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_BACK]._keys.push_back(DIK_S);                  // 後退
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_LEFT]._keys.push_back(DIK_A);                  // 左
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_RIGHT]._keys.push_back(DIK_D);                 // 右
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_JUMP]._keys.push_back(DIK_SPACE);              // ジャンプ
+    m_GameConfigMap[(int)GAME_CONFIG::MOVE_DASH]._keys.push_back(DIK_LSHIFT);             // ダッシュ
     
     // 視点移動
-    m_GameConfigMap[GAME_CONFIG::VIEW_UP]._keys.push_back(DIK_UP);                   // 上↑
-    m_GameConfigMap[GAME_CONFIG::VIEW_DOWN]._keys.push_back(DIK_DOWN);               // 下↓
-    m_GameConfigMap[GAME_CONFIG::VIEW_LEFT]._keys.push_back(DIK_LEFT);               // 左←
-    m_GameConfigMap[GAME_CONFIG::VIEW_RIGHT]._keys.push_back(DIK_RIGHT);             // 右→
+    m_GameConfigMap[(int)GAME_CONFIG::VIEW_UP]._keys.push_back(DIK_UP);                   // 上↑
+    m_GameConfigMap[(int)GAME_CONFIG::VIEW_DOWN]._keys.push_back(DIK_DOWN);               // 下↓
+    m_GameConfigMap[(int)GAME_CONFIG::VIEW_LEFT]._keys.push_back(DIK_LEFT);               // 左←
+    m_GameConfigMap[(int)GAME_CONFIG::VIEW_RIGHT]._keys.push_back(DIK_RIGHT);             // 右→
 
     // 武器
-    m_GameConfigMap[GAME_CONFIG::WEAPON_FIRE]._keys.push_back(DIK_F);                // 発射
-    m_GameConfigMap[GAME_CONFIG::WEAPON_RELOAD]._keys.push_back(DIK_R);              // リロード
-    m_GameConfigMap[GAME_CONFIG::WEAPON_CHANGE1]._keys.push_back(DIK_1);             // 武器切り替え１
-    m_GameConfigMap[GAME_CONFIG::WEAPON_CHANGE2]._keys.push_back(DIK_2);             // 武器切り替え２
-    m_GameConfigMap[GAME_CONFIG::WEAPON_ZOOM]._keys.push_back(DIK_G);                // ズーム
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_FIRE]._keys.push_back(DIK_F);                // 発射
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_RELOAD]._keys.push_back(DIK_R);              // リロード
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_CHANGE1]._keys.push_back(DIK_1);             // 武器切り替え１
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_CHANGE2]._keys.push_back(DIK_2);             // 武器切り替え２
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_ZOOM]._keys.push_back(DIK_G);                // ズーム
 
-    m_GameConfigMap[GAME_CONFIG::DECITION]._keys.push_back(DIK_RETURN);              // 決定
-    m_GameConfigMap[GAME_CONFIG::DECITION]._keys.push_back(DIK_SPACE);
-    m_GameConfigMap[GAME_CONFIG::PAUSE]._keys.push_back(DIK_TAB);                    // ポーズ画面
-    m_GameConfigMap[GAME_CONFIG::EXIT]._keys.push_back(DIK_ESCAPE);                  // 終了
+    m_GameConfigMap[(int)GAME_CONFIG::DECITION]._keys.push_back(DIK_RETURN);              // 決定
+    m_GameConfigMap[(int)GAME_CONFIG::DECITION]._keys.push_back(DIK_SPACE);
+    m_GameConfigMap[(int)GAME_CONFIG::PAUSE]._keys.push_back(DIK_TAB);                    // ポーズ画面
+    m_GameConfigMap[(int)GAME_CONFIG::EXIT]._keys.push_back(DIK_ESCAPE);                  // 終了
 
     /* マウス */
-    m_GameConfigMap[GAME_CONFIG::WEAPON_FIRE]._mouse  = MOUSE_BUTTON_STATE::LEFT;    // 発射 マウス
-    m_GameConfigMap[GAME_CONFIG::WEAPON_ZOOM]._mouse  = MOUSE_BUTTON_STATE::RIGHT;   // ズーム マウス
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_FIRE]._mouse  = MOUSE_BUTTON_STATE::LEFT;    // 発射 マウス
+    m_GameConfigMap[(int)GAME_CONFIG::WEAPON_ZOOM]._mouse  = MOUSE_BUTTON_STATE::RIGHT;   // ズーム マウス
 
 
     /* デバッグ用 */
-    m_GameConfigMap[GAME_CONFIG::F1]._keys.push_back(DIK_F1);
-    m_GameConfigMap[GAME_CONFIG::F2]._keys.push_back(DIK_F2);
-    m_GameConfigMap[GAME_CONFIG::F3]._keys.push_back(DIK_F3);
-    m_GameConfigMap[GAME_CONFIG::F4]._keys.push_back(DIK_F4);
-    m_GameConfigMap[GAME_CONFIG::F5]._keys.push_back(DIK_F5);
-    m_GameConfigMap[GAME_CONFIG::F6]._keys.push_back(DIK_F6);
-    m_GameConfigMap[GAME_CONFIG::F7]._keys.push_back(DIK_F7);
-    m_GameConfigMap[GAME_CONFIG::F8]._keys.push_back(DIK_F8);
-    m_GameConfigMap[GAME_CONFIG::F9]._keys.push_back(DIK_F9);
-    m_GameConfigMap[GAME_CONFIG::F10]._keys.push_back(DIK_F10);
-    m_GameConfigMap[GAME_CONFIG::F11]._keys.push_back(DIK_F11);
-    m_GameConfigMap[GAME_CONFIG::F12]._keys.push_back(DIK_F12);
+    m_GameConfigMap[(int)GAME_CONFIG::F1]._keys.push_back(DIK_F1);
+    m_GameConfigMap[(int)GAME_CONFIG::F2]._keys.push_back(DIK_F2);
+    m_GameConfigMap[(int)GAME_CONFIG::F3]._keys.push_back(DIK_F3);
+    m_GameConfigMap[(int)GAME_CONFIG::F4]._keys.push_back(DIK_F4);
+    m_GameConfigMap[(int)GAME_CONFIG::F5]._keys.push_back(DIK_F5);
+    m_GameConfigMap[(int)GAME_CONFIG::F6]._keys.push_back(DIK_F6);
+    m_GameConfigMap[(int)GAME_CONFIG::F7]._keys.push_back(DIK_F7);
+    m_GameConfigMap[(int)GAME_CONFIG::F8]._keys.push_back(DIK_F8);
+    m_GameConfigMap[(int)GAME_CONFIG::F9]._keys.push_back(DIK_F9);
+    m_GameConfigMap[(int)GAME_CONFIG::F10]._keys.push_back(DIK_F10);
+    m_GameConfigMap[(int)GAME_CONFIG::F11]._keys.push_back(DIK_F11);
+    m_GameConfigMap[(int)GAME_CONFIG::F12]._keys.push_back(DIK_F12);
 
 
     // キー状態初期化
     for (int i = 0; i < (int)GAME_CONFIG::NUM; i++) {
-        GAME_CONFIG action = static_cast<GAME_CONFIG>(i);
+        int action = i;
         m_PrevGameConfigCountersMap[action] = 0;
         m_CrntGameConfigCountersMap[action] = 0;
     }
@@ -509,6 +532,11 @@ bool InputManager::KeyDeviceProcess()
     // **************************************************
     hr = m_pKeyDevice->Acquire();
     if (FAILED(hr)) {
+        // 取得失敗時（フォーカスが外れた時など）は全てのキーカウントを0にリセットする
+        for (int i = 0; i < static_cast<int>(GAME_CONFIG::NUM); i++) {
+            m_PrevGameConfigCountersMap[i] = m_CrntGameConfigCountersMap[i];
+            m_CrntGameConfigCountersMap[i] = 0;
+        }
         return false;
     }
     // デバイスとの同期を取る
@@ -526,7 +554,7 @@ bool InputManager::KeyDeviceProcess()
     //
     for (int i = 0; i < static_cast<int>(GAME_CONFIG::NUM); i++)
     {
-        GAME_CONFIG action = (GAME_CONFIG)i;
+        size_t action = i;
 
 		auto& configInfo = m_GameConfigMap[action];
 
@@ -578,6 +606,11 @@ bool InputManager::MouseDeviceProcess()
     // **************************************************
     hr = m_pMouseDevice->Acquire();
     if (FAILED(hr)) {
+        // 取得失敗時（フォーカスが外れた時など）は全てのキーカウントを0にリセットする
+        for (int i = 0; i < static_cast<int>(MOUSE_BUTTON_STATE::NUM); i++) {
+            m_CrntMouseState._count[i] = 0;
+            m_PrevMouseState._count[i] = 0;
+        }
         return false;
     }
     // デバイスとの同期を取る
@@ -585,6 +618,13 @@ bool InputManager::MouseDeviceProcess()
     if (FAILED(hr)) {
         return false;
     }
+
+    //c_dfDIMouseを設定した場合はDIMOUSESTATEを取得する
+    hr = m_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &m_CrntMouseState._state);
+    if (FAILED(hr)) {
+        return false;
+    }
+
 
     // 前回の状態として保持
     m_PrevMouseState = m_CrntMouseState;
@@ -602,10 +642,5 @@ bool InputManager::MouseDeviceProcess()
         }
     }
 
-    //c_dfDIMouseを設定した場合はDIMOUSESTATEを取得する
-    hr = m_pMouseDevice->GetDeviceState(sizeof(DIMOUSESTATE), &m_CrntMouseState._state);
-    if (FAILED(hr)) {
-        return false;
-    }
     return true;
 }

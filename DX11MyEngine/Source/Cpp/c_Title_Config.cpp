@@ -29,7 +29,6 @@ void c_Title_Config::OnEnter(SceneManager *pOwner)
 	configObj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 	configObj->set_Tag("ConfigSetting");
 	m_pConfigSetting = configObj->add_Component<ConfigSetting>();
-
 }
 
 

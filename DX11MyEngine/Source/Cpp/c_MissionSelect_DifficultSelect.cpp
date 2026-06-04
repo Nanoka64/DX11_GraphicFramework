@@ -31,12 +31,12 @@ void c_MissionSelect_DifficultSelect::OnEnter(SceneManager* pOwner)
 
 		UIData::RectTransformData rectTrans;
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/Line.png";
+		buttonData._imagePath = "Resource/Texture/Title/Frame08.png";
 		buttonData._text = g_DifficultyNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::PRESSED;
 		buttonData._onClicFunction = [this, i, pOwner]() {this->DifficultSelectButton_OnClicFunction(pOwner, i); };
-		buttonData._textOffsetPos = VEC2(100.0f, 0.0f);
+		buttonData._textOffsetPos = VEC2(100.0f, 10.0f);
 		rectTrans._size = ITEM_SIZE;
 		rectTrans._pos = pos;
 		// ボタン
@@ -48,15 +48,15 @@ void c_MissionSelect_DifficultSelect::OnEnter(SceneManager* pOwner)
 	}
 
 
-	// 武器説明背景のスプライトのオブジェクトとコンポーネントの取得と設定
+	// 難易度背景のスプライトのオブジェクトとコンポーネントの取得と設定
 	UIData::RectTransformData rectData;
-	rectData._size = VEC2(1200.0f, 700.0f);
-	rectData._pos = VEC2(770.0f, 410.0f);
+	rectData._size = VEC2(1000.0f, 550.0f);
+	rectData._pos = VEC2(820.0f, 480.0f);
 	UIData::SpriteUIData spriteData;
 	spriteData._tag = "DifficultSelectBackSprite";
 	spriteData._color = VEC4(0.7f, 0.7f, 0.7f, 1.0f);
 	//spriteData._shaderType = SHADER_TYPE::FORWARD_UNLIT_UI_NOTEXTURE_SPRITE;
-	spriteData._imagePath = "Resource/Texture/Title/Frame01.png";
+	spriteData._imagePath = "Resource/Texture/Title/Frame10.png";
 	spriteData._layerRank = 99;
 	m_pBackSpriteObj = Master::m_pUIManager->GetSprite(*m_pRenderer, rectData, spriteData);
 

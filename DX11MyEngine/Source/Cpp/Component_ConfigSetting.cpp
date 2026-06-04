@@ -275,7 +275,7 @@ void ConfigSetting::BorrowFromUIPoolAndSetup(RendererEngine& renderer)
 
 		/* 左側 */
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/TriangleCursor_L.png";
+		buttonData._imagePath = "Resource/Texture/Title/Cursor_L.png";
 		buttonData._layerRank = 111;
 		buttonData._repeatInputInterval = 5;	// ボタンを押し続けたときの連続入力の間隔
 		buttonData._inputWaitFrame = 10;		// ボタンを押してから次の入力を受け付けるまでのフレーム数
@@ -289,10 +289,14 @@ void ConfigSetting::BorrowFromUIPoolAndSetup(RendererEngine& renderer)
 		m_pConfigAdjustmentButtonObjArray[i][0] = Master::m_pUIManager->GetButton(renderer, rectTrans, buttonData);
 		auto leftButton = m_pConfigAdjustmentButtonObjArray[i][0]->get_Component<ButtonUI>();
 		leftButton->set_Color(VEC4(0.0f), UIData::STATE::DISABLED);		// 無効の際は表示しない
+		leftButton->set_Color(VEC4(5.0f, 5.0f, 0.0f, 1.0f), UIData::STATE::PRESSED);
 		leftButton->set_IsInteractable(false);
+		leftButton->set_AllowRepeatInput(true);		// 押し続けたときの連続入力を許可する
+		leftButton->set_RepeatInputInterval(2);		// 入力間隔
+		leftButton->set_InputWaitFrame(1);
 
 		/* 右側 */
-		buttonData._imagePath = "Resource/Texture/Title/TriangleCursor_R.png";
+		buttonData._imagePath = "Resource/Texture/Title/Cursor_R.png";
 		buttonData._tag = "AdjustmentButton" + std::to_string(i) + "_2";
 		buttonData._inputValidationState = UIData::STATE::PRESSED;
 		buttonData._onClicFunction = [this, i]() {this->ChangeConfigValue(static_cast<CONFIG_ITEM>(i), false); };	// クリックされたときに設定値を増やす関数を呼ぶ
@@ -301,8 +305,11 @@ void ConfigSetting::BorrowFromUIPoolAndSetup(RendererEngine& renderer)
 		m_pConfigAdjustmentButtonObjArray[i][1] = Master::m_pUIManager->GetButton(renderer, rectTrans, buttonData);
 		auto rightButton = m_pConfigAdjustmentButtonObjArray[i][1]->get_Component<ButtonUI>();
 		rightButton->set_Color(VEC4(0.0f), UIData::STATE::DISABLED);	// 無効の際は表示しない
+		rightButton->set_Color(VEC4(5.0f, 5.0f, 0.0f, 1.0f), UIData::STATE::PRESSED);
 		rightButton->set_IsInteractable(false);
-
+		rightButton->set_AllowRepeatInput(true);		// 押し続けたときの連続入力を許可する
+		rightButton->set_RepeatInputInterval(2);		// 入力間隔
+		rightButton->set_InputWaitFrame(1);
 
 		//m_pButtonArray[i] = m_pConfigAdjustmentButtonObj[i]->get_Component<ButtonUI>();
 		//m_pMenuItemRectTransformArray[i] = m_pConfigAdjustmentButtonObj[i]->get_RectTransform();

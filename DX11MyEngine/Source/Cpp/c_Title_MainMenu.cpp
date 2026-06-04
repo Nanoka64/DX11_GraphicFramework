@@ -38,12 +38,12 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 
 		UIData::RectTransformData rectTrans;
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/Line.png";
+		buttonData._imagePath = "Resource/Texture/Title/Frame08.png";
 		buttonData._text = g_TitleMenuItemNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::PRESSED;
 		buttonData._onClicFunction = [this, i]() {m_NextState = m_MenuItemInfoArray[i]._nextState; };
-		buttonData._textOffsetPos = VEC2(100.0f, 0.0f);
+		buttonData._textOffsetPos = VEC2(100.0f, 25.0f);
 		rectTrans._size = MENU_ITEM_SIZE;
 		rectTrans._pos = pos;
 		m_pButtonsObjArray[i] = Master::m_pUIManager->GetButton(*m_pRenderer, rectTrans, buttonData);

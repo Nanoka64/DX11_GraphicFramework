@@ -150,7 +150,6 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 	if (newState != m_CrntChildStateID)
 	{
 		Master::m_pInputManager->StopInput(20);	// 入力を少しの間受け付けないようにする（シーン遷移の瞬間に入力されるのを防止）
-
 		ChangeChildState(pOwner, newState);
 	}
 

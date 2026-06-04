@@ -92,8 +92,8 @@ private:
 	/* 定数 */
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;							// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
 	const VECTOR2::VEC2 MENU_ITEM_SIZE			= VECTOR2::VEC2(450.0f, 100.0f);	// メニュー項目のサイズ
-	const VECTOR2::VEC2 MENU_ITEM_START_POS		= VECTOR2::VEC2(400.0f, 600.0f);	// 項目の開始位置
-	const float ITEM_POS_Y_BETWEEN_DIST = 100.0f;							// 項目同士のY距離
+	const VECTOR2::VEC2 MENU_ITEM_START_POS		= VECTOR2::VEC2(400.0f, 550.0f);	// 項目の開始位置
+	const float ITEM_POS_Y_BETWEEN_DIST = 120.0f;							// 項目同士のY距離
 
 
 	SceneStateEnums::c_TITLE m_NextState = SceneStateEnums::c_TITLE::c_TITLE_MAIN_MENU;	// 次のステート
@@ -130,7 +130,7 @@ private:
 	const float DECISON_TEXT_DRAW_DURATION = 2.0f;								// 装備決定時のテキストの表示時間
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;						// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
 	const float ITEM_POS_Y_BETWEEN_DIST = 140.0f;						// 項目同士のY距離
-	const VECTOR2::VEC2 SOLDIER_ITEM_SIZE = VECTOR2::VEC2(500.0f, 140.0f);		// 兵装項目のサイズ
+	const VECTOR2::VEC2 SOLDIER_ITEM_SIZE = VECTOR2::VEC2(500.0f, 100.0f);		// 兵装項目のサイズ
 	const VECTOR2::VEC2 SOLDIER_ITEM_START_POS = VECTOR2::VEC2(400.0f, 500.0f);	// 兵装項目の開始位置
 
 
@@ -235,9 +235,9 @@ class c_MissionSelect_DifficultSelect : public IState<SceneManager>
 private:
 
 	/* 定数 */
-	const VECTOR2::VEC2 ITEM_SIZE = VECTOR2::VEC2(450.0f, 100.0f);		// 項目のサイズ
-	const VECTOR2::VEC2 ITEM_START_POS = VECTOR2::VEC2(900.0f, 500.0f);	// 項目の開始位置
-	const float ITEM_POS_Y_BETWEEN_DIST = 100.0f;				// ミッション項目同士のY距離
+	const VECTOR2::VEC2 ITEM_SIZE = VECTOR2::VEC2(440.0f, 80.0f);		// 項目のサイズ
+	const VECTOR2::VEC2 ITEM_START_POS = VECTOR2::VEC2(900.0f, 550.0f);	// 項目の開始位置
+	const float ITEM_POS_Y_BETWEEN_DIST = 90.0f;				// ミッション項目同士のY距離
 
 	class GameObject* m_pBackSpriteObj;	// 背景スプライトオブジェクト
 	std::array<class GameObject*, UINT_CAST(UtilityData::DIFFICULTY_LEVEL::NUM)> m_pButtonsObjArray;	// 難易度選択のボタン

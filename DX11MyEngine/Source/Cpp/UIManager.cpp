@@ -127,6 +127,7 @@ bool UIManager::Init(RendererEngine &renderer)
             button->OnClickFunc(nullptr);
             button->set_Text("Button");
             button->set_IsInteractable(true);
+            button->ParamReset();
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject *
@@ -268,6 +269,39 @@ void UIManager::Update(RendererEngine &renderer)
 void UIManager::Draw(RendererEngine &renderer)
 {
 }
+
+//*---------------------------------------------------------------------------------------
+//*【?】ボタンの入力処理
+//*
+//* [引数]
+//* &renderer : 描画エンジンの参照
+//*
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void UIManager::ButtonInputProcess(RendererEngine& renderer)
+{
+    if (m_pCrntFocusedButton == nullptr) {
+        return;
+    }
+    ButtonUI *pNextBtn = nullptr;
+
+    // 入力に応じて次の移動先を取得
+    if (GetInputDown(GAME_CONFIG::VIEW_UP))    pNextBtn = m_pCrntFocusedButton->m_pNavUp;
+    if (GetInputDown(GAME_CONFIG::VIEW_DOWN))  pNextBtn = m_pCrntFocusedButton->m_pNavDown;
+    if (GetInputDown(GAME_CONFIG::VIEW_LEFT))  pNextBtn = m_pCrntFocusedButton->m_pNavLeft;
+    if (GetInputDown(GAME_CONFIG::VIEW_RIGHT)) pNextBtn = m_pCrntFocusedButton->m_pNavRight;
+
+    // 移動先が存在すればフォーカスを移す
+    if (pNextBtn != nullptr) {
+        m_pCrntFocusedButton->m_IsFocused = false;  // 今のボタンからフォーカスを外す
+        pNextBtn->m_IsFocused = true;               // 次のボタンにフォーカスを当てる
+        m_pCrntFocusedButton = pNextBtn;
+
+        // カーソル移動音を鳴らす
+        Master::m_pSoundManager->Play(SOUND_TYPE::SE, m_pCrntFocusedButton->m_InputSoundID);
+    }
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】スプライトの取り出し

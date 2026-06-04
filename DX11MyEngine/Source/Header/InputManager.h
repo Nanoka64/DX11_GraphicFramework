@@ -27,6 +27,9 @@ private:
     LPDIRECTINPUTDEVICE8 m_pKeyDevice = nullptr;    // キーボード用
     LPDIRECTINPUTDEVICE8 m_pMouseDevice = nullptr;  // マウス用
 
+	HWND m_hWnd = nullptr;  // ウィンドウハンドル
+
+
     /// <summary>
     /// コンフィグ情報
     /// </summary>
@@ -54,15 +57,18 @@ private:
 
     //std::unordered_map<enum class SYSTEM_CONFIG, ConfigInfo> m_SystemConfigKeyMap;  // システム用コンフィグ管理
 
-    std::unordered_map<enum class GAME_CONFIG, ConfigInfo> m_GameConfigMap;         // ゲームシーン用コンフィグ管理
-    std::unordered_map<enum class GAME_CONFIG, int>m_CrntGameConfigCountersMap;
-    std::unordered_map<enum class GAME_CONFIG, int>m_PrevGameConfigCountersMap;
+    //std::unordered_map<enum class GAME_CONFIG, ConfigInfo> m_GameConfigMap;         // ゲームシーン用コンフィグ管理
+    //std::unordered_map<enum class GAME_CONFIG, int>m_CrntGameConfigCountersMap;
+    //std::unordered_map<enum class GAME_CONFIG, int>m_PrevGameConfigCountersMap;
+    std::array<ConfigInfo, static_cast<int>(GAME_CONFIG::NUM)> m_GameConfigMap;         // ゲームシーン用コンフィグ管理
+    std::array<int, static_cast<int>(GAME_CONFIG::NUM)> m_CrntGameConfigCountersMap;
+    std::array<int, static_cast<int>(GAME_CONFIG::NUM)> m_PrevGameConfigCountersMap;
+
 
     INPUT_TYPE m_CrntInputType;     // 現在の入力方式
     int m_InputStopTime = 0;        // 入力を受け付けない時間
     bool m_InputStopFlag = false;   // 入力を受け付けないフラグ
     POINT m_MousePos;               // マウス座標
-
 
     /// <summary>
     /// マウス情報
@@ -113,6 +119,7 @@ public:
 
     void InitDefaultKeyConfig();            // コンフィグデフォルト設定
 
+	void ClearInputState();          // 入力状態のリセット
 	void StopInput(int stopTime);    // 入力を一定時間受け付けないようにする
 
 private:

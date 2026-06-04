@@ -41,12 +41,12 @@ void c_Title_MissionSelect::OnEnter(SceneManager *pOwner)
 
 		UIData::RectTransformData rectTrans;
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/Line.png";
+		buttonData._imagePath = "Resource/Texture/Title/Frame08.png";
 		buttonData._text = g_MissionNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::PRESSED;
 		buttonData._onClicFunction = [this, i, pOwner]() { 	this->MissionSelectButton_OnClicFunction(pOwner); };	// 難易度選択へ
-		buttonData._textOffsetPos = VEC2(100.0f, 0.0f);
+		buttonData._textOffsetPos = VEC2(100.0f, 25.0f);
 		rectTrans._size = MISSION_ITEM_SIZE;	// サイズ
 		rectTrans._pos = pos;					// 位置
 		m_pButtonsObjArray[i] = Master::m_pUIManager->GetButton(*m_pRenderer, rectTrans, buttonData);

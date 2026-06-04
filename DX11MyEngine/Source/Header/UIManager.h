@@ -16,6 +16,9 @@ class UIManager
 private:
     std::unordered_map<UIData::UI_TYPE, ObjectPool<GameObject>> m_UIObjectPoolMap;      // UIの連想配列プール
     std::unordered_map <UIData::UI_TYPE, std::vector<GameObject *>> m_ExtractedUIMap;   // 取り出したUIオブジェクトを一時的に保持する（役割が終わっていたら返す）
+
+    class ButtonUI* m_pCrntFocusedButton;    // 現在選択されているボタン
+
 public:
 	UIManager();
 	~UIManager();
@@ -64,5 +67,8 @@ private:
 	UIManager(const UIManager &) = delete;
 	UIManager &operator=(const UIManager &) = delete;
 	// ------------------------------------------------------
+
+
+	void ButtonInputProcess(RendererEngine& renderer);    // ボタンの入力処理
 };
 

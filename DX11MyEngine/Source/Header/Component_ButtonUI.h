@@ -33,6 +33,24 @@ private:
 	int m_InputWaitFrame;							// 入力後の待機時間カウンター
 	int m_RepeatInputInterval;						// 入力の連続判定の間隔
 	bool m_IsInteractable;							// 入力を受け付けるかどうか
+	bool m_IsPressedInside;							// ボタン内でクリックが開始されたかを判定するフラグ
+	bool m_AllowRepeatInput;						// 長押しによる連続入力を許可するか
+	int m_CurrentRepeatTimer;						// 連続入力用の内部タイマー
+
+
+
+	/* ナビゲーション用のリンク先 */
+	ButtonUI* m_pNavUp;
+	ButtonUI* m_pNavDown;
+	ButtonUI* m_pNavLeft;
+	ButtonUI* m_pNavRight;
+	bool m_IsFocused = false;// 現在選択されているか
+
+
+	//*****************************************************************************************
+	//	UIManagerからのアクセスを許可
+	//*****************************************************************************************
+	friend class UIManager;
 
 public:
 	ButtonUI(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
@@ -41,6 +59,8 @@ public:
 	void Start(RendererEngine &renderer) override;		// 初期化
 	void Update(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer)override;		// 描画処理
+	
+	void ParamReset();	// パラメータリセット
 
 	/// <summary>
 	/// ボタン用のスプライト設定
@@ -155,5 +175,9 @@ public:
 	/// <param name="_color">カラー</param>
 	/// <param name="_state">設定する状態</param>
 	void set_Color(const VECTOR4::VEC4& _color, UIData::STATE _state);
+
+
+	// 連続入力を許可する設定用セッター
+	void set_AllowRepeatInput(bool allow) { m_AllowRepeatInput = allow; }
 };
 
