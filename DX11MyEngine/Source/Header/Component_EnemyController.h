@@ -30,6 +30,7 @@ private:
 	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
 	std::weak_ptr<class Collider> m_pColliderComp;				// コライダーコンポーネント
 	std::weak_ptr<class MoveLogic> m_pMoveLogicComp;			// 移動コンポーネント
+	std::weak_ptr<class Physics> m_pPhysicsComp;				// 物理コンポーネント
 	const GameObject* m_pTarget;								// 攻撃目標
 	StateMachine<EnemyController> m_StateMachine;
 

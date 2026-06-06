@@ -167,7 +167,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             //
             auto physics = obj->add_Component<Physics>();
             physics->set_AirDrag(1.0f);
-
+            physics->set_Restitution(0.0f); // 跳ねない
 
             //
             // コライダーの追加

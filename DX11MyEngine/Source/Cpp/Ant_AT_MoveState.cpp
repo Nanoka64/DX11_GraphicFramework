@@ -81,13 +81,13 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	VEC3 myPos = myTransform->get_VEC3ToPos();	// 自分の位置
 	VEC3 startPos = pOwner->get_StartPos();
 
-	// 方向転換
-	if (pOwner->get_StateTimer() > m_MoveDuration * 0.5f && m_IsDirChange == false)
-	{
-		m_IsDirChange = true;
-		m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
-		m_MoveDir.y = 0.0f;
-	}
+	//// 方向転換
+	//if (pOwner->get_StateTimer() > m_MoveDuration * 0.5f && m_IsDirChange == false)
+	//{
+	//	m_IsDirChange = true;
+	//	m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
+	//	m_MoveDir.y = 0.0f;
+	//}
 
 	/* 親の移動コンポーネントを使い、移動処理を行う */
 	// 方向を変えて、移動させる

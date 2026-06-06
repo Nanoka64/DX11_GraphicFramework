@@ -122,6 +122,7 @@ bool ItemManager::Init(RendererEngine& renderer)
             collider->set_Center(VEC3(0, 1.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
             collider->set_IsStatic(true);
             collider->set_IsTrigger(true);          // 物理判定無し
+			collider->set_IsEnable(false);		    // 最初は無効状態
 
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ITEM);

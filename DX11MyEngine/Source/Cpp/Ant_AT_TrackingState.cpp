@@ -54,10 +54,10 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 	auto targetObj = pOwner->get_Target();
 	auto myObj = pOwner->get_OwnerObj().lock();
 
-	if (pOwner->get_IsGrounded() == false)
-	{
-		return ANT_STATE::ANT_STATE_PATROL_IDLE;
-	}
+	//if (pOwner->get_IsGrounded() == false)
+	//{
+	//	return ANT_STATE::ANT_STATE_PATROL_IDLE;
+	//}
 
 	// 目標が居なくなったら待機状態へ戻る
 	if (targetObj == nullptr || myObj == nullptr)
@@ -112,7 +112,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		}
 
 		// 移動ベクトルを渡す
-		pOwner->set_MoveVelocity(targetDir * pOwner->get_MoveSpeed());
+		//pOwner->set_MoveVelocity(targetDir * pOwner->get_MoveSpeed());
 	}
 
 	return ANT_STATE::ANT_STATE_ACTIVE_TRACKING;
