@@ -63,8 +63,6 @@ void ButtonUI::Start(RendererEngine &renderer)
 		return;
 	}
 	m_pMyTransform = m_pOwner.lock()->get_RectTransform();
-
-
 }
 
 
@@ -96,24 +94,34 @@ void ButtonUI::Update(RendererEngine &renderer)
 
 	bool isTriggeredThisFrame = false; // 今フレームでOnClickを発動するかどうか
 
-	if (Master::m_pCollisionManager->HitCheck2D_BoxVsPoint(colData, VEC2(FLOAT_CAST(mousePos.x), FLOAT_CAST(mousePos.y))))
+	bool isMouseHover = Master::m_pCollisionManager->HitCheck2D_BoxVsPoint(colData, VEC2(FLOAT_CAST(mousePos.x), FLOAT_CAST(mousePos.y)));
+
+	// マウスが範囲内にいる、またはフォーカスされているならハイライト状態にする
+	if (isMouseHover || m_IsFocused)
 	{
+		bool isInputDown = GetInputDown(GAME_CONFIG::DECITION);
+		bool isInputUp = GetInputUp(GAME_CONFIG::DECITION);;
+		bool isInputHold = GetInputHold(GAME_CONFIG::DECITION, 1);
+
 		m_CrntState = UIData::STATE::HIGH_LIGHTED;
 
 		// 押し始め
 		if (GetMouseClickDown(MOUSE_BUTTON_STATE::LEFT) ||
-			GetInputDown(GAME_CONFIG::DECITION)) 
+			isInputDown)
 		{
 			m_IsPressedInside = true;
 			m_CurrentRepeatTimer = 0; // タイマーリセット
 
 			// 押し始めは無条件で1回発動させる
-			isTriggeredThisFrame = true;
+			//if (m_AllowRepeatInput) 
+			{
+				isTriggeredThisFrame = true;
+			}
 		}
 
 		// 押されている間
 		if (m_IsPressedInside && (GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, m_RepeatInputInterval, m_RepeatInputInterval) || 
-			GetInputHold(GAME_CONFIG::DECITION, 1)))
+			isInputHold))
 		{
 			m_CrntState = UIData::STATE::PRESSED;
 
@@ -135,7 +143,7 @@ void ButtonUI::Update(RendererEngine &renderer)
 
 		// 離した時
 		if (m_IsPressedInside && (GetMouseClickUp(MOUSE_BUTTON_STATE::LEFT) || 
-			GetInputUp(GAME_CONFIG::DECITION))) 
+			isInputUp))
 		{
 			m_CrntState = UIData::STATE::SELECTED;
 			m_IsPressedInside = false;
@@ -154,7 +162,7 @@ void ButtonUI::Update(RendererEngine &renderer)
 	else
 	{
 		// 範囲外に出たらフラグとタイマーをリセット
-		if (GetMouseClickUp(MOUSE_BUTTON_STATE::LEFT) || !GetMouseClickHoldRepeat(MOUSE_BUTTON_STATE::LEFT, m_RepeatInputInterval, m_RepeatInputInterval)) {
+		if (m_IsPressedInside) {
 			m_IsPressedInside = false;
 			m_CurrentRepeatTimer = 0;
 		}
@@ -217,6 +225,50 @@ void ButtonUI::ParamReset()
 	VEC4(1.0f, 1.0f, 1.0f, 1.0f),   // 選択された
 	VEC4(0.1f, 0.1f, 0.1f, 1.0f)	// 無効
 	};
+
+	m_pNavUp = nullptr;
+	m_pNavDown = nullptr;
+	m_pNavLeft = nullptr;
+	m_pNavRight = nullptr;
+	m_IsFocused = false;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ボクリック処理を実行
+//*
+//* [引数] なし
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void ButtonUI::InvokeClick()
+{
+	if (m_OnClick)
+	{
+		Master::m_pSoundManager->Play(SOUND_TYPE::SE, m_InputSoundID);
+		m_OnClick();
+	}
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ナビゲーションの紐づけ設定関数
+//*
+//* [引数] 
+//* *_up     : 上ボタン
+//* *_down   : 下ボタン
+//* *_left   : 左ボタン
+//* *_right  : 右ボタン
+//* 
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void ButtonUI::set_Navigation(
+	ButtonUI* _up,
+	ButtonUI* _down,
+	ButtonUI* _left,
+	ButtonUI* _right)
+{
+	m_pNavUp    = _up;
+	m_pNavDown  = _down;
+	m_pNavLeft  = _left;
+	m_pNavRight = _right;
 }
 
 //*---------------------------------------------------------------------------------------

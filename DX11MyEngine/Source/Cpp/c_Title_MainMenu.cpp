@@ -29,6 +29,7 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 	m_MenuItemInfoArray[2]._nextState = c_TITLE::c_TITLE_CONFIG;
 	m_MenuItemInfoArray[3]._nextState = c_TITLE::c_GO_EXIT;
 
+	ButtonUI* prevButton = nullptr;
 
 	// メニュー項目のオブジェクトとコンポーネントの取得と設定
 	for (int i = 0; i < static_cast<int>(TITLEMENU_ITEM::NUM); i++)
@@ -56,6 +57,47 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 		m_MenuItemInfoArray[i]._name = g_TitleMenuItemNames[i];
 		m_MenuItemInfoArray[i]._type = static_cast<TITLEMENU_ITEM>(i);
 	}
+
+	//for (int i = 0; i < static_cast<int>(TITLEMENU_ITEM::NUM); i++)
+	//{
+	//	auto currentBtn = m_pButtonArray[i].lock();
+	//	if (!currentBtn) continue;
+
+	//	ButtonUI* upBtn = nullptr;
+	//	ButtonUI* downBtn = nullptr;
+	//	ButtonUI* leftBtn = nullptr;  // 縦並びなので今回は空
+	//	ButtonUI* rightBtn = nullptr; // 縦並びなので今回は空
+
+	//	// --- 上のボタンの設定 ---
+	//	if (i > 0) {
+	//		upBtn = m_pButtonArray[i - 1].lock().get(); // 1つ上のボタン
+	//	}
+	//	else {
+	//		// 一番上のボタンの場合、一番下へループさせる
+	//		upBtn = m_pButtonArray[static_cast<int>(TITLEMENU_ITEM::NUM) - 1].lock().get();
+
+	//		// ※ループさせずに行き止まりにする場合は何も代入しない（デフォルトの空ポインタのまま）
+	//	}
+
+	//	// --- 下のボタンの設定 ---
+	//	if (i < static_cast<int>(TITLEMENU_ITEM::NUM) - 1) {
+	//		downBtn = m_pButtonArray[i + 1].lock().get(); // 1つ下のボタン
+	//	}
+	//	else {
+	//		// 一番下のボタンの場合、一番上へループさせる
+	//		downBtn = m_pButtonArray[0].lock().get();
+	//	}
+
+	//	// コンポーネントにナビゲーション情報をセット
+	//	currentBtn->set_Navigation(upBtn, downBtn, leftBtn, rightBtn);
+	//}
+
+	//// 画面を開いた直後は、一番上のボタン（i = 0）にフォーカスを当てる
+	//if (!m_pButtonArray[0].expired())
+	//{
+	//	// UIManager側に実装したフォーカスセット関数を呼ぶ想定
+	//	Master::m_pUIManager->SetFirstFocus(m_pButtonArray[0].lock().get());
+	//}
 
 	// ****************************************************
 	//				タイトルBGMの再生

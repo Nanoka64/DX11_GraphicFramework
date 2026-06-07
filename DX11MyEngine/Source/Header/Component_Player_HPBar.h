@@ -3,16 +3,16 @@
 class Player_HPBar :  public IComponent
 {
 private:
-	const float SIZE_X = 540.0f;				// HPバーの横幅
-	const float SIZE_Y = 30.0f;					// HPバーの縦幅
+	const float SIZE_X = 516.0f;				// HPバーの横幅
+	const float SIZE_Y = 28.0f;					// HPバーの縦幅
 	const float SHAKE_HPBAR_DURATION = 1.0f;	// ダメージを受けた際に、HPバーを揺らす時間
-	const VECTOR2::VEC2 SHAKE_LENGTH = VECTOR2::VEC2(50.0f, 0.0f);	// 横に揺らす
+	const VECTOR2::VEC2 SHAKE_LENGTH = VECTOR2::VEC2(50.0f, 0.0f);			// 横に揺らすつよさ
 	const VECTOR2::VEC2 HPBAR_BACK_POS = VECTOR2::VEC2(50.0f, 0.0f);		// HPバーの背景スプライトの位置
 	const VECTOR2::VEC2 HPBAR_BACK_SIZE = VECTOR2::VEC2(600.0f, 300.0f);	// HPバーの背景スプライトのサイズ
-	const VECTOR2::VEC2 HPBAR_POS = VECTOR2::VEC2(90.0f, 125.0f);				// HPバー本体スプライトの位置
+	const VECTOR2::VEC2 HPBAR_POS = VECTOR2::VEC2(92.0f, 127.0f);			// HPバー本体スプライトの位置
 	const VECTOR2::VEC2 HPBAR_SIZE = VECTOR2::VEC2(520.0f, 30.0f);			// HPバー本体スプライトのサイズ
-	const VECTOR2::VEC2 CRNTHP_TEXT_POS = VECTOR2::VEC2(160.0f, 157.0f);				// HPバー本体スプライトの位置
-	const VECTOR2::VEC2 MAXHP_TEXT_POS = VECTOR2::VEC2(160.0f, 185.0);				// HPバー本体スプライトの位置
+	const VECTOR2::VEC2 CRNTHP_TEXT_POS = VECTOR2::VEC2(160.0f, 157.0f);	// 現在のHPテキストの位置
+	const VECTOR2::VEC2 MAXHP_TEXT_POS = VECTOR2::VEC2(160.0f, 185.0);		// 最大HPテキストの位置
 	const float DANGER_COLOR_FADE_SPEED = 20.0f;	// 危険体力の時のフェード速度
 
 	std::weak_ptr<class GameObject>m_pPlayerObj;

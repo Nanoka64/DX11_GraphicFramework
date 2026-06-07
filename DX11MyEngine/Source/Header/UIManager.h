@@ -62,6 +62,9 @@ public:
     /// <returns></returns>
     GameObject* GetButton(RendererEngine &renderer, const UIData::RectTransformData &_transformData, const UIData::ButtonUIData &_param);
 
+    // UI画面を開いた時などに、最初に選択状態にするボタンをセットする
+    void SetFirstFocus(class ButtonUI* _firstButton);
+
 private:
 	// コピー禁止
 	UIManager(const UIManager &) = delete;

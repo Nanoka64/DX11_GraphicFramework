@@ -217,6 +217,10 @@ void UIManager::Update(RendererEngine &renderer)
         ++mapIt;
     }
 
+
+    // ボタン入力の更新
+    //ButtonInputProcess(renderer);
+
     //////////////////////////////////////////////////////////////////////////////////////////
     //						デバッグ用
     //              ※ デバッグモードが有効の際に表示
@@ -256,6 +260,7 @@ void UIManager::Update(RendererEngine &renderer)
         }
     }
     Master::m_pDebugger->EndDebugWindow();
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -286,10 +291,22 @@ void UIManager::ButtonInputProcess(RendererEngine& renderer)
     ButtonUI *pNextBtn = nullptr;
 
     // 入力に応じて次の移動先を取得
-    if (GetInputDown(GAME_CONFIG::VIEW_UP))    pNextBtn = m_pCrntFocusedButton->m_pNavUp;
-    if (GetInputDown(GAME_CONFIG::VIEW_DOWN))  pNextBtn = m_pCrntFocusedButton->m_pNavDown;
-    if (GetInputDown(GAME_CONFIG::VIEW_LEFT))  pNextBtn = m_pCrntFocusedButton->m_pNavLeft;
-    if (GetInputDown(GAME_CONFIG::VIEW_RIGHT)) pNextBtn = m_pCrntFocusedButton->m_pNavRight;
+    if (GetInputDown(GAME_CONFIG::VIEW_UP))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavUp;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_DOWN))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavDown;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_LEFT))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavLeft;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_RIGHT))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavRight;
+    }
 
     // 移動先が存在すればフォーカスを移す
     if (pNextBtn != nullptr) {
@@ -298,10 +315,31 @@ void UIManager::ButtonInputProcess(RendererEngine& renderer)
         m_pCrntFocusedButton = pNextBtn;
 
         // カーソル移動音を鳴らす
-        Master::m_pSoundManager->Play(SOUND_TYPE::SE, m_pCrntFocusedButton->m_InputSoundID);
+        //Master::m_pSoundManager->Play(SOUND_TYPE::SE, m_pCrntFocusedButton->m_InputSoundID);
     }
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】最初に選択状態にするボタンをセットする
+//*
+//* [引数]
+//* *_firstButton         : 選択状態にするボタン
+//*
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void UIManager::SetFirstFocus(class ButtonUI* _firstButton)
+{
+    // 以前のフォーカスを外す
+    if (m_pCrntFocusedButton != nullptr) {
+        m_pCrntFocusedButton->set_IsFocused(false);
+    }
+
+    // 新しいボタンにフォーカスを当てる
+    if (_firstButton != nullptr) {
+        _firstButton->set_IsFocused(true);
+        m_pCrntFocusedButton = _firstButton;
+    }
+}
 
 //*---------------------------------------------------------------------------------------
 //*【?】スプライトの取り出し

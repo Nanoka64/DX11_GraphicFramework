@@ -219,7 +219,7 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 	// 装備を決定したときのテキスト表示 ************************************************************************
 	if (m_DecisionTextDrawTimer > 0.0f) {
 		std::string decisionText = g_SoldierNames[m_DecisionSoldierTypeIndex];
-		float textY = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.y;
+		float textY = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.y - 40.0f;
 		float textX = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.x - 150.0f;
 
 		Master::m_pDirectWriteManager->SetColor(D2D1::ColorF(D2D1::ColorF(0.0f, 1.0f, 1.0f)));	// 水色

@@ -46,7 +46,6 @@ private:
 	ButtonUI* m_pNavRight;
 	bool m_IsFocused = false;// 現在選択されているか
 
-
 	//*****************************************************************************************
 	//	UIManagerからのアクセスを許可
 	//*****************************************************************************************
@@ -61,6 +60,19 @@ public:
 	void Draw(RendererEngine &renderer)override;		// 描画処理
 	
 	void ParamReset();	// パラメータリセット
+
+	/// <summary>
+	/// クリック処理を実行
+	/// </summary>
+	void InvokeClick();
+
+	// ナビゲーションの紐づけ設定関数
+	void set_Navigation(
+		ButtonUI* _up,
+		ButtonUI* _down,
+		ButtonUI* _left,
+		ButtonUI* _right);
+
 
 	/// <summary>
 	/// ボタン用のスプライト設定
@@ -176,6 +188,8 @@ public:
 	/// <param name="_state">設定する状態</param>
 	void set_Color(const VECTOR4::VEC4& _color, UIData::STATE _state);
 
+	void set_IsFocused(bool _focused) { m_IsFocused = _focused; }
+	bool get_IsFocused() const { return m_IsFocused; }
 
 	// 連続入力を許可する設定用セッター
 	void set_AllowRepeatInput(bool allow) { m_AllowRepeatInput = allow; }

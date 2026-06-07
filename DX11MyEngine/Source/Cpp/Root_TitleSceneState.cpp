@@ -240,5 +240,7 @@ void Root_TitleSceneState::Draw(SceneManager* pOwner)
 	m_pChildStateMap[m_CrntChildStateID]->Draw(pOwner);
 
 
+	Master::m_pDirectWriteManager->SetOutLine(3.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f));
 	Master::m_pDirectWriteManager->DrawString("マウス：選択　/　左クリック：決定　/　右クリック：戻る", VECTOR2::VEC2(700.0f, 1000.0f), "White_30_STD");
+	Master::m_pDirectWriteManager->SetOutLine(0.0f);
 }

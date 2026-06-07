@@ -129,7 +129,7 @@ private:
 	/* 定数 */
 	const float DECISON_TEXT_DRAW_DURATION = 2.0f;								// 装備決定時のテキストの表示時間
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;						// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
-	const float ITEM_POS_Y_BETWEEN_DIST = 140.0f;						// 項目同士のY距離
+	const float ITEM_POS_Y_BETWEEN_DIST = 140.0f;								// 項目同士のY距離
 	const VECTOR2::VEC2 SOLDIER_ITEM_SIZE = VECTOR2::VEC2(500.0f, 100.0f);		// 兵装項目のサイズ
 	const VECTOR2::VEC2 SOLDIER_ITEM_START_POS = VECTOR2::VEC2(400.0f, 500.0f);	// 兵装項目の開始位置
 

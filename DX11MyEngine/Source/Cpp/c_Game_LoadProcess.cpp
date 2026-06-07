@@ -64,7 +64,7 @@ void c_Game_LoadProcess::OnEnter(SceneManager *pOwner)
     rectData._size = VEC2(width, height);
     UIData::SpriteUIData spriteData;
     spriteData._tag = "LoadSprite";
-    spriteData._imagePath = "Resource/Texture/Title/Load.png";
+    spriteData._imagePath = "Resource/Texture/Title/Game_Load_01.png";
     spriteData._layerRank = 101;
     m_pLoadBackObj = Master::m_pUIManager->GetSprite(*m_pRenderer, rectData, spriteData);
 }
@@ -213,7 +213,6 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         //}
     }
 
-
     /* 建物 モデルの生成 */
     {
         // マテリアル取得
@@ -304,30 +303,30 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     /* 八面体生成 */
     {
-        // マテリアル取得
-        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
-        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
+        //// マテリアル取得
+        //auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
+        //auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
 
-        SetupMaterialInfo matInfo[2];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr1;
-        matInfo[1].Index = 1;
-        matInfo[1].pMaterialData = matPtr2;
+        //SetupMaterialInfo matInfo[2];
+        //matInfo[0].Index = 0;
+        //matInfo[0].pMaterialData = matPtr1;
+        //matInfo[1].Index = 1;
+        //matInfo[1].pMaterialData = matPtr2;
 
-        CreateModelInfo model;
-        model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
-        model.ObjTag = "Octahedron";
-        model.IsAnim = false;
-        model.MatNum = 2;
-        model.IsActive = true;
-        model.SetupMaterial = matInfo;
-        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-        auto obj = MeshFactory::CreateModel(model);
-        obj->set_IsStatic(false);
-        obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
-        obj->get_Component<MyTransform>()->set_Pos(-100.0f, 100.0f, 100);
-        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        //CreateModelInfo model;
+        //model.pRenderer = m_pRenderer;
+        //model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
+        //model.ObjTag = "Octahedron";
+        //model.IsAnim = false;
+        //model.MatNum = 2;
+        //model.IsActive = true;
+        //model.SetupMaterial = matInfo;
+        //model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        //auto obj = MeshFactory::CreateModel(model);
+        //obj->set_IsStatic(false);
+        //obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
+        //obj->get_Component<MyTransform>()->set_Pos(-100.0f, 100.0f, 100);
+        //obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
     /* 地面の生成 */
@@ -420,26 +419,29 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsNormalMap = true;
         mesh.ObjLayer = 105;
 
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 20; i++)
         {
-            VEC3 pt;
-            pt.x = static_cast<float>(rand() % 1000) - 500.0f;
-            pt.y = 40.0f;
-            pt.z = static_cast<float>(rand() % 1000) - 500.0f;
+            VEC3 pos;
+            pos.x = -50.0f;
+            pos.y = 1.0f + i;
+            pos.z = 90.0f + i;
             VEC3 col;
             col.x = static_cast<float>(rand() % 255) / 255.0f;
             col.y = static_cast<float>(rand() % 255) / 255.0f;
             col.z = static_cast<float>(rand() % 255) / 255.0f;
+            VEC3 scl = VEC3(1.0f);
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Pos(VEC3(-150.0f, 10.0f, 100.0f));
-            obj->get_Transform().lock()->set_Scale(VEC3(1.0f, 1.0f, 1.0f));
-            obj->set_Tag("PointLight");
+            obj->get_Transform().lock()->set_Pos(pos);
+            obj->get_Transform().lock()->set_Scale(scl);
+            obj->set_Tag("Block");
+            obj->set_IsUpdateAllowedDuringPause(false);
             auto light = obj->add_Component<PointLight>();
             light->set_LightColor(col);
-            light->set_Range(1.0f);
-            light->set_Intensity(1.0f);
+            light->set_Range(15.0f);
+            light->set_Intensity(1.5f);
 
+            // 物理コンポーネント
             auto physics = obj->add_Component<Physics>();
             physics->set_AirDrag(1.0f);
 
@@ -754,6 +756,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     // ロード画面スプライトをオフに（プールへ返す）
 	m_pLoadBackObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+
+    //*****************************************************************************************
+    //
+    //                        爆速ロード防止のため、一時的に処理を停止させる
+    //  
+    //*****************************************************************************************
+    Sleep(1500);
 }
 
 
