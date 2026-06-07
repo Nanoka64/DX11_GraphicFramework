@@ -41,8 +41,9 @@ namespace VECTOR3
 		VEC3 operator-(const VEC3& vec) const	{ return { this->x - vec.x,this->y - vec.y,this->z - vec.z }; };
 		VEC3 operator-(const float& scl) const	{ return { this->x - scl,this->y - scl,this->z - scl }; };
 		VEC3 operator-() const					{ return { -this->x, -this->y, -this->z }; };
-		VEC3 operator*(float scl) const			{ return { this->x * scl,this->y * scl,this->z * scl }; };
+		VEC3 operator*(const float& scl) const	{ return { this->x * scl,this->y * scl,this->z * scl }; };
 		VEC3 operator*(const VEC3& vec) const	{ return { this->x * vec.x,this->y * vec.y,this->z * vec.z }; };
+		VEC3 operator/(const float& scl) const	{ return { this->x * scl,this->y * scl,this->z * scl }; };
 		VEC3 operator+() const					{ return *this; };
 		operator DirectX::XMFLOAT3()const		{ return DirectX::XMFLOAT3(x, y, z); }		// XMFLOAT3‚É“n‚·Û‚Ì•ÏŠ·
 		operator DirectX::XMVECTOR()const		{ return DirectX::XMVectorSet(x, y, z, 1.0f); }    // XMVECTOR‚É“n‚·Û‚Ì•ÏŠ·
@@ -79,6 +80,15 @@ namespace VECTOR3
 			this->x /= vec.x;
 			this->y /= vec.y;
 			this->z /= vec.z;
+
+			return *this;
+		};
+		
+		// •¡‡‘ã“ü Š„‚èŽZ
+		VEC3& operator/=(const float &scl) {
+			this->x /= scl;
+			this->y /= scl;
+			this->z /= scl;
 
 			return *this;
 		};

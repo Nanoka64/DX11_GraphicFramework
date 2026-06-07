@@ -37,10 +37,10 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float3 luminance = dot(texColor.xyz, lumaWeight);
     
     // [“x‚ª1.0f‚É‹ß‚¢ê‡‚Í”wŒi‚È‚Ì‚Å‹P“x0‚É‚·‚é
-    if (depth >= 0.9999)
-    {
-        luminance = 0.0f;
-    }
+    //if (depth >= 0.9999)
+    //{
+    //    luminance = 0.0f;
+    //}
     //clip(luminance - 1.0f);
     
     // 1.0ˆÈ‰º‚È‚ç0.0‚É‚È‚é

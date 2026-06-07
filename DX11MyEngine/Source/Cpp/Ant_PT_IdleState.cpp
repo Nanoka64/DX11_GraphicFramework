@@ -48,7 +48,7 @@ int Ant_PT_IdleState::Update(class EnemyController* pOwner)
 	auto target = pOwner->get_Target();	// 目標オブジェクト
 	if (target == nullptr || pOwner->get_OwnerObj().expired())
 	{
-		MessageBox(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
+		MessageBoxA(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
 		assert(false);
 	}
 	else

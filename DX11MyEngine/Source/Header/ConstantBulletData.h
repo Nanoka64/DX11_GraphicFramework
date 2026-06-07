@@ -48,6 +48,7 @@ namespace BulletData
         int _penetrationsCount = 0;                 // 貫通可能回数
         float _collisionSize = 0.0f;                // 衝突判定の半径
         float _gravityScale = 0.0f;                 // 重力の影響を受けるかどうか（0.0fなら受けない）
+        float _knockbackForce = 1.0f;               // ノックバック力
 
         unsigned int _collisionMask = 0;            // どのオブジェクトと衝突するか（COLLISION_CATEGORY）
         std::string _bulletMaterialTag;             // 使用するマテリアルのタグ（TODO:ビルボードと3Dモデルで分ける必要あるかも）

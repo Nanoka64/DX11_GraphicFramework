@@ -77,10 +77,13 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     auto pContext = renderer.get_DeviceContext();
 	auto resourcePtr = m_pResource.lock();
     std::shared_ptr<MeshResourceData> meshData = resourcePtr->m_pMeshData;
-    CB_TRANSFORM_SET* cbTransSet = resourcePtr->m_pCBTransformSet;
-    CB_MATERIAL_SET* cbMatSet = resourcePtr->m_pCBMaterialDataSet;
+    //CB_TRANSFORM_SET* cbTransSet = resourcePtr->m_pCBTransformSet;
+    //CB_MATERIAL_SET* cbMatSet = resourcePtr->m_pCBMaterialDataSet;
     ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
     ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
+    CB_MATERIAL cbMaterial{};
+	CB_TRANSFORM cbTransform{};
+
 
     std::shared_ptr<MyTransform> transform = m_pOwner.lock()->get_Transform().lock();
 
@@ -90,22 +93,42 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     /* ========== 定数バッファの更新 ========== */
     XMMATRIX viewInvMtx = renderer.get_ViewInvMatrix(); // ビュー逆行列取得
 
-    const XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	// ビルボードの回転を計算 ==========================
+
+	// デフォルトの上方向ベクトル（ワールドのY軸）を基準にする
+    const XMVECTOR baseUP = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+    // ----------------------------------------------
+    // 前方ベクトル
+    // ----------------------------------------------
     XMVECTOR forward = viewInvMtx.r[2];     // [2]に前方向が入ってる（0:rg1:up2:fw）
- 
+
     if (resourcePtr->m_FixedAxisBitFlag & FIXED_AXIS_BITFLAG_X) {
-        forward = XMVectorSetX(forward, 0.0f);  // X成分を0にする
+        forward = XMVectorSetX(forward, 0.0f);  // X成分を0にする（左右向かない）
     }
     if (resourcePtr->m_FixedAxisBitFlag & FIXED_AXIS_BITFLAG_Y) {
-        forward = XMVectorSetY(forward, 0.0f);  // Y成分を0にする
+        forward = XMVectorSetY(forward, 0.0f);  // Y成分を0にする（上向かない）
     }
     if (resourcePtr->m_FixedAxisBitFlag & FIXED_AXIS_BITFLAG_Z) {
-        forward = XMVectorSetZ(forward, 0.0f);  // Z成分を0にする
+        forward = XMVectorSetZ(forward, 0.0f);  // Z成分を0にする（前後向かない）
     }
-
     forward = XMVector3Normalize(forward);  // 正規化
 
-    XMVECTOR right = XMVector3Cross(up, forward);   // 外積を使って右方向ベクトルを求める
+    
+    // ----------------------------------------------
+    // 右方向ベクトル
+    // ----------------------------------------------
+    XMVECTOR right = XMVector3Cross(baseUP, forward);   // 外積を使って右方向ベクトルを求める
+    right = XMVector3Normalize(right);      // 正規化
+
+
+    // ----------------------------------------------
+	// 上方向ベクトル
+    // ----------------------------------------------
+    XMVECTOR up = XMVector3Cross(forward, right);
+    up = XMVector3Normalize(up);            // 正規化
+
 
     viewInvMtx.r[0] = right;   // X軸
     viewInvMtx.r[1] = up;      // Y軸
@@ -113,6 +136,7 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     viewInvMtx.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);// 平行移動成分をゼロにする
 
     // ワールド行列セット ==========================
+
 
     // 明示的に行列を設定
     XMMATRIX worldMtx = 
@@ -123,41 +147,19 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
         );
 
     XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
-    XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
-    
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbTransSet->pBuff,
-        0,
-        nullptr,
-        &cbTransSet->Data,
-        0,
-        0
-    );
+    XMStoreFloat4x4(&cbTransform.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
 
     auto pMatData = meshData->pMaterials.lock();
 
     // マテリアル情報セット ==========================
-    CB_MATERIAL mat{};
-    mat.Diffuse = pMatData->m_DiffuseColor;
-    mat.Specular = pMatData->m_SpecularColor;
-    mat.SpecularPower = pMatData->m_SpecularPower;
-    cbMatSet->Data = mat;
+    cbMaterial.Diffuse = pMatData->m_DiffuseColor;
+    cbMaterial.Specular = pMatData->m_SpecularColor;
+    cbMaterial.SpecularPower = pMatData->m_SpecularPower;
 
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbMatSet->pBuff,
-        0,
-        nullptr,
-        &cbMatSet->Data,
-        0,
-        0
-    );
 
     // 定数バッファをセット ==========================
-    pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
-    pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
-    //pContext->PSSetConstantBuffers(0, 1, &m_pCB3DObjectSet->pBuff);
+    Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
+    Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
 
     // テクスチャセット ==========================

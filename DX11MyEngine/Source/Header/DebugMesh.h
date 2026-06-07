@@ -26,7 +26,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer;
     UINT m_VertexNum;
     UINT m_IndexNum;
-    std::unique_ptr<CB_TRANSFORM_SET> m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
     DEBUG_MESHS_TYPE m_MeshType;
 
 public:
@@ -37,7 +36,6 @@ public:
     void Draw(RendererEngine& renderer, const DirectX::XMMATRIX &world);
 
 private:
-    bool CreateTransformCBuffer(RendererEngine& renderer);
     bool CreateVertexIndexBuffer(RendererEngine& renderer, const VERTEX::VERTEX_Static* pVertices, UINT vNum, const WORD* pIndices, UINT iNum);
 };
 

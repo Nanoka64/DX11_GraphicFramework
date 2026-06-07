@@ -16,8 +16,7 @@ using namespace VERTEX;
 //*----------------------------------------------------------------------------------------
 DecalRenderer::DecalRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) 
     : IComponent(pOwner, updateRank),
-    m_IsDynamic(false),
-    m_pCBDecalSet(nullptr)
+    m_IsDynamic(false)
 {
 	this->set_Tag("DecalRenderer");
 }
@@ -28,13 +27,7 @@ DecalRenderer::DecalRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 //*----------------------------------------------------------------------------------------
 DecalRenderer::~DecalRenderer()
 {
-    if (m_pCBDecalSet) {
-        if (m_pCBDecalSet->pBuff) {
-            m_pCBDecalSet->pBuff->Release();
-        }
-        delete m_pCBDecalSet;
-        m_pCBDecalSet = nullptr;
-    }
+
 }
 
 
@@ -48,10 +41,10 @@ DecalRenderer::~DecalRenderer()
 void DecalRenderer::Start(RendererEngine &renderer)
 {
     // デカール用定数バッファ作成
-    if (!CreateDecalConstantBuffer(renderer))
-    {
-        MessageBox(NULL, "デカール用定数バッファが作成できませんでした", "Error", MB_OK);
-    }
+    //if (!CreateDecalConstantBuffer(renderer))
+    //{
+    //    MessageBox(NULL, "デカール用定数バッファが作成できませんでした", "Error", MB_OK);
+    //}
 }
 
 
@@ -84,11 +77,10 @@ void DecalRenderer::Draw(RendererEngine &renderer)
 
     auto pContext = renderer.get_DeviceContext();
     std::shared_ptr<MeshResourceData> meshInfo = m_pMeshResource.lock()->m_pMeshData;
-    CB_TRANSFORM_SET *cbTransSet = m_pMeshResource.lock()->m_pCBTransformSet;
-    CB_MATERIAL_SET *cbMatSet = m_pMeshResource.lock()->m_pCBMaterialDataSet;
     ID3D11Buffer *vtxBuff = meshInfo->pVertexBuffer;
     UINT vtxStride = meshInfo->VertexStride;
     ID3D11Buffer *idxBuff = meshInfo->pIndexBuffer;
+    CB_TRANSFORM cbTransform = {};
 
     auto transform = m_pOwner.lock()->get_Transform().lock();
 
@@ -97,32 +89,12 @@ void DecalRenderer::Draw(RendererEngine &renderer)
     // ワールド行列セット ==========================
     XMMATRIX worldMtx = transform->get_WorldMtx();
     worldMtx = XMMatrixTranspose(worldMtx);                 // 行列の転置
-    XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
-
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbTransSet->pBuff,
-        0,
-        nullptr,
-        &cbTransSet->Data,
-        0,
-        0
-    );
+    XMStoreFloat4x4(&cbTransform.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
 
     // デカール情報セット ==========================
-    // GPUメモリにアクセス
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    if (SUCCEEDED(pContext->Map(m_pCBDecalSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource)))
-    {
-        // ワールド逆行列
-        XMMATRIX invWorld = XMMatrixInverse(NULL, worldMtx);
-        XMStoreFloat4x4(&m_pCBDecalSet->Data.DecalWorldInvMtx, invWorld);
-
-        // データのコピー 
-        memcpy(mappedResource.pData, &m_pCBDecalSet->Data, sizeof(CB_DECAL));
-        // アクセス終了
-        pContext->Unmap(m_pCBDecalSet->pBuff, 0);
-    }
+    XMMATRIX invWorld = XMMatrixInverse(NULL, worldMtx);
+    XMStoreFloat4x4(&m_CBDecalData.DecalWorldInvMtx, invWorld); // ワールド逆行列
+	m_CBDecalData.DecalColor = VEC3(1.0f, 1.0f, 1.0f);          // デカールの色（白でテクスチャの色をそのまま使う）
 
     // 通常パス **********************************************************
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
@@ -132,31 +104,17 @@ void DecalRenderer::Draw(RendererEngine &renderer)
         auto pMatData = meshInfo->pMaterials.lock();
 
         // マテリアル情報セット ==========================
-        CB_MATERIAL mat{};
-        mat.Diffuse = pMatData->m_DiffuseColor;
-        mat.Specular = pMatData->m_SpecularColor;
-        mat.SpecularPower = pMatData->m_SpecularPower;
-        mat.EmissivePower = pMatData->m_EmissivePower;
-        mat.EmissiveColor = pMatData->m_EmissiveColor;
-        mat.OffsetUV;
-        cbMatSet->Data = mat;
-
-        // 定数バッファに転送
-        pContext->UpdateSubresource(
-            cbMatSet->pBuff,
-            0,
-            nullptr,
-            &cbMatSet->Data,
-            0,
-            0
-        );
+        m_CBMaterialData.Diffuse = pMatData->m_DiffuseColor;
+        m_CBMaterialData.Specular = pMatData->m_SpecularColor;
+        m_CBMaterialData.SpecularPower = pMatData->m_SpecularPower;
+        m_CBMaterialData.EmissivePower = pMatData->m_EmissivePower;
+        m_CBMaterialData.EmissiveColor = pMatData->m_EmissiveColor;
+        m_CBMaterialData.OffsetUV;
 
         // 定数バッファをセット ==========================
-        pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);       // ワールド
-        pContext->PSSetConstantBuffers(0, 1, &cbTransSet->pBuff);       // ワールド
-        pContext->PSSetConstantBuffers(11,1, &m_pCBDecalSet->pBuff);    // デカール
-        pContext->VSSetConstantBuffers(4, 1, &cbMatSet->pBuff);         // マテリアル
-        pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);         // ,,,
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&m_CBMaterialData, sizeof(CB_MATERIAL));
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::DECAL, (void*)&m_CBDecalData, sizeof(CB_DECAL));
 
         // テクスチャセット（アルベドと法線のみ） ==========================
         ID3D11ShaderResourceView *diffuseSRV = nullptr;
@@ -191,40 +149,40 @@ void DecalRenderer::Draw(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 bool DecalRenderer::CreateDecalConstantBuffer(RendererEngine &renderer)
 {
-    auto pDevice = renderer.get_Device();
+    //auto pDevice = renderer.get_Device();
 
-    D3D11_USAGE usage;  // 使用方法
-    UINT accesssFlags;  // CPU書き込みフラグ
+    //D3D11_USAGE usage;  // 使用方法
+    //UINT accesssFlags;  // CPU書き込みフラグ
 
-    // 動的変更をするか
-    if (m_IsDynamic){
-        usage = D3D11_USAGE_DYNAMIC;
-        accesssFlags = D3D11_CPU_ACCESS_WRITE;
-    }
-    else{
-        usage = D3D11_USAGE_DEFAULT;
-        accesssFlags = 0;
-    }
+    //// 動的変更をするか
+    //if (m_IsDynamic){
+    //    usage = D3D11_USAGE_DYNAMIC;
+    //    accesssFlags = D3D11_CPU_ACCESS_WRITE;
+    //}
+    //else{
+    //    usage = D3D11_USAGE_DEFAULT;
+    //    accesssFlags = 0;
+    //}
 
-    m_pCBDecalSet = new CB_DECAL_SET();
+    //m_pCBDecalSet = new CB_DECAL_SET();
 
-    D3D11_BUFFER_DESC bd;
-    ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
-    bd.Usage = usage;
-    bd.ByteWidth = sizeof(CB_DECAL);
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    bd.CPUAccessFlags = accesssFlags;
+    //D3D11_BUFFER_DESC bd;
+    //ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
+    //bd.Usage = usage;
+    //bd.ByteWidth = sizeof(CB_DECAL);
+    //bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    //bd.CPUAccessFlags = accesssFlags;
 
-    D3D11_SUBRESOURCE_DATA initData;
-    ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
-    initData.pSysMem = nullptr;
+    //D3D11_SUBRESOURCE_DATA initData;
+    //ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
+    //initData.pSysMem = nullptr;
 
-    // バッファの作成
-    HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBDecalSet->pBuff);
-    if (FAILED(hr))
-    {
-        return false;
-    }
+    //// バッファの作成
+    //HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBDecalSet->pBuff);
+    //if (FAILED(hr))
+    //{
+    //    return false;
+    //}
 
     return true;
 }

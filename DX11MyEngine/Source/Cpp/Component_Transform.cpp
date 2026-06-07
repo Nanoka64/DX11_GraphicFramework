@@ -475,7 +475,7 @@ XMMATRIX MyTransform::get_ExcludingRotWorldMtx(const DirectX::XMMATRIX& _scl, co
 
 //*---------------------------------------------------------------------------------------
 //* @:Transform Class 
-//*【?】「前」方向取得
+//*【?】ローカル空間の「前」方向取得
 //* 引数：なし
 //* 返値：VEC3
 //*----------------------------------------------------------------------------------------
@@ -484,13 +484,19 @@ const VEC3 MyTransform::get_Forward() const
     return VEC3::FromXMVECTOR(DirectX::XMVector3Rotate(FORWARD, m_RotationQ));
 }
 
+//*---------------------------------------------------------------------------------------
+//* @:Transform Class 
+//*【?】ワールド空間の「前」方向取得
+//* 引数：なし
+//* 返値：VEC3
+//*----------------------------------------------------------------------------------------
 const VEC3 MyTransform::get_WorldForward() const
 {
     // 最終的なワールド行列を取得
     DirectX::XMMATRIX worldMat = get_WorldMtx();
 
-    // Z方向(0,0,1)のベクトルを、ワールド行列の「回転成分だけ」で変換する
-    // TransformNormal を使うことで、移動量やスケールを無視して純粋な方向だけを取り出せます
+    // Z方向(0,0,1)のベクトルを、ワールド行列の回転成分だけで変換する
+    // TransformNormal を使うことで、移動量やスケールを無視して純粋な方向だけを取り出せる
     DirectX::XMVECTOR worldForward = DirectX::XMVector3TransformNormal(
         DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
         worldMat

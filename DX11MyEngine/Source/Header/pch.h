@@ -93,11 +93,50 @@ constexpr int POINTLIGHT_MAX_NUM		= 100; // ポイントライトの最大数
 constexpr int DIRECTIONLIGHT_MAX_NUM	= 1;   // ディレクションライトの最大数
 
 
+#define IS_WRITE_ENABLE   // DirectWriteを使用しているとRenderDocが使用できないのでそういう時にこれを消す
+
+
+/// <summary>
+/// 描画パス
+/// </summary>
+enum class RENDER_PASS
+{
+    MAIN,   // 通常
+    SHADOW, // シャドウ
+};
+
+/// <summary>
+/// カリングモード
+/// </summary>
+enum class CULL_MODE
+{
+    NONE,
+    FRONT,
+    BACK,
+
+    NUM,
+};
+
+/// <summary>
+/// レンダリングパイプラインの種類
+/// </summary>
+enum class RENDER_PIPELINE_STATE
+{
+    NONE,
+    DEFAULT,
+    DEFAULT_2D,
+
+    NUM,
+};
+
+
 /* 自作ヘッダ */
 #include "VERTEX.h"					// 頂点情報
 #include "SHADER.h"					// シェーダ情報
 #include "Window.h"					// ウインドウ情報
 #include "Helper.h"					// ヘルパー
+#include "IDXResource.h"					// ヘルパー
+#include "ConstantBuffer.h"			// 定数バッファ用構造体
 #include "ConstantBufferStructs.h"	// 定数バッファ用構造体
 #include "Material.h"				// マテリアル
 #include "BitFlag.h"				// ビットフラグ関連

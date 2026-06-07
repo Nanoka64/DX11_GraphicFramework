@@ -34,6 +34,16 @@ struct CollInData_Segment
 };
 
 /// <summary>
+/// 三角形判定用
+/// </summary>
+struct CollInData_Triangle
+{
+	VECTOR3::VEC3 _v0;
+	VECTOR3::VEC3 _v1;
+	VECTOR3::VEC3 _v2;
+};
+
+/// <summary>
 /// 3D球判定
 /// </summary>
 struct CollInData_Sphere
@@ -57,7 +67,7 @@ struct CollInData_AABB
 struct CollInData_Plane
 {
     VECTOR3::VEC3 _point;   // 任意の点
-    VECTOR3::VEC3 _norm;    // 平面の法線
+    VECTOR3::VEC3 _norm;    // 法線
 };
 
 /// <summary>
@@ -73,8 +83,8 @@ struct CollInData2D_AABB
 struct CollInData_OBB
 {
     VECTOR3::VEC3 _center;      // 中心位置
-    VECTOR3::VEC3 _slope[3];    // 各座標軸の傾き
-    VECTOR3::VEC3 _harfLength;  // 各座標軸に沿った長さの半分
+    VECTOR3::VEC3 _axis[3];     // 各座標軸の傾き
+    VECTOR3::VEC3 _harfLength;  //ローカルのx, y, z軸に沿ったハーフサイズ
 };
 
 // ***************************************************************************************
@@ -154,6 +164,9 @@ public:
 
     // 箱と箱
     bool HitCheck_BoxVsBox(const CollInData_AABB &_src, const CollInData_AABB &_dst);
+    
+    // 箱と箱（OBB）
+    bool HitCheck_OBBVsOBB(const CollInData_OBB &_src, const CollInData_OBB&_dst, class CollisionInfo* _hitInfo);
 
     // 箱と点
     bool HitCheck_BoxVsPoint(const CollInData_AABB &box, const VECTOR3::VEC3& _p);    
@@ -168,14 +181,16 @@ public:
     //*****************************************************************************************
     //						 レイキャスト 
     //*****************************************************************************************
-    // 平面と線
+    // 平面とレイ
     bool HitCheck_PlaneVsRay(const CollInData_Plane& _plane, const CollInData_Ray& _ray, class CollisionInfo* _hitInfo );
     
-    // 箱と線
+    // 箱とレイ
     bool HitCheck_BoxVsRay(const CollInData_AABB& _box, const CollInData_Ray& _ray, class CollisionInfo* _hitInfo);
+    
+	// 三角形とレイ
+	bool HitCheck_TraiangleVsRay(const CollInData_Triangle& _triangle, const CollInData_Ray& _ray, float& u, float& v, float& t);
 
-
-    // 球と線
+    // 球とレイ
     bool HitCheck_SphereVsRay(const CollInData_Sphere& _sphere, const CollInData_Ray& _ray, class CollisionInfo* _hitInfo );
 
     // 平面と線分

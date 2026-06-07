@@ -14,6 +14,7 @@
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
 #include "Component_LineRenderer.h"
+#include "Component_Physics.h"
 
 using namespace VECTOR2;
 using namespace VECTOR3;
@@ -181,6 +182,84 @@ void RectTransformEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
+/* --- @:PhysicsEditor Class --- */
+//
+// ***************************************************************************************
+bool PhysicsEditor::Init(RendererEngine& renderer)
+{
+    return true;
+}
+
+void PhysicsEditor::OnEditorGUI(RendererEngine& renderer, GameObject& pObj)
+{
+    auto pPhysics = pObj.get_Component<Physics>();
+
+    if (pPhysics == nullptr)
+    {
+        return;
+    }
+
+    VEC3 vel = pPhysics->get_Velocity();
+    VEC3 forceAccumulator = pPhysics->get_ForceAccumulator();
+    float mass = pPhysics->get_Mass();
+    float gravityScale = pPhysics->get_GravityScale();
+    float airDrag = pPhysics->get_AirDrag();
+    float restitution = pPhysics->get_Restitution();
+    float maxSpeed = pPhysics->get_MaxSpeed();
+    float moveDrag = pPhysics->get_MoveDrag();
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"物理")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"質量"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Mass", 1, &mass, 0.5f, 0.0f, 100.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"重力"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Gravity", 1, &gravityScale, 0.5f, 0.0f, 100.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"空中抵抗"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##AirDrag", 1, &airDrag, 0.01f, 0.0f, 1.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"移動抵抗"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##MoveDrag", 1, &moveDrag, 0.01f, 0.0f, 1.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"反発係数"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Restitution", 1, &restitution, 0.01f, 0.0f, 1.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最大速度"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##MaxSpeed", 1, &maxSpeed, 0.01f, 0.0f, 100.0f);
+
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"移動ベクトル"));
+        Master::m_pDebugger->DG_DragVec3("##Velocity", &vel, 0.0f, -0.0f, 0.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8" 1フレームに蓄積された力"));
+        Master::m_pDebugger->DG_DragVec3("##ForceAccumulator", &forceAccumulator, 0.0f, -0.0f, 0.0f);
+
+
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+
+    pPhysics->set_Mass(mass);
+    pPhysics->set_GravityScale(gravityScale);
+	pPhysics->set_AirDrag(airDrag);
+	pPhysics->set_Restitution(restitution);
+	pPhysics->set_MaxSpeed(maxSpeed);
+    pPhysics->set_MoveDrag(moveDrag);
+}
+
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
 /* --- @:DirectionLightEditor Class --- */
 //
 // ***************************************************************************************
@@ -248,6 +327,7 @@ void DirectionLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pOb
     pDirectionLig->set_OrthographicWidth(orthogriphicWidth);
     pDirectionLig->set_OrthographicHeight(orthogriphicHeight);
 }
+
 
 
 // ***************************************************************************************
@@ -339,7 +419,7 @@ void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &p
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"移動速度"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_SliderFloat("##MoveSpeed", 1, &moveSpeed, 0.0f, 100.0f);
+        Master::m_pDebugger->DG_DragFloat("##MoveSpeed", 1, &moveSpeed, 1.0f, 0.0f, 1000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"速度ベクトル"));
         Master::m_pDebugger->DG_SameLine();

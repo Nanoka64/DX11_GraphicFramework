@@ -292,3 +292,18 @@ const EnemyData::EnemyDifficultyFactor& DataManager::get_EnemyDifficultyFactor()
 {
 	return m_EnemyDifficultyFactorArray[UINT_CAST(m_SelectDifficultyLevel)];
 }
+
+//*----------------------------------------------------------------------------------------
+//*【?】スクリーンのサイズを設定＆定数バッファも書き換える
+//*----------------------------------------------------------------------------------------
+void DataManager::set_ScreenSize(UINT _w, UINT _h)
+{
+	m_ScreenWidth = _w;
+	m_ScreenHeight = _h;
+
+	// 定数バッファも更新
+	CB_WINDOW cbWindow{};
+	cbWindow.WindowWidth = static_cast<float>(m_ScreenWidth);
+	cbWindow.WindowHeight = static_cast<float>(m_ScreenHeight);
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::WINDOW, (void*)&cbWindow, sizeof(CB_WINDOW));
+}

@@ -20,16 +20,15 @@
 class DataManager
 {
 private:
-	UINT m_ScreenWidth;
-	UINT m_ScreenHeight;
-	float m_DefaultFov;	// デフォルトのFOV
-	bool m_IsDebugMode;
-	class RendererEngine* m_pRenderer;// 描画エンジンのポインタ（読み取り）
-	std::weak_ptr<class Camera3D> m_pCameraComponent;		// カメラコンポーネント
-	
-	int m_SelectWeaponID[2];	// 武器選択で選択した武器のID 一時的にここに置く
-	UtilityData::UserConfigData m_UserConfigData;		// ユーザ設定データ
-	UtilityData::DIFFICULTY_LEVEL m_SelectDifficultyLevel;	// 選択された難易度
+	UINT m_ScreenWidth;											// スクリーンの横幅
+	UINT m_ScreenHeight;										// スクリーンの縦幅
+	float m_DefaultFov;											// デフォルトのFOV
+	bool m_IsDebugMode;											// デバッグ用エディタの有無のフラグ
+	class RendererEngine* m_pRenderer;							// 描画エンジンのポインタ（読み取り）
+	std::weak_ptr<class Camera3D> m_pCameraComponent;			// カメラコンポーネント
+	int m_SelectWeaponID[2];									// 武器選択で選択した武器のID 一時的にここに置く
+	UtilityData::UserConfigData m_UserConfigData;				// ユーザ設定データ
+	UtilityData::DIFFICULTY_LEVEL m_SelectDifficultyLevel;		// 選択された難易度
 	std::array<EnemyData::EnemyDifficultyFactor, UINT_CAST(UtilityData::DIFFICULTY_LEVEL::NUM)> m_EnemyDifficultyFactorArray;	// 難易度係数（敵ごとでは無く、一旦一括で管理）
 
 
@@ -56,8 +55,7 @@ public:
 	bool SettingsData_MissionTermination(RendererEngine& renderer, UINT _missionNumber);	// ミッション終了時
 	void ClearGameSceneResource(RendererEngine& renderer);
 
-	void set_ScreenWidth(UINT _w) { m_ScreenWidth = _w; };			// スクリーンの横幅を設定（基本的にRendererEngine以外からは設定しない）
-	void set_ScreenHeight(UINT _h) { m_ScreenHeight = _h; };		// スクリーンの縦幅を設定（基本的にRendererEngine以外からは設定しない）
+	void set_ScreenSize(UINT _w, UINT _h);		// スクリーンサイズの設定（基本的にRendererEngine以外からは設定しない）
 	void set_DefaultFov(float _f) { m_DefaultFov = _f; }			// デフォルトFOVの設定
 	void set_IdDebugMode(bool flag) { m_IsDebugMode = flag; }		// デバッグ用エディタのフラグ設定
 	void set_IsCameraControl(bool _isControl) { m_IsCameraControl = _isControl; }	// カメラ制御の有無の設定

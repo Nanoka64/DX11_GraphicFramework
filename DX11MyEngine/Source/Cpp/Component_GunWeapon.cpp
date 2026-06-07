@@ -83,9 +83,21 @@ void GunWeapon::Start(RendererEngine& renderer)
     get_WeaponFlags().EnableFlag(WEAPON_STATUS::ENABLED);
 }
 
-
 //*---------------------------------------------------------------------------------------
 //*【?】更新
+//*
+//* [引数]
+//* &renderer : 描画エンジンの参照
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void GunWeapon::Update(RendererEngine& renderer)
+{
+
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】遅延更新
 //*
 //* [引数]
 //* &renderer : 描画エンジンの参照
@@ -111,6 +123,8 @@ void GunWeapon::LateUpdate(RendererEngine& renderer)
     auto player = Master::m_pGameObjectManager->get_ObjectByTag("Player");
     auto skinnedMesh = player->get_Component<SkinnedMeshAnimator>();
     //auto& boneMtx = skinnedMesh->get_BoneLocalWorldMatrix("mixamorig:RightHand");
+    
+    // 武器の位置を右手の位置に合わせる
     auto& boneMtx = skinnedMesh->get_BoneLocalWorldMatrix("WeaponSocket_Right");
     transform->set_OffsetWorldTransfomationMatrix(boneMtx);
 
@@ -204,7 +218,7 @@ void GunWeapon::LateUpdate(RendererEngine& renderer)
     //Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"リロード時間：%.2f"), gunParam->_reloadTime);
     //Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"ズーム倍率：%.2f"), gunParam->_zoomLength);
     //Master::m_pDebugger->EndDebugWindow();
-
+    
     // ステート更新
     m_StateMachine.Update();
 }
@@ -244,7 +258,7 @@ bool GunWeapon::Setup(const WeaponData::BaseWeaponData* _pWeaponData)
     m_pWeaponData = static_cast<const GunWeaponData*>(_pWeaponData);
     if (!m_pWeaponData)
     {
-        MessageBox(NULL, "武器のパラメータが一致しません", "GunWeapon", MB_OK);
+        MessageBoxA(NULL, "武器のパラメータが一致しません", "GunWeapon", MB_OK);
         return false;
     }
 
@@ -326,7 +340,6 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
     float c_AngleH =camera->get_Angle_H();
     float c_AngleV =camera->get_Angle_V();
-    VEC3 cameraPos = camera->get_CameraPos();
 
     auto transform = m_pOwner.lock()->get_Transform().lock();
     VEC3 pos = transform->get_WorldVEC3ToPos();
@@ -338,6 +351,77 @@ void GunWeapon::Fire(RendererEngine& renderer)
         
     auto gunParam = get_GunWeaponData();
 
+    // =====================================================================
+    // 武器の向きに合わせて発射するやり方
+    // =====================================================================
+    {
+        //   // ワールド変換行列から方向をとる
+        //   XMMATRIX worldMtx = transform->get_WorldMtx();
+        //   DirectX::XMVECTOR scale;
+        //   DirectX::XMVECTOR rotQuat;
+        //   DirectX::XMVECTOR trans;
+        //   // 変換行列の分解しクォータニオンを取得する
+        //   DirectX::XMMatrixDecompose(&scale, &rotQuat, &trans, worldMtx);
+
+
+        //   // 基準となる前方ベクトル
+        //   DirectX::XMVECTOR baseForward = DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+        //   // 武器の回転クオータニオンで、前方ベクトルを回転させる
+        //   DirectX::XMVECTOR forwardVec = DirectX::XMVector3Rotate(baseForward, rotQuat);
+        //   
+        //   VEC3 fw = VEC3::FromXMVECTOR(forwardVec);
+
+        //   // 水平方向の向きを求める (Yaw)
+        //   float yaw = atan2(fw.x, fw.z);
+
+        //   // 水平成分の長さ
+        //   float xzLen = sqrtf(fw.x * fw.x + fw.z * fw.z);
+
+        //   // 垂直方向の角度を求める (Pitch)
+        //   float pitch = atan2(-fw.y, xzLen);
+
+           ///* そのままだとプレイヤーの位置から発射されてしまうので、前方に少しオフセットした位置を発射位置とする */
+        //   VEC3 firePos;
+        //   firePos.x = pos.x + (fw.x * 1.0f);
+        //   firePos.y = pos.y + (fw.y * 1.0f);
+        //   firePos.z = pos.z + (fw.z * 1.0f);
+    }
+    
+    // =====================================================================
+	// カメラの向きに合わせて発射するやり方
+    // =====================================================================
+    // カメラの位置と、カメラの注視点を取得
+    VEC3 focusPoint = camera->get_FocusPoint();
+    VEC3 cameraPos = camera->get_CameraPos();
+    VEC3 lookDir = camera->get_LookDir();
+
+    XMVECTOR vCamPos = XMVectorSet(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f);
+    XMVECTOR vFocus = XMVectorSet(focusPoint.x, focusPoint.y, focusPoint.z, 1.0f);
+
+    // カメラの前方ベクトルを計算する (注視点 - カメラ位置 を正規化)
+    XMVECTOR camForward = XMVector3Normalize(XMVectorSubtract(vFocus, vCamPos));
+
+    // はるか遠くにある仮想のターゲット位置を計算
+    float targetDistance = 1000.0f;
+    XMVECTOR targetPos = XMVectorMultiplyAdd(-lookDir, XMVectorReplicate(targetDistance), vCamPos);
+
+	VEC3 firePos;
+	firePos.x = pos.x + (camForward.m128_f32[0] * 1.0f);
+    firePos.y = pos.y + (camForward.m128_f32[1] * 1.0f);
+    firePos.z = pos.z + (camForward.m128_f32[2] * 1.0f);
+
+    // 発射位置からターゲット位置への「弾の方向ベクトル」を求める
+    XMVECTOR vFirePos = XMVectorSet(firePos.x, firePos.y, firePos.z, 1.0f);
+    XMVECTOR bulletDirVec = XMVector3Normalize(XMVectorSubtract(targetPos, vFirePos));
+
+    // 弾の方向ベクトルから Yaw と Pitch を計算（エフェクトや弾のクォータニオン用）
+    VEC3 fw = VEC3::FromXMVECTOR(bulletDirVec);
+    float yaw = atan2f(fw.x, fw.z);
+    float xzLen = sqrtf(fw.x * fw.x + fw.z * fw.z);
+    float pitch = atan2f(-fw.y, xzLen);
+
+    // これを弾やマズルフラッシュの基準となる回転クォータニオンにする
+    XMVECTOR rotQuat = XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
 
     // 同時発射
     for (int i = 0; i < gunParam->_bulletSimultaneousNum; i++)
@@ -346,17 +430,6 @@ void GunWeapon::Fire(RendererEngine& renderer)
         //rad.x = (c_AngleV);
         //rad.y = (c_AngleH - 1.57f);
         //rad.z = 0.0f;
-
-        XMMATRIX mat;
-
-        // ワールド変換行列から方向をとる
-        XMMATRIX worldMtx = transform->get_WorldMtx();
-        DirectX::XMVECTOR scale;
-        DirectX::XMVECTOR rotQuat; 
-        DirectX::XMVECTOR trans;
-        // 変換行列の分解しクォータニオンを取得する
-        DirectX::XMMatrixDecompose(&scale, &rotQuat, &trans, worldMtx);
-
 
         // 弾のバラつき
         float accuracy = gunParam->_accuracy;
@@ -374,7 +447,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
         // トランスフォームパラメータ
         BulletTransformData bulletTransform;
-        bulletTransform._pos = pos;
+        bulletTransform._pos = firePos;
         bulletTransform._rotQ = finalRotQuat;
         bulletTransform._scale;
 
@@ -393,6 +466,19 @@ void GunWeapon::Fire(RendererEngine& renderer)
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 0.8f, 0.0f));
     }
 
+    //*****************************************************************************************
+    //						マズルフラッシュエフェクトの再生
+    //*****************************************************************************************
+    if (gunParam->_muzzleFlashEffectTag.empty() == false)
+    {
+		VEC3 muzzleScale = gunParam->_muzzleFlashEffectScale;   // エフェクトの大きさ
+
+        auto handle = Master::m_pEffectManager->PlayEffect(gunParam->_muzzleFlashEffectTag);
+        Master::m_pEffectManager->SetPositionEffect(handle, firePos.x, firePos.y, firePos.z);
+        Master::m_pEffectManager->SetScaleEffect(handle, muzzleScale.x, muzzleScale.y, muzzleScale.z);
+        Master::m_pEffectManager->SetRotationEffect(handle, pitch, yaw, 0.0f);
+    }
+    
     // 弾数減らす
     m_AmmoRemaining--;
 }

@@ -44,7 +44,6 @@ bool GameManager::Init(RendererEngine& renderer)
 		return false;
 	}
 
-
 	return true;
 }
 

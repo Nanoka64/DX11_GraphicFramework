@@ -25,6 +25,9 @@ TrailRenderer::TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 	m_Color(VEC4(1.0f, 1.0f, 1.0f,1.0f))
 {
 	this->set_Tag("TrailRenderer");
+
+
+	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Acid.png");
 }
 
 
@@ -56,11 +59,10 @@ void TrailRenderer::Start(RendererEngine &renderer)
 {
 	if (!Setup(renderer))
 	{
-		MessageBox(NULL,"セットアップができませんでした","TrailRenderer Error",MB_OK);
+		MessageBoxA(NULL,"セットアップができませんでした","TrailRenderer Error",MB_OK);
 		return;
 	}
 	//m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
-	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Acid.png");
 }
 
 
@@ -184,28 +186,27 @@ void TrailRenderer::VertexUpdate(RendererEngine& renderer)
 	for (int i = 0; i < m_TrailInfoList.size(); i++)
 	{
 		VEC3 tail = m_TrailInfoList[i]._pos;// 末尾（今作るのはこれ）
-		VEC3 head = VEC3();					// 先頭
 
 		m_TrailInfoList[i]._time--;
 
 		// 時間の比率を求める
 		float w_t = static_cast<float>(m_TrailInfoList[i]._time) / static_cast<float>(m_DrawTime);
 
-		// 先頭位置を取得
+		VEC3 headDir;
+
+		// 先頭位置への方向を求める
 		if (i < (m_TrailInfoList.size() - 1)){
-			head = m_TrailInfoList[i + 1]._pos;
+			headDir = (m_TrailInfoList[i + 1]._pos - tail).Normalize();
 		}
 		else{
 			// 先頭位置がない場合、前の情報から仮想の位置を作る
 			VEC3 prev = m_TrailInfoList[i - 1]._pos;
-			head = head + (tail - prev);
+			headDir = (tail - prev).Normalize();
 		}
 
 		// カメラへの方向
 		VEC3 viewDir = (tail - cameraPos).Normalize();
 		
-		// 先頭位置への方向
-		VEC3 headDir = (head - tail).Normalize();
 
 		// メッシュの広がる方向ベクトルを作る
 		VEC3 dir = VEC3::Cross(headDir, viewDir);
@@ -269,26 +270,35 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 
-	if (m_pCBMaterialDataSet == nullptr)return;
+	CB_MATERIAL cbMaterial{};
+	cbMaterial.Diffuse = m_Color;
+	cbMaterial.EmissivePower = m_EmissivePower;
+	cbMaterial.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
+	cbMaterial.Specular = VEC4(1.0f, 1.0f, 1.0f, 0.1f);
+	cbMaterial.SpecularPower = 100.0f;
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
-	// GPUメモリにアクセス
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	m_pCBMaterialDataSet->Data.Diffuse		 = m_Color;
-	m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
-	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
-	m_pCBMaterialDataSet->Data.Specular		 = VEC4(1.0f, 1.0f, 1.0f, 0.1f);
-	m_pCBMaterialDataSet->Data.SpecularPower = 100.0f;
+	//if (m_pCBMaterialDataSet == nullptr)return;
 
-	// データのコピー 
-	memcpy(mappedResource.pData, &m_pCBMaterialDataSet->Data, sizeof(CB_MATERIAL));
+	//// GPUメモリにアクセス
+	//D3D11_MAPPED_SUBRESOURCE mappedResource;
+	//pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	// アクセス終了
-	pContext->Unmap(m_pCBMaterialDataSet->pBuff, 0);
+	//m_pCBMaterialDataSet->Data.Diffuse		 = m_Color;
+	//m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
+	//m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
+	//m_pCBMaterialDataSet->Data.Specular		 = VEC4(1.0f, 1.0f, 1.0f, 0.1f);
+	//m_pCBMaterialDataSet->Data.SpecularPower = 100.0f;
 
-	// 定数バッファへ送信
-	pContext->PSSetConstantBuffers(4,1, &m_pCBMaterialDataSet->pBuff);
+	//// データのコピー 
+	//memcpy(mappedResource.pData, &m_pCBMaterialDataSet->Data, sizeof(CB_MATERIAL));
+
+	//// アクセス終了
+	//pContext->Unmap(m_pCBMaterialDataSet->pBuff, 0);
+
+	//// 定数バッファへ送信
+	//pContext->PSSetConstantBuffers(4,1, &m_pCBMaterialDataSet->pBuff);
 
 	ID3D11ShaderResourceView* tex = nullptr;
 	tex = m_pTex->get_SRV();
@@ -310,13 +320,13 @@ bool TrailRenderer::Setup(RendererEngine &renderer)
 	// 頂点バッファの作成
 	if (!CreateVertexBuffer(renderer))
 	{
-		MessageBox(NULL, "頂点バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
+		MessageBoxA(NULL, "頂点バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
 		return false;
 	}
 	// 定数バッファの作成
 	if (!CreateConstantBuffer(renderer))
 	{
-		MessageBox(NULL, "定数バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
+		MessageBoxA(NULL, "定数バッファの作成が出来ませんでした", "TrailRenderer Error", MB_OK);
 		return false;
 	}
 

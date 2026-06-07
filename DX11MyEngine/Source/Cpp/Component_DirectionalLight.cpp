@@ -18,8 +18,8 @@ using namespace VECTOR3;
 //*----------------------------------------------------------------------------------------
 DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
 m_FocusOffsetDistance(100.0f),
-m_OrthographicWidth(100.0f),
-m_OrthographicHeigh(100.0f),
+m_OrthographicWidth(200.0f),
+m_OrthographicHeigh(200.0f),
 m_ShadowDistance(200.0f)
 {
 	this->set_Tag("DirectionalLight");
@@ -60,7 +60,7 @@ void DirectionalLight::Update(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
 
-	CB_DIRECTION_LIGHT dirData{};
+	CB_DirectionLightData dirData{};
 	
 	// トランスフォームの取得
 	auto transform = m_pOwner.lock()->get_Transform().lock();

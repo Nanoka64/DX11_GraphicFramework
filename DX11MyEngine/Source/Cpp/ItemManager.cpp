@@ -13,7 +13,7 @@ using namespace VECTOR2;
 using namespace UtilityData;
 
 
-constexpr int NUM_DEFAULT_ITEM = 50;    // デフォルトの生成数
+constexpr int NUM_DEFAULT_ITEM = 32;    // デフォルトの生成数
 constexpr int NUM_MAX_ITEM = 256;       // 最大アイテム数
 
 //*---------------------------------------------------------------------------------------
@@ -122,6 +122,7 @@ bool ItemManager::Init(RendererEngine& renderer)
             collider->set_Center(VEC3(0, 1.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
             collider->set_IsStatic(true);
             collider->set_IsTrigger(true);          // 物理判定無し
+			collider->set_IsEnable(false);		    // 最初は無効状態
 
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ITEM);
@@ -218,7 +219,7 @@ void ItemManager::SpawnItem(UtilityData::ITEM_TYPE _type, const VECTOR3::VEC3& _
     auto obj = m_pItemObjectPool->get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return;
     }
 
@@ -281,7 +282,7 @@ void ItemManager::SpawnItemRand(int _minNum, int _maxNum, const VECTOR3::VEC3& _
         // プールから取り出し
         auto obj = m_pItemObjectPool->get();
         if (obj == nullptr){
-            OutputDebugString("プールに空きがありません");
+            OutputDebugStringA("プールに空きがありません");
             return;
         }
 

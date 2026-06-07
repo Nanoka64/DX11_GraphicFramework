@@ -69,36 +69,29 @@ void SkyRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
     std::shared_ptr<MeshResourceData> meshData = m_pMeshResource.lock()->m_pMeshData;
-    CB_TRANSFORM_SET* cbTransSet = m_pMeshResource.lock()->m_pCBTransformSet;
-    CB_MATERIAL_SET* cbMatSet = m_pMeshResource.lock()->m_pCBMaterialDataSet;
     ID3D11Buffer* vtxBuff = meshData->pVertexBuffer;
     ID3D11Buffer* idxBuff = meshData->pIndexBuffer;
+	CB_TRANSFORM cbTransform = {};
+	CB_MATERIAL cbMaterial = {};
+
+	auto transform = m_pOwner.lock()->get_Transform().lock();
+
 
     // シェーダセット ==========================
     Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ShaderType());
 
     /* ========== 定数バッファの更新 ========== */
+    // ワールド行列セット ==========================
     XMMATRIX viewMtx = renderer.get_ViewMatrix();
     viewMtx.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);// 平行移動成分をゼロにする
-
-    // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_ExcludingRotWorldMtx();
+    XMMATRIX worldMtx = transform->get_ExcludingRotWorldMtx();
     worldMtx *= viewMtx;
-    XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
-    XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
+    XMMATRIX mtx = XMMatrixTranspose(worldMtx);         // 行列の転置
+    XMStoreFloat4x4(&cbTransform.WorldMtx, mtx);        // XMMATRIX → XMFLOAT4X4変換
 
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbTransSet->pBuff,
-        0,
-        nullptr,
-        &cbTransSet->Data,
-        0,
-        0
-    );
 
     // 定数バッファをセット ==========================
-    pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
+    Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
     //pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);   // マテリアルは今のところ必要なし
 
     // テクスチャセット ==========================

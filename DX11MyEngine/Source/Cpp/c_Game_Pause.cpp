@@ -24,8 +24,8 @@ void c_Game_Pause::OnEnter(SceneManager* pOwner)
 	// Å‰‚Í‹ó
 	this->SetInitChildState(pOwner, c_GAME::c_GAME_NONE);
 
-	// ˜A‘±“ü—Í–hŽ~‚Ì‚½‚ßA1ƒtƒŒ[ƒ€Ž~‚ß‚é
-	Master::m_pInputManager->StopInput(1);
+	// ˜A‘±“ü—Í–hŽ~‚Ì‚½‚ßA30ƒtƒŒ[ƒ€Ž~‚ß‚é
+	Master::m_pInputManager->StopInput(30);
 
 	Master::m_pDataManager->set_IsPause(true);
 
@@ -52,8 +52,8 @@ void c_Game_Pause::OnExit(SceneManager* pOwner)
 	// UIƒIƒuƒWƒFƒNƒg‚ðŠJ•ú
 	ReleaseToUIPool();
 
-	// ˜A‘±“ü—Í–hŽ~‚Ì‚½‚ßA1ƒtƒŒ[ƒ€Ž~‚ß‚é
-	Master::m_pInputManager->StopInput(1);
+	// ˜A‘±“ü—Í–hŽ~‚Ì‚½‚ßA30ƒtƒŒ[ƒ€Ž~‚ß‚é
+	Master::m_pInputManager->StopInput(10);
 }
 
 
@@ -121,8 +121,8 @@ void c_Game_Pause::Draw(SceneManager* pOwner)
 	// ‰½‚à‘I‘ð‚³‚ê‚Ä–³‚¢‚Æ‚«‚É•\Ž¦
 	if (m_CrntSelectPauseState == PAUSE_ITEM::NONE)
 	{
-		float width = Master::m_pDataManager->get_ScreenWidth();
-		float height = Master::m_pDataManager->get_ScreenHeight();
+		float width = FLOAT_CAST(Master::m_pDataManager->get_ScreenWidth());
+		float height = FLOAT_CAST(Master::m_pDataManager->get_ScreenHeight());
 
 		Master::m_pDirectWriteManager->SetOutLine(3.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f));
 		Master::m_pDirectWriteManager->DrawStringToAligment("‚o‚‚•‚“‚…", VECTOR2::VEC2(0.0f, -250.0f), "White_40_STD", H_ALIGNMENT::CENTER, V_ALIGNMENT::CENTER, VEC2(width, height));
@@ -159,12 +159,12 @@ void c_Game_Pause::BorrowFromUIPoolAndSetup(SceneManager* pOwner)
 
 		UIData::RectTransformData rectTrans;
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/Line.png";
+		buttonData._imagePath = "Resource/Texture/Title/Frame07.png";
 		buttonData._text = g_PauseItemNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::SELECTED;
 		buttonData._onClicFunction = [this, pOwner, i]() { this->Button_OnClicFunction(pOwner, static_cast<PAUSE_ITEM>(i)); };	// ƒNƒŠƒbƒNŽž‚Ìˆ—
-		buttonData._textOffsetPos = VEC2(100.0f, 0.0f);
+		buttonData._textOffsetPos = VEC2(100.0f, 10.0f);
 		rectTrans._size = PAUSE_ITEM_BUTTON_SIZE;
 		rectTrans._pos = pos;
 		m_pPauseItemBackButtonObjArray[i] = Master::m_pUIManager->GetButton(*m_pRenderer, rectTrans, buttonData);

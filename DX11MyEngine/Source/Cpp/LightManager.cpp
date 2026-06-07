@@ -11,8 +11,6 @@ using namespace VECTOR3;
 //* なし 
 //*----------------------------------------------------------------------------------------
 LightManager::LightManager():
-	m_pCBPointLightSet(nullptr),
-	m_pCBDirectionLightSet(nullptr),
 	m_pContext(nullptr)
 {};
 
@@ -24,12 +22,6 @@ LightManager::~LightManager()
 {
 	m_TemporaryPointLightData.clear();
 	m_TemporaryDirectionLightData.clear();
-
-	SAFE_RELEASE(m_pCBPointLightSet->pBuff);
-	SAFE_RELEASE(m_pCBDirectionLightSet->pBuff);
-
-	SAFE_DELETE(m_pCBPointLightSet);
-	SAFE_DELETE(m_pCBDirectionLightSet);
 
 	m_pContext = nullptr;
 };
@@ -76,8 +68,6 @@ void LightManager::Update()
 
 void LightManager::Term()
 {
-	SAFE_DELETE(m_pCBPointLightSet);
-	SAFE_DELETE(m_pCBDirectionLightSet);
 	m_TemporaryPointLightData.clear();
 	m_TemporaryDirectionLightData.clear();
 
@@ -96,33 +86,39 @@ void LightManager::DirectionLight_SetCBuffer()
 {
 	VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
 
+	CB_DIRECTION_LIGHT cbDirectionLight{};
 
 	// バッファの更新
 	memcpy(
-		m_pCBDirectionLightSet->Data,
+		&cbDirectionLight.Lights,
 		m_TemporaryDirectionLightData.data(),
-		m_TemporaryDirectionLightData.size() * sizeof(CB_DIRECTION_LIGHT)
+		m_TemporaryDirectionLightData.size() * sizeof(CB_DirectionLightData)
 	);
-
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	// 一旦直接セット
 	// TODO: ライトをまとめた構造体を作り、ポイント、ディレクション問わず一気に送ってしまい、その時に一緒にカメラも送るか、
 	//		 カメラを完全に分離するか…
-	m_pCBDirectionLightSet->Data[0].EyePos = cameraPos;
+	cbDirectionLight.EyePos = cameraPos;
 
-	// GPUメモリにアクセス
-	m_pContext->Map(m_pCBDirectionLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	/* 定数バッファにセット */
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::DIRECTIONAL_LIGHT, (void*)&cbDirectionLight, sizeof(CB_DIRECTION_LIGHT));
 
-	// データのコピー 
-	memcpy(mappedResource.pData, &m_pCBDirectionLightSet->Data, sizeof(CB_DIRECTION_LIGHT) * DIRECTIONLIGHT_MAX_NUM);
 
-	// アクセス終了
-	m_pContext->Unmap(m_pCBDirectionLightSet->pBuff, 0);
+	//D3D11_MAPPED_SUBRESOURCE mappedResource;
+	//m_pCBDirectionLightSet->Data[0].EyePos = cameraPos;
 
-	// ピクセルシェーダにセット
-	m_pContext->VSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
-	m_pContext->PSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
+	//// GPUメモリにアクセス
+	//m_pContext->Map(m_pCBDirectionLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	//// データのコピー 
+	//memcpy(mappedResource.pData, &m_pCBDirectionLightSet->Data, sizeof(CB_DIRECTION_LIGHT) * DIRECTIONLIGHT_MAX_NUM);
+
+	//// アクセス終了
+	//m_pContext->Unmap(m_pCBDirectionLightSet->pBuff, 0);
+
+	//// ピクセルシェーダにセット
+	//m_pContext->VSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
+	//m_pContext->PSSetConstantBuffers(5, 1, &m_pCBDirectionLightSet->pBuff);
 
 	m_TemporaryDirectionLightData.clear();
 }
@@ -143,12 +139,17 @@ void LightManager::PointLight_SetCBuffer()
 	uint32_t lightCount = static_cast<uint32_t>(m_TemporaryPointLightData.size());
 	if (lightCount > POINTLIGHT_MAX_NUM) lightCount = POINTLIGHT_MAX_NUM;
 
+	CB_POINT_LIGHT cbPointLight {};
+
 	// ライトの個数セット
-	m_pCBPointLightSet->Data.LightCount = lightCount;
+	cbPointLight.LightCount = lightCount;
 
 	// ライトが0個以上あるなら
 	if (lightCount > 0) {
-		memcpy(m_pCBPointLightSet->Data.Lights, m_TemporaryPointLightData.data(), lightCount * sizeof(CB_PointLightData));
+		memcpy(cbPointLight.Lights, m_TemporaryPointLightData.data(), lightCount * sizeof(CB_PointLightData));
+
+		/* 定数バッファにセット */
+		Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::POINT_LIGHT, (void*)&cbPointLight, sizeof(CB_POINT_LIGHT));
 
 		//// バッファの更新
 		//memcpy(
@@ -157,19 +158,19 @@ void LightManager::PointLight_SetCBuffer()
 		//	m_TemporaryPointLightData.size() * sizeof(CB_POINT_LIGHT)
 		//);
 
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		//D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-		// GPUメモリにアクセス
-		m_pContext->Map(m_pCBPointLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		//// GPUメモリにアクセス
+		//m_pContext->Map(m_pCBPointLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-		// データのコピー 
-		memcpy(mappedResource.pData, &m_pCBPointLightSet->Data, sizeof(CB_POINT_LIGHT));
+		//// データのコピー 
+		//memcpy(mappedResource.pData, &m_pCBPointLightSet->Data, sizeof(CB_POINT_LIGHT));
 
-		// アクセス終了
-		m_pContext->Unmap(m_pCBPointLightSet->pBuff, 0);
+		//// アクセス終了
+		//m_pContext->Unmap(m_pCBPointLightSet->pBuff, 0);
 
-		// ピクセルシェーダにセット
-		m_pContext->PSSetConstantBuffers(6, 1, &m_pCBPointLightSet->pBuff);
+		//// ピクセルシェーダにセット
+		//m_pContext->PSSetConstantBuffers(6, 1, &m_pCBPointLightSet->pBuff);
 
 		// 一時データクリア
 		m_TemporaryPointLightData.clear();
@@ -189,27 +190,27 @@ void LightManager::PointLight_SetCBuffer()
 //*----------------------------------------------------------------------------------------
 bool LightManager::CreatePointLightCBuffer(ID3D11Device* pDevice)
 {
-	// ライト定数バッファの生成
-	m_pCBPointLightSet = new CB_POINT_LIGHT_SET;
-	if (m_pCBPointLightSet == nullptr) {
-		return false;
-	}
+	//// ライト定数バッファの生成
+	//m_pCBPointLightSet = new CB_POINT_LIGHT_SET;
+	//if (m_pCBPointLightSet == nullptr) {
+	//	return false;
+	//}
 
-	// 定数バッファの設定
-	D3D11_BUFFER_DESC bd{};
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;						// 頻繁更新
-	bd.ByteWidth = sizeof(CB_POINT_LIGHT);				// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	//// 定数バッファの設定
+	//D3D11_BUFFER_DESC bd{};
+	//ZeroMemory(&bd, sizeof(bd));
+	//bd.Usage = D3D11_USAGE_DYNAMIC;						// 頻繁更新
+	//bd.ByteWidth = sizeof(CB_POINT_LIGHT);				// バッファのサイズ
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	//bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
+	//bd.MiscFlags = 0;
+	//bd.StructureByteStride = 0;
 
-	// 定数バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBPointLightSet->pBuff);
-	if (FAILED(hr)) {
-		return false;
-	}
+	//// 定数バッファの生成
+	//HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBPointLightSet->pBuff);
+	//if (FAILED(hr)) {
+	//	return false;
+	//}
 
 	return true;
 }
@@ -227,28 +228,28 @@ bool LightManager::CreatePointLightCBuffer(ID3D11Device* pDevice)
 //*----------------------------------------------------------------------------------------
 bool LightManager::CreateDirectionLightCBuffer(ID3D11Device* pDevice)
 {
-	// ライト定数バッファの生成
-	m_pCBDirectionLightSet = new CB_DIRECTION_LIGHT_SET;
-	if (m_pCBDirectionLightSet == nullptr) {
-		return false;
-	}
+	//// ライト定数バッファの生成
+	//m_pCBDirectionLightSet = new CB_DIRECTION_LIGHT_SET;
+	//if (m_pCBDirectionLightSet == nullptr) {
+	//	return false;
+	//}
 
-	// 定数バッファの設定
-	D3D11_BUFFER_DESC bd{};
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;						// 頻繁更新
-	bd.ByteWidth = sizeof(CB_DIRECTION_LIGHT) * DIRECTIONLIGHT_MAX_NUM;			// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	//// 定数バッファの設定
+	//D3D11_BUFFER_DESC bd{};
+	//ZeroMemory(&bd, sizeof(bd));
+	//bd.Usage = D3D11_USAGE_DYNAMIC;						// 頻繁更新
+	//bd.ByteWidth = sizeof(CB_DIRECTION_LIGHT) * DIRECTIONLIGHT_MAX_NUM;			// バッファのサイズ
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	//bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
+	//bd.MiscFlags = 0;
+	//bd.StructureByteStride = 0;
 
 
-	// 定数バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBDirectionLightSet->pBuff);
-	if (FAILED(hr)) {
-		return false;
-	}
+	//// 定数バッファの生成
+	//HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBDirectionLightSet->pBuff);
+	//if (FAILED(hr)) {
+	//	return false;
+	//}
 
 	return true;
 }
@@ -295,7 +296,7 @@ void LightManager::set_PointLightData(const CB_PointLightData& data)
 //* [返値]
 //* void 
 //*----------------------------------------------------------------------------------------
-void LightManager::set_DirectionLightData(const CB_DIRECTION_LIGHT& data)
+void LightManager::set_DirectionLightData(const CB_DirectionLightData& data)
 {
 	// ディレクションライトの最大数より少なければ追加
 	if (m_TemporaryDirectionLightData.size() < DIRECTIONLIGHT_MAX_NUM){

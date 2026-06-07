@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Component_EnemyController.h"
 #include "Component_BoxCollider.h"
+#include "Component_Physics.h"
 #include "Ant_StateHeader.h"
 #include "GameObject.h"
 
@@ -37,8 +38,21 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	XMVECTOR targetQuat = XMQuaternionRotationAxis(axis, angle);
 	m_TargetRotQ = XMQuaternionMultiply(m_StartRotQ, targetQuat);
 
+	VECTOR3::VEC3 knockbackDir;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
+
+	// 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
+	knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+	knockbackDir.y = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+
+	auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
+	physics->AddImpulse(knockbackDir);
+
 	// コライダーの判定をオフに
-	pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>()->set_IsEnable(false);	
+	//pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>()->set_IsEnable(false);	
+	auto collider = pOwner->get_OwnerObj().lock()->get_Component<BoxCollider>();
+	collider->set_Center(VEC3(0.0f, -0.5f, 0.0f));
+	collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
 }
 
 //*---------------------------------------------------------------------------------------
@@ -62,7 +76,7 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 {
 	if (pOwner->get_OwnerObj().expired())
 	{
-		MessageBox(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
+		MessageBoxA(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
 		assert(false);
 	}
 	else
@@ -91,24 +105,18 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 			myTransform->set_RotationQuaternion(crntRotQ);
 
 			// 跳ねる感じに
-			crntPos.y = ((Tool::Easing::EaseOutBounce(t)*-1.0f) * -3.0f);
-			myTransform->set_Pos(crntPos);
+			//crntPos.y = ((Tool::Easing::EaseOutBounce(t)*-1.0f) * -3.0f);
+			//myTransform->set_Pos(crntPos);
 		}
+
 
 		//*****************************************************************************************
 		//						裏世界へ落下する
 		//*****************************************************************************************
-		if (timer - OVERTURN_TIME > FALL_END_TIME)
+		if (timer - OVERTURN_TIME > DELETE_TIME)
 		{
-			crntPos.y -= FALL_SPEED * deltaTime;
-
-			myTransform->set_Pos(crntPos);
-
-			// 削除
-			if (crntPos.y < DELETE_POS_Y)
-			{
-				pOwner->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
-			}
+			pOwner->get_OwnerObj().lock()->get_Component<Physics>()->set_IsEnable(false);
+			pOwner->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 		}
 	}
 

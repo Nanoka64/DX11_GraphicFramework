@@ -61,6 +61,7 @@ enum class SHADER_TYPE
     POST_SHADOWMAP_SKINNED,             // シャドウマップスキニング用
     POST_DEPTH_OF_FILED,                // 被写界深度
     POST_TONEMAPPING,                   // トーンマッピング（ACES使用）
+    POST_DISTORTION,                    // ディストーション
     
     /* 旧仕様 */
     //SIMPLE,     // 単純な3Dオブジェクト表示用
@@ -105,7 +106,30 @@ struct InputLayoutSetupData
     const D3D11_INPUT_ELEMENT_DESC *pLayout;  // レイアウト
 };
 
+//* ==========================================================================
+//* - @:CONSTANT_BUFFER_TYPE列挙体 Class - */
+//* 【?】定数バッファの種類
+//*      レジスタスロットはこの順番で揃える 
+//* ==========================================================================
+enum class CONSTANT_BUFFER_TYPE
+{
+    TRANSFORM = 0,          // ワールド行列
+    VIEW,                   // ビュー行列
+    PROJECTION,             // プロジェクション行列
+	BONE,                   // スキニング用ボーン行列
+	MATERIAL,   	        // マテリアル情報
+	DIRECTIONAL_LIGHT,      // ディレクションライト
+	POINT_LIGHT,            // ポイントライト
+	BLUR_WEIGHTS,			// ブラーの重み
+	POSTEFFECT,             // ポストエフェクト用
+	SHADOW,				    // シャドウマップ用
+	SPRITE,                 // スプライト用
+	DECAL,  		        // デカール用  
+	WINDOW, 			    // ウインドウ情報用
+	DISTORTION,             // ディストーション用
 
+    NUM,
+};
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -123,6 +147,7 @@ private:
     std::vector<ShaderInfo> m_ShaderList;
     std::weak_ptr<class RendererEngine> m_pRenderer;    // 描画クラスの弱参照を持つ
     std::vector<InputLayoutSetupData> m_InputLayoutSetupDataList;
+    std::array<std::unique_ptr<IConstantBuffer>, UINT_CAST(CONSTANT_BUFFER_TYPE::NUM)> m_ConstantBuffers;    // 定数バッファの所有権を持つ
 
 public:
     ShaderManager() = default;
@@ -152,6 +177,15 @@ public:
     /// </summary>
     void NullSetAllShader();
 
+	/// <summary>
+	/// 定数バッファの更新＆セット
+	/// </summary>
+	/// <param name="type">種類</param>
+	/// <param name="_data">データ</param>
+	/// <param name="_size">データサイズ</param>
+	void BindConstantBuffer(CONSTANT_BUFFER_TYPE type, const void* _data, UINT _size);
+
+    
     void Term();
 
 private:
@@ -181,7 +215,5 @@ private:
     /// </summary>
     /// <returns></returns>
     bool LoadCSOFile(const wchar_t *csoName, std::vector<uint8_t> *pByteCodeOUT);
-
-
 };
 

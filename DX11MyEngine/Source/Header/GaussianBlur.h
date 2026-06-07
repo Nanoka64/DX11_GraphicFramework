@@ -13,7 +13,7 @@ class GaussianBlur
 {
 private:
 	static const int NUM_WEIGHTS = 8;
-	BlurInfo m_BlurInfo;
+	CB_BLUR m_BlurInfo;
 
 	std::weak_ptr<class Texture> m_pTexture;	// ブラー処理をするテクスチャ
 	class DX_RenderTarget* m_pHorizontalBlur;   // 水平ブラー

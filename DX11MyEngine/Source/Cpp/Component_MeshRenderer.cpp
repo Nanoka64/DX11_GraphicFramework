@@ -66,27 +66,19 @@ void MeshRenderer::Draw(RendererEngine& renderer)
 {
     auto pContext = renderer.get_DeviceContext();
     std::shared_ptr<MeshResourceData> meshInfo = m_pMeshResource.lock()->m_pMeshData;
-    CB_TRANSFORM_SET* cbTransSet =  m_pMeshResource.lock()->m_pCBTransformSet;
-    CB_MATERIAL_SET* cbMatSet =  m_pMeshResource.lock()->m_pCBMaterialDataSet;
     ID3D11Buffer* vtxBuff = meshInfo->pVertexBuffer;
     UINT vtxStride = meshInfo->VertexStride;
     ID3D11Buffer* idxBuff = meshInfo->pIndexBuffer;
+    CB_TRANSFORM cbTransform = {};  
+    CB_MATERIAL cbMaterial = {};
+
+    auto transform = m_pOwner.lock()->get_Transform().lock();
 
     /* ========== 定数バッファの更新 ========== */
     // ワールド行列セット ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Transform().lock()->get_WorldMtx();
-    XMMATRIX mtx = XMMatrixTranspose(worldMtx);        // 行列の転置
-    XMStoreFloat4x4(&cbTransSet->Data.WorldMtx, mtx);  // XMMATRIX → XMFLOAT4X4変換
-
-    // 定数バッファに転送
-    pContext->UpdateSubresource(
-        cbTransSet->pBuff,
-        0,
-        nullptr,
-        &cbTransSet->Data,
-        0,
-        0
-    );
+    XMMATRIX worldMtx = transform->get_WorldMtx();
+    worldMtx = XMMatrixTranspose(worldMtx);                 // 行列の転置
+    XMStoreFloat4x4(&cbTransform.WorldMtx, worldMtx);       // XMMATRIX → XMFLOAT4X4変換
 
     // 通常パス **********************************************************
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
@@ -97,28 +89,16 @@ void MeshRenderer::Draw(RendererEngine& renderer)
 
         // マテリアル情報セット ==========================
         CB_MATERIAL mat{};
-        mat.Diffuse = pMatData->m_DiffuseColor;
-        mat.Specular = pMatData->m_SpecularColor;
-        mat.SpecularPower = pMatData->m_SpecularPower;
-        mat.EmissivePower = pMatData->m_EmissivePower;
-        mat.EmissiveColor = pMatData->m_EmissiveColor;
-        mat.OffsetUV ;
-        cbMatSet->Data = mat;
-
-        // 定数バッファに更新
-        pContext->UpdateSubresource(
-            cbMatSet->pBuff,
-            0,
-            nullptr,
-            &cbMatSet->Data,
-            0,
-            0
-        );
+        cbMaterial.Diffuse = pMatData->m_DiffuseColor;
+        cbMaterial.Specular = pMatData->m_SpecularColor;
+        cbMaterial.SpecularPower = pMatData->m_SpecularPower;
+        cbMaterial.EmissivePower = pMatData->m_EmissivePower;
+        cbMaterial.EmissiveColor = pMatData->m_EmissiveColor;
+        cbMaterial.OffsetUV ;
 
         // 定数バッファをセット ==========================
-        pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
-        pContext->VSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
-        pContext->PSSetConstantBuffers(4, 1, &cbMatSet->pBuff);
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
         // テクスチャセット ==========================
         ID3D11ShaderResourceView *diffuseSRV = nullptr;
@@ -144,8 +124,16 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
 
         // 定数バッファをセット ==========================
-        pContext->VSSetConstantBuffers(0, 1, &cbTransSet->pBuff);
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
     }
+
+
+    //カリング設定 ==========================
+    renderer.RegisterCullMode(meshInfo->CullMode);
+
+    //ブレンドステート設定 ==========================
+    Master::m_pBlendManager->DeviceToSetBlendState(meshInfo->pMaterials.lock()->m_BlendMode);
+
 
     // 頂点＆インデックスバッファ設定 ==========================
     UINT offset = 0;

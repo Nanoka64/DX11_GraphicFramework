@@ -32,11 +32,11 @@ void c_Title_SoldierSelect::OnEnter(SceneManager *pOwner)
 
 		UIData::RectTransformData rectTrans;
 		UIData::ButtonUIData buttonData;
-		buttonData._imagePath = "Resource/Texture/Title/Frame03.png";
+		buttonData._imagePath = "Resource/Texture/Title/Frame07.png";
 		buttonData._text = g_SoldierNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::SELECTED;
-		buttonData._textOffsetPos = VEC2(80.0f, 50.0f);
+		buttonData._textOffsetPos = VEC2(80.0f, 25.0f);
 		buttonData._onClicFunction = // 武器の選択
 			[this, i]() {
 				Master::m_pDataManager->set_SelectWeaponID(m_CrntSelectItem * 2, 0);
@@ -61,13 +61,13 @@ void c_Title_SoldierSelect::OnEnter(SceneManager *pOwner)
 
 	// 武器説明背景のスプライトのオブジェクトとコンポーネントの取得と設定
 	UIData::RectTransformData rectData;
-	rectData._size = VEC2(1000.0f, 600.0f);
-	rectData._pos = VEC2(800.0f, 460.0f);
+	rectData._size = VEC2(1000.0f, 550.0f);
+	rectData._pos = VEC2(820.0f, 480.0f);
 	UIData::SpriteUIData spriteData;
 	spriteData._tag = "WeaponDescriptionbackSprite";
 	spriteData._color = VEC4(0.7f, 0.7f, 0.7f, 1.0f);
 	//spriteData._shaderType = SHADER_TYPE::FORWARD_UNLIT_UI_NOTEXTURE_SPRITE;
-	spriteData._imagePath = "Resource/Texture/Title/Frame01.png";
+	spriteData._imagePath = "Resource/Texture/Title/Frame10.png";
 	spriteData._layerRank = 110;
 	m_pWeaponDescriptionBackSpriteObj = Master::m_pUIManager->GetSprite(*m_pRenderer, rectData, spriteData);
 
@@ -219,7 +219,7 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 	// 装備を決定したときのテキスト表示 ************************************************************************
 	if (m_DecisionTextDrawTimer > 0.0f) {
 		std::string decisionText = g_SoldierNames[m_DecisionSoldierTypeIndex];
-		float textY = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.y;
+		float textY = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.y - 40.0f;
 		float textX = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.x - 150.0f;
 
 		Master::m_pDirectWriteManager->SetColor(D2D1::ColorF(D2D1::ColorF(0.0f, 1.0f, 1.0f)));	// 水色

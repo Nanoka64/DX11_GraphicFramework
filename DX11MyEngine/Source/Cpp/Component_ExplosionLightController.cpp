@@ -86,10 +86,9 @@ void ExplosionLightController::Update(RendererEngine &renderer)
 	float range = (m_Parameter._explosionLightRadius) * (1.0f - easeOut);
 
 	auto pPointLight = m_pPointLight.lock();
-	pPointLight->set_Intensity(20.0f * (1.0f - easeOut));
+	pPointLight->set_Intensity(10.0f * (1.0f - easeOut));
 	pPointLight->set_Range(range);
 	pPointLight->set_LightColor(VEC3(0.8f, 0.4f, 0.1f));
-
 }
 
 

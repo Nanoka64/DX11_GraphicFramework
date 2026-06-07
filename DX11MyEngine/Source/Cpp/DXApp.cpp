@@ -183,6 +183,12 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_TONEMAPPING,                  SHADER_CREATE_TYPE::CSO))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFERRED_STD_TRAIL,                SHADER_CREATE_TYPE::RUNTIME))return false;
     if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::DEFERRED_STD_DECAL,                SHADER_CREATE_TYPE::CSO))return false;
+    if (!Master::m_pShaderManager->CreateShader(SHADER_TYPE::POST_DISTORTION,                   SHADER_CREATE_TYPE::RUNTIME))return false;
+
+
+    // データ管理にスクリーンの大きさを設定する（定数バッファも更新）
+    Master::m_pDataManager->set_ScreenSize(m_pRenderer->get_ScreenWidth(), m_pRenderer->get_ScreenHeight());
+
 
     // *************************************************************************************************
     //** リソース管理の初期化 **/

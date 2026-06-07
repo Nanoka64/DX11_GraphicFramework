@@ -14,10 +14,10 @@
 class MiniMapRader :  public IComponent
 {
 private:
-	const float MINIMAP_X = 1750.0f;    // ミニマップの中心X座標
+	const float MINIMAP_X = 1700.0f;    // ミニマップの中心X座標
 	const float MINIMAP_Y = 150.0f;     // ミニマップの中心X座標
-	const float MINIMAP_RADIUS = 130.0f;// ミニマップの半径
-	const float MINIMAP_SIZE = 300.0f;  // ミニマップのサイズ
+	const float MINIMAP_RADIUS = 120.0f;// ミニマップの半径
+	const float MINIMAP_SIZE = 270.0f;  // ミニマップのサイズ
 	const float MINIMAP_ENEMY_ICON_SIZE = 10.0f; // ミニマップ上の敵アイコンのサイズ
 
 	const int ENEMY_ICON_LAYER = 111;	// 敵アイコンのレイヤー

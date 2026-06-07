@@ -126,9 +126,12 @@ private:
     std::vector<std::weak_ptr<Material>> m_pMaterialList;	// マテリアルリスト
 
 	// ボーン変換用定数バッファ
-	CB_BONES_DATA_SET *m_pConstanrBufferBonesData;	// ボーン用
-	CB_TRANSFORM_SET  *m_pCBTransformSet;			// ワールド行列用
-	CB_MATERIAL_SET   *m_pCBMaterialDataSet;		// マテリアル用
+	CB_BONES_DATA m_BonesData;						// 定数バッファ用ボーン変換データ
+
+
+	//CB_BONES_DATA_SET *m_pConstanrBufferBonesData;// ボーン用
+	//CB_TRANSFORM_SET  *m_pCBTransformSet;			// ワールド行列用
+	//CB_MATERIAL_SET   *m_pCBMaterialDataSet;		// マテリアル用
 
 	/***********アニメーション関連***********/
 	std::vector<NodeInfo *> m_pNodeList;				 // Nodeツリー情報
@@ -176,9 +179,10 @@ public:
 	const SHADER_TYPE &get_ShadowShaderType() const { return m_ShadowShaderType; }	
 
 	/* 定数バッファ */
-	CB_BONES_DATA_SET *GetConstantBufferBonesData() const { return m_pConstanrBufferBonesData; }
-	CB_TRANSFORM_SET *GetConstantBufferTransformSet() const { return m_pCBTransformSet; }
-	CB_MATERIAL_SET *GetConstantBufferMaterialDataSet() const { return m_pCBMaterialDataSet; }
+	const CB_BONES_DATA* get_BonesData() const { return &m_BonesData; }
+	//CB_BONES_DATA_SET *GetConstantBufferBonesData() const { return m_pConstanrBufferBonesData; }
+	//CB_TRANSFORM_SET *GetConstantBufferTransformSet() const { return m_pCBTransformSet; }
+	//CB_MATERIAL_SET *GetConstantBufferMaterialDataSet() const { return m_pCBMaterialDataSet; }
 
 private:
 	void AnimationExtraction(const aiScene *scene);				// アニメーション情報抽出

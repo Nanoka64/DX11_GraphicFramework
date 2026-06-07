@@ -43,7 +43,7 @@ bool UIManager::Init(RendererEngine &renderer)
     // 既に作成されているなら返す
     if (!m_UIObjectPoolMap.empty())
     {
-        MessageBox(NULL, "プールはすでに生成済み", "UIManager", MB_OK);
+        MessageBoxA(NULL, "プールはすでに生成済み", "UIManager", MB_OK);
         return true;
     }
 
@@ -127,6 +127,7 @@ bool UIManager::Init(RendererEngine &renderer)
             button->OnClickFunc(nullptr);
             button->set_Text("Button");
             button->set_IsInteractable(true);
+            button->ParamReset();
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject *
@@ -186,7 +187,7 @@ void UIManager::Update(RendererEngine &renderer)
         auto poolIt = m_UIObjectPoolMap.find(mapIt->first);
         if (poolIt == m_UIObjectPoolMap.end())
         {
-            OutputDebugString("指定されたプールが存在しません");
+            OutputDebugStringA("指定されたプールが存在しません");
             continue;
         }
 
@@ -215,6 +216,10 @@ void UIManager::Update(RendererEngine &renderer)
 
         ++mapIt;
     }
+
+
+    // ボタン入力の更新
+    //ButtonInputProcess(renderer);
 
     //////////////////////////////////////////////////////////////////////////////////////////
     //						デバッグ用
@@ -255,6 +260,7 @@ void UIManager::Update(RendererEngine &renderer)
         }
     }
     Master::m_pDebugger->EndDebugWindow();
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -267,6 +273,72 @@ void UIManager::Update(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void UIManager::Draw(RendererEngine &renderer)
 {
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ボタンの入力処理
+//*
+//* [引数]
+//* &renderer : 描画エンジンの参照
+//*
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void UIManager::ButtonInputProcess(RendererEngine& renderer)
+{
+    if (m_pCrntFocusedButton == nullptr) {
+        return;
+    }
+    ButtonUI *pNextBtn = nullptr;
+
+    // 入力に応じて次の移動先を取得
+    if (GetInputDown(GAME_CONFIG::VIEW_UP))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavUp;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_DOWN))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavDown;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_LEFT))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavLeft;
+    }
+    else if (GetInputDown(GAME_CONFIG::VIEW_RIGHT))
+    {
+        pNextBtn = m_pCrntFocusedButton->m_pNavRight;
+    }
+
+    // 移動先が存在すればフォーカスを移す
+    if (pNextBtn != nullptr) {
+        m_pCrntFocusedButton->m_IsFocused = false;  // 今のボタンからフォーカスを外す
+        pNextBtn->m_IsFocused = true;               // 次のボタンにフォーカスを当てる
+        m_pCrntFocusedButton = pNextBtn;
+
+        // カーソル移動音を鳴らす
+        //Master::m_pSoundManager->Play(SOUND_TYPE::SE, m_pCrntFocusedButton->m_InputSoundID);
+    }
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】最初に選択状態にするボタンをセットする
+//*
+//* [引数]
+//* *_firstButton         : 選択状態にするボタン
+//*
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void UIManager::SetFirstFocus(class ButtonUI* _firstButton)
+{
+    // 以前のフォーカスを外す
+    if (m_pCrntFocusedButton != nullptr) {
+        m_pCrntFocusedButton->set_IsFocused(false);
+    }
+
+    // 新しいボタンにフォーカスを当てる
+    if (_firstButton != nullptr) {
+        _firstButton->set_IsFocused(true);
+        m_pCrntFocusedButton = _firstButton;
+    }
 }
 
 //*---------------------------------------------------------------------------------------
@@ -285,7 +357,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return nullptr;
     }
 
@@ -293,7 +365,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     auto transform = obj->get_RectTransform().lock();
     if (transform == nullptr)
     {
-        MessageBox(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
 
@@ -307,7 +379,7 @@ GameObject *UIManager::GetSprite(RendererEngine &renderer, const UIData::RectTra
     // スプライトの初期化 *********************************************************************
     auto sprite = obj->get_Component<SpriteRenderer>();
     if (sprite == nullptr) {
-        MessageBox(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetSpriteData(*sprite.get(), _param); // データのセット
@@ -334,14 +406,14 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return nullptr;
     }
 
     // トランスフォームの設定 *********************************************************************
     auto transform = obj->get_RectTransform().lock();
     if (transform == nullptr){
-        MessageBox(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "UIトランスフォームが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::RectTransformData::SetRectTransformData(*transform.get(), _transformData); // データのセット
@@ -352,7 +424,7 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     // スプライトの初期化 *********************************************************************
     auto sprite = obj->get_Component<SpriteRenderer>();
     if (sprite == nullptr) {
-        MessageBox(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "スプライトコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetSpriteData(*sprite.get(), _param); // データのセット
@@ -361,7 +433,7 @@ GameObject *UIManager::GetButton(RendererEngine &renderer, const UIData::RectTra
     //ボタンの初期化 *********************************************************************
     auto button = obj->get_Component<ButtonUI>();
     if (button == nullptr) {
-        MessageBox(NULL, "ボタンコンポーネントが見つかりません", "UIManager", MB_OK);
+        MessageBoxA(NULL, "ボタンコンポーネントが見つかりません", "UIManager", MB_OK);
         return nullptr;
     }
     UIData::ButtonUIData::SetButtonData(*button.get(), _param); // データのセット

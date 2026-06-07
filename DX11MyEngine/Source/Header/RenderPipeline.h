@@ -24,6 +24,8 @@ private:
     class DX_RenderTarget *m_pLuminance_RT;		// 輝度抽出用
     class DX_RenderTarget *m_pShadowMap_RT;		// シャドウマップ（ライトから見た深度を書き込む）
 
+    //class DX_RenderTarget *m_pSceneCopy_RT;	
+
     // シャドウマップの解像度
     const float SHADOW_SIZE_X = 4096.0f;    
     const float SHADOW_SIZE_Y = 4096.0f;
@@ -53,10 +55,10 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pFinalSceneToneMappingFilter_Sprite;
 
 
-    DoFInfo m_DofData;
+    CB_DOF m_DofData;
 
     // シャドウバイアス情報
-    ShadowInfo m_ShadowData;
+    CB_SHADOW m_ShadowData;
 
 
     // ビューポートの設定時にスムーズに渡す用

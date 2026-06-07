@@ -33,6 +33,8 @@
 #include "Component_MoveLogic.h"
 #include "Component_Faction.h"
 #include "Component_Item.h"
+#include "Component_DistortionEffect.h"
+#include "Component_Physics.h"
 
 using namespace UtilityData;
 using namespace EnemyData;
@@ -62,7 +64,7 @@ void c_Game_LoadProcess::OnEnter(SceneManager *pOwner)
     rectData._size = VEC2(width, height);
     UIData::SpriteUIData spriteData;
     spriteData._tag = "LoadSprite";
-    spriteData._imagePath = "Resource/Texture/Title/Load.png";
+    spriteData._imagePath = "Resource/Texture/Title/Game_Load_01.png";
     spriteData._layerRank = 101;
     m_pLoadBackObj = Master::m_pUIManager->GetSprite(*m_pRenderer, rectData, spriteData);
 }
@@ -81,7 +83,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     // *************************************************************************************************
     if (!Master::m_pBulletManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "弾管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "弾管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -90,7 +92,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     // *************************************************************************************************
     if (!Master::m_pItemManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "アイテム管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "アイテム管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -105,7 +107,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/GiantAnt01.fbx";
+        model.Path = "Resource/Model/Enemy/GiantAnt01/GiantAnt01.fbx";
         model.ObjTag = "Ant1";
         model.IsAnim = true;
         model.MatNum = 1;
@@ -161,6 +163,13 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             transform->set_Scale(1);
 
             //
+            // 物理コンポーネント追加
+            //
+            auto physics = obj->add_Component<Physics>();
+            physics->set_AirDrag(1.0f);
+            physics->set_Restitution(0.0f); // 跳ねない
+
+            //
             // コライダーの追加
             //
             auto collider = obj->add_Component<BoxCollider>();
@@ -202,28 +211,6 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         //    // ポーズ中は停止
         //    obj->set_IsUpdateAllowedDuringPause(false);
         //}
-    }
-
-    /* クレイモア モデルの生成 */
-    {
-        //// マテリアル取得
-        //auto matPtr = Master::m_pResourceManager->FindMaterial("Claymore");
-
-        //SetupMaterialInfo matInfo[1];
-        //matInfo[0].Index = 0;
-        //matInfo[0].pMaterialData = matPtr;
-
-        //CreateModelInfo model;
-        //model.pRenderer = m_pRenderer;
-        //model.Path = "Resource/Model/Claymore/Claymore.fbx";
-        //model.ObjTag = "Claymore";
-        //model.IsAnim = false;
-        //model.MatNum = 1;
-        //model.SetupMaterial = matInfo;
-        //model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-        //auto obj = MeshFactory::CreateModel(model);
-        //obj->get_Component<MyTransform>()->set_Scale(2.0f, 2.0f, 2.0f);
-        //obj->get_Component<MyTransform>()->set_Pos(0.0f, 100.0f, 400.0f);
     }
 
     /* 建物 モデルの生成 */
@@ -299,55 +286,47 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/MotherShip.fbx";
+        model.Path = "Resource/Model/Enemy/MotherShip/MotherShip.fbx";
         model.ObjTag = "MotherShip";
         model.IsAnim = false;
         model.MatNum = 1;
         model.IsActive = true;
-
         model.SetupMaterial = matInfo;
-
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+
         auto obj = MeshFactory::CreateModel(model);
+		obj->set_IsStatic(false);
         obj->get_Component<MyTransform>()->set_Scale(0.1f, 0.1f, 0.1f);
         obj->get_Component<MyTransform>()->set_Pos(0.0f, 500.0f, 0.0f);
         obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
-    /* クモ モデルの生成 */
+    /* 八面体生成 */
     {
-        // マテリアル取得
-        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Spider_1");
-        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Spider_2");
-        auto matPtr3 = Master::m_pResourceManager->FindMaterial("Spider_3");
-        auto matPtr4 = Master::m_pResourceManager->FindMaterial("Spider_4");
+        //// マテリアル取得
+        //auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
+        //auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
 
-        SetupMaterialInfo matInfo[4];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr1;
-        matInfo[1].Index = 1;
-        matInfo[1].pMaterialData = matPtr2;
-        matInfo[2].Index = 2;
-        matInfo[2].pMaterialData = matPtr3;
-        matInfo[3].Index = 3;
-        matInfo[3].pMaterialData = matPtr4;
+        //SetupMaterialInfo matInfo[2];
+        //matInfo[0].Index = 0;
+        //matInfo[0].pMaterialData = matPtr1;
+        //matInfo[1].Index = 1;
+        //matInfo[1].pMaterialData = matPtr2;
 
-        CreateModelInfo model;
-        model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/fbx/Spider_3.fbx";
-        model.ObjTag = "Spider";
-        model.IsAnim = true;
-        model.MatNum = 4;
-        model.IsActive = false;
-
-        model.SetupMaterial = matInfo;
-
-        model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
-        auto obj = MeshFactory::CreateModel(model);
-        obj->get_Component<SkinnedMeshAnimator>()->set_IsAnim(true);
-        obj->get_Component<MyTransform>()->set_Scale(0.5f, 0.5f, 0.5f);
-        obj->get_Component<MyTransform>()->set_Pos(0.0f, 0.0f, 0.0f);
-        obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        //CreateModelInfo model;
+        //model.pRenderer = m_pRenderer;
+        //model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
+        //model.ObjTag = "Octahedron";
+        //model.IsAnim = false;
+        //model.MatNum = 2;
+        //model.IsActive = true;
+        //model.SetupMaterial = matInfo;
+        //model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        //auto obj = MeshFactory::CreateModel(model);
+        //obj->set_IsStatic(false);
+        //obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
+        //obj->get_Component<MyTransform>()->set_Pos(-100.0f, 100.0f, 100);
+        //obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
     }
 
     /* 地面の生成 */
@@ -388,6 +367,17 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         Master::m_pCollisionManager->RegisterCollider(collider);
     }
 
+    /* ディストーション */
+  //  {
+  //      auto obj = GIGA_Engine::Instantiate3D(std::make_shared<GameObject>(), true);
+  //      obj->set_Tag("DistortionEffect");
+  //      obj->set_LayerRank(1000);
+  //      obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+		//obj->get_Transform().lock()->set_Pos(-155.0f, 5.0f, 100.0f);
+  //      auto distortion = obj->add_Component<DistortionEffect>();
+  //      distortion->Setup(*m_pRenderer);
+  //  }
+
     /* スカイボックスの生成 */
     {
         // マテリアル取得
@@ -427,33 +417,39 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsActive = true;
         mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
         mesh.IsNormalMap = true;
-        mesh.ObjLayer = 90;
+        mesh.ObjLayer = 105;
 
-        for (int i = 0; i < 0; i++)
+        for (int i = 0; i < 20; i++)
         {
-            VEC3 pt;
-            pt.x = static_cast<float>(rand() % 1000) - 500.0f;
-            pt.y = 40.0f;
-            pt.z = static_cast<float>(rand() % 1000) - 500.0f;
+            VEC3 pos;
+            pos.x = -50.0f;
+            pos.y = 1.0f + i;
+            pos.z = 90.0f + i;
             VEC3 col;
             col.x = static_cast<float>(rand() % 255) / 255.0f;
             col.y = static_cast<float>(rand() % 255) / 255.0f;
             col.z = static_cast<float>(rand() % 255) / 255.0f;
+            VEC3 scl = VEC3(1.0f);
 
             auto obj = MeshFactory::CreateUtilityMesh(mesh);
-            obj->get_Transform().lock()->set_Pos(VEC3(-100.0f, 0.0f, 100.0f));
-            obj->get_Transform().lock()->set_Scale(VEC3(1.0f, 1.0f, 1.0f));
-            obj->set_Tag("PointLight" + std::to_string(i));
+            obj->get_Transform().lock()->set_Pos(pos);
+            obj->get_Transform().lock()->set_Scale(scl);
+            obj->set_Tag("Block");
+            obj->set_IsUpdateAllowedDuringPause(false);
             auto light = obj->add_Component<PointLight>();
             light->set_LightColor(col);
-            light->set_Range(100.0f);
-            light->set_Intensity(25.0f);
+            light->set_Range(15.0f);
+            light->set_Intensity(1.5f);
+
+            // 物理コンポーネント
+            auto physics = obj->add_Component<Physics>();
+            physics->set_AirDrag(1.0f);
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
             collider->set_Center(VEC3(0, 0, 0));
-            collider->set_IsStatic(true);
+            collider->set_IsStatic(false);
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
 
@@ -726,11 +722,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     auto dirLightObj = Master::m_pGameObjectManager->get_ObjectByTag("DirectionLight");
     auto dirLight = dirLightObj->get_Component<DirectionalLight>();
     VEC3 color = VEC3(1.0f);
+	float intensity = 2.5f;
     switch (crntDiffLevel)
     {
     case UtilityData::DIFFICULTY_LEVEL::EASY:
+		color = VEC3(0.8f, 0.8f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::NORMAL:
+        color = VEC3(0.8f, 0.8f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::HARD:
         color = VEC3(1.0f, 0.7f, 0.7f);
@@ -739,13 +738,13 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         color = VEC3(0.8f, 0.3f, 0.8f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::IMPOSSIBLE:
-        color = VEC3(1.0f, 0.0f, 0.0f);
+        color = VEC3(0.9f, 0.0f, 0.0f);
         break;
     default:
         break;
     }
     dirLight->set_LightColor(color);
-
+	dirLight->set_Intensity(intensity);
 
 
     // ロード画面用スプライトをオフに
@@ -757,6 +756,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     // ロード画面スプライトをオフに（プールへ返す）
 	m_pLoadBackObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+
+    //*****************************************************************************************
+    //
+    //                        爆速ロード防止のため、一時的に処理を停止させる
+    //  
+    //*****************************************************************************************
+    Sleep(1500);
 }
 
 

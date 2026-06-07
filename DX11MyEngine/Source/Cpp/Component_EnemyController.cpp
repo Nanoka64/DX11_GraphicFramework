@@ -8,6 +8,7 @@
 #include "Component_Collider.h"
 #include "Component_BoxCollider.h"
 #include "Component_Health.h"
+#include "Component_Physics.h"
 #include "RendererEngine.h"
 #include "CollisionInfo.h"
 #include "MeshFactory.h"
@@ -72,6 +73,9 @@ void EnemyController::Start(RendererEngine& renderer)
 
 	// 移動コンポーネントの取得
 	m_pMoveLogicComp = ownerObj->get_Component<MoveLogic>();
+
+	// 物理コンポーネントの取得
+	m_pPhysicsComp = ownerObj->get_Component<Physics>();
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
@@ -234,20 +238,16 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 
 	m_pAnimatorComp.lock()->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
 
+	auto transform = m_pOwner.lock()->get_Transform().lock();
+	VEC3 newPos = transform->get_VEC3ToPos();
 
-	//if(m_IsGrounded == false)
-	//{
-	//	// 空中にいる場合は重力をかけ続ける
-	//	m_GravityVelocity -= m_Gravity * deltaTime;
-
-	//	// 世界の裏側に落下した場合
-	//	if (newPos.y < -100.0f)
-	//	{
-	//		m_GravityVelocity = 0.0f;
-	//		myTransform->set_Pos(VEC3(0.0f, 100.0f, 0.0f));
-	//	}
-	//}
-	//newPos.y += m_GravityVelocity;
+	// 世界の裏側に落下した場合
+	if (newPos.y < -100.0f)
+	{
+		m_GravityVelocity = 0.0f;
+		transform->set_Pos(VEC3(0.0f, 100.0f, 0.0f));
+		m_pPhysicsComp.lock()->SetZeroVelocity();
+	}
 }
 
 

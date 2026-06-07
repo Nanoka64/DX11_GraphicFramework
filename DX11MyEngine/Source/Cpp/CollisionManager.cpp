@@ -63,7 +63,7 @@ void CollisionManager::CollisionProcess()
         bool isStaticB = false;
         auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
         if (transA == nullptr) {
-            MessageBox(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            MessageBoxA(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
             continue;
         }
 
@@ -101,7 +101,7 @@ void CollisionManager::CollisionProcess()
             auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();
 
             if (transB == nullptr) {
-                MessageBox(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+                MessageBoxA(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
                 continue;
             }
 
@@ -584,7 +584,7 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
 
         auto trans = col->get_OwnerObj().lock()->get_Component<MyTransform>();
         if (trans == nullptr) {
-            MessageBox(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
+            MessageBoxA(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
             continue;
         }
 
@@ -652,6 +652,95 @@ bool CollisionManager::HitCheck_BoxVsBox(const CollInData_AABB &_src, const Coll
     if (_src._min.z > _dst._max.z) return false;
 
     // 当たっている可能性しか残っていない
+    return true;
+}
+
+// 軸上にOBBを投影した際の半径（長さ）を計算するヘルパー関数
+float GetProjectedRadius(const CollInData_OBB& obb, const VEC3& axis)
+{
+    // 各ローカル軸と分離軸の内積の絶対値にハーフサイズを掛けて足し合わせる
+    return  obb._harfLength.x * std::abs(VEC3::Dot(obb._axis[0], axis)) +
+            obb._harfLength.y * std::abs(VEC3::Dot(obb._axis[1], axis)) +
+            obb._harfLength.z * std::abs(VEC3::Dot(obb._axis[2], axis));
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】OBBとOBBの判定
+//*
+//* [引数]
+//* &_src : OBB 
+//* &_dst : OBB
+//* [返値]
+//* true : 当たった
+//* false : 当たってない
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck_OBBVsOBB(const CollInData_OBB& _src, const CollInData_OBB& _dst, CollisionInfo* _hitInfo)
+{
+    float minPenetration = FLT_MAX;
+    VEC3 bestAxis = VEC3(0, 0, 0);
+
+    // 15本の分離軸候補をリストアップ
+    std::vector<VEC3> axes;
+    axes.reserve(15);
+
+    // OBB A の各ローカル軸 (3本)
+    for (int i = 0; i < 3; ++i) axes.push_back(_src._axis[i]);
+    // OBB B の各ローカル軸 (3本)
+    for (int i = 0; i < 3; ++i) axes.push_back(_dst._axis[i]);
+
+    // 外積による軸 (3×3 = 9本)
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            VEC3 crossAxis = VEC3::Cross(_src._axis[i], _dst._axis[j]);
+            // 2つの軸が平行な場合、外積がゼロベクトルになるため除外する
+            if (crossAxis.LengthSq() > 0.0001f) {
+                axes.push_back(crossAxis.Normalize());
+            }
+        }
+    }
+
+    // AからBへの中心間ベクトル
+    VEC3 t = _dst._center - _src._center;
+
+    // 全ての軸に対して重なりをチェック
+    for (const auto& axis : axes)
+    {
+        // 各OBBの投影半径を計算
+        float rA = GetProjectedRadius(_src, axis);
+        float rB = GetProjectedRadius(_dst, axis);
+
+        // 中心間距離を軸に投影
+        float distance = std::abs(VEC3::Dot(t, axis));
+
+        // 分離している軸が1本でもあれば衝突していない
+        if (distance > rA + rB)
+        {
+            return false;
+        }
+
+        // めり込み量（オーバーラップ）の計算
+        float penetration = (rA + rB) - distance;
+        if (penetration < minPenetration)
+        {
+            minPenetration = penetration;
+            bestAxis = axis; // 最小のめり込みを起こしている軸が衝突法線となる
+        }
+    }
+
+    // 法線の向きを「AからBへ向かう方向」に統一する
+    if (VEC3::Dot(bestAxis, t) < 0.0f)
+    {
+        bestAxis = -bestAxis;
+    }
+
+    // 既存のシステムに合わせて衝突情報を格納
+    _hitInfo->set_PenetrationDepth(minPenetration);
+    _hitInfo->set_HitNormal(bestAxis);
+
+    return true;
+
+
+
     return true;
 }
 
@@ -817,7 +906,7 @@ bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB& _box, const Coll
     float tx_Min = 0.0f;
     float tx_Max = 0.0f;
     // 線分ベクトルが0.0（平行）の場合
-    if (dir.x == 0.0f) 
+    if (std::abs(dir.x) <= 1e-6f)
     {
         // 線分のZ幅がボックスのZ幅に入ってなければ、衝突していない
         if (point.x < minV.x || point.x > maxV.x)
@@ -858,7 +947,7 @@ bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB& _box, const Coll
     float ty_Min = 0.0f;
     float ty_Max = 0.0f;
     // 線分ベクトルが0.0（平行）の場合
-    if (dir.y == 0.0f) {
+    if (std::abs(dir.y) <= 1e-6f) {
 
 		// 線分のY幅がボックスのY幅に入ってなければ、衝突していない
         if (point.y < minV.y || point.y > maxV.y)
@@ -906,7 +995,7 @@ bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB& _box, const Coll
     float tz_Min = 0.0f;
     float tz_Max = 0.0f;
     // 線分ベクトルが0.0の場合
-    if (dir.z == 0.0f) {
+    if (std::abs(dir.z) <= 1e-6f) {
         if (point.z < minV.z || point.z > maxV.z)
         {
             return false;
@@ -950,12 +1039,70 @@ bool CollisionManager::HitCheck_BoxVsRay(const CollInData_AABB& _box, const Coll
         return false;
     }
 
-
     _hitInfo->set_HitPoint(point + dir * t_Min);
     _hitInfo->set_HitNormal(hitNnormal);
 
     return true;
 }
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】三角形とレイの判定
+//* 参考サイト：https://github.com/mitsuba-renderer/mitsuba/blob/450a2b8a258f09ec7e0824861e2306340ccbb3f4/include/mitsuba/core/triangle.h#L109
+//*
+//* [引数]
+//* &_triangle : 三角形
+//* &_ray : レイ
+//* &_u , &_v : 三角形の面内座標（重心座標）
+//* &_t : レイの始点から衝突点までの距離
+//* [返値]
+//* true : 当たった
+//* false : 当たってない
+//*----------------------------------------------------------------------------------------
+bool CollisionManager::HitCheck_TraiangleVsRay(
+    const CollInData_Triangle& _triangle,
+    const CollInData_Ray& _ray,
+	float& _u, float& _v, float& _t
+)
+{
+    /* Find vectors for two edges sharing */
+    VEC3 edge1 = _triangle._v1 - _triangle._v0, edge2 = _triangle._v2 - _triangle._v0;
+
+    /* Begin calculating determinant - also used to calculate U parameter */
+    VEC3 pvec = VEC3::Cross(_ray._dir, edge2);
+
+    float det = VEC3::Dot(edge1, pvec);
+    if (det == 0) {
+        return false;
+    }
+    float inv_det = 1.0f / det;
+
+    /* Calculate distance from v[0] to ray origin */
+    VEC3 tvec = _ray._point - _triangle._v0;
+
+    /* Calculate U parameter and test bounds */
+    _u = VEC3::Dot(tvec, pvec) * inv_det;
+    if (_u < 0.0 || _u > 1.0) {
+        return false;
+    }
+
+    /* Prepare to test V parameter */
+    VEC3 qvec = VEC3::Cross(tvec, edge1);
+
+    /* Calculate V parameter and test bounds */
+    _v = VEC3::Dot(_ray._dir, qvec) * inv_det;
+
+    /* Inverted comparison (to catch NaNs) */
+    if (_v >= 0.0 && _u + _v <= 1.0) {
+        /* ray intersects triangle -> compute t */
+        _t = VEC3::Dot(edge2, qvec) * inv_det;
+
+        return true;
+    }
+
+    return false;
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】スフィアとレイの判定

@@ -33,6 +33,7 @@ void Ant_AT_MoveState::OnEnter(class EnemyController* pOwner)
 
 	// 移動方向
 	m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
+	m_MoveDir.y = 0.0f;
 
 	m_IsDirChange = false;
 }
@@ -80,12 +81,13 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	VEC3 myPos = myTransform->get_VEC3ToPos();	// 自分の位置
 	VEC3 startPos = pOwner->get_StartPos();
 
-	// 方向転換
-	if (pOwner->get_StateTimer() > m_MoveDuration * 0.5f && m_IsDirChange == false)
-	{
-		m_IsDirChange = true;
-		m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
-	}
+	//// 方向転換
+	//if (pOwner->get_StateTimer() > m_MoveDuration * 0.5f && m_IsDirChange == false)
+	//{
+	//	m_IsDirChange = true;
+	//	m_MoveDir = Master::m_pRandomManager->GetVEC3Random(DIR_RAND_MIN, DIR_RAND_MAX);
+	//	m_MoveDir.y = 0.0f;
+	//}
 
 	/* 親の移動コンポーネントを使い、移動処理を行う */
 	// 方向を変えて、移動させる
@@ -94,7 +96,7 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	movePram._turnSpeed = 0.05f;	// 急に振り向くと変なので、少し優しめに
 	movePram._moveDirection = m_MoveDir;
 	auto move = pOwner->get_MoveLogicComponent().lock();
-	move->Calculate(movePram);
+	move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 
 	return ANT_STATE::ANT_STATE_ACTIVE_MOVE;

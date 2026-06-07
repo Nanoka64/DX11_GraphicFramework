@@ -465,6 +465,10 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
     //m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
     m_pDefferdLighting_Sprite->Draw(renderer);
 
+    //auto pContext = renderer.get_DeviceContext();
+    //pContext->CopyResource(m_pSceneCopy_RT->get_RTTexture().Get(), m_pSceneFinal_RT->get_RTTexture().Get());
+
+
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 }
@@ -479,6 +483,11 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
 {
+    //auto pContext = renderer.get_DeviceContext();
+    //pContext->PSSetShaderResources(6, 1, m_pSceneCopy_RT->get_SRV_ComPtr().GetAddressOf());
+    //pContext->PSSetShaderResources(5, 1, m_pDepth_RT->get_DepthSRV_ComPtr().GetAddressOf());
+
+
     // ************************************************************************
     // 
     // フォワードの場合はこの下に記述
@@ -516,8 +525,8 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     /*
     * エフェクシアの描画もここでする！！
     */
-    Master::m_pEffectManager->DrawEffect();
     Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
+    Master::m_pEffectManager->DrawEffect();
 
     // スカイボックス深度ステンシル設定解除
     renderer.RegisterDepthStencilState(NULL, 0);
@@ -802,6 +811,21 @@ bool RenderPipeline::CreateRenderTargets(RendererEngine &renderer)
         DXGI_FORMAT_D32_FLOAT
     );
     if (result == false)return false;
+
+ //   // ****************************************************************
+	//// シーンコピー用のレンダーターゲット（フォワードオブジェクト描画前のシーンをコピーしておく用）
+ //   // ****************************************************************
+ //   m_pSceneCopy_RT = new DX_RenderTarget();
+ //   result = m_pSceneCopy_RT->Create(
+ //       renderer,
+ //       renderer.get_ScreenWidth(),
+ //       renderer.get_ScreenHeight(),
+ //       1,
+ //       1,
+ //       DXGI_FORMAT_R32G32B32A32_FLOAT,
+ //       DXGI_FORMAT_UNKNOWN
+ //   );
+ //   if (result == false)return false;
 
     return true;
 }

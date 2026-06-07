@@ -1,14 +1,20 @@
 #pragma once
 #include "IComponent.h"
 
-
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:ModelMeshRenderer Class --- */
+//
+//  ★継承：IComponent ★
+// 
+// 【?】モデルメッシュ描画用のコンポーネント
+//
+// ***************************************************************************************
 class ModelMeshRenderer : public IComponent
 {
 private:
 	std::weak_ptr<class ModelMeshResource> m_pMeshResource;	// メッシュ情報の参照
 	bool m_IsDrawWireframe;
-
-
 	int m_DebugDrawBoneNum;
 
 public:

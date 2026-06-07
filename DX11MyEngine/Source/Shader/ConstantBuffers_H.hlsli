@@ -190,6 +190,29 @@ cbuffer CB_SPRITE : register(b10)
 cbuffer CB_DECAL : register(b11)
 {
     float4x4 cb_InvDecalTransform;  // デカールボックスのワールド逆行列
+    float3 cb_DecalColor;   // カラー（float4にしてaにディザリングのしきい値入れてもいいかも）
+    float pad6;
+};
+
+//* =========================================================================
+//*- @:ウインドウ用データ -            >>>>>>>【１２】
+//* =========================================================================
+cbuffer CB_WINDOW : register(b12)
+{
+    float cb_WindowWidth; // ウインドウの幅
+    float cb_WindowHeight; // ウインドウの高さ
+    float2 pad7;
+};
+
+
+//* =========================================================================
+//*- @:ディストーション用データ -        >>>>>>>【１３】
+//* =========================================================================
+cbuffer CB_DISTORTION : register(b13)
+{
+    float cb_DistortionPower;       // ディストーションの強さ
+    float cb_DistortionTime;        // ディストーションの時間（アニメーション用）
+    float2 cb_Distortion_UVScale;   // ディストーションのUVスケール
 };
 
 #endif

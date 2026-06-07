@@ -17,6 +17,7 @@
 #include "Component_Health.h"
 #include "Component_PointLight.h"
 #include "Component_Faction.h"
+#include "Component_Physics.h"
 #include "GameObject.h"
 #include "MeshFactory.h"
 #include "InputFactory.h"
@@ -46,7 +47,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
     // *************************************************************************************************
     if (!Master::m_pUIManager->Init(*m_pRenderer))
     {
-        MessageBox(NULL, "UI管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "UI管理クラスの初期化に失敗しました", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -58,7 +59,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
             assert(false);
         }
         obj->set_LayerRank(LAYER_RANK_CAMERA);
-        obj->set_Tag("Camera");
+        obj->set_Tag("MainCamera");
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
         obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 1000.0f);
@@ -82,7 +83,7 @@ void c_Title_LoadProcess::OnEnter(SceneManager *pOwner)
     rectData._size = VEC2(width, height);
 	UIData::SpriteUIData spriteData;
     spriteData._tag = "LoadSprite";
-    spriteData._imagePath = "Resource/Texture/Title/Load.png";
+    spriteData._imagePath = "Resource/Texture/Title/Title_Load.png";
     spriteData._layerRank = 101;
     m_pLoadBackObj = Master::m_pUIManager->GetSprite(*m_pRenderer, rectData, spriteData);
 }
@@ -107,7 +108,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
     // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))
     {
-        MessageBox(NULL, "CSVの読み込みに失敗", "GameLoad", MB_OK);
+        MessageBoxA(NULL, "CSVの読み込みに失敗", "GameLoad", MB_OK);
         assert(false);
     }
 
@@ -211,6 +212,9 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         auto faction = pPlayerObj->add_Component<Faction>();
         faction->set_Faction(FACTION::PLAYER);
 
+        auto physics = pPlayerObj->add_Component<Physics>();
+        //physics->set_GravityScale(0.0f);
+
         // コライダーの追加
         auto collider = pPlayerObj->add_Component<BoxCollider>();
         collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
@@ -251,7 +255,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);// 破棄しない
 		obj->set_LayerRank(LAYER_RANK_DIRLIGHT);
         auto light = obj->add_Component<DirectionalLight>();
-        light->set_LightColor(VEC3(1.0f, 1.0f, 1.0f));
+        light->set_LightColor(VEC3(0.9f, 0.9f, 0.9f));
         light->set_Intensity(3.0f);
         light->set_LightCameraTrackingObj(m_pCameraComp->get_OwnerObj().lock());
         light->Start(*m_pRenderer);

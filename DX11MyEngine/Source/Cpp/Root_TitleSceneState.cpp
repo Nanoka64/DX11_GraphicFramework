@@ -38,7 +38,7 @@ void Root_TitleSceneState::OnEnter(SceneManager* pOwner)
 	UIData::SpriteUIData spriteData;
 	UIData::RectTransformData spriteRect;
 	// タイトルロゴのスプライト
-	spriteData._imagePath = "Resource/Texture/Title/Title_logo.png";
+	spriteData._imagePath = "Resource/Texture/Title/IA_TitleLogo.png";
 	spriteData._tag = "TitleLogo_Sp";
 	spriteData._layerRank = 100;
 	spriteRect._size = VEC2(width, height);
@@ -150,7 +150,6 @@ int Root_TitleSceneState::Update(SceneManager* pOwner)
 	if (newState != m_CrntChildStateID)
 	{
 		Master::m_pInputManager->StopInput(20);	// 入力を少しの間受け付けないようにする（シーン遷移の瞬間に入力されるのを防止）
-
 		ChangeChildState(pOwner, newState);
 	}
 
@@ -241,5 +240,7 @@ void Root_TitleSceneState::Draw(SceneManager* pOwner)
 	m_pChildStateMap[m_CrntChildStateID]->Draw(pOwner);
 
 
+	Master::m_pDirectWriteManager->SetOutLine(3.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f));
 	Master::m_pDirectWriteManager->DrawString("マウス：選択　/　左クリック：決定　/　右クリック：戻る", VECTOR2::VEC2(700.0f, 1000.0f), "White_30_STD");
+	Master::m_pDirectWriteManager->SetOutLine(0.0f);
 }

@@ -89,8 +89,8 @@ private:
 
 	const float TRACKING_TIME_MAX = 7.0f;	// 追跡の最大時間
 	const float TRACKING_TIME_MIN = 1.0f;	// 追跡の最小時間
-	const float ATTACK_POSSIBLE_RANGE_MAX = 50.0f;	// 攻撃可能最大距離
-	const float ATTACK_POSSIBLE_RANGE_MIN = 10.0f;	// 攻撃可能最小距離
+	const float ATTACK_POSSIBLE_RANGE_MAX = 60.0f;	// 攻撃可能最大距離
+	const float ATTACK_POSSIBLE_RANGE_MIN = 5.0f;	// 攻撃可能最小距離
 	const float MOVE_SPEED = 12.0f;
 	const float ANIM_SPEED = 1.6f;			// アニメーション速度
 
@@ -178,9 +178,7 @@ class Ant_AT_DeadState : public IState<class EnemyController>
 {
 private:
 	const float OVERTURN_TIME = 0.5f;		// ひっくり返るまでの時間
-	const float FALL_END_TIME = 2.0f;		// 死亡後、裏世界に落ちるまでの時間
-	const float FALL_SPEED = 20.0f;
-	const float DELETE_POS_Y = -30.0f;		// 削除されるY座標
+	const float DELETE_TIME = 10.0f;		// 死亡までの時間
 
 	DirectX::XMVECTOR m_TargetRotQ;	// ひっくり返った後のクオータニオン
 	DirectX::XMVECTOR m_StartRotQ;	// ひっくり返った後のクオータニオン

@@ -11,6 +11,7 @@
 #include "MeshFactory.h"
 #include "ResourceManager.h"
 #include "Component_MoveLogic.h"
+#include "Component_Physics.h"
 
 using namespace VECTOR3;
 using namespace VECTOR2;
@@ -139,15 +140,16 @@ bool BulletManager::Init(RendererEngine &renderer)
         [&renderer](GameObject *obj) {          
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 
-            // コライダーの使用をオンに
-            //auto collider = obj->get_Component<BoxCollider>();
-            //collider->set_IsEnable(true); 
+
         },
         // 返却時に実行 ******************************************************************************************
         [](GameObject *obj) 
         {
             auto bulletComp = obj->get_Component<NormalBullet>();
             bulletComp->Reset();
+
+            auto physics = obj->get_Component<Physics>();
+            physics->SetZeroVelocity();
 
             // コライダーの使用をオフに
             //auto collider = obj->get_Component<BoxCollider>();
@@ -212,6 +214,8 @@ bool BulletManager::Init(RendererEngine &renderer)
             auto moveComp = obj->add_Component<MoveLogic>();
             moveComp->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
             moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
+
+            auto physics = obj->add_Component<Physics>();
 
             //// 軌跡
             //auto trail = obj->add_Component<TrailRenderer>();
@@ -282,6 +286,9 @@ bool BulletManager::Init(RendererEngine &renderer)
             auto trail = obj->get_Component<TrailRenderer>();
             trail->clear_TrailInfoList();
 
+            auto physics = obj->get_Component<Physics>();
+            physics->SetZeroVelocity();
+
             auto transform = obj->get_Transform().lock();
             VEC3 pos = transform->get_VEC3ToPos();
             transform->get_VEC3ToScale();
@@ -291,7 +298,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             //*****************************************************************************************
             auto lightObj = m_pExplosionBulletLightPool->get();
             if (lightObj == nullptr) {
-                OutputDebugString("ライトプールに空きがありません");
+                OutputDebugString(L"ライトプールに空きがありません");
                 return;
             }
 
@@ -349,12 +356,15 @@ bool BulletManager::Init(RendererEngine &renderer)
 
             // 軌跡コンポーネントの追加
             auto trail = obj->add_Component<TrailRenderer>();
-            trail->set_Width(0.3f);
-            trail->set_MinVertexDistance(1.0f);
-            trail->set_DrawTime(30);
-            trail->set_EmissivePower(10.0f);
-            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.0f, 1.0f));
-            trail->set_PosRandVec(VEC3(0.5f));
+            trail->set_Width(1.0f);
+            trail->set_MinVertexDistance(0.1f);
+            trail->set_DrawTime(20);
+            trail->set_EmissivePower(5.0f);
+            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.5f, 1.0f));
+            //trail->set_PosRandVec(VEC3(0.5f));
+
+            auto physics = obj->add_Component<Physics>();
+
 
             //// 衝突用コライダーの追加
             //auto collider = obj->add_Component<BoxCollider>();
@@ -418,7 +428,7 @@ void BulletManager::Update(RendererEngine &renderer)
         auto poolIt = m_BulletObjectPoolMap.find(mapIt->first);
         if (poolIt == m_BulletObjectPoolMap.end())
         {
-            OutputDebugString("指定された弾のプールが存在しません");
+            OutputDebugString(L"指定された弾のプールが存在しません");
             continue;
         }
 
@@ -551,7 +561,7 @@ void BulletManager::clear_CrntActiveBullet()
         auto poolIt = m_BulletObjectPoolMap.find(mapIt->first);
         if (poolIt == m_BulletObjectPoolMap.end())
         {
-            OutputDebugString("指定された弾のプールが存在しません");
+            OutputDebugString(L"指定された弾のプールが存在しません");
             continue;
         }
         auto& pool = poolIt->second;        // プールの取り出し
@@ -616,7 +626,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugString(L"プールに空きがありません");
         return;
     }
 
@@ -633,6 +643,11 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     bulletComp->Setup(&_param);
 
     const auto bulletParam = bulletComp->get_Parameter();
+    
+    // 物理コンポーネントに重力の設定
+    auto physics = obj->get_Component<Physics>();
+    physics->set_GravityScale(bulletParam->_gravityScale);
+
 
     // 弾に合わせたマテリアルに付け替え
     auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_bulletMaterialTag);
@@ -662,7 +677,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto bulletObj = bulletPool.get();
     if (bulletObj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugString(L"プールに空きがありません");
         return;
     }
 
@@ -677,6 +692,13 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     // 弾コンポーネントのセットアップ
     auto bulletComp = bulletObj->get_Component<ExplosionBullet>();
     bulletComp->Setup(&_param);
+
+    const auto bulletParam = bulletComp->get_ExplosionParameter();
+
+    // 物理コンポーネントに重力の設定
+    auto physics = bulletObj->get_Component<Physics>();
+    physics->set_GravityScale(bulletParam->_gravityScale);
+
 
     //auto collider = bulletObj->get_Component<BoxCollider>();
     //collider->set_Size(VEC3(_transformData._scale));
@@ -700,7 +722,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     auto obj = pool.get();
     if (obj == nullptr)
     {
-        OutputDebugString("プールに空きがありません");
+        OutputDebugStringA("プールに空きがありません");
         return;
     }
 

@@ -76,13 +76,16 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     const aiScene *pScene           = modelData->get_Scene();
     ModelMesh *pMeshes              = modelData->get_Meshes();
     UINT meshNum                    = modelData->get_MeshNum();
-    CB_MATERIAL_SET *CB_MatSet      = modelData->GetConstantBufferMaterialDataSet();
-    CB_TRANSFORM_SET *CB_TransSet   = modelData->GetConstantBufferTransformSet();
+    //CB_MATERIAL_SET *CB_MatSet      = modelData->GetConstantBufferMaterialDataSet();
+    //CB_TRANSFORM_SET *CB_TransSet   = modelData->GetConstantBufferTransformSet();
     UINT vertexNum                  = pMeshes->get_VertexNum();
     //VERTEX_Skneed* vertices         = pMeshes->get_Vertices();
     SHADER_TYPE shaderType          = modelData->get_ShaderType();
     SHADER_TYPE shadowShaderType    = modelData->get_ShadowShaderType();
+	CB_TRANSFORM cbTransform{};
+	CB_MATERIAL cbMaterial{};
 
+    auto transform = m_pOwner.lock()->get_Transform().lock();
 
     /* デバッグモード指定の場合、ワイヤーフレームで表示 */
     if (m_IsDrawWireframe) {
@@ -93,27 +96,16 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     }
     
     // ワールド行列更新 ==========================
-    XMMATRIX worldMtx = m_pOwner.lock()->get_Component<MyTransform>()->get_WorldMtx();
-    worldMtx = XMMatrixTranspose(worldMtx);
-    XMStoreFloat4x4(&CB_TransSet->Data.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
-
-    // バッファの更新
-    pDeviceContext->UpdateSubresource(
-        CB_TransSet->pBuff,
-        0,
-        nullptr,
-        &CB_TransSet->Data,
-        0,
-        0
-    );
+    XMMATRIX worldMtx = transform->get_WorldMtx();
+    worldMtx = XMMatrixTranspose(worldMtx);                 // 行列の転置
+    XMStoreFloat4x4(&cbTransform.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
 
     // 通常パス **********************************************************
     if (renderer.get_CrntRenderPass() == RENDER_PASS::MAIN) {
         Master::m_pShaderManager->DeviceToSetShader(shaderType);
 
-
         // トランスフォーム用定数バッファのセット
-        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);    // ワールド行列
+		Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
 
         // メッシュの描画
         for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
@@ -124,25 +116,12 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
             if (mat != nullptr)
             {
                 // 定数バッファにマテリアル情報セット ==========================
-                CB_MATERIAL cb_matData{};
-                cb_matData.Diffuse = mat->m_DiffuseColor;
-                cb_matData.Specular = mat->m_SpecularColor;
-                cb_matData.SpecularPower = mat->m_SpecularPower;
-                cb_matData.EmissivePower = mat->m_EmissivePower;
-                cb_matData.EmissiveColor = mat->m_EmissiveColor;
-                CB_MatSet->Data = cb_matData;
-
-                // 定数バッファに転送
-                pDeviceContext->UpdateSubresource(
-                    CB_MatSet->pBuff,
-                    0,
-                    nullptr,
-                    &CB_MatSet->Data,
-                    0,
-                    0
-                );
-
-                pDeviceContext->PSSetConstantBuffers(4, 1, &CB_MatSet->pBuff);      // PSにマテリアルセット
+                cbMaterial.Diffuse = mat->m_DiffuseColor;
+                cbMaterial.Specular = mat->m_SpecularColor;
+                cbMaterial.SpecularPower = mat->m_SpecularPower;
+                cbMaterial.EmissivePower = mat->m_EmissivePower;
+                cbMaterial.EmissiveColor = mat->m_EmissiveColor;
+                Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
                 //ブレンドステート設定 ==========================
                 Master::m_pBlendManager->DeviceToSetBlendState(mat->m_BlendMode);
@@ -188,7 +167,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
             Master::m_pShaderManager->DeviceToSetShader(SHADER_TYPE::POST_SHADOWMAP);
         }
         // トランスフォーム用定数バッファのセット
-        pDeviceContext->VSSetConstantBuffers(0, 1, &CB_TransSet->pBuff);
+        Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
 
         // メッシュの描画 マテリアル等なし
         for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)

@@ -1,6 +1,6 @@
 {
   "level": 0,
-  "name": "サンダーカノンTA-DZ",
+  "name": "ハウンドカノンTA-DZ",
   "bulletMaxNum": 1,
   "bulletSimultaneousNum": 1,
   "fireRate": 1.0,
@@ -9,6 +9,8 @@
   "zoomLength": 2.1,
   "isLaserSight": true,
   "soundID": 0,
+  "muzzleFlashEffectTag" : "MuzzleEffect_Rocket_01",
+  "muzzleFlashEffectScale" : [5.0, 5.0, 5.0],
   "bulletType": "EXPLOSION",
   "bulletParam": {
     "damage": 500.0,
@@ -19,6 +21,7 @@
     "penetrationsCount": 0,
     "collisionSize": 0.0,
     "gravityScale": 0.0,
+    "knockbackForce" : 100.0,
     "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
     "bulletMaterialTag" : "Bullet_01",
     "decalMaterialTag" : "Decal_BulletHole",

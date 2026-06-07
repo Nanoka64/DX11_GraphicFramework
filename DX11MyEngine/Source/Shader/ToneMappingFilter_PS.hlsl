@@ -53,7 +53,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // トーンマッピング処理
     // TODO : エフェクトの見た目が極端に変わってしまうので、一旦飛ばす
-    //finalColor = ACESToneMapping(hdrColor);
+    finalColor = ACESToneMapping(hdrColor);
     
     
     // リニア空間：現実的な正しい世界
@@ -64,7 +64,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // そのままだと本来よりも暗くなってしまう。
     // 1.0 / 2.2をすることで0.4545...ガンマの逆数となり、
     // この累乗を計算することで正しい明るさで表示される......らしい。
-    finalColor = pow(hdrColor, 1.0f / 2.2f);
+    finalColor = pow(finalColor, 1.0f / 2.2f);
     
     return float4(finalColor, 1.0f);;
 }

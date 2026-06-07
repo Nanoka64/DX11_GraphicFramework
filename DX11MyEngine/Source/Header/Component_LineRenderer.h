@@ -27,7 +27,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertesBuffer;// 頂点バッファ
 	bool m_IsView;								// カメラに向くようにするか（ビルボード）
-	CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
+	//CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
 	std::shared_ptr<class Texture> m_pTex;		//
 	VECTOR4::VEC4 m_Color;	// エミッシブも一緒に
 	float m_EmissivePower;	// 

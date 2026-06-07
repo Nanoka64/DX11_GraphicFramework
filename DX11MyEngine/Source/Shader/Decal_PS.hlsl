@@ -3,7 +3,10 @@
 /* - @:ピクセルシェーダ -*/
 //
 //  【?】デカールの書き込み用
-//       
+//       現在はテクスチャが端で途切れるようにしているけど、綺麗に見せるなら端から先へテクスチャが綺麗に張られるようにする必要がある。
+//      以下の「Tri-Planar Texture Mapping」というやり方で行けるかも？一旦今回は、他の個所を優先するため保留
+//      https://qiita.com/edo_m18/items/c8995fe91778895c875e
+//
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
@@ -36,7 +39,6 @@ struct PS_OUT
     float4 Normal : SV_Target1;
 };
 
-
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
@@ -48,7 +50,7 @@ PS_OUT PSMain(PS_IN input)
     float4 normalColor = float4(0.0, 0.0, 0.0, 1.0);
     
     // スクリーン空間のUVを求める（デカールはボックスの為そのままでは使えない）
-    float2 screenUV = input.Pos.xy * float2(1.0f / 1904.0f, 1.0f / 1041.0f);
+    float2 screenUV = input.Pos.xy / float2(cb_WindowWidth, cb_WindowHeight);
     
     // 深度値
     float depth = g_tDepthTexture.Sample(g_sSampler, screenUV).r;
@@ -63,6 +65,24 @@ PS_OUT PSMain(PS_IN input)
     // デカールボックスの範囲内か
     // X = 0.6だとしたら0.5 - 0.6になりマイナスの値になるため、クリップされる
     clip(0.5f - abs(localPosToDecal.xyz));
+    
+    
+    
+    // ==========================================================
+    // テクスチャが引き伸ばされないようにする処理（今は端で途切れるようにしている）
+    // ==========================================================
+    // ローカル法線を計算
+    float3 ddxLocal = ddx(localPosToDecal.xyz);
+    float3 ddyLocal = ddy(localPosToDecal.xyz);
+    float3 localSurfaceNormal = normalize(cross(ddxLocal, ddyLocal));
+
+    // デカールの投影方向（ローカルのZ軸）と、面の法線がどれくらい向かい合っているか
+    // 1.0に近いほど正面、0.0に近いほど側面（引き伸ばされる面）
+    float faceAngle = abs(localSurfaceNormal.z);
+
+    // 角度がキツい場合はクリップして描画しない
+    clip(faceAngle - 0.2f);
+    // ==========================================================
 
     // UV座標へ変換
     float2 decalUV = localPosToDecal.xy;
@@ -83,7 +103,7 @@ PS_OUT PSMain(PS_IN input)
     float3 decalWorldNormal = normalize(mul(normTex.xyz, (float3x3) cb_Transform));
     decalWorldNormal = decalWorldNormal * 0.5f + 0.5f; // 0～1戻す
     
-    albedColor.rgb = albedTex.rgb;
+    albedColor.rgb = albedTex.rgb * cb_DecalColor;
     albedColor.a = albedTex.a;
     normalColor.rgb = decalWorldNormal.rgb;
     normalColor.a = normTex.a;

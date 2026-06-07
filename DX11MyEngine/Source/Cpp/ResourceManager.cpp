@@ -74,7 +74,7 @@ std::shared_ptr<Texture> ResourceManager::LoadWIC_Texture(const std::wstring &pa
         {
             std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
             errMsg = Tool::WStringToString(path.c_str()) + errMsg;
-            int result = MessageBox(NULL, errMsg.c_str() , "Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
+            int result = MessageBoxA(NULL, errMsg.c_str() , "Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
 
             return nullptr;
         }
@@ -119,7 +119,7 @@ std::shared_ptr<Texture> ResourceManager::LoadDDS_CubeMap_Texture(const std::wst
         {
             std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
             errMsg = Tool::WStringToString(path.c_str()) + errMsg;
-            int result = MessageBox(NULL, errMsg.c_str(), "DDS Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
+            int result = MessageBoxA(NULL, errMsg.c_str(), "DDS Texture LoadError", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
             return nullptr;
         }
         // îzóÒÇ…ìoò^
@@ -161,7 +161,7 @@ std::shared_ptr<ModelData> ResourceManager::LoadModel(const char *path)
         {
             std::string errMsg = "ÇÃÉçÅ[ÉhÇ…é∏îs";
             errMsg = path + errMsg;
-            int result = MessageBox(NULL, errMsg.c_str(), "Model Load Error", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
+            int result = MessageBoxA(NULL, errMsg.c_str(), "Model Load Error", MB_ABORTRETRYIGNORE | MB_ICONWARNING);
             return nullptr;
         }
 
@@ -233,7 +233,7 @@ std::shared_ptr<Material> ResourceManager::FindMaterial(const std::string& tag)
     }
 
     // ìoò^Ç≥ÇÍÇƒÇ¢Ç»Ç¢Ç»ÇÁÉfÉtÉHÉãÉgÇÃï®Çï‘Ç∑
-    MessageBox(NULL, "É}ÉeÉäÉAÉãÇ™ìoò^Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ", "Material", MB_OK);
+    MessageBoxA(NULL, "É}ÉeÉäÉAÉãÇ™ìoò^Ç≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ", "Material", MB_OK);
     return m_pMaterialMap.find("Default")->second;
 }
 
@@ -330,7 +330,7 @@ bool ResourceManager::ImportCSV_AllMaterialData(const std::string& _path)
     }
     else
     {
-        MessageBox(NULL, "CSVÇ™ì«Ç›çûÇﬂÇ‹ÇπÇÒÇ≈ÇµÇΩ", "Load Error", MB_OK);
+        MessageBoxA(NULL, "CSVÇ™ì«Ç›çûÇﬂÇ‹ÇπÇÒÇ≈ÇµÇΩ", "Load Error", MB_OK);
         return false;
     }
 
@@ -353,7 +353,7 @@ void ResourceManager::RegisterMaterialData(const std::string& tag, const Materia
     // ä˘Ç…ìoò^çœÇ›
     if (it != m_pMaterialMap.end())
     {
-        MessageBox(NULL, "ä˘Ç…ìoò^çœÇ›ÇÃÉ}ÉeÉäÉAÉãÇ≈Ç∑", "Material", MB_OK);
+        MessageBoxA(NULL, "ä˘Ç…ìoò^çœÇ›ÇÃÉ}ÉeÉäÉAÉãÇ≈Ç∑", "Material", MB_OK);
         return;
     }
 

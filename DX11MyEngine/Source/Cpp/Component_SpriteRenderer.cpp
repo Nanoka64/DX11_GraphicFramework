@@ -16,7 +16,6 @@ using namespace Tool::UV;
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
 SpriteRenderer::SpriteRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
-m_pCBTransformSet(nullptr),
 m_ShaderType(SHADER_TYPE::NONE),
 m_pVSUserExpandCBuffers(nullptr),
 m_pPSUserExpandCBuffers(nullptr),
@@ -24,7 +23,6 @@ m_VSUserExpandCBNum(0),
 m_PSUserExpandCBNum(0),
 m_UVOffset(VECTOR2::VEC2()),
 m_BlendMode(BLEND_MODE::ALPHA),
-m_pCBSpritDataSet(nullptr),
 m_Color(VEC4(1.0f))
 {
     this->set_Tag("SpriteRenderer");
@@ -74,6 +72,8 @@ void SpriteRenderer::Update(RendererEngine &renderer)
 void SpriteRenderer::Draw(RendererEngine &renderer)
 {
     auto pContext = renderer.get_DeviceContext();
+	CB_TRANSFORM cbTransform = {};
+	CB_SPRITE cbSprite = {};
 
     // シェーダセット ==========================
 	Master::m_pShaderManager->DeviceToSetShader(m_ShaderType);
@@ -91,24 +91,12 @@ void SpriteRenderer::Draw(RendererEngine &renderer)
 	// ワールド変換行列の作成 ====================================================
 	XMMATRIX world = transform->get_WorldMtx();
 	world = XMMatrixTranspose(world);	// 転置
-	XMStoreFloat4x4(&m_pCBTransformSet->Data.WorldMtx, world);	
-
-	// GPUメモリにアクセス
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	pContext->Map(m_pCBTransformSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	memcpy(mappedResource.pData, &m_pCBTransformSet->Data, sizeof(CB_TRANSFORM));	// データのコピー 
-	pContext->Unmap(m_pCBTransformSet->pBuff, 0);									// アクセス終了
-	pContext->VSSetConstantBuffers(0, 1, &m_pCBTransformSet->pBuff);				// 頂点シェーダへ送信
+	XMStoreFloat4x4(&cbTransform.WorldMtx, world);
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
 
 	// uvオフセット ====================================================
-	m_pCBSpritDataSet->Data.OffsetUV = m_UVOffset;
-
-	// スプライト情報定数バッファへ
-	pContext->Map(m_pCBSpritDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	memcpy(mappedResource.pData, &m_pCBSpritDataSet->Data, sizeof(CB_SPRITE));		// データのコピー 
-	pContext->Unmap(m_pCBSpritDataSet->pBuff, 0);									// アクセス終了
-	pContext->VSSetConstantBuffers(10, 1, &m_pCBSpritDataSet->pBuff);				// 頂点シェーダへ送信
-
+	cbSprite.OffsetUV = m_UVOffset;
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::SPRITE, (void*)&cbSprite, sizeof(CB_SPRITE));
 
     // テクスチャセット ==========================
 	for (auto it = m_pTextureMap.begin(); it != m_pTextureMap.end(); it++)
@@ -307,47 +295,47 @@ bool SpriteRenderer::Setup(const CreateSpriteInfo& info)
 // ----------------------------------------------------------------------------------------------------------------------
 bool SpriteRenderer::CreateCBuffer(ID3D11Device *pDevice)
 {
-	// ワールド変換用定数バッファ設定*************************************************
-	m_pCBTransformSet = new CB_TRANSFORM_SET;
-	if (m_pCBTransformSet == nullptr) {
-		return false;
-	}
+	//// ワールド変換用定数バッファ設定*************************************************
+	//m_pCBTransformSet = new CB_TRANSFORM_SET;
+	//if (m_pCBTransformSet == nullptr) {
+	//	return false;
+	//}
 
-	D3D11_BUFFER_DESC bd{};
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
-	bd.ByteWidth = sizeof(CB_TRANSFORM);				// バッファのサイズ
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	//D3D11_BUFFER_DESC bd{};
+	//ZeroMemory(&bd, sizeof(bd));
+	//bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
+	//bd.ByteWidth = sizeof(CB_TRANSFORM);				// バッファのサイズ
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	//bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
+	//bd.MiscFlags = 0;
+	//bd.StructureByteStride = 0;
 
-	// 定数バッファの生成
-	HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBTransformSet->pBuff);
-	if (FAILED(hr)) {
-		return false;
-	}
-	
+	//// 定数バッファの生成
+	//HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBTransformSet->pBuff);
+	//if (FAILED(hr)) {
+	//	return false;
+	//}
+	//
 
 
-	// スプライト情報用定数バッファの設定*************************************************
-	m_pCBSpritDataSet = new CB_SPRITE_SET;
-	if (m_pCBTransformSet == nullptr) {
-		return false;
-	}
-	
-	bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
-	bd.ByteWidth = sizeof(CB_SPRITE);					// バッファのサイズ
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
+	//// スプライト情報用定数バッファの設定*************************************************
+	//m_pCBSpritDataSet = new CB_SPRITE_SET;
+	//if (m_pCBTransformSet == nullptr) {
+	//	return false;
+	//}
+	//
+	//bd.Usage = D3D11_USAGE_DYNAMIC;						// 動的変更
+	//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+	//bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUから書き込み
+	//bd.ByteWidth = sizeof(CB_SPRITE);					// バッファのサイズ
+	//bd.MiscFlags = 0;
+	//bd.StructureByteStride = 0;
 
-	// 生成
-	hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBSpritDataSet->pBuff);
-	if (FAILED(hr)) {
-		return false;
-	}
+	//// 生成
+	//hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBSpritDataSet->pBuff);
+	//if (FAILED(hr)) {
+	//	return false;
+	//}
 
 	return true;
 }

@@ -30,6 +30,7 @@ private:
 	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
 	std::weak_ptr<class Collider> m_pColliderComp;				// コライダーコンポーネント
 	std::weak_ptr<class MoveLogic> m_pMoveLogicComp;			// 移動コンポーネント
+	std::weak_ptr<class Physics> m_pPhysicsComp;				// 物理コンポーネント
 	const GameObject* m_pTarget;								// 攻撃目標
 	StateMachine<EnemyController> m_StateMachine;
 
@@ -90,6 +91,9 @@ public:
 	/* アニメーションの再生させるかどうか */
 	bool get_IsAnim() const { return m_IsAnim; }
 	void set_IsAnim(bool _flag) { m_IsAnim = _flag; }
+
+	/* 接地フラグ */
+	bool get_IsGrounded() const { return m_IsGrounded; }
 
 	/* 攻撃目標 */
 	const GameObject* get_Target() const { return m_pTarget; }

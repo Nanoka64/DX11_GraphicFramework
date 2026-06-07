@@ -22,9 +22,9 @@ ModelData::ModelData() :
     m_AnimNum(0),
     m_MaterialNum(0),
     m_pScene(nullptr),
-    m_pConstanrBufferBonesData(nullptr),
-    m_pCBTransformSet(nullptr),
-    m_pCBMaterialDataSet(nullptr),
+    //m_pConstanrBufferBonesData(nullptr),
+    //m_pCBTransformSet(nullptr),
+    //m_pCBMaterialDataSet(nullptr),
     m_pMeshes(nullptr),
     m_ShaderType(SHADER_TYPE::NONE),
     m_ShadowShaderType(SHADER_TYPE::NONE)
@@ -381,33 +381,33 @@ void ModelData::MatrialExtraction(const aiScene *scene)
 //*----------------------------------------------------------------------------------------
 bool ModelData::CreateBonesCBuffer(RendererEngine &renderer)
 {
-    auto device = renderer.get_Device();	// デバイス取得
-    m_pConstanrBufferBonesData = new CB_BONES_DATA_SET;
+    //auto device = renderer.get_Device();	// デバイス取得
+    //m_pConstanrBufferBonesData = new CB_BONES_DATA_SET;
 
-    HRESULT hr = S_OK;
+    //HRESULT hr = S_OK;
 
-    // リソース設定
-    D3D11_BUFFER_DESC desc;
-    ZeroMemory(&desc, sizeof(desc));
-    desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.ByteWidth = sizeof(CB_BONES_DATA);
-    desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    desc.CPUAccessFlags = 0;
-    desc.MiscFlags = 0;
-    desc.StructureByteStride = 0;
-    for (size_t i = 0; i < ARRAYSIZE(m_pConstanrBufferBonesData->Data.BonesMatrices); i++)
-    {
-        m_pConstanrBufferBonesData->Data.BonesMatrices[i] = DirectX::XMFLOAT4X4(
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        );
-    }
+    //// リソース設定
+    //D3D11_BUFFER_DESC desc;
+    //ZeroMemory(&desc, sizeof(desc));
+    //desc.Usage = D3D11_USAGE_DEFAULT;
+    //desc.ByteWidth = sizeof(CB_BONES_DATA);
+    //desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    //desc.CPUAccessFlags = 0;
+    //desc.MiscFlags = 0;
+    //desc.StructureByteStride = 0;
+    //for (size_t i = 0; i < ARRAYSIZE(m_pConstanrBufferBonesData->Data.BonesMatrices); i++)
+    //{
+    //    m_pConstanrBufferBonesData->Data.BonesMatrices[i] = DirectX::XMFLOAT4X4(
+    //        1.0f, 0.0f, 0.0f, 0.0f,
+    //        0.0f, 1.0f, 0.0f, 0.0f,
+    //        0.0f, 0.0f, 1.0f, 0.0f,
+    //        0.0f, 0.0f, 0.0f, 1.0f
+    //    );
+    //}
 
-    // 定数バッファ作成
-    hr = device->CreateBuffer(&desc, NULL, &m_pConstanrBufferBonesData->pBuff);
-    if (FAILED(hr))return false;
+    //// 定数バッファ作成
+    //hr = device->CreateBuffer(&desc, NULL, &m_pConstanrBufferBonesData->pBuff);
+    //if (FAILED(hr))return false;
 
     return true;
 }
@@ -421,29 +421,29 @@ bool ModelData::CreateBonesCBuffer(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 bool ModelData::CreateMaterialCBuffer(RendererEngine &renderer)
 {
-    auto pDevice = renderer.get_Device();
+    //auto pDevice = renderer.get_Device();
 
-    // 定数バッファの設定
-    D3D11_BUFFER_DESC bd{};
-    ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-    bd.ByteWidth = sizeof(CB_MATERIAL);				    // バッファのサイズ
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-    bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-    bd.MiscFlags = 0;
-    bd.StructureByteStride = 0;
+    //// 定数バッファの設定
+    //D3D11_BUFFER_DESC bd{};
+    //ZeroMemory(&bd, sizeof(bd));
+    //bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
+    //bd.ByteWidth = sizeof(CB_MATERIAL);				    // バッファのサイズ
+    //bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+    //bd.CPUAccessFlags = 0;								// CPUから書き込みしない
+    //bd.MiscFlags = 0;
+    //bd.StructureByteStride = 0;
 
-    // マテリアル情報定数バッファの生成
-    m_pCBMaterialDataSet = new CB_MATERIAL_SET;
-    if (m_pCBMaterialDataSet == nullptr) {
-        return false;
-    }
+    //// マテリアル情報定数バッファの生成
+    //m_pCBMaterialDataSet = new CB_MATERIAL_SET;
+    //if (m_pCBMaterialDataSet == nullptr) {
+    //    return false;
+    //}
 
-    // 定数バッファの生成
-    HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBMaterialDataSet->pBuff);
-    if (FAILED(hr)) {
-        return false;
-    }
+    //// 定数バッファの生成
+    //HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBMaterialDataSet->pBuff);
+    //if (FAILED(hr)) {
+    //    return false;
+    //}
 
     return true;
 }
@@ -457,29 +457,29 @@ bool ModelData::CreateMaterialCBuffer(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 bool ModelData::CreateTransformCBuffer(RendererEngine &renderer)
 {
-    auto pDevice = renderer.get_Device();
+    //auto pDevice = renderer.get_Device();
 
-    // ワールド変換定数バッファの生成
-    m_pCBTransformSet = new CB_TRANSFORM_SET;
-    if (m_pCBTransformSet == nullptr) {
-        return false;
-    }
+    //// ワールド変換定数バッファの生成
+    //m_pCBTransformSet = new CB_TRANSFORM_SET;
+    //if (m_pCBTransformSet == nullptr) {
+    //    return false;
+    //}
 
-    // 定数バッファの設定
-    D3D11_BUFFER_DESC bd{};
-    ZeroMemory(&bd, sizeof(bd));
-    bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
-    bd.ByteWidth = sizeof(CB_TRANSFORM);				// バッファのサイズ
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
-    bd.CPUAccessFlags = 0;								// CPUから書き込みしない
-    bd.MiscFlags = 0;
-    bd.StructureByteStride = 0;
+    //// 定数バッファの設定
+    //D3D11_BUFFER_DESC bd{};
+    //ZeroMemory(&bd, sizeof(bd));
+    //bd.Usage = D3D11_USAGE_DEFAULT;						// 標準設定
+    //bd.ByteWidth = sizeof(CB_TRANSFORM);				// バッファのサイズ
+    //bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;			// 定数バッファとして使う
+    //bd.CPUAccessFlags = 0;								// CPUから書き込みしない
+    //bd.MiscFlags = 0;
+    //bd.StructureByteStride = 0;
 
-    // 定数バッファの生成
-    HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBTransformSet->pBuff);
-    if (FAILED(hr)) {
-        return false;
-    }
+    //// 定数バッファの生成
+    //HRESULT hr = pDevice->CreateBuffer(&bd, nullptr, &m_pCBTransformSet->pBuff);
+    //if (FAILED(hr)) {
+    //    return false;
+    //}
 
     return true;
 }

@@ -102,6 +102,8 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 
 	// 注視点を設定
 	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, CAMERA_MOVE_FACTOR);	// ガタガタする
+	//float followSpeed = 10.0f;
+	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, followSpeed * deltaTime);
 	m_FocusPoint = focusObjPos;
 
 	// 方向ベクトルを作る
@@ -109,8 +111,6 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 	lookDir.x = m_PosOffset.x * cosf(m_Angle_V) * cosf(m_Angle_H);
 	lookDir.y = m_PosOffset.y * sinf(m_Angle_V);
 	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sinf(m_Angle_H);
-
-
 
 	m_CameraPos = lookDir + m_FocusPoint;
 
@@ -147,9 +147,9 @@ void Camera3D::CamraControl(RendererEngine& renderer)
 	{
 		m_Angle_V = 1.5f;
 	}
-	if (m_Angle_V <= -1.0f)	// 上
+	if (m_Angle_V <= -1.3f)	// 上
 	{
-		m_Angle_V = -1.0f;
+		m_Angle_V = -1.3f;
 	}
 	if (m_Angle_H >= 3.14f) {
 		m_Angle_H -= 6.28f;

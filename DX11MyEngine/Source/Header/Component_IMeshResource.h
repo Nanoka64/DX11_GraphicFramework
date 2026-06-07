@@ -22,6 +22,7 @@ enum class UTILITY_MESH_TYPE
 //  ★継承：IComponent ★
 //
 // 【?】メッシュ構造（データ）の管理
+//		頂点情報など
 //	※　UnityのMeshFilter的な役割
 //
 // ***************************************************************************************
@@ -33,9 +34,11 @@ private:
 	friend class DecalRenderer;
 
 	std::shared_ptr<MeshResourceData> m_pMeshData; // メッシュ情報
-	CB_TRANSFORM_SET *m_pCBTransformSet;		   // 定数バッファ(ワールド行列用)
-	CB_MATERIAL_SET *m_pCBMaterialDataSet;		   // 定数バッファ(マテリアル用)
+
+	//CB_TRANSFORM_SET *m_pCBTransformSet;		   // 定数バッファ(ワールド行列用)
+	//CB_MATERIAL_SET *m_pCBMaterialDataSet;		   // 定数バッファ(マテリアル用)
 	SHADER_TYPE m_ShaderType;	
+
 public:
 	IMeshResource(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual~IMeshResource();

@@ -32,7 +32,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 skyTex = g_tSkyboxTexture.Sample(g_sSampler, input.TexCoord.xyz);
     
     //skyTex += 0.15f;
-    skyTex.rgb *= cb_DirLightData[0].DiffuseColor;
+    skyTex.rgb *= cb_DirLightData[0].DiffuseColor;  // ディレクションライトと連動するようにする
     
     //skyTex.r += 1.8f;
     

@@ -45,4 +45,12 @@ void TimeManager::Update()
 	
 	// デルタタイムをfloatにして保持
 	m_DeltaTime = std::chrono::duration<float>(deltaTime).count();
+
+	// --- 追加：デルタタイムの上限（Clamp）処理 ---
+	// 例: 0.1秒（10fps相当の処理落ち）を上限とする
+	const float MAX_DELTA_TIME = 0.1f;
+	if (m_DeltaTime > MAX_DELTA_TIME)
+	{
+		m_DeltaTime = MAX_DELTA_TIME;
+	}
 }

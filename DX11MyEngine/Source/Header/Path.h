@@ -33,6 +33,7 @@ namespace Path
     const std::wstring HLSL__DoF_Filter_PS_PATH = std::wstring(Shader)              + L"DoF_Filter_PS.hlsl";
     const std::wstring HLSL__ToneMappingFilter_PS_PATH = std::wstring(Shader)       + L"ToneMappingFilter_PS.hlsl";
     const std::wstring HLSL__Decal_PS_PATH = std::wstring(Shader)                   + L"Decal_PS.hlsl";
+    const std::wstring HLSL__Distortion_PS_PATH = std::wstring(Shader)              + L"Distortion_PS.hlsl";
 
     // VS
     const std::wstring HLSL__Skinned_VS_PATH = std::wstring(Shader)                 + L"Skinned_VS.hlsl";
@@ -43,6 +44,7 @@ namespace Path
     const std::wstring HLSL__YBlur_VS_PATH = std::wstring(Shader)                   + L"YBlur_VS.hlsl";
     const std::wstring HLSL__Skybox_VS_PATH = std::wstring(Shader)                  + L"Skybox_VS.hlsl";
     const std::wstring HLSL__Trail_VS_PATH = std::wstring(Shader)                   + L"Trail_VS.hlsl";
+    const std::wstring HLSL__Distortion_VS_PATH = std::wstring(Shader)              + L"Distortion_VS.hlsl";
 
     const std::wstring HLSL__ShadowMap_PATH = std::wstring(Shader)                  + L"ShadowMap.hlsl";
     const std::wstring HLSL__ShadowMap_Skinned_PATH = std::wstring(Shader)          + L"ShadowMap_Skinned.hlsl";
@@ -62,6 +64,7 @@ namespace Path
     const std::wstring HLSL_CSO__DoF_Filter_PS_PATH = std::wstring(CSO)             + L"DoF_Filter_PS.cso";
     const std::wstring HLSL_CSO__ToneMappingFilter_PS_PATH = std::wstring(CSO)      + L"ToneMappingFilter_PS.cso";
     const std::wstring HLSL_CSO__Decal_PS_PATH = std::wstring(CSO)                  + L"Decal_PS.cso";
+    const std::wstring HLSL_CSO__Distortion_PS_PATH = std::wstring(CSO)             + L"Distortion_PS.cso";
 
     // VS
     const std::wstring HLSL_CSO__Skinned_VS_PATH = std::wstring(CSO)                + L"Skinned_VS.cso";
@@ -72,6 +75,7 @@ namespace Path
     const std::wstring HLSL_CSO__YBlur_VS_PATH = std::wstring(CSO)                  + L"YBlur_VS.cso";
     const std::wstring HLSL_CSO__Skybox_VS_PATH = std::wstring(CSO)                 + L"Skybox_VS.cso";
     const std::wstring HLSL_CSO__Trail_VS_PATH = std::wstring(Shader)               + L"Trail_VS.cso";
+    const std::wstring HLSL_CSO__Distortion_VS_PATH = std::wstring(Shader)          + L"Distortion_VS.cso";
 
     const std::wstring HLSL_CSO__ShadowMap_PATH = std::wstring(CSO)                 + L"ShadowMap.cso";
     const std::wstring HLSL_CSO__ShadowMap_Skinned_PATH = std::wstring(CSO)         + L"ShadowMap_Skinned.cso";

@@ -38,7 +38,7 @@ DirectWriteManager::~DirectWriteManager()
 HRESULT DirectWriteManager::Init(RendererEngine &render)
 {
     HRESULT hr = S_OK;
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return hr;
 #else
 
@@ -113,7 +113,7 @@ HRESULT DirectWriteManager::Init(RendererEngine &render)
     //CHECK_HRESULT(hr);
 
     return hr;
-#endif // IS_ENABLE
+#endif // IS_WRITE_ENABLE
 
 }
 
@@ -144,7 +144,7 @@ void DirectWriteManager::Term()
 //*----------------------------------------------------------------------------------------
 void DirectWriteManager::BeginDraw()
 {
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     m_pRenderTarget->BeginDraw();
@@ -159,7 +159,7 @@ void DirectWriteManager::BeginDraw()
 //*----------------------------------------------------------------------------------------
 HRESULT DirectWriteManager::EndDraw()
 {
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return S_OK;
 #else
     return m_pRenderTarget->EndDraw();
@@ -199,13 +199,13 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA* data)
 {
     HRESULT hr = S_OK;
 
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return hr;
 #else
     // 既に登録済みなら返す
     auto it = m_pTextFormatMap.find(data->tag);
     if (it != m_pTextFormatMap.end()) {
-        MessageBox(NULL, "既に登録済みのフォントです", "DirectWriteManager", MB_OK);
+        MessageBoxA(NULL, "既に登録済みのフォントです", "DirectWriteManager", MB_OK);
         return S_FALSE;
     }
 
@@ -246,7 +246,7 @@ HRESULT DirectWriteManager::SetFontData(FONT_DATA* data)
 //*----------------------------------------------------------------------------------------
 void DirectWriteManager::SetColor(const D2D1_COLOR_F& col)
 {
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
 
@@ -278,7 +278,7 @@ void DirectWriteManager::SetColor(const D2D1_COLOR_F& col)
 //*----------------------------------------------------------------------------------------
 void DirectWriteManager::SetOutLine(float _size, const D2D1_COLOR_F& col)
 {
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     // まだブラシが作成されていない場合のみ、新しく作成する
@@ -313,7 +313,7 @@ void DirectWriteManager::DrawString(std::string _str, const VECTOR2::VEC2& _pos,
     HRESULT hr = S_OK;
 
 
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
@@ -380,7 +380,7 @@ void DirectWriteManager::DrawString(std::wstring _wstr, const VECTOR2::VEC2& _po
     HRESULT hr = S_OK;
 
 
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
@@ -456,7 +456,7 @@ void DirectWriteManager::DrawStringToAligment(
 {
     HRESULT hr = S_OK;
 
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
@@ -550,7 +550,7 @@ void DirectWriteManager::DrawStringToAligment(
 {
     HRESULT hr = S_OK;
 
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
     return;
 #else
     Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報

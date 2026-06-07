@@ -30,10 +30,9 @@ MoveLogic::MoveLogic(std::weak_ptr<GameObject> pOwner, int updateRank)
 MoveLogic::~MoveLogic()
 {
 	m_pMoveBehaviour = nullptr;
-    m_pMoveBehaviourMap.clear();
 }
 //*---------------------------------------------------------------------------------------
-//*【?】機能概要
+//*【?】初期化
 //*
 //* [引数]
 //* &renderer : 描画エンジンの参照
@@ -51,6 +50,19 @@ void MoveLogic::Start(RendererEngine &renderer)
 //*
 //* [引数]
 //* &renderer : 描画エンジンの参照
+//*
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void MoveLogic::Update(RendererEngine &renderer)
+{
+    Calculate(m_MoveParam);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】更新
+//*
+//* [引数]
+//* &_param : 移動計算に必要なパラメータ
 //*
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
@@ -80,17 +92,17 @@ void MoveLogic::Calculate(const MoveParam& _param)
             VEC3 newPos = crntPos + (res._moveVelocity * deltaTime);
 
             // 重力があるなら、重力処理を行う
-            if (_param._gravity > 0.0f)
-            {
-                m_GravityVelocity -= _param._gravity * deltaTime;
+            //if (_param._gravity > 0.0f)
+            //{
+            //    m_GravityVelocity -= _param._gravity * deltaTime;
 
-                newPos.y += m_GravityVelocity * deltaTime;
-                if (newPos.y < 0.0f)
-                {
-                    newPos.y = 0.0f;
-                    m_GravityVelocity = 0.0f;
-                }
-            }
+            //    newPos.y += m_GravityVelocity * deltaTime;
+            //    if (newPos.y < -100.0f)
+            //    {
+            //        newPos.y = 0.0f;
+            //        m_GravityVelocity = 0.0f;
+            //    }
+            //}
 
             // 反映
             pTransform->set_Pos(newPos);
@@ -122,13 +134,15 @@ void MoveLogic::ParamReset()
 //*----------------------------------------------------------------------------------------
 void MoveLogic::Register(MOVE_BEHAVIOUR_TYPE _type)
 {
+    int index = static_cast<int>(_type);
+
     switch (_type)
     {
     case MOVE_BEHAVIOUR_TYPE::LINEAR:
-        m_pMoveBehaviourMap[_type] = std::make_unique<LinearMove_Behaviour>();
+        m_pMoveBehaviourMap[index] = std::make_unique<LinearMove_Behaviour>();
         break;
     case MOVE_BEHAVIOUR_TYPE::HOMING:
-        m_pMoveBehaviourMap[_type] = std::make_unique<HormingMove_Behaviour>();
+        m_pMoveBehaviourMap[index] = std::make_unique<HormingMove_Behaviour>();
         break;
     default:
         break;
@@ -145,12 +159,19 @@ void MoveLogic::Register(MOVE_BEHAVIOUR_TYPE _type)
 //*----------------------------------------------------------------------------------------
 void MoveLogic::ChangeBehaviour(MOVE_BEHAVIOUR_TYPE _type)
 {
+	// NONEが指定された場合は、移動挙動を解除する
+    if (_type == MOVE_BEHAVIOUR_TYPE::NONE)
+    {
+        m_pMoveBehaviour = nullptr;
+		return;
+    }
+
     // もし登録されていなければ登録する
-    auto it = m_pMoveBehaviourMap.find(_type);
-    if (it == m_pMoveBehaviourMap.end())
+    int index = static_cast<int>(_type);
+    if (m_pMoveBehaviourMap[index] == nullptr)
     {
         Register(_type);
     }
 
-    m_pMoveBehaviour = m_pMoveBehaviourMap[_type].get();
+    m_pMoveBehaviour = m_pMoveBehaviourMap[index].get();
 }

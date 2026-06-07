@@ -14,7 +14,8 @@ class DecalRenderer : public IComponent
 {
 private:
 	std::weak_ptr<class IMeshResource> m_pMeshResource;	// メッシュ情報の参照
-	CB_DECAL_SET *m_pCBDecalSet;						// デカール用定数バッファ
+	CB_MATERIAL m_CBMaterialData;						// 定数バッファ用のマテリアルデータ
+	CB_DECAL m_CBDecalData;								// 定数バッファ用のデカールデータ
 	bool m_IsDynamic;									// 動的に変更されるか
 public:
 	DecalRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

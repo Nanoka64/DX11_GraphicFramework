@@ -5,7 +5,6 @@
 #include <string>
 #include <format>
 
-#define IS_ENABLE   // DirectWriteを使用しているとRenderDocが使用できないのでそういう時にこれを消す
 
 /// <summary>
 /// 水平方向のアライメント指定用の列挙型
@@ -137,7 +136,7 @@ public:
     template <typename... Args>
     void DrawFormatString(std::string str, const VECTOR2::VEC2& _pos, const std::string& formatTag,  Args&&... args)
     {
-#ifndef IS_ENABLE
+#ifndef IS_WRITE_ENABLE
         return;
 #else
         HRESULT hr = S_OK;

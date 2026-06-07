@@ -64,7 +64,7 @@ int Ant_PT_MoveState::Update(class EnemyController* pOwner)
 	auto target = pOwner->get_Target();	// 目標オブジェクト
 	if (target == nullptr || pOwner->get_OwnerObj().expired())
 	{
-		MessageBox(NULL,"ターゲットがいません","Ant_PT_MoveState",MB_OK);
+		MessageBoxA(NULL,"ターゲットがいません","Ant_PT_MoveState",MB_OK);
 		assert(false);
 	}
 	else
@@ -105,9 +105,21 @@ int Ant_PT_MoveState::Update(class EnemyController* pOwner)
 		}
 
 		/* 移動範囲外に出ていたら、反射させる */
-		if (!VEC3::TargetInTheRange(myPos, startPos, MOVE_RANGE)){
+		if (!VEC3::TargetInTheRange(myPos, startPos, MOVE_RANGE)) {
 			VEC3 boundaryNorm = startPos - myPos;
-			m_MoveDir = VEC3::Reflect(m_MoveDir, boundaryNorm.Normalize());
+			boundaryNorm.y = 0.0f; // Y成分を無視して平面で考える
+
+			// ゼロ除算回避
+			if (boundaryNorm.LengthSq() > 0.0001f) {
+				boundaryNorm = boundaryNorm.Normalize();
+
+				// m_MoveDir が外側を向いている（中心方向と逆）時のみ反射させる
+				if (VEC3::Dot(m_MoveDir, boundaryNorm) < 0.0f) {
+					m_MoveDir = VEC3::Reflect(m_MoveDir, boundaryNorm);
+					m_MoveDir.y = 0.0f;
+					m_MoveDir = m_MoveDir.Normalize();
+				}
+			}
 		}
 
 		/* 前方に壁があれば、反射させる */
@@ -118,9 +130,21 @@ int Ant_PT_MoveState::Update(class EnemyController* pOwner)
 		CollInData_Ray frontTraceRay;
 		frontTraceRay._point = myPos;
 		frontTraceRay._dir = myForward * 5.0f;
-		if (Master::m_pCollisionManager->CheckRaycast(frontTraceRay, collisionMask, &hitInfo)){
+
+		if (Master::m_pCollisionManager->CheckRaycast(frontTraceRay, collisionMask, &hitInfo)) {
 			VEC3 hitNorm = hitInfo.get_HitNormal();	// 衝突した面の法線
-			m_MoveDir = VEC3::Reflect(m_MoveDir, hitNorm);	// 反射
+			hitNorm.y = 0.0f; // 建物の壁が傾いていてもY方向の力は無視する
+
+			if (hitNorm.LengthSq() > 0.0001f) {
+				hitNorm = hitNorm.Normalize();
+
+				// m_MoveDir が壁に向かっている時のみ反射させる
+				if (VEC3::Dot(m_MoveDir, hitNorm) < 0.0f) {
+					m_MoveDir = VEC3::Reflect(m_MoveDir, hitNorm);	// 反射
+					m_MoveDir.y = 0.0f;
+					m_MoveDir = m_MoveDir.Normalize();
+				}
+			}
 		}
 
 
@@ -131,8 +155,8 @@ int Ant_PT_MoveState::Update(class EnemyController* pOwner)
 		movePram._turnSpeed = 0.05f;	// 急に振り向くと変なので、少し優しめに
 		movePram._moveDirection = m_MoveDir;
 		auto move = pOwner->get_MoveLogicComponent().lock();
-		move->Calculate(movePram);
-		
+		move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
+
 
 		// 壁のぼり
 		//VEC3 myForward = myTransform->get_Forward();

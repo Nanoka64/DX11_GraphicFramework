@@ -9,6 +9,7 @@
 #include "RenderPipeline.h"
 #include "Component_3DCamera.h"
 #include "GameObject.h"
+#include "ConstantBuffer.h"
 #include <string>
 
 using namespace VECTOR2;
@@ -102,8 +103,7 @@ bool RendererEngine::Init(HWND hWnd)
     m_ScreenHeight = client_rc.bottom - client_rc.top;
 
     // データ管理にスクリーンの大きさを設定する
-    Master::m_pDataManager->set_ScreenWidth(m_ScreenWidth);
-    Master::m_pDataManager->set_ScreenHeight(m_ScreenHeight);
+    //Master::m_pDataManager->set_ScreenSize(m_ScreenWidth, m_ScreenHeight);
 
     // 正常に初期化されたか
     if (!InitDx11()) {
@@ -112,13 +112,12 @@ bool RendererEngine::Init(HWND hWnd)
     }
 
     // 初期化
-    m_RenderParam.Init(*this);
+    //m_RenderParam.Init(*this);
 
     m_StartTime = timeGetTime();    // 開始時間取得
 
     // 投影変換行列の設定
-    SetupProjectionTransform(static_cast<float>(m_ScreenWidth), static_cast<float>(m_ScreenHeight), 100.0f, 1.0f, 10000.0f);
-
+    //SetupProjectionTransform(static_cast<float>(m_ScreenWidth), static_cast<float>(m_ScreenHeight), 100.0f, 1.0f, 10000.0f);
 
 
     return true;
@@ -789,7 +788,7 @@ void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type, 
 
     // ビュー変換し定数バッファへ送る
     if (!SetupViewTransform(viewMatrix)) {
-        MessageBox(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
+        MessageBoxA(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
         return;
     };
 
@@ -838,42 +837,45 @@ bool RendererEngine::SetupProjectionTransform(float _w, float _h, float _fovDeg,
     );
     ohProjMat = XMMatrixTranspose(ohProjMat);   // 転置
 
+    CB_PROJECTION cbProjection{};
+
     // 透視投影行列
-    auto& cb = m_RenderParam.cbProjectionSet;
-    XMStoreFloat4x4(&cb.Data.Projection, psProj);
+    XMStoreFloat4x4(&cbProjection.Projection, psProj);
 
     // 透視投影逆行列
     XMMATRIX psInvProj = XMMatrixInverse(NULL, psProj);
-    XMStoreFloat4x4(&cb.Data.InvProjection, psInvProj);
-
+    XMStoreFloat4x4(&cbProjection.InvProjection, psInvProj);
     // 正射投影行列
-    XMStoreFloat4x4(&cb.Data.OrthographicProjection, ohProjMat);
+    XMStoreFloat4x4(&cbProjection.OrthographicProjection, ohProjMat);
 
-    // サブリソース
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(mappedResource));
+    /* 定数バッファにセット */
+    Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::PROJECTION, (void*)&cbProjection, sizeof(CB_PROJECTION));
 
-    // CPUアクセス
-    HRESULT hr = pDeviceContext->Map(
-        cb.pBuff,
-        0,
-        D3D11_MAP_WRITE_DISCARD,
-        0,
-        &mappedResource
-    );
+    //// サブリソース
+    //D3D11_MAPPED_SUBRESOURCE mappedResource;
+    //ZeroMemory(&mappedResource, sizeof(mappedResource));
 
-    if (FAILED(hr))return false;
+    //// CPUアクセス
+    //HRESULT hr = pDeviceContext->Map(
+    //    cb.pBuff,
+    //    0,
+    //    D3D11_MAP_WRITE_DISCARD,
+    //    0,
+    //    &mappedResource
+    //);
 
-    CopyMemory(mappedResource.pData, &cb.Data, sizeof(cb.Data));
+    //if (FAILED(hr))return false;
 
-    // マップ解除
-    pDeviceContext->Unmap(cb.pBuff, 0);
+    //CopyMemory(mappedResource.pData, &cb.Data, sizeof(cb.Data));
 
-    // VSにProjectionMatrixをセット(ここで1度セットして以後不変)
-    pDeviceContext->VSSetConstantBuffers(2, 1, &cb.pBuff);
+    //// マップ解除
+    //pDeviceContext->Unmap(cb.pBuff, 0);
 
-    // PSにも
-    pDeviceContext->PSSetConstantBuffers(2, 1, &cb.pBuff);
+    //// VSにProjectionMatrixをセット(ここで1度セットして以後不変)
+    //pDeviceContext->VSSetConstantBuffers(2, 1, &cb.pBuff);
+
+    //// PSにも
+    //pDeviceContext->PSSetConstantBuffers(2, 1, &cb.pBuff);
 
     return true;
 }
@@ -892,35 +894,39 @@ bool RendererEngine::SetupViewTransform(const XMMATRIX& viewMat)
     // ビュー行列保持
     m_View = viewMat;
 
-    auto& cb = m_RenderParam.cbViewSet;
-    XMStoreFloat4x4(&cb.Data.View, XMMatrixTranspose(viewMat));
+    CB_VIEW cbView{ };
+    XMStoreFloat4x4(&cbView.View, XMMatrixTranspose(viewMat));
 
     // ビュープロジェクション逆行列取得
-    cb.Data.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
+    cbView.ViewProjInvMatrix = get_ViewProjectionInvMatrix();
 
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ZeroMemory(&mappedResource, sizeof(mappedResource));
-    // CPUアクセス
-    HRESULT hr = pDeviceContext->Map(
-        cb.pBuff,
-        0,
-        D3D11_MAP_WRITE_DISCARD,
-        0,
-        &mappedResource
-    );
+    /* 定数バッファにセット */
+    Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::VIEW, (void*)&cbView, sizeof(CB_VIEW));
 
-    if (FAILED(hr))return false;
 
-    CopyMemory(mappedResource.pData, &cb.Data, sizeof(cb.Data));
+    //D3D11_MAPPED_SUBRESOURCE mappedResource;
+    //ZeroMemory(&mappedResource, sizeof(mappedResource));
+    //// CPUアクセス
+    //HRESULT hr = pDeviceContext->Map(
+    //    cb.pBuff,
+    //    0,
+    //    D3D11_MAP_WRITE_DISCARD,
+    //    0,
+    //    &mappedResource
+    //);
 
-    // マップ解除
-    pDeviceContext->Unmap(cb.pBuff, 0);
+    //if (FAILED(hr))return false;
 
-    // VSにViewMatrixをセット
-    pDeviceContext->VSSetConstantBuffers(1, 1, &cb.pBuff);
+    //CopyMemory(mappedResource.pData, &cb.Data, sizeof(cb.Data));
 
-    // ピクセルシェーダにもセット！！
-    pDeviceContext->PSSetConstantBuffers(1, 1, &cb.pBuff);
+    //// マップ解除
+    //pDeviceContext->Unmap(cb.pBuff, 0);
+
+    //// VSにViewMatrixをセット
+    //pDeviceContext->VSSetConstantBuffers(1, 1, &cb.pBuff);
+
+    //// ピクセルシェーダにもセット！！
+    //pDeviceContext->PSSetConstantBuffers(1, 1, &cb.pBuff);
 
     return true;
 }

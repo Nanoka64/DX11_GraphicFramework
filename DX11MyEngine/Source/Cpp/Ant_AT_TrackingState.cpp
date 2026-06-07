@@ -54,6 +54,11 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 	auto targetObj = pOwner->get_Target();
 	auto myObj = pOwner->get_OwnerObj().lock();
 
+	//if (pOwner->get_IsGrounded() == false)
+	//{
+	//	return ANT_STATE::ANT_STATE_PATROL_IDLE;
+	//}
+
 	// 目標が居なくなったら待機状態へ戻る
 	if (targetObj == nullptr || myObj == nullptr)
 	{
@@ -85,7 +90,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		VEC3 targetPos = targetTransform->get_VEC3ToPos();	// 目標位置
 		VEC3 myPos = myTransform->get_VEC3ToPos();			// 自分の位置
 		VEC3 targetDir = (targetPos - myPos).Normalize();	// 目標方向
-
+		targetDir.y = 0.0f;
 
 		// 親の移動コンポーネントを使い、移動処理を行う
 		MoveParam movePram;
@@ -93,7 +98,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		movePram._turnSpeed = 0.1f;
 		movePram._targetPos = targetPos;
 		auto move = pOwner->get_MoveLogicComponent().lock();
-		move->Calculate(movePram);
+		move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 		
 		//=========================================================================================
@@ -107,7 +112,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		}
 
 		// 移動ベクトルを渡す
-		pOwner->set_MoveVelocity(targetDir * pOwner->get_MoveSpeed());
+		//pOwner->set_MoveVelocity(targetDir * pOwner->get_MoveSpeed());
 	}
 
 	return ANT_STATE::ANT_STATE_ACTIVE_TRACKING;

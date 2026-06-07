@@ -197,11 +197,11 @@ bool DX_RenderTarget::CreateDepthStencil(RendererEngine &renderer, UINT w, UINT 
 //* @:DX_RenderTarget Class 
 //*【?】レンダーターゲットテクスチャの取得
 //* 引数：なし
-//* 返値：テクスチャの参照ポインタ
+//* 返値：テクスチャ
 //*----------------------------------------------------------------------------------------
-std::weak_ptr<class Texture> DX_RenderTarget::get_RTTexture()const
+Microsoft::WRL::ComPtr<ID3D11Texture2D>DX_RenderTarget::get_RTTexture()const
 {
-    return {};
+    return m_pRenderTargetTexture;
 }
 
 

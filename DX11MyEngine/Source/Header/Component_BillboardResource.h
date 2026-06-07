@@ -38,9 +38,9 @@ private:
 	FIXED_AXIS_BITFLAG m_FixedAxisBitFlag;	// 固定軸を決めるためのフラグ（Y軸固定など）
 
 
-	std::shared_ptr<MeshResourceData> m_pMeshData;						// メッシュ情報
-	CB_TRANSFORM_SET* m_pCBTransformSet;		// 定数バッファ(ワールド行列用)
-	CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
+	std::shared_ptr<MeshResourceData> m_pMeshData;	// メッシュ情報
+	//CB_TRANSFORM_SET* m_pCBTransformSet;			// 定数バッファ(ワールド行列用)
+	//CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
 
 public:
 	BillboardResource(std::weak_ptr<GameObject> pOwner, int updateRank = 100);

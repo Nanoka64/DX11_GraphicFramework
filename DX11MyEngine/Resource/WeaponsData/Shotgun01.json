@@ -9,6 +9,8 @@
   "zoomLength": 1.0,
   "isLaserSight": false,
   "soundID": 0,
+  "muzzleFlashEffectTag" : "MuzzleEffect_01",
+  "muzzleFlashEffectScale" : [3.0, 3.0, 3.0],
   "bulletType": "NORMAL",
   "bulletParam": {
     "damage": 50.0,
@@ -19,6 +21,7 @@
     "penetrationsCount": 3,
     "collisionSize": 0.0,
     "gravityScale": 0.0,
+    "knockbackForce" : 20.0,
     "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
     "bulletMaterialTag" : "Bullet_03",
     "decalMaterialTag" : "Decal_BulletHole",

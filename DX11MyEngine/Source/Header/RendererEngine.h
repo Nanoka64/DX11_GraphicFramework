@@ -8,39 +8,6 @@
 
 using namespace DirectX;
 
-/// <summary>
-/// 描画パス
-/// </summary>
-enum class RENDER_PASS
-{
-    MAIN,   // 通常
-    SHADOW, // シャドウ
-};
-
-/// <summary>
-/// カリングモード
-/// </summary>
-enum class CULL_MODE
-{
-	NONE,
-	FRONT,
-    BACK,
-
-    NUM,
-};
-
-/// <summary>
-/// レンダリングパイプラインの種類
-/// </summary>
-enum class RENDER_PIPELINE_STATE
-{
-    NONE,
-    DEFAULT,
-    DEFAULT_2D,
-
-    NUM,
-};
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:RendererEngine Class --- */
@@ -82,7 +49,7 @@ private:
     ID3D11Buffer                            * m_pIndexBuffer;         // 頂点バッファ(実際の頂点のデータが詰まっている)
 
     D3D11_VIEWPORT m_CrntViewPort;  // 現在のビューポート設定
-    RenderParam m_RenderParam;  // 描画パラメータ
+    //RenderParam m_RenderParam;  // 描画パラメータ
 
     UINT m_ScreenWidth; // ウインドウ横幅
     UINT m_ScreenHeight;// ウインドウ縦幅
@@ -93,6 +60,7 @@ private:
     RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
 
     class RenderPipeline *m_pRendererPipeline;      // 描画パイプラインの実体を持つ
+	CB_WINDOW_SET *m_pCBWindowSet;                  // ウインドウ情報の定数バッファセット
 public:
     RendererEngine();
     ~RendererEngine();
@@ -121,7 +89,7 @@ public:
     inline ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
     inline IDXGISwapChain *get_SwapChain() const { return m_pSwapChain; }                // スワップチェイン取得
     inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
-    inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
+    //inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
     inline HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
     inline UINT get_ScreenWidth()const { return m_ScreenWidth; };                       
     inline UINT get_ScreenHeight()const { return m_ScreenHeight; };

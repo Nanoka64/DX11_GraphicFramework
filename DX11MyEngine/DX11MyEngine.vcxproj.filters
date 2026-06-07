@@ -286,6 +286,18 @@
     <Filter Include="ソース ファイル\Game\Scene\Head">
       <UniqueIdentifier>{6b7b7f36-9bb9-44aa-9da9-e255c8167cae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Enemy\State_Octahedron">
+      <UniqueIdentifier>{658c3605-c934-40cf-bb95-dc162d12f607}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Enemy\State_Octahedron\Active">
+      <UniqueIdentifier>{c761bab5-39c9-41d6-b3aa-6b1082f5f60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Enemy\State_Octahedron\Patrol">
+      <UniqueIdentifier>{af5aab4e-de94-433f-8d16-db2081328e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\BaseComponent\Effect">
+      <UniqueIdentifier>{7d07187a-6b47-4bc0-b449-0855f0bf640a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -543,9 +555,6 @@
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
       <Filter>ソース ファイル\State\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
-      <Filter>ソース ファイル\BaseComponent\Mesh\UtilityMesh</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_TimerDestruction.cpp">
       <Filter>ソース ファイル\BaseComponent\Utility</Filter>
     </ClCompile>
@@ -743,6 +752,18 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\c_Game_Config.cpp">
       <Filter>ソース ファイル\Game\Scene\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_DistortionEffect.cpp">
+      <Filter>ソース ファイル\BaseComponent\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Physics.cpp">
+      <Filter>ソース ファイル\BaseComponent\Move</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -998,9 +1019,6 @@
     <ClInclude Include="Source\Header\Ant_StateHeader.h">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Ant</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Component_DecalRenderer.h">
-      <Filter>ソース ファイル\BaseComponent\Mesh\UtilityMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Component_TimerDestruction.h">
       <Filter>ソース ファイル\BaseComponent\Utility</Filter>
     </ClInclude>
@@ -1187,6 +1205,27 @@
     <ClInclude Include="Source\Header\Component_ConfigSetting.h">
       <Filter>ソース ファイル\Game\Component\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_DecalRenderer.h">
+      <Filter>ソース ファイル\BaseComponent\Mesh\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Octahedron_StateHeader.h">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_DistortionEffect.h">
+      <Filter>ソース ファイル\BaseComponent\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ConstantBuffer.h">
+      <Filter>ソース ファイル\Tool\CBuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\IConstantBuffer.h">
+      <Filter>ソース ファイル\Tool\CBuff</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_MuzzleFlashEffect.h">
+      <Filter>ソース ファイル\Game\Component\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Physics.h">
+      <Filter>ソース ファイル\BaseComponent\Move</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ConstantBuffers_H.hlsli">
@@ -1290,6 +1329,12 @@
     </FxCompile>
     <FxCompile Include="Source\Shader\Sprite_NoTexture_PS.hlsl">
       <Filter>HLSL\PS\Foward</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Distortion_PS.hlsl">
+      <Filter>HLSL\PS\Foward</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shader\Distortion_VS.hlsl">
+      <Filter>HLSL\VS</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -45,7 +45,7 @@ public:
     /// レンダーターゲットテクスチャの取得
     /// </summary>
     /// <returns></returns>
-    std::weak_ptr<class Texture> get_RTTexture()const;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> get_RTTexture()const;
     int get_Width()const;
     int get_Height()const;
 

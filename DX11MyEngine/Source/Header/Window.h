@@ -8,11 +8,11 @@
 
 
 // ウインドウのタイトルバーのとこ
-constexpr LPCWSTR g_WindowTitle = L"地球防衛戦線";
+constexpr LPCWSTR g_WindowTitle = L"THE INSECT ATTACK";
 
 // ウインドウクラス名 内部的な識別名？
 constexpr LPCWSTR g_WindowClassNameW = L"DX11_3DGAME_SL";
-constexpr LPCSTR  g_WindowClassNameA = "DX11_3DGAME_SL";
+constexpr LPCWSTR  g_WindowClassNameA = L"DX11_3DGAME_SL";
 
 // FPS
 constexpr float g_Fps = 60.0f;

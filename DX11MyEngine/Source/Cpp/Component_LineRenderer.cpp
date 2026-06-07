@@ -19,7 +19,6 @@ LineRenderer::LineRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 	m_Dir(VEC3()),
 	m_StartPos(VEC3()),
 	m_Color(VEC4(1.0f, 1.0f, 1.0f, 1.0f)),
-	m_pCBMaterialDataSet(nullptr),
 	m_IsView(true),
 	m_EmissivePower(3.0f)
 {
@@ -34,14 +33,6 @@ LineRenderer::LineRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 //*----------------------------------------------------------------------------------------
 LineRenderer::~LineRenderer()
 {
-	if (m_pCBMaterialDataSet) {
-		if (m_pCBMaterialDataSet->pBuff) {
-			m_pCBMaterialDataSet->pBuff->Release();
-		}
-		delete m_pCBMaterialDataSet;
-		m_pCBMaterialDataSet = nullptr;
-	}
-
 	m_pVertesBuffer.Reset();
 }
 
@@ -57,7 +48,7 @@ void LineRenderer::Start(RendererEngine& renderer)
 {
 	if (!Setup(renderer))
 	{
-		MessageBox(NULL, "セットアップができませんでした", "LineRenderer Error", MB_OK);
+		MessageBoxA(NULL, "セットアップができませんでした", "LineRenderer Error", MB_OK);
 		return;
 	}
 	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/rust_coarse_01_arm_1k.jpg");
@@ -214,24 +205,15 @@ void LineRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 {
 	auto pContext = renderer.get_DeviceContext();
 
-	// GPUメモリにアクセス
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	pContext->Map(m_pCBMaterialDataSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-	m_pCBMaterialDataSet->Data.Diffuse = m_Color;
-	m_pCBMaterialDataSet->Data.EmissivePower = m_EmissivePower;
-	m_pCBMaterialDataSet->Data.EmissiveColor = VEC3(m_Color.x,m_Color.y,m_Color.z);
-	m_pCBMaterialDataSet->Data.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pCBMaterialDataSet->Data.SpecularPower = 100.0f;
-
-	// データのコピー 
-	memcpy(mappedResource.pData, &m_pCBMaterialDataSet->Data, sizeof(CB_MATERIAL));
-
-	// アクセス終了
-	pContext->Unmap(m_pCBMaterialDataSet->pBuff, 0);
-
-	// PS定数バッファへ送信
-	pContext->PSSetConstantBuffers(4, 1, &m_pCBMaterialDataSet->pBuff);
+	CB_MATERIAL cbMaterial{};
+	cbMaterial.Diffuse = m_Color;
+	cbMaterial.EmissivePower = m_EmissivePower;
+	cbMaterial.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
+	cbMaterial.Specular = VEC4(1.0f, 1.0f, 1.0f, 1.0f);
+	cbMaterial.SpecularPower = 100.0f;
+	
+	/* 定数バッファにセット */
+	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
 	ID3D11ShaderResourceView* tex = nullptr;
 	tex = m_pTex->get_SRV();
@@ -253,13 +235,13 @@ bool LineRenderer::Setup(RendererEngine& renderer)
 	// 頂点バッファの作成
 	if (!CreateVertexBuffer(renderer))
 	{
-		MessageBox(NULL, "頂点バッファの作成が出来ませんでした", "LineRenderer Error", MB_OK);
+		MessageBoxA(NULL, "頂点バッファの作成が出来ませんでした", "LineRenderer Error", MB_OK);
 		return false;
 	}
 	// 定数バッファの作成
 	if (!CreateConstantBuffer(renderer))
 	{
-		MessageBox(NULL, "定数バッファの作成が出来ませんでした", "LineRenderer Error", MB_OK);
+		MessageBoxA(NULL, "定数バッファの作成が出来ませんでした", "LineRenderer Error", MB_OK);
 		return false;
 	}
 
@@ -315,25 +297,25 @@ bool LineRenderer::CreateVertexBuffer(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 bool LineRenderer::CreateConstantBuffer(RendererEngine& renderer)
 {
-	auto pDevice = renderer.get_Device();
+	//auto pDevice = renderer.get_Device();
 
-	// マテリアル --------------------------------------------------------------
-	m_pCBMaterialDataSet = new CB_MATERIAL_SET();
+	//// マテリアル --------------------------------------------------------------
+	//m_pCBMaterialDataSet = new CB_MATERIAL_SET();
 
-	D3D11_BUFFER_DESC mat_BufferDesc;
-	ZeroMemory(&mat_BufferDesc, sizeof(D3D11_BUFFER_DESC));
-	mat_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	mat_BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	mat_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	mat_BufferDesc.ByteWidth = sizeof(CB_MATERIAL);
+	//D3D11_BUFFER_DESC mat_BufferDesc;
+	//ZeroMemory(&mat_BufferDesc, sizeof(D3D11_BUFFER_DESC));
+	//mat_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//mat_BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//mat_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//mat_BufferDesc.ByteWidth = sizeof(CB_MATERIAL);
 
-	// バッファの作成
-	HRESULT hr = pDevice->CreateBuffer(&mat_BufferDesc, nullptr, &m_pCBMaterialDataSet->pBuff);
-	if (FAILED(hr))
-	{
-		delete m_pCBMaterialDataSet;
-		return false;
-	}
+	//// バッファの作成
+	//HRESULT hr = pDevice->CreateBuffer(&mat_BufferDesc, nullptr, &m_pCBMaterialDataSet->pBuff);
+	//if (FAILED(hr))
+	//{
+	//	delete m_pCBMaterialDataSet;
+	//	return false;
+	//}
 
 	return true;
 }

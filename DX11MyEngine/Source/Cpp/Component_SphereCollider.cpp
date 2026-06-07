@@ -47,7 +47,7 @@ void SphereCollider::Start(RendererEngine &renderer)
 
     if (m_pTransform.expired())
     {
-        MessageBox(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
+        MessageBoxA(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
     }
 }
 
