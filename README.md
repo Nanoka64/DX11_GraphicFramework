@@ -25,10 +25,10 @@ https://github.com/Nanoka64/EarthDefenseBattleLine/releases
 ### Youtubeの方に紹介動画を公開しています。
 https://youtu.be/jpEfTbvPlUU
 
-<img src="docs/images/ScreenShot_03.jpg">
+<img src="docs/images/ScreenShot_15.png">
+<img src="docs/images/ScreenShot_17.jpg">
 <img src="docs/images/ScreenShot_05.jpg">
-<img src="docs/images/ScreenShot_06.jpg">
-<img src="docs/images/ScreenShot_08.jpg">
+<img src="docs/images/ScreenShot_14.jpg">
  
 ## 3. 技術スタック
 - **言語**: C++
