@@ -46,6 +46,26 @@ HRESULT Texture::Load_WIC(const std::wstring& path, RendererEngine& renderer)
 	);
 	if (FAILED(hr))return hr;
 
+	// -----------------------------------------------------------------
+	// ミップマップの適用
+	// ----------------------------------------------------------------
+	ScratchImage mipImage;
+	hr = DirectX::GenerateMipMaps(
+		image.GetImages(),
+		image.GetImageCount(),
+		metadata,
+		DirectX::TEX_FILTER_DEFAULT,
+		0,			// 0にすることで1x1のサイズまでミップマップを生成する
+		mipImage
+	);
+
+	if (SUCCEEDED(hr))
+	{
+		// 生成に成功したら、ミップマップを含む新しい画像とメタデータに差し替える
+		image = std::move(mipImage);
+		metadata = image.GetMetadata();
+	}
+
 	m_Width = static_cast<UINT>(metadata.width);
 	m_Height = static_cast<UINT>(metadata.height);
 
