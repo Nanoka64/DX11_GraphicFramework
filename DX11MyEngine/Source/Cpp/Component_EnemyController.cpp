@@ -154,7 +154,8 @@ void EnemyController::Start(RendererEngine& renderer)
 
             // 死亡エフェクト
 			int handle = Master::m_pEffectManager->PlayEffect("EnemyDead_01");
-			Master::m_pEffectManager->SetScaleEffect(handle,1.0f,1.0f, 1.0f);
+			float deadEffectScale =1.5f;
+			Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
 			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + 2.0f, pos.z);
 			m_IsDead = true;
 			m_IsAnim = false;

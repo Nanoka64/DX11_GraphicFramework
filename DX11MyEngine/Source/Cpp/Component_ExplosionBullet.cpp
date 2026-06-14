@@ -279,7 +279,7 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
                     VECTOR3::VEC3 knockbackDir = targetPos - pos;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
                     knockbackDir = knockbackDir.Normalize();
 
-                    // 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
+                    // 少し上（Y軸）に向かせることで、放物線を描いて飛ばせる
                     knockbackDir.y += 0.5f;
                     knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);
                     knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);

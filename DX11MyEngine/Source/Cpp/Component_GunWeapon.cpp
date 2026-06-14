@@ -406,9 +406,9 @@ void GunWeapon::Fire(RendererEngine& renderer)
     XMVECTOR targetPos = XMVectorMultiplyAdd(-lookDir, XMVectorReplicate(targetDistance), vCamPos);
 
 	VEC3 firePos;
-	firePos.x = pos.x + (camForward.m128_f32[0] * 1.0f);
-    firePos.y = pos.y + (camForward.m128_f32[1] * 1.0f);
-    firePos.z = pos.z + (camForward.m128_f32[2] * 1.0f);
+	firePos.x = pos.x + (camForward.m128_f32[0] * 2.0f);
+    firePos.y = pos.y + (camForward.m128_f32[1] * 2.0f);
+    firePos.z = pos.z + (camForward.m128_f32[2] * 2.0f);
 
     // 発射位置からターゲット位置への「弾の方向ベクトル」を求める
     XMVECTOR vFirePos = XMVectorSet(firePos.x, firePos.y, firePos.z, 1.0f);

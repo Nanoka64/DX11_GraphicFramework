@@ -135,20 +135,20 @@ enum class RENDER_PIPELINE_STATE
 #include "SHADER.h"					// シェーダ情報
 #include "Window.h"					// ウインドウ情報
 #include "Helper.h"					// ヘルパー
-#include "IDXResource.h"					// ヘルパー
+#include "IDXResource.h"			// リソース
 #include "ConstantBuffer.h"			// 定数バッファ用構造体
 #include "ConstantBufferStructs.h"	// 定数バッファ用構造体
 #include "Material.h"				// マテリアル
 #include "BitFlag.h"				// ビットフラグ関連
 #include "Master.h"					// シングルトン
 #include "StateMachine.h"			// ステートマシン
-#include "EnemyStateFactory.h"	// ステートの作成
+#include "EnemyStateFactory.h"	    // ステートの作成
+#include "InputFactory.h"           // 入力処理
 
 //#include "ShaderManager.h"	// シェーダ管理
 //#include "Debugger.h"	    // Imguiデバッグ用
 //#include "BlendManager.h"   // ブレンドステート用
 
-#include "InputFactory.h"// 入力処理
 
 /* クラス前方宣言 */
 class RendererEngine;
