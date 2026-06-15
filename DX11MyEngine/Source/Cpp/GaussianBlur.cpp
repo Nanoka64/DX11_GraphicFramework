@@ -8,6 +8,7 @@
 #include "Component_SpriteRenderer.h"
 #include "GameObject.h"
 
+using namespace RenderData;
 
 /// <summary>
 /// ガウシアン関数を利用して重みテーブルを計算する

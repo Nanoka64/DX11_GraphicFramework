@@ -269,6 +269,7 @@ bool SoundManager::InitXA2Sound(void)
 	Load_Wav("Resource/Sound/SE/Weapon/GunFire_01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE01));
 	Load_Wav("Resource/Sound/SE/Weapon/GunFire_02.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_FIRE02));
 	Load_Wav("Resource/Sound/SE/Weapon/Ricochet_01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01));
+	Load_Wav("Resource/Sound/SE/Weapon/Ricochet_02.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET02));
 	Load_Wav("Resource/Sound/SE/Weapon/Explosion01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01));
 	Load_Wav("Resource/Sound/SE/Weapon/GunChange_01.wav", SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::GUN_CHANGE01));
 
@@ -568,6 +569,24 @@ bool SoundManager::Load_Wav(const char *_filename, SOUND_TYPE _type, int _id)
 bool SoundManager::Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop)
 {
 	return Internal_SoundPlay_RandPitch(_type, _id, _pitchRange, _loop);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】SEの再生
+//*　　 ピッチをランダムにする（銃声などのずっと同じ音にしたくない場合）
+//*
+//* [引数]
+//* index：再生するサウンドのハンドル
+//* _pitchRange：ピッチをどのくらいの範囲に収めるか（100の場合、±5%揺らぐ）
+//* _loop：ループさせるか
+//* 
+//* [返値] 
+// true:成功
+// false:失敗
+//*----------------------------------------------------------------------------------------
+bool SoundManager::Play_RandPitch_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, int _pitchRange, const VECTOR3::VEC3& _vel, bool _loop)
+{
+	return Internal_SoundPlay_RandPitch_3D(_type, _id, _pos, _radius, _pitchRange, _vel, _loop);
 }
 
 
@@ -878,6 +897,129 @@ bool SoundManager::Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _
 
 			return true;
 		}
+	}
+
+	return false;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】3Dサウンドの再生（内部関数）
+//*		ピッチを指定の幅でランダムにする 
+//*
+//* [引数]
+//* _type       ：サウンドの種類 (SE、BGM、ボイスなど)
+//* _id         ：再生するサウンドのID 
+//* _pos        ：再生位置
+//* _radius     ：聞こえる範囲 
+//* _pitchRange ：ピッチの幅
+//* _loop       ：ループするかどうか
+//* 
+//* [返値] 
+// true:成功
+// false:失敗
+//*---------------------------------------------------------------------------------------
+bool SoundManager::Internal_SoundPlay_RandPitch_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, int _pitchRange, const VECTOR3::VEC3& _vel , bool _loop)
+{
+	HRESULT hr = S_OK;
+	WaveResource* typeWaveResource = nullptr;
+
+	// 音声データの取得
+	SerchResource(_type, _id, typeWaveResource);
+
+	// 再生が終了しているソースボイスを探す
+	for (auto& slot : m_3DSoundSlotArray) {
+		XAUDIO2_VOICE_STATE state;
+		slot._pSourceVoice->GetState(&state);
+
+		// 使われているスロットは飛ばす
+		if (state.BuffersQueued != 0)continue;
+		if (slot._isUsed == true)continue;
+
+
+		if (typeWaveResource == nullptr) {
+			continue;
+		}
+
+		slot._pos = _pos;		 // 音を鳴らす位置をセット
+		slot._velocity = _vel;	 // 音の移動ベクトルをセット
+		slot._isLoop = _loop;	 // ループするかどうかをセット
+		slot._soundID = _id;	 // 音のIDをセット
+		slot._soundType = _type; // 音の種類をセット
+		slot._isUsed = true;	 // スロット使用中にする
+		slot._volumeDefault = get_Volume(_type);	// 音量のデフォルト値をセット
+		slot._volumeFactor = 1.0f;					// 音量の倍率を初期化
+		slot._radius = _radius;	 // 音の聞こえる範囲
+
+		// エミッター
+		X3DAUDIO_EMITTER emitter = {};
+		emitter.ChannelCount = 1;		// 基本的に3Dサウンド用はモノラルなので 1 チャンネル
+		emitter.CurveDistanceScaler = _radius;
+		emitter.DopplerScaler = 1.0f;
+		emitter.ChannelRadius = 0.0f;
+		emitter.Position.x = slot._pos.x;
+		emitter.Position.y = slot._pos.y;
+		emitter.Position.z = slot._pos.z;
+		emitter.Velocity.x = slot._velocity.x;
+		emitter.Velocity.y = slot._velocity.y;
+		emitter.Velocity.z = slot._velocity.z;
+		emitter.pVolumeCurve = &LinearCurve;
+
+
+		// 3Dサウンドにするための計算
+		X3DAudioCalculate(m_X3DInstanceHandle, &m_Listener, &emitter,
+			X3DAUDIO_CALCULATE_MATRIX,
+			&m_DSPSettings);
+
+		// 計算結果をソースボイスに反映
+		hr = slot._pSourceVoice->SetOutputMatrix(
+			m_pMasteringVoice,
+			1,
+			m_DeviceDetails.InputChannels,
+			m_DSPSettings.pMatrixCoefficients
+		);
+
+		if (FAILED(hr)) {
+			continue;
+		}
+
+		// 波形データ
+		XAUDIO2_BUFFER buff = {};
+		buff.pAudioData = typeWaveResource->_waveBuffer;	// 波形データの先頭アドレス
+		buff.AudioBytes = typeWaveResource->_size;			// 波形データのサイズ
+		buff.Flags = XAUDIO2_END_OF_STREAM;
+		buff.LoopCount = slot._isLoop ? XAUDIO2_LOOP_INFINITE : 0;	// ループさせるか
+
+		float volume = slot._volumeDefault * slot._volumeFactor;
+
+		// ピッチをいじる
+		float pitch = 1.0f + ((rand() % _pitchRange - (_pitchRange / 2)) / 1000.0f);
+		hr = slot._pSourceVoice->SetFrequencyRatio(pitch);
+		if (FAILED(hr)) return false;
+
+		// 音量
+		hr = slot._pSourceVoice->SetVolume(volume);
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		// バッファのクリア
+		slot._pSourceVoice->Stop(XAUDIO2_PLAY_TAILS);
+		slot._pSourceVoice->FlushSourceBuffers();
+
+
+		// 音声バッファの追加
+		hr = slot._pSourceVoice->SubmitSourceBuffer(&buff);
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		// 音を鳴らす
+		hr = slot._pSourceVoice->Start();
+		if (FAILED(hr)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	return false;

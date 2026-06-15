@@ -8,6 +8,7 @@
 using namespace DirectX;
 using namespace VERTEX;
 using namespace Tool::UV;
+using namespace RenderData;
 
 //*---------------------------------------------------------------------------------------
 //* @:SpriteRenderer Class 

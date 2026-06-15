@@ -14,6 +14,7 @@
 #include <string>
 
 using namespace  DirectX;
+using namespace  RenderData;
 using namespace VECTOR2;
 using namespace VECTOR3;
 using namespace VECTOR4;

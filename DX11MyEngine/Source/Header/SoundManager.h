@@ -49,6 +49,7 @@ enum class SOUND_ID
 
     /* 跳弾 */
     ROCOCHET01,
+    ROCOCHET02,
 
     /* 爆発 */
     EXPLOSION01,
@@ -254,11 +255,12 @@ public:
     //
     // 再生関数
     //
-    bool Play(SOUND_TYPE _type, int _id, bool _loop = false);                               // 再生
+    bool Play(SOUND_TYPE _type, int _id, bool _loop = false);                                                                                           // 再生
     bool Play_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3 &_pos, float _radius, const VECTOR3::VEC3 &_vel = VECTOR3::VEC3(), bool _loop = false); // 再生（3D空間で鳴らす）
-    bool Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);    // 再生（ピッチをランダムに揺らす）
-    bool Play_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);         // 指定範囲のサウンドからランダムに再生 _beginIDから音声データが連続している必要あり
-    bool PlayBGM(BGM_ID _id, bool _loop = true);    // BGMの再生
+    bool Play_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);                                                                // 再生（ピッチをランダムに揺らす）
+    bool Play_RandPitch_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, int _pitchRange, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);                   // 再生3D（ピッチをランダムに揺らす）
+    bool Play_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);                                                                     // 指定範囲のサウンドからランダムに再生 _beginIDから音声データが連続している必要あり
+    bool PlayBGM(BGM_ID _id, bool _loop = true);                                                                                                        // BGMの再生
     
     //
     // 停止関数
@@ -280,6 +282,7 @@ private:
     bool Internal_Load_Wav(const char* _filename, WaveResource& _out, int _channelNum = 2, int _sampleLate = 44100, int _bitsPersample = 16);
     bool Internal_SoundPlay(SOUND_TYPE _type, int _id, bool _loop = false);
     bool Internal_SoundPlay_RandPitch(SOUND_TYPE _type, int _id, int _pitchRange, bool _loop = false);
+    bool Internal_SoundPlay_RandPitch_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, int _pitchRange, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);
     bool Internal_SoundPlay_Rand(SOUND_TYPE _type, int _beginId, int _range, bool _loop = false);
     bool Internal_SoundPlay_3D(SOUND_TYPE _type, int _id, const VECTOR3::VEC3& _pos, float _radius, const VECTOR3::VEC3& _vel = VECTOR3::VEC3(), bool _loop = false);
 

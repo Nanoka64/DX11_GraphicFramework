@@ -17,6 +17,7 @@ using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
 using namespace Tool;
+using namespace RenderData;
 
 
 constexpr float DOF_MAX_RANGE = 1000.0f;

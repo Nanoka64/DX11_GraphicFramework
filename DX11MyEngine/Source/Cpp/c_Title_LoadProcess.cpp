@@ -217,7 +217,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 
         // コライダーの追加
         auto collider = pPlayerObj->add_Component<BoxCollider>();
-        collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
+        collider->set_Size(VEC3(0.5f, 1.0f, 0.5f));
         collider->set_Center(VEC3(0.0f, 1.0f, 0.0f));
 
         // コリジョンのカテゴリ

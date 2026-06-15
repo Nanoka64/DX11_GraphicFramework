@@ -403,7 +403,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     /* ポイントライトの生成 (Cubuで分かりやすく)*/
     {
         // マテリアル取得
-        auto matPtr = Master::m_pResourceManager->FindMaterial("PointLight");
+        auto matPtr = Master::m_pResourceManager->FindMaterial("Block");
 
         SetupMaterialInfo matInfo[1];
         matInfo[0].Index = 0;
@@ -436,6 +436,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             obj->get_Transform().lock()->set_Scale(scl);
             obj->set_Tag("Block");
             obj->set_IsUpdateAllowedDuringPause(false);
+            obj->set_IsStatic(false);
             auto light = obj->add_Component<PointLight>();
             light->set_LightColor(col);
             light->set_Range(15.0f);
@@ -493,6 +494,41 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         // コライダーの登録
         Master::m_pCollisionManager->RegisterCollider(collider);
     }
+
+
+    /* 足場 */
+    {
+        // マテリアル取得
+        auto matPtr = Master::m_pResourceManager->FindMaterial("Block");
+        SetupMaterialInfo matInfo[1];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr;
+        CreateUtilityMeshInfo mesh;
+        mesh.pRenderer = m_pRenderer;
+        mesh.Type = UTILITY_MESH_TYPE::CUBE;
+        mesh.MatNum = 1;
+        mesh.MaterialData = matInfo;
+        mesh.IsActive = true;
+        mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+        mesh.IsNormalMap = true;
+        auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        obj->get_Transform().lock()->set_Pos(VEC3(-50.0f, 1.0f, 90.0f));
+        obj->get_Transform().lock()->set_Scale(VEC3(5.0f, 1.0f, 5.0f));
+        obj->set_Tag("Scaffolding");
+
+        // コライダーの追加
+        auto collider = obj->add_Component<BoxCollider>();
+        collider->set_Size(VEC3(5.0f, 1.0f, 5.0f));
+        collider->set_Center(VEC3(0, 0, 0));
+        collider->set_IsStatic(true);
+
+        // 衝突カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
+
+        // コライダーの登録
+        Master::m_pCollisionManager->RegisterCollider(collider);
+    }
+
 
     /* 武器のサイト用スプライト*/
     {

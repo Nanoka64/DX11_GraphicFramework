@@ -5,6 +5,7 @@
 
 using namespace VERTEX;
 using namespace Tool::UV;
+using namespace RenderData;
 
 // í∏ì_êî ***************************************
 const UINT g_QuadVertexNum		   = 4;

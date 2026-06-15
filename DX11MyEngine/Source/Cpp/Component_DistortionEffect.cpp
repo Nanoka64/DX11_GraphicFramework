@@ -3,6 +3,7 @@
 #include "Component_DistortionEffect.h"
 
 using namespace DirectX;
+using namespace RenderData;
 using namespace VERTEX;
 using namespace VECTOR3;
 using namespace VECTOR2;

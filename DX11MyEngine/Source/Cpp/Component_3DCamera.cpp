@@ -30,7 +30,7 @@ m_LookDir({ 0.0f,0.0f,0.0f }),
 m_Angle_H(1.57f),
 m_Angle_V(0.f),
 m_Fov(45.0f),
-m_NearClipDist(1.0f),
+m_NearClipDist(0.4f),
 m_FarClipDist(2000.0f),
 m_IsControl(true),
 m_Shaker()

@@ -3,6 +3,8 @@
 //      * Includes *
 //--------------------------------------------------------------------------------------
 //using namespace DirectX;
+#include "ConstantRenderData.h"
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -53,7 +55,7 @@ private:
 
     DWORD m_StartTime;
 
-    RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
+    RenderData::RENDER_PASS m_CrntRenderPass;   // 現在の描画パス
 
     class RenderPipeline *m_pRendererPipeline;      // 描画パイプラインの実体を持つ
 	CB_WINDOW_SET *m_pCBWindowSet;                  // ウインドウ情報の定数バッファセット
@@ -113,18 +115,18 @@ public:
     /// 現在の描画パスを取得
     /// </summary>
     /// <returns></returns>
-    RENDER_PASS get_CrntRenderPass()const;
+    RenderData::RENDER_PASS get_CrntRenderPass()const;
 
     /// <summary>
     /// 描画パスを設定
     /// </summary>
-    void set_CrntRenderPass(RENDER_PASS pass);
+    void set_CrntRenderPass(RenderData::RENDER_PASS pass);
 
     /// <summary>
     /// カリングモードの設定
     /// </summary>
     /// <param name="mode"></param>
-    void RegisterCullMode(CULL_MODE mode);
+    void RegisterCullMode(RenderData::CULL_MODE mode);
 
     void RegisterRendererPipeline(class RenderPipeline *pPipeline);
 
@@ -132,12 +134,12 @@ public:
     /// レンダリングパイプラインのセットアップ
     /// </summary>
     /// <returns></returns>
-    bool CreateRendererPipeline(RENDER_PIPELINE_STATE type);
+    bool CreateRendererPipeline(RenderData::RENDER_PIPELINE_STATE type);
 
     /// <summary>
     /// デフォルトのレンダリングパイプラインを実行
     /// </summary>
-    void ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type, const class Camera3D* pCam);
+    void ExecuteDefaultRendererPipeline(RenderData::RENDER_PIPELINE_STATE type, const class Camera3D* pCam);
 
     // ************************************************************************
     // 

@@ -4,6 +4,7 @@
 #include "RendererEngine.h"
 
 using namespace VERTEX;
+using namespace RenderData;
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ

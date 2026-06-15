@@ -9,6 +9,7 @@
 
 using namespace DirectX;
 using namespace VERTEX;
+using namespace RenderData;
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ

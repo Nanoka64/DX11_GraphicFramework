@@ -96,41 +96,8 @@ constexpr int DIRECTIONLIGHT_MAX_NUM	= 1;   // ディレクションライトの最大数
 #define IS_WRITE_ENABLE   // DirectWriteを使用しているとRenderDocが使用できないのでそういう時にこれを消す
 
 
-/// <summary>
-/// 描画パス
-/// </summary>
-enum class RENDER_PASS
-{
-    MAIN,   // 通常
-    SHADOW, // シャドウ
-};
-
-/// <summary>
-/// カリングモード
-/// </summary>
-enum class CULL_MODE
-{
-    NONE,
-    FRONT,
-    BACK,
-
-    NUM,
-};
-
-/// <summary>
-/// レンダリングパイプラインの種類
-/// </summary>
-enum class RENDER_PIPELINE_STATE
-{
-    NONE,
-    DEFAULT,
-    DEFAULT_2D,
-
-    NUM,
-};
-
-
 /* 自作ヘッダ */
+#include "ConstantRenderData.h"		// 描画情報
 #include "VERTEX.h"					// 頂点情報
 #include "SHADER.h"					// シェーダ情報
 #include "Window.h"					// ウインドウ情報
@@ -144,6 +111,7 @@ enum class RENDER_PIPELINE_STATE
 #include "StateMachine.h"			// ステートマシン
 #include "EnemyStateFactory.h"	    // ステートの作成
 #include "InputFactory.h"           // 入力処理
+#include "RenderCommand.h"			// 描画コマンド
 
 //#include "ShaderManager.h"	// シェーダ管理
 //#include "Debugger.h"	    // Imguiデバッグ用

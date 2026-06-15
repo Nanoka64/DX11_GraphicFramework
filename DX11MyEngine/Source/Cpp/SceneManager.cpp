@@ -34,6 +34,7 @@ using namespace Tool::UV;
 using namespace Tool;
 using namespace Input;
 
+using namespace RenderData;
 using namespace GIGA_Engine;
 
 using namespace SceneStateEnums;

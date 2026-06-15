@@ -23,6 +23,7 @@ WeaponBox_Billboard,1,1,1,1,1,1,1,1,50,1,0,0,5,Resource/Texture/Item/WeaponBox.p
 Armor_Billboard,1,1,1,1,1,1,1,1,50,1,0,0,5,Resource/Texture/Item/Armor.png,-1,-1,1
 LaserPointBillboard,5,1,1,1,1,1,1,1,50,1,0,0,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 PointLight,1,1,1,1,1,1,1,1,50,1,1,1,0,Resource/Texture/Wall_W040.jpg,Resource/Texture/Wall_W040_n.png,-1,0
+Block,1,1,1,1,1,1,1,1,120,1,1,1,0,Resource/Texture/Materials/concrete_pavement_diff_2k.png,Resource/Texture/Materials/concrete_pavement_nor_dx_2k.png,-1,0
 Decal_BulletHole,1,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/BulletHole.png,Resource/Texture/Particle/BulletHole_n.png,-1,0
 Decal_Ant_Splash,1,1,1,1,1,1,1,1,100,1,1,1,1.5,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 RocketLauncher,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Weapon/RocketLauncher/Simple rocket launcher Tex.png,Resource/Texture/DefaultN_Map.png,-1,0

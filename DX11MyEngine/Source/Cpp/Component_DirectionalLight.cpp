@@ -19,8 +19,8 @@ using namespace DirectX;
 //*----------------------------------------------------------------------------------------
 DirectionalLight::DirectionalLight(std::weak_ptr<GameObject> pOwner, int updateRank) : Light(pOwner, updateRank),
 m_FocusOffsetDistance(100.0f),
-m_OrthographicWidth(200.0f),
-m_OrthographicHeigh(200.0f),
+m_OrthographicWidth(150.0f),
+m_OrthographicHeigh(150.0f),
 m_ShadowDistance(200.0f)
 {
 	this->set_Tag("DirectionalLight");

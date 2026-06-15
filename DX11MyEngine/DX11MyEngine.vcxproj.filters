@@ -1229,6 +1229,9 @@
     <ClInclude Include="Source\Header\ConstantRenderData.h">
       <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Header\RenderCommand.h">
+      <Filter>ソース ファイル\Constant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ConstantBuffers_H.hlsli">

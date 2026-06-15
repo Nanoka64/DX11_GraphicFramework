@@ -8,6 +8,7 @@
 #include <algorithm>
 
 using namespace Path;
+using namespace RenderData;
 using namespace Microsoft::WRL;
 
 //*****************************************************************

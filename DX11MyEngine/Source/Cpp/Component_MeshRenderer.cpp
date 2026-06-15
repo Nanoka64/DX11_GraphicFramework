@@ -8,6 +8,7 @@
 
 using namespace DirectX;
 using namespace VERTEX;
+using namespace RenderData;
 using namespace Tool::UV;
 
 //*---------------------------------------------------------------------------------------
