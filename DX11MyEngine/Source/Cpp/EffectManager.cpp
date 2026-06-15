@@ -4,6 +4,7 @@
 #include "RendererEngine.h"
 #include <Effekseer.h>
 
+using namespace DirectX;
 using namespace VECTOR3;
 
 EffectManager::EffectManager():

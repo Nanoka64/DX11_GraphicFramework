@@ -7,6 +7,7 @@
 #include "Component_3DCamera.h"
 
 using namespace VECTOR3;
+using namespace DirectX;
 
 
 

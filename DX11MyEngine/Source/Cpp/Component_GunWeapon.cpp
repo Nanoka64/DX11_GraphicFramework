@@ -17,6 +17,7 @@
 #include "Component_SkinnedMeshAnimator.h"
 #include "CollisionInfo.h"
 
+using namespace DirectX;
 using namespace GIGA_Engine;
 using namespace Input;
 using namespace VECTOR3;

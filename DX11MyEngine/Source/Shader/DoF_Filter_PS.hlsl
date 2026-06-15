@@ -33,11 +33,11 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     
     //// 深度が1.0f に近い背景は薄くぼかす
-    //if (depth >= 0.9999)
-    //{
-    //    blurTex.a = 0.5f;
-    //    return blurTex;
-    //}
+    if (depth >= 0.9999)
+    {
+        blurTex.a = 0.5f;
+        return blurTex;
+    }
     
     // ※ 深度値はNDC空間のZ値なのでビュー空間に戻す
     float4 ndcPos = float4(0, 0, 0, 0); // NDC空間（正規化デバイス座標）

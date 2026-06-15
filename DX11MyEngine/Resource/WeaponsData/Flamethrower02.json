@@ -1,0 +1,28 @@
+{
+  "level": 0,
+  "name": "火炎放射器P2",
+  "bulletMaxNum": 10,
+  "bulletSimultaneousNum": 8,
+  "fireRate": 10.0,
+  "reloadTime": 3.5,
+  "accuracy": 0.1,
+  "zoomLength": 2.0,
+  "isLaserSight": false,
+  "soundID": 0,
+  "bulletType": "NORMAL",
+  "bulletParam": {
+    "damage": 5.0,
+    "damageDistAttenuationRate": 0.5,
+    "speed": 100.0,
+    "acceleration": 0.0,
+    "range": 100.0,
+    "penetrationsCount": 5,
+    "collisionSize": 0.0,
+    "gravityScale": 0.0,
+    "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
+    "bulletMaterialTag" : "Flame_01",
+    "decalMaterialTag" : "",
+    "hitEffectTag" : "BulletHit_Flame",
+    "scale": [2.5, 2.5, 2.5]
+  }
+}

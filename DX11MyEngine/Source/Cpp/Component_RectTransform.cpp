@@ -3,6 +3,7 @@
 #include "RendererEngine.h"
 
 
+using namespace DirectX;
 using namespace VECTOR2;
 using namespace VECTOR3;
 

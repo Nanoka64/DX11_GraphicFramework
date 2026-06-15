@@ -226,9 +226,6 @@
     <Filter Include="ソース ファイル\Game\Component\Weapon\Gun\State">
       <UniqueIdentifier>{a128b6e8-5f98-4aa6-9598-5ad70908ef49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Constant">
-      <UniqueIdentifier>{53d4c155-2ccd-4fcb-8e3d-c1c90f153528}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Scene">
       <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
     </Filter>
@@ -297,6 +294,9 @@
     </Filter>
     <Filter Include="ソース ファイル\BaseComponent\Effect">
       <UniqueIdentifier>{7d07187a-6b47-4bc0-b449-0855f0bf640a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Constant">
+      <UniqueIdentifier>{53d4c155-2ccd-4fcb-8e3d-c1c90f153528}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -616,7 +616,7 @@
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ConstantUIData.cpp">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_BuildingController.cpp">
       <Filter>ソース ファイル\Game\Component\Building</Filter>
@@ -1077,22 +1077,22 @@
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantBulletData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantWeaponData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantUIData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\SceneStateEnums.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantPlayerData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantUtilityData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_BuildingController.h">
       <Filter>ソース ファイル\Game\Component\Building</Filter>
@@ -1101,10 +1101,10 @@
       <Filter>ソース ファイル\Game\Component\Building\State_Building</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantBuildingData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantEnemyData.h">
-      <Filter>ソース ファイル\Game\Constant</Filter>
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\BuildingStateFactory.h">
       <Filter>ソース ファイル\State\Factory</Filter>
@@ -1225,6 +1225,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Physics.h">
       <Filter>ソース ファイル\BaseComponent\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ConstantRenderData.h">
+      <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

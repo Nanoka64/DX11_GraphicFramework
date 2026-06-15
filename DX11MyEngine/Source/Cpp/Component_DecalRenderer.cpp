@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "BlendManager.h"
 
+using namespace DirectX;
 using namespace VERTEX;
 
 //*---------------------------------------------------------------------------------------
@@ -84,12 +85,11 @@ void DecalRenderer::Draw(RendererEngine &renderer)
 
     auto transform = m_pOwner.lock()->get_Transform().lock();
 
-
     /* ========== 定数バッファの更新 ========== */
     // ワールド行列セット ==========================
     XMMATRIX worldMtx = transform->get_WorldMtx();
     worldMtx = XMMatrixTranspose(worldMtx);                 // 行列の転置
-    XMStoreFloat4x4(&cbTransform.WorldMtx, worldMtx);  // XMMATRIX → XMFLOAT4X4変換
+    XMStoreFloat4x4(&cbTransform.WorldMtx, worldMtx);       // XMMATRIX → XMFLOAT4X4変換
 
     // デカール情報セット ==========================
     XMMATRIX invWorld = XMMatrixInverse(NULL, worldMtx);

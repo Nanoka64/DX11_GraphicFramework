@@ -10,7 +10,9 @@
 #include "DirectWriteManager.h"
 #include "RendererEngine.h"
 #include "CollisionInfo.h"
+#include "ConstantUtilityData.h"
 
+using namespace UtilityData;
 using namespace Input;
 using namespace VECTOR3;
 using namespace VECTOR2;
@@ -397,7 +399,23 @@ void PlayerController::LateUpdate(RendererEngine& renderer)
 	//-----------------------------------------------------------------------------
 	else if (!m_IsGrounded)
 	{
-		ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_LOOP, 0.5f);
+		// レイの情報を作る
+		CollInData_Ray ray;
+		ray._point = crntPos;
+		ray._dir = -upVec; // 下方向
+
+		unsigned hitMask = UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+		CollisionInfo hitInfo;
+
+		// レイキャストして当たりそうになっていたら、ジャンプダウン状態に移行する
+		if (Master::m_pCollisionManager->CheckRaycast(ray, hitMask, &hitInfo))
+		{
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_DOWN, 0.5f);
+		}
+		else
+		{
+			ChangeAnimation(PLAYER_RANGER_ANIM_ID::JUMP_LOOP, 0.5f);
+		}
 	}
 	//-----------------------------------------------------------------------------
 	// ■ 地上にいる場合の「移動」と「待機」のアニメーション制御

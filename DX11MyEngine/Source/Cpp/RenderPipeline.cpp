@@ -19,8 +19,8 @@ using namespace VECTOR2;
 using namespace Tool;
 
 
-constexpr float DOF_MAX_RANGE = 2800.0f;
-constexpr float DOF_MIN_RANGE = 300.0f;
+constexpr float DOF_MAX_RANGE = 1000.0f;
+constexpr float DOF_MIN_RANGE = 200.0f;
 
 constexpr const UINT STENCIL_REF_DECAL   = 1;   // デカールの参照値
 constexpr const UINT STENCIL_REF_STATIC  = 1;   // 静的オブジェクトの参照値

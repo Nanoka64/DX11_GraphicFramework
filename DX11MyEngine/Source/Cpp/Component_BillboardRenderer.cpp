@@ -7,6 +7,7 @@
 #include "BlendManager.h"
 
 
+using namespace DirectX;
 using namespace VERTEX;
 
 //*---------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #include "DebugMesh.h"
 #include "GameObject.h"
 
+using namespace DirectX;
 using namespace GIGA_Engine;
 using namespace VECTOR3;
 

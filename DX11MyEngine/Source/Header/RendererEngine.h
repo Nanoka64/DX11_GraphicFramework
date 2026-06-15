@@ -2,11 +2,7 @@
 //--------------------------------------------------------------------------------------
 //      * Includes *
 //--------------------------------------------------------------------------------------
-#include "TRIANGLE.h"
-#include "RenderParam.h"	// 描画情報
-#include "SHADER.h"	// 描画情報
-
-using namespace DirectX;
+//using namespace DirectX;
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -209,37 +205,37 @@ public:
     /// </summary>
     /// <param name="viewMat"></param>
     /// <returns></returns>
-    bool SetupViewTransform(const XMMATRIX& viewMat);
+    bool SetupViewTransform(const DirectX::XMMATRIX& viewMat);
 
     /// <summary>
     /// プロジェクション行列の取得
     /// </summary>
     /// <returns></returns>
-    XMMATRIX get_ProjectionMatrix()const;
+    DirectX::XMMATRIX get_ProjectionMatrix()const;
     
     /// <summary>
     /// ビュープロジェクション行列の取得
     /// </summary>
     /// <returns></returns>
-    XMMATRIX get_ViewProjectionMatrix()const;
+    DirectX::XMMATRIX get_ViewProjectionMatrix()const;
 
     /// <summary>
     /// ビュープロジェクション行列の逆行列取得
     /// </summary>
     /// <returns></returns>
-    XMFLOAT4X4 get_ViewProjectionInvMatrix()const;
+    DirectX::XMFLOAT4X4 get_ViewProjectionInvMatrix()const;
 
     /// <summary>
     /// ビュー行列の取得
     /// </summary>
     /// <returns></returns>
-    XMMATRIX get_ViewMatrix()const;
+    DirectX::XMMATRIX get_ViewMatrix()const;
 
     /// <summary>
     /// ビュー逆行列の取得
     /// </summary>
     /// <returns></returns>
-    XMMATRIX get_ViewInvMatrix()const;
+    DirectX::XMMATRIX get_ViewInvMatrix()const;
 
     // ************************************************************************
     // 

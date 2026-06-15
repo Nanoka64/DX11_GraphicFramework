@@ -10,8 +10,10 @@
 #include "Component_3DCamera.h"
 #include "GameObject.h"
 #include "ConstantBuffer.h"
+#include "ConstantRenderData.h"
 #include <string>
 
+using namespace  DirectX;
 using namespace VECTOR2;
 using namespace VECTOR3;
 using namespace VECTOR4;
