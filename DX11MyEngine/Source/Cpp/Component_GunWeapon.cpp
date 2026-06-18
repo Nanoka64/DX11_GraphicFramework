@@ -75,7 +75,7 @@ void GunWeapon::Start(RendererEngine& renderer)
 
     // ステートの作成
     WeaponStateFactory::CreateGunWeapon(m_StateMachine, 0, renderer);
-    m_StateMachine.SetCrntState(GUN_STATE::GUN_STATE_IDLE);
+    m_StateMachine.SetStartState(GUN_STATE::GUN_STATE_IDLE);
 
     // 全ビットを0に
     m_WeaponFlags.Init();

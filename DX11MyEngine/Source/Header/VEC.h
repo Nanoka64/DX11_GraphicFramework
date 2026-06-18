@@ -274,6 +274,19 @@ namespace VECTOR4
 			return *this;
 		}
 
+
+		/// <summary>
+		/// XMVECTOR ‚©‚ç VEC4 ‚Ö‚Ì•ÏŠ·
+		/// </summary>
+		/// <param name="vec"></param>
+		/// <returns></returns>
+		static VEC4 FromXMVECTOR(const DirectX::XMVECTOR& vec)
+		{
+			DirectX::XMFLOAT4 tmp;
+			DirectX::XMStoreFloat4(&tmp, vec);
+			return VEC4(tmp);
+		}
+
 		// ‘S‚Ä‚Ì—v‘f‚ğ1‚Å‰Šú‰»
 		void AllOne()
 		{

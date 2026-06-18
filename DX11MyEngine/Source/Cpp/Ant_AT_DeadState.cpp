@@ -2,8 +2,13 @@
 #include "Component_EnemyController.h"
 #include "Component_BoxCollider.h"
 #include "Component_Physics.h"
+#include "Component_DecalRenderer.h"
+#include "Component_TimerDestruction.h"
 #include "Ant_StateHeader.h"
 #include "GameObject.h"
+#include "RendererEngine.h"
+#include "MeshFactory.h"
+#include "ResourceManager.h"
 
 using namespace DirectX;
 using namespace VECTOR3;
@@ -22,7 +27,11 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	// 移動ベクトルは0
 	pOwner->set_MoveVelocity(VEC3());
 
+	// アニメーションの停止
 	pOwner->set_IsAnim(false);
+
+	// 死亡エフェクトの作成
+	SpawnDeadEffect(pOwner);
 
 	pOwner->set_MoveLogicState(MOVE_BEHAVIOUR_TYPE::NONE);
 
@@ -40,9 +49,9 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 
 	VECTOR3::VEC3 knockbackDir;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
 
-	// 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ぶ
+	// 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ばせる
 	knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
-	knockbackDir.y = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
+	knockbackDir.y += 5.0f;
 	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
 
 	auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
@@ -84,7 +93,9 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 		// 共通処理
 		int commonRes = Ant_CommonStateProcess::CommonProcess(pOwner);
 		// 同じ場合も返す
-		if (commonRes != -1 && commonRes != ANT_STATE::ANT_STATE_ACTIVE_DEAD){
+		if (commonRes != -1 && 
+			commonRes != ANT_STATE::ANT_STATE_ACTIVE_DEAD && 
+			commonRes != ANT_STATE::ANT_STATE_ACTIVE_HIT_STUN){
 			return commonRes;
 		}
 
@@ -121,4 +132,64 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 	}
 
 	return ANT_STATE::ANT_STATE_ACTIVE_DEAD;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:Ant_AT_DeadState Class 
+//*【?】死亡エフェクトの生成
+//* 引数：1.EnemyController
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void Ant_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner)
+{
+	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	VEC3 pos = myTransform->get_VEC3ToPos();
+
+	// ****************************************************
+	//				 死亡音再生
+	// ****************************************************
+	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos, SOUND_DEAD_RADIUS);
+
+	// ****************************************************
+	//				アイテム出現
+	// ****************************************************
+	Master::m_pItemManager->SpawnItemRand(DROP_ITEM_MIN, DROP_ITEM_MAX, pos, 0.0f);
+
+	pOwner->set_IsAnim(false);	// アニメーションを停止
+
+	// 死亡エフェクト
+	int handle = Master::m_pEffectManager->PlayEffect("EnemyDead_01");
+	float deadEffectScale = 1.5f;
+	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
+	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + 2.0f, pos.z);
+
+	auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");
+	SetupMaterialInfo matInfo[1];
+	matInfo[0].Index = 0;
+	matInfo[0].pMaterialData = matPtr;
+
+	CreateDecalInfo decal;
+	decal.pRenderer = m_pRenderer;
+	decal.Type = UTILITY_MESH_TYPE::CUBE;
+	decal.MatNum = 1;
+	decal.MaterialData = matInfo;
+	decal.IsActive = false;
+	decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+	decal.IsNormalMap = false;
+	decal.IsDynamic = true;
+
+	VEC3 scale;
+	scale.x = 20.0f;
+	scale.y = 20.0f;
+	scale.z = 1.0f;
+
+	auto obj = MeshFactory::CreateDecal(decal);
+	obj->get_Component<DecalRenderer>()->Start(*m_pRenderer);
+	obj->get_Transform().lock()->set_Pos(pos);
+	obj->get_Transform().lock()->set_Scale(scale);
+	obj->get_Transform().lock()->set_RotateToRad(1.57f, Tool::RandRange(0.0f, 6.14f), 0.0f);
+	obj->set_Tag("Ant_Splash");
+	auto timer = obj->add_Component<TimerDestruction>();
+	timer->set_LifeTime(15.0f);  // 生存時間
 }

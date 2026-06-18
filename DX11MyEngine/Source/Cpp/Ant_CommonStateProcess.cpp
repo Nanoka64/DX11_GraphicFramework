@@ -22,6 +22,10 @@ int Ant_CommonStateProcess::CommonProcess(class EnemyController* pOwner)
 	{
 		return ANT_STATE::ANT_STATE_ACTIVE_DEAD;
 	}
+	else if (pOwner->get_IsOnDamage())
+	{
+		return ANT_STATE::ANT_STATE_ACTIVE_HIT_STUN;
+	}
 	else
 	{
 		// ステート内で移動処理が実行されるので、移動後の値が取れる

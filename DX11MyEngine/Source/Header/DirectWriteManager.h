@@ -63,6 +63,8 @@ private:
 	/// <param name="_pTextLayout">テキストレイアウトポインタの参照</param>
 	void DrawOutLine(const D2D1_POINT_2F& _pos, const Microsoft::WRL::ComPtr<IDWriteTextLayout> &_pTextLayout);
 
+    class RendererEngine* m_pRenderEngine;
+
 public:
     DirectWriteManager();
     ~DirectWriteManager();
@@ -109,6 +111,16 @@ public:
     void DrawString(std::string str, const VECTOR2::VEC2 &_pos, const std::string& formatTag, D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE, bool _isUnderLine = true, DWRITE_TEXT_ALIGNMENT _alignment = DWRITE_TEXT_ALIGNMENT_LEADING);
     void DrawString(std::wstring str, const VECTOR2::VEC2& _pos, const std::string& formatTag, D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE, bool _isUnderLine = true, DWRITE_TEXT_ALIGNMENT _alignment = DWRITE_TEXT_ALIGNMENT_LEADING);
 
+    /// <summary>
+    /// 文字列を3D空間に描画する
+    /// </summary>
+    /// <param name="_str"></param>
+    /// <param name="_pos"></param>
+    /// <param name="formatTag"></param>
+    /// <param name="options"></param>
+    /// <param name="_isUnderLine"></param>
+    /// <param name="_alignment"></param>
+    void DrawString3D(const std::string& _str, const VECTOR3::VEC3& _pos, const std::string& formatTag, D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE, bool _isUnderLine = true, DWRITE_TEXT_ALIGNMENT _alignment = DWRITE_TEXT_ALIGNMENT_LEADING);
 
     /// <summary>
 	/// アライメント指定の文字列の表示

@@ -3,7 +3,9 @@
 #include "FontConfig.h"
 #include "RendererEngine.h"
 
-
+using namespace VECTOR3;
+using namespace VECTOR2;
+using namespace VECTOR4;
 
 //--------------------------------------------------------------------------------------
 //      * DirectWriteManager Class - コンストラクタ - *
@@ -111,6 +113,8 @@ HRESULT DirectWriteManager::Init(RendererEngine &render)
     //// 色の設定
     //hr = m_pRenderTarget->CreateSolidColorBrush(m_pFontData->color, &m_pSolidBrush);
     //CHECK_HRESULT(hr);
+
+    m_pRenderEngine = &render;
 
     return hr;
 #endif // IS_WRITE_ENABLE
@@ -417,6 +421,86 @@ void DirectWriteManager::DrawString(std::wstring _wstr, const VECTOR2::VEC2& _po
     D2D1_POINT_2F pos = { 0,0 };
     pos.x = _pos.x;
     pos.y = _pos.y;
+
+    // アウトラインの描画
+    if (m_OutLineSize > 0.0f)
+    {
+        this->DrawOutLine(pos, pTextLayout);
+        m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+    }
+
+    // 描画
+    m_pRenderTarget->DrawTextLayout(pos, pTextLayout.Get(), m_pSolidBrush, _options);
+#endif
+}
+
+//--------------------------------------------------------------------------------------
+//      * DirectWriteManager Class - 文字列を3D空間に描画する - *
+//       :文字列
+//       :座標
+//       :使用するフォーマットキー
+//       :整形オプション
+//--------------------------------------------------------------------------------------
+void DirectWriteManager::DrawString3D(const std::string& _str, const VECTOR3::VEC3& _pos, const std::string & _formatTag, D2D1_DRAW_TEXT_OPTIONS _options, bool _isUnderLine, DWRITE_TEXT_ALIGNMENT _alignment)
+{
+    HRESULT hr = S_OK;
+
+
+#ifndef IS_WRITE_ENABLE
+    return;
+#else
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> pTextLayout;  // テキスト情報
+
+    // ワイド文字に変換
+    std::wstring wstr = StringToWString(_str);
+
+    // レンダーターゲットのサイズ取得
+    D2D1_SIZE_F RVSize = m_pRenderTarget->GetSize();
+
+    // テキストレイアウトの作成
+    hr = m_pWriteFactory->CreateTextLayout(
+        wstr.c_str(),
+        static_cast<UINT32>(wstr.size()),
+        m_pTextFormatMap[_formatTag].Get(),
+        RVSize.width,
+        RVSize.height,
+        pTextLayout.GetAddressOf()
+    );
+    CHECK_HRESULT_NO_BOOL(hr);
+
+    // テキストの配置設定
+    pTextLayout->SetTextAlignment(_alignment);
+    
+	// 下線
+    if (_isUnderLine) {
+        // 下線
+        DWRITE_TEXT_RANGE textRange = { 0,      // 下線を引く始まりの文字インデックス
+                                        static_cast<UINT32>(wstr.length()) };    // 下線の長さ(何文字分か).
+
+        // 下線設定
+        hr = pTextLayout->SetUnderline(TRUE, textRange);
+        CHECK_HRESULT_NO_BOOL(hr);
+    }
+
+    // ワールド座標から、スクリーン座標への変換
+    float screenWidth = Master::m_pDataManager->get_ScreenWidth();
+    float screenHeight = Master::m_pDataManager->get_ScreenHeight();
+    DirectX::XMMATRIX view = m_pRenderEngine->get_ViewMatrix();
+    DirectX::XMMATRIX proj = m_pRenderEngine->get_ProjectionMatrix();
+    DirectX::XMMATRIX viewProj = DirectX::XMMatrixMultiply(view, proj);
+    DirectX::XMVECTOR vWorld = DirectX::XMVectorSet(_pos.x, _pos.y, _pos.z, 1.0f);
+    VEC4 clip = VEC4::FromXMVECTOR(DirectX::XMVector4Transform(vWorld, viewProj));
+    VEC3 ndc;
+    ndc.x = clip.x / clip.w;
+    ndc.y = clip.y / clip.w;
+    ndc.z = clip.z / clip.w;
+    float screenX = (ndc.x + 1.0f) * (screenWidth * 0.5f);
+    float screenY = (1.0f - ndc.y) * (screenHeight * 0.5f); // Y軸は下方向が正になるよう反転
+
+    // 描画位置の確定
+    D2D1_POINT_2F pos = { 0,0 };
+    pos.x = screenX;
+    pos.y = screenY;
 
     // アウトラインの描画
     if (m_OutLineSize > 0.0f)

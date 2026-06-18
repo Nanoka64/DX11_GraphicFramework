@@ -29,10 +29,10 @@ using namespace UtilityData;
 //*----------------------------------------------------------------------------------------
 EnemyController::EnemyController(std::weak_ptr<GameObject> pOwner, int updateRank)
     :IComponent(pOwner, updateRank),
-    m_IsDead(false),
 	m_StateMachine(this),
 	m_IsAnim(false),
 	m_IsGrounded(false),
+	m_IsOnDamage(false),
 	m_CrntAnimID(-1),
 	m_MoveSpeed(0.0f),
 	m_MoveVelocity(VECTOR3::VEC3()),
@@ -79,124 +79,29 @@ void EnemyController::Start(RendererEngine& renderer)
 
 	// HP管理コンポーネントの取得
 	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
+	
 
+	// *********************************************************
+	// ステート内で処理を行うようにしたので要らないかも？
+	// *********************************************************
 	// TODO:処理関数を外から入れるようにする
 	// 被弾時の処理登録
 	m_pHealthComp.lock()->RegisterOnDamage(
 		[this, &renderer](float _damage)
 		{
-			auto transform = m_pOwner.lock()->get_Transform().lock();
-			VEC3 pos = transform->get_VEC3ToPos();
-			VEC3 rot;
-			rot.x = Tool::RandRange(-3.14f, 3.14f);
-			rot.y = Tool::RandRange(-3.14f, 3.14f);
-			rot.z = Tool::RandRange(-3.14f, 3.14f);
-
-			ChangeState(ANT_STATE::ANT_STATE_ACTIVE_TRACKING);
-
-			// ****************************************************
-			//				 被弾音再生
-			// ****************************************************
-			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), pos, SOUND_HIT_RADIUS);
-
-			int hit_handle = Master::m_pEffectManager->PlayEffect("EnemyHit_01");
-			Master::m_pEffectManager->SetScaleEffect(hit_handle, 1.0f, 1.0f, 1.0f);
-			Master::m_pEffectManager->SetPositionEffect(hit_handle, pos.x, pos.y + 2.0f, pos.z);	// 位置が足元になってしまってるので、少し上に補正
-			Master::m_pEffectManager->SetRotationEffect(hit_handle, rot.x, rot.y, rot.z);
-
-
-			auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");
-			SetupMaterialInfo matInfo[1];
-			matInfo[0].Index = 0;
-			matInfo[0].pMaterialData = matPtr;
-
-			CreateDecalInfo decal;
-			decal.pRenderer = &renderer;
-			decal.Type = UTILITY_MESH_TYPE::CUBE;
-			decal.MatNum = 1;
-			decal.MaterialData = matInfo;
-			decal.IsActive = false;
-			decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
-			decal.IsNormalMap = false;
-			decal.IsDynamic = true;
-
-			VEC3 scale;
-			scale.x = 6.0f;
-			scale.y = 6.0f;
-			scale.z = 1.0f;
-			auto obj = MeshFactory::CreateDecal(decal);
-			obj->get_Component<DecalRenderer>()->Start(renderer);
-			obj->get_Transform().lock()->set_Pos(pos);
-			obj->get_Transform().lock()->set_Scale(scale);
-			obj->get_Transform().lock()->set_RotateToRad(1.57f, Tool::RandRange(0.0f, 6.14f), 0.0f);
-			obj->set_Tag("Ant_Splash");
-			auto timer = obj->add_Component<TimerDestruction>();
-			timer->set_LifeTime(8.0f);  // 生存時間
+			m_IsOnDamage = true;
 		}
 	);
 	// 死亡時の処理登録
 	m_pHealthComp.lock()->RegisterOnDead(
 		[this, &renderer]
 		{
-			auto transform = m_pOwner.lock()->get_Transform().lock();
-			VEC3 pos = transform->get_VEC3ToPos();
 
-			// ****************************************************
-			//				 死亡音再生
-			// ****************************************************
-			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos, SOUND_DEAD_RADIUS);
-
-			// ****************************************************
-			//				アイテム出現
-			// ****************************************************
-			Master::m_pItemManager->SpawnItemRand(DROP_ITEM_MIN, DROP_ITEM_MAX, pos, 0.0f);
-
-
-            // 死亡エフェクト
-			int handle = Master::m_pEffectManager->PlayEffect("EnemyDead_01");
-			float deadEffectScale =1.5f;
-			Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
-			Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + 2.0f, pos.z);
-			m_IsDead = true;
-			m_IsAnim = false;
-
-			auto matPtr = Master::m_pResourceManager->FindMaterial("Decal_Ant_Splash");
-			SetupMaterialInfo matInfo[1];
-			matInfo[0].Index = 0;
-			matInfo[0].pMaterialData = matPtr;
-
-			CreateDecalInfo decal;
-			decal.pRenderer = &renderer;
-			decal.Type = UTILITY_MESH_TYPE::CUBE;
-			decal.MatNum = 1;
-			decal.MaterialData = matInfo;
-			decal.IsActive = false;
-			decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
-			decal.IsNormalMap = false;
-			decal.IsDynamic = true;
-
-			VEC3 scale;
-			scale.x = 20.0f;
-			scale.y = 20.0f;
-			scale.z = 1.0f;
-
-			auto obj = MeshFactory::CreateDecal(decal);
-			obj->get_Component<DecalRenderer>()->Start(renderer);
-			obj->get_Transform().lock()->set_Pos(pos);
-			obj->get_Transform().lock()->set_Scale(scale);
-			obj->get_Transform().lock()->set_RotateToRad(1.57f, Tool::RandRange(0.0f, 6.14f), 0.0f);
-			obj->set_Tag("Ant_Splash");
-			auto timer = obj->add_Component<TimerDestruction>();
-			timer->set_LifeTime(15.0f);  // 生存時間
 		}
 	);
 
 	// 開始時の座標を入れる
 	m_StartPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
-
-	// ステートの作成（TODO:外から種類を変えられるようにする）
-	EnemyStateFactory::Create(m_StateMachine, ENEMY_TYPE::ENEMY_TYPE_ANT_Normal, renderer);
-	m_StateMachine.SetCrntState(ANT_STATE::ANT_STATE_PATROL_IDLE);
 
 	m_pMoveLogicComp.lock()->Register(MOVE_BEHAVIOUR_TYPE::HOMING);
 	m_pMoveLogicComp.lock()->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
@@ -228,19 +133,26 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 {
 	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
+
 	auto target = Master::m_pGameObjectManager->get_ObjectByTagConst("Player");
 	m_pTarget = target;
 
 	m_pAnimatorComp.lock()->set_IsAnim(m_IsAnim);
 	m_StateTimer += deltaTime;	// タイマー進める
-
+	
 	// ステートの実行
 	m_StateMachine.Update();
+
+	m_IsOnDamage = false;	//　ダメージフラグを初期化
 
 	m_pAnimatorComp.lock()->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
 
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 	VEC3 newPos = transform->get_VEC3ToPos();
+
+	VEC3 strPos = newPos;
+	strPos.y += 5.0f;
+	Master::m_pDirectWriteManager->DrawString3D("Ant", strPos, "White_20_STD");
 
 	// 世界の裏側に落下した場合
 	if (newPos.y < -100.0f)
@@ -342,6 +254,23 @@ std::shared_ptr<MyTransform> EnemyController::get_TargetTransform() const
 	}
 
 	return nullptr;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】死亡フラグの取得
+//*
+//* [引数]なし
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+bool EnemyController::get_IsDead()const
+{
+	if (auto health = m_pHealthComp.lock()){
+		return health->get_IsDead();
+	}
+	else{
+		assert(false);
+	}
+	return false;
 }
 
 //*---------------------------------------------------------------------------------------

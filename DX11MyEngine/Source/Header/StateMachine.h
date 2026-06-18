@@ -54,7 +54,7 @@ public:
 	/// 現在のステートを設定
 	/// </summary>
 	/// <param name="id"></param>
-	void SetCrntState(const int id)
+	void SetStartState(const int id)
 	{
 		m_CrntStateID = id;
 		m_pStateMap[id]->OnEnter(m_pOwner);

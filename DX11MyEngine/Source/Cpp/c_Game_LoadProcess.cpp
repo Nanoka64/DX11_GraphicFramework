@@ -114,6 +114,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
+
         for (int i = 0; i < 50; i++)
         {
             model.ObjTag = "Ant"/* + std::to_string(i + 1)*/;   // タグ
@@ -133,7 +134,11 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             //
             // エネミーコントローラー追加
             //
-            obj->add_Component<EnemyController>();
+            auto enemyController = obj->add_Component<EnemyController>();
+
+            //
+            // 移動コンポーネントの追加
+            //
             obj->add_Component<MoveLogic>();
             
             //
@@ -183,6 +188,18 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
+            
+            
+            //
+            // ステートの登録
+            //
+            enemyController->Start(*m_pRenderer);
+            StateMachine<EnemyController> stateMachine_Ant(enemyController.get());
+            EnemyStateFactory::Create(stateMachine_Ant, ENEMY_TYPE::ENEMY_TYPE_ANT_Normal, *m_pRenderer);
+            stateMachine_Ant.SetStartState(ANT_STATE::ANT_STATE_PATROL_IDLE);
+            // 登録
+            enemyController->RegisterStateMachine(stateMachine_Ant);
+
         }
     }
 

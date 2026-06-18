@@ -46,7 +46,7 @@ void BuildingController::Start(RendererEngine& renderer)
 
 	// ステート作成
 	BuildingStateFactory::CreateBuilding(m_StateMachine, 0, renderer);
-	m_StateMachine.SetCrntState(BUILDING_STATE::BUILDING_STATE_IDLE);
+	m_StateMachine.SetStartState(BUILDING_STATE::BUILDING_STATE_IDLE);
 }
 
 //*---------------------------------------------------------------------------------------

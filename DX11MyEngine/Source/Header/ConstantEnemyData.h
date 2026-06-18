@@ -38,6 +38,7 @@ namespace EnemyData
 		ANT_STATE_ACTIVE_DAMAGED,		// ƒ_ƒ[ƒW
 		ANT_STATE_ACTIVE_BLOWN_AWAY,	// ”š”­‚É‚æ‚é‚«”ò‚Ñ
 		ANT_STATE_ACTIVE_FALLING,		// —Ž‰º’†
+		ANT_STATE_ACTIVE_HIT_STUN,		// ”í’e
 		ANT_STATE_ACTIVE_DEAD,			// Ž€–S
 	};
 

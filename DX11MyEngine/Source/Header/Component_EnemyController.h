@@ -20,11 +20,7 @@
 class EnemyController :  public IComponent
 {
 private:
-	// TODO:一旦、ここにパラメータを直接置く
-	const float SOUND_HIT_RADIUS = 300.0f;				// 被弾音が聞こえる範囲
-	const float SOUND_DEAD_RADIUS = 600.0f;				// 死亡音が聞こえる範囲
-	const int DROP_ITEM_MIN = 0;						// 落とすアイテムの最小数
-	const int DROP_ITEM_MAX = 1;						// 落とすアイテムの最大数
+	StateMachine<EnemyController> m_StateMachine;				// ステートマシン
 
 	std::weak_ptr<class Health>m_pHealthComp;					// 体力管理コンポーネント
 	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
@@ -32,10 +28,9 @@ private:
 	std::weak_ptr<class MoveLogic> m_pMoveLogicComp;			// 移動コンポーネント
 	std::weak_ptr<class Physics> m_pPhysicsComp;				// 物理コンポーネント
 	const GameObject* m_pTarget;								// 攻撃目標
-	StateMachine<EnemyController> m_StateMachine;
 
-	VECTOR3::VEC3 m_MoveVelocity;	// 移動
-	VECTOR3::VEC3 m_StartPos;		// 開始位置
+	VECTOR3::VEC3 m_MoveVelocity;					// 移動
+	VECTOR3::VEC3 m_StartPos;						// 開始位置
 	const EnemyData::BaseEnemyData* m_pEnemyData;	// 読み取り専用データ
 
 	int m_CrntAnimID;				// 現在のアニメーション番号
@@ -44,32 +39,30 @@ private:
 	float m_Gravity;				// 重力
 	float m_GravityVelocity;		// 地面方向に掛かるベロシティ
 	float m_AnimSpeed;				// アニメーション速度
-	bool m_IsDead;
+	//bool m_IsDead;
 	bool m_IsAnim;					// アニメーション中かどうか
 	bool m_IsGrounded;				// 接地しているか
+	bool m_IsOnDamage;				// ダメージフラグ
 
 public:
 	EnemyController(std::weak_ptr<GameObject> pOwner, int updateRank);
 	~EnemyController();
 
-	void Start(RendererEngine& renderer) override;	// 初期化
+	void Start(RendererEngine& renderer) override;		// 初期化
 	void LateUpdate(RendererEngine& renderer) override;	// 更新
-	void Update(RendererEngine& renderer) override;	// 更新
-	void Draw(RendererEngine& renderer) override;	// 描画
-	void OnCollisionEnter(const class CollisionInfo &_other)override;
+	void Update(RendererEngine& renderer) override;		// 更新
+	void Draw(RendererEngine& renderer) override;		// 描画
+	void OnCollisionEnter(const class CollisionInfo &_other)override;	// 衝突時処理
 	void set_EnemyData(const EnemyData::BaseEnemyData* _enemyData) { m_pEnemyData = _enemyData; }	// エネミーデータの設定
 	const EnemyData::BaseEnemyData* get_EnemyData()const;
 
-	/// <summary>
-	/// ステートの変更
-	/// </summary>
-	/// <param name="_state"></param>
+	/// <summary> ステートマシンの登録 </summary>
+	void RegisterStateMachine(const StateMachine<EnemyController>& _state) { m_StateMachine = _state; };
+
+	/// <summary>ステートの変更 </summary>
 	void ChangeState(const int _state);
 
-	/// <summary>
-	/// アニメーションの変更
-	/// </summary>
-	/// <param name="id"></param>
+	/// <summary>アニメーションの変更 </summary>
 	void ChangeAnimation(const int _newId);
 
 	/* アニメーション速度 */
@@ -106,7 +99,6 @@ public:
 	float get_StateTimer()const { return m_StateTimer; }
 	void clear_StateTimer() { m_StateTimer = 0.0f; }	
 
-
 	/* 移動ロジックの切り替え */
 	void set_MoveLogicState(UtilityData::MOVE_BEHAVIOUR_TYPE _moveType);
 
@@ -117,5 +109,8 @@ public:
 	const VECTOR3::VEC3 &get_StartPos() { return m_StartPos; }
 
 	/* 死亡フラグ */
-	bool get_IsDead()const { return m_IsDead; }
+	bool get_IsDead()const;
+
+	/* ダメージフラグ */
+	bool get_IsOnDamage()const { return m_IsOnDamage; }
 };

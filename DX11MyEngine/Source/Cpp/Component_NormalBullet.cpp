@@ -192,10 +192,10 @@ void NormalBullet::Start(RendererEngine& renderer)
                 Master::m_pEffectManager->SetRotationEffect(effectHandle, effectRot.x, effectRot.y, effectRot.z);
             }
 
-            //*****************************************************************************************
-            //						ヒットサウンド再生
-            //*****************************************************************************************
-            Master::m_pSoundManager->Play_RandPitch_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01), pos, 40, 300);
+        //    //*****************************************************************************************
+        //    //						ヒットサウンド再生
+        //    //*****************************************************************************************
+        //    Master::m_pSoundManager->Play_RandPitch_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01), pos, 40, 300);
         };
 }
 

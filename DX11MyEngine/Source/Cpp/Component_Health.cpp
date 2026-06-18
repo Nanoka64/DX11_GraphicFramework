@@ -16,7 +16,8 @@ Health::Health(std::weak_ptr<GameObject> pOwner, int updateRank)
     :IComponent(pOwner, updateRank),
     m_CrntHP(0.0f),
     m_MaxHP(0.0f),
-    m_IsDead(false)
+    m_IsDead(false)/*,
+    m_IsOnDamage(false)*/
 {
     this->set_Tag("Health");
 }
@@ -53,7 +54,15 @@ void Health::Update(RendererEngine& renderer)
 
 }
 
-
+//*---------------------------------------------------------------------------------------
+//*【?】ダメージ処理
+//*
+//* [引数]
+//* _dmg : ダメージ値
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
 void Health::TakeDamage(const float _dmg)
 {
     if (m_IsDead){

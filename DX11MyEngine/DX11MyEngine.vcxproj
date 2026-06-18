@@ -374,6 +374,7 @@
     </Text>
     <ClCompile Include="Source\Cpp\Ant_AT_AttackAcid.cpp" />
     <ClCompile Include="Source\Cpp\Ant_AT_DeadState.cpp" />
+    <ClCompile Include="Source\Cpp\Ant_AT_HitStunState.cpp" />
     <ClCompile Include="Source\Cpp\Ant_AT_MoveState.cpp" />
     <ClCompile Include="Source\Cpp\Ant_CommonStateProcess.cpp" />
     <ClCompile Include="Source\Cpp\Ant_PT_IdleState.cpp" />

@@ -765,6 +765,9 @@
     <ClCompile Include="Source\Cpp\Component_Physics.cpp">
       <Filter>ソース ファイル\BaseComponent\Move</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Ant_AT_HitStunState.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Ant\Active</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">

@@ -163,6 +163,27 @@ public:
 	int Update(class EnemyController *pOwner)override;
 };
 
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:Ant_AT_HitStunState Class --- */
+//
+//  ★継承：IState ★
+//
+// 【?】[アクティブ]
+//		被弾時
+//		
+// ***************************************************************************************
+class Ant_AT_HitStunState : public IState<class EnemyController>
+{
+private:
+	const float SOUND_HIT_RADIUS = 300.0f;				// 被弾音が聞こえる範囲
+
+public:
+	void OnEnter(class EnemyController *pOwner) override;
+	void OnExit(class EnemyController *pOwner)override;
+	int Update(class EnemyController *pOwner)override;
+};
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -179,6 +200,9 @@ class Ant_AT_DeadState : public IState<class EnemyController>
 private:
 	const float OVERTURN_TIME = 0.5f;		// ひっくり返るまでの時間
 	const float DELETE_TIME = 10.0f;		// 死亡までの時間
+	const float SOUND_DEAD_RADIUS = 600.0f;				// 死亡音が聞こえる範囲
+	const int DROP_ITEM_MIN = 0;						// 落とすアイテムの最小数
+	const int DROP_ITEM_MAX = 1;						// 落とすアイテムの最大数
 
 	DirectX::XMVECTOR m_TargetRotQ;	// ひっくり返った後のクオータニオン
 	DirectX::XMVECTOR m_StartRotQ;	// ひっくり返った後のクオータニオン
@@ -187,6 +211,10 @@ public:
 	void OnEnter(class EnemyController *pOwner) override;
 	void OnExit(class EnemyController *pOwner)override;
 	int Update(class EnemyController *pOwner)override;
+
+private:
+	void SpawnDeadEffect(class EnemyController* pOwner);
+
 };
 
 /// <summary>

@@ -83,7 +83,7 @@ bool SceneManager::Init(RendererEngine &renderer)
     SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_TITLE, renderer);
     SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_GAME, renderer);
     SceneFactory::Create(m_StateMachine, SCENE_STATE::SCENE_STATE_RESULT, renderer);
-    m_StateMachine.SetCrntState(SCENE_STATE::SCENE_STATE_TITLE);
+    m_StateMachine.SetStartState(SCENE_STATE::SCENE_STATE_TITLE);
 
     return true;
 }

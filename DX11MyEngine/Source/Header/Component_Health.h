@@ -15,9 +15,10 @@
 class Health : public IComponent
 {
 private:
-	float m_CrntHP;	// 現在のHP
-	float m_MaxHP;	// 最大HP
-	bool m_IsDead;
+	float m_CrntHP;		// 現在のHP
+	float m_MaxHP;		// 最大HP
+	bool m_IsDead;		// 死亡フラグ 
+	//bool m_IsOnDamage;  // ダメージを受けたか
 
 
 	std::vector<std::function<void(float)>> m_DamageTaskArray;	// ダメージを受けた際の処理
@@ -41,7 +42,8 @@ public:
 	void set_CrntHP(const float _hp);
 	void set_RecoveryHP(const float _hp);
 
-	bool get_IsDead()const { return m_IsDead; }	// 死亡フラグ取得
+	bool get_IsDead()const { return m_IsDead; }			// 死亡フラグ取得
+	//bool get_IsOnDamage()const { return m_IsOnDamage;}  // ダメージフラグを取得
 
 	void Reset();
 };

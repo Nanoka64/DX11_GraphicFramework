@@ -52,6 +52,7 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 	std::shared_ptr<Ant_AT_TrackingState> pATTracking = std::make_shared<Ant_AT_TrackingState>();		// AT í«è]
 	std::shared_ptr<Ant_AT_MoveState> pATMove = std::make_shared<Ant_AT_MoveState>();					// AT à⁄ìÆ
 	std::shared_ptr<Ant_AT_AttackAcidState> pATAttackAcid = std::make_shared<Ant_AT_AttackAcidState>();	// AT é_çUåÇ
+	std::shared_ptr<Ant_AT_HitStunState> pATHitStun = std::make_shared<Ant_AT_HitStunState>();					// ATéÄñS
 	std::shared_ptr<Ant_AT_DeadState> pATDead = std::make_shared<Ant_AT_DeadState>();					// ATéÄñS
 
 	//ï`âÊÉCÉìÉ^Å[ÉtÉFÉCÉXê›íË
@@ -61,6 +62,7 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 	pATTracking->set_Renderer(&_renderer);
 	pATMove->set_Renderer(&_renderer);
 	pATAttackAcid->set_Renderer(&_renderer);
+	pATHitStun->set_Renderer(&_renderer);
 	pATDead->set_Renderer(&_renderer);
 
 	// ********************************************************************************
@@ -80,5 +82,6 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_TRACKING, std::move(pATTracking));
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_MOVE, std::move(pATMove));
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_ATTACK_ACID, std::move(pATAttackAcid));
+	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_HIT_STUN, std::move(pATHitStun));
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_DEAD, std::move(pATDead));
 }
