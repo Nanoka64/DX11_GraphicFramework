@@ -18,11 +18,11 @@ class LineRenderer : public IComponent
 {
 private:
 	float m_Width;					// 幅
+	float m_Length;					// 長さ
 	int m_DrawTime;					// 表示時間
 
 	VECTOR3::VEC3 m_StartPos;		// 始点
 	VECTOR3::VEC3 m_Dir;			// 線の方向
-	float m_Length;					// 長さ
 
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertesBuffer;// 頂点バッファ
