@@ -164,9 +164,11 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     Effekseer::Manager::UpdateParameter updateParameter;
     m_EfkManager->Update(updateParameter);
     
+    float deltaTime = Master::m_pTimeManager->get_DeltaTime();
+
     // Update a time
     // 時間を更新する
-    m_EfkRenderer->SetTime(m_Timer / 60.0f);
+    m_EfkRenderer->SetTime(m_Timer);
 
     // Specify a projection matrix
     // 投影行列を設定
@@ -175,7 +177,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     // Specify a camera matrix
     // カメラ行列を設定
     m_EfkRenderer->SetCameraMatrix(cameraMatrix);
-    m_Timer++;
+    m_Timer += deltaTime;
 }
 
 
