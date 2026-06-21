@@ -7,7 +7,10 @@
 //*【?】コンストラクタ
 //*----------------------------------------------------------------------------------------
 TimeManager::TimeManager():
-	m_DeltaTime(0.0)
+	m_DeltaTime(0.0f),
+	m_HitStopScale(1.0f),
+	m_HitStopTimer(0.0f),
+	m_TimeScale(1.0f)
 {
 }
 
@@ -40,11 +43,31 @@ void TimeManager::Update()
 	// デルタタイムを計算 (ミリ秒単位に変換)
 	auto deltaTime = currentTime - m_PrevTime;
 
+
 	// 現在の時間を次のループの基準時間に更新
 	m_PrevTime = currentTime;
-	
+
 	// デルタタイムをfloatにして保持
-	m_DeltaTime = std::chrono::duration<float>(deltaTime).count();
+	float rawDeltaTime = std::chrono::duration<float>(deltaTime).count();
+	m_DeltaTime = rawDeltaTime;
+
+
+	if (m_HitStopTimer > 0.0f)
+	{
+		m_HitStopTimer -= rawDeltaTime;
+		if (m_HitStopTimer <= 0.0f)
+		{
+			m_HitStopTimer = 0.0f;
+			m_HitStopScale = 1.0f; // タイマー終了で等速に戻す
+		}
+	}
+	else
+	{
+		m_HitStopScale = 1.0f;
+	}
+
+	// タイムスケール適用
+	m_DeltaTime = m_DeltaTime * m_TimeScale * m_HitStopScale;
 
 	// --- 追加：デルタタイムの上限（Clamp）処理 ---
 	// 例: 0.1秒（10fps相当の処理落ち）を上限とする
@@ -52,5 +75,18 @@ void TimeManager::Update()
 	if (m_DeltaTime > MAX_DELTA_TIME)
 	{
 		m_DeltaTime = MAX_DELTA_TIME;
+	}
+}
+
+void TimeManager::TriggerHitStop(float _duration, float _scale)
+{
+	if (_duration > m_HitStopTimer)
+	{
+		m_HitStopTimer = _duration;
+	}
+
+	if (_scale < m_HitStopScale)
+	{
+		m_HitStopScale = _scale;
 	}
 }

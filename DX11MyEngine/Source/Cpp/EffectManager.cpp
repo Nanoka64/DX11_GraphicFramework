@@ -8,7 +8,7 @@ using namespace DirectX;
 using namespace VECTOR3;
 
 EffectManager::EffectManager():
-    m_Timer(0)
+    m_Timer(0.0f)
 {
 }
 
@@ -159,16 +159,17 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     layerParameter.ViewerPosition = viewerPosition;
     m_EfkManager->SetLayerParameter(0, layerParameter);
 
+    float timeScale = Master::m_pTimeManager->get_TimeScale();
+
     // Update the manager
     // マネージャーの更新
     Effekseer::Manager::UpdateParameter updateParameter;
+    updateParameter.DeltaFrame = timeScale;
     m_EfkManager->Update(updateParameter);
-    
-    float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
     // Update a time
     // 時間を更新する
-    m_EfkRenderer->SetTime(m_Timer);
+    //m_EfkRenderer->SetTime(m_Timer);
 
     // Specify a projection matrix
     // 投影行列を設定
@@ -177,7 +178,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
     // Specify a camera matrix
     // カメラ行列を設定
     m_EfkRenderer->SetCameraMatrix(cameraMatrix);
-    m_Timer += deltaTime;
+    //m_Timer += deltaTime;
 }
 
 

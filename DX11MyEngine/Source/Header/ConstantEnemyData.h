@@ -42,6 +42,21 @@ namespace EnemyData
 		ANT_STATE_ACTIVE_DEAD,			// Ž€–S
 	};
 
+	inline const char* g_AntStateNames[] =
+	{
+		"PATROL_IDLE",
+		"PATROL_MOVE",
+		"ACTIVE_MOVE",
+		"ACTIVE_TRACKING",
+		"ACTIVE_ATTACK_BITE",
+		"ACTIVE_ATTACK_ACID",
+		"ACTIVE_DAMAGED",
+		"ACTIVE_BLOWN_AWAY",
+		"ACTIVE_FALLING",
+		"ACTIVE_HIT_STUN",
+		"ACTIVE_DEAD",
+	};
+
 	const float ENEMY_ANT01_BASE_HP = 200.0f;	// ƒAƒŠ‚ÌŠî–{HP
 
 	/// <summary>

@@ -152,7 +152,9 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 
 	VEC3 strPos = newPos;
 	strPos.y += 5.0f;
-	Master::m_pDirectWriteManager->DrawString3D("Ant", strPos, "White_20_STD");
+	std::string stateName = EnemyData::g_AntStateNames[m_StateMachine.get_CrntStateIndex()];
+
+	Master::m_pDirectWriteManager->DrawString3D(stateName, strPos, "White_20_STD");
 
 	// ¢ŠE‚Ì— ‘¤‚É—‰º‚µ‚½ê‡
 	if (newPos.y < -100.0f)

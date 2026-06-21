@@ -25,7 +25,7 @@ private:
     ::EffekseerRenderer::RendererRef m_EfkRenderer; // エフェクトの描画に必要なもの
     std::unordered_map<std::string,Effekseer::EffectRef> m_EffectMap; // エフェクトのパラメータを持つ
 
-    int32_t m_Timer;
+    float m_Timer;
 
 public:
     EffectManager();

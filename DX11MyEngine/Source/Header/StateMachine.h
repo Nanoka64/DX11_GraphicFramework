@@ -39,6 +39,8 @@ public:
 		m_pStateMap.clear();
 	}
 
+	int get_CrntStateIndex()const { return m_CrntStateID; }
+
 	/// <summary>
 	/// ステートを設定する
 	/// </summary>

@@ -58,6 +58,11 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 	}
 	else
 	{
+		int commonRes = Ant_CommonStateProcess::CommonProcess(pOwner);
+		if (commonRes != -1)
+		{
+			return commonRes;
+		}
 
 		auto targetTransform = target->get_Transform().lock();
 		VEC3 targetPos = targetTransform->get_VEC3ToPos();	// –Ú•WˆÊ’u

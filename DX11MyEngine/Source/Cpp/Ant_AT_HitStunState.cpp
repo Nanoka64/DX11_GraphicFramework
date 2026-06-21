@@ -97,6 +97,6 @@ int Ant_AT_HitStunState::Update(class EnemyController* pOwner)
 		return commonRes;
 	}
 
-	return ANT_STATE::ANT_STATE_ACTIVE_HIT_STUN;
+	return ANT_STATE::ANT_STATE_ACTIVE_MOVE;
 }
 
