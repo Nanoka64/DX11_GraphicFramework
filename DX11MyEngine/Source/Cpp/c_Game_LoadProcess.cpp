@@ -195,7 +195,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             //
             enemyController->Start(*m_pRenderer);
             StateMachine<EnemyController> stateMachine_Ant(enemyController.get());
-            EnemyStateFactory::Create(stateMachine_Ant, ENEMY_TYPE::ENEMY_TYPE_ANT_Normal, *m_pRenderer);
+            EnemyStateFactory::Create(stateMachine_Ant, (int)ENEMY_TYPE::GIANT_ANT_Normal, *m_pRenderer);
             stateMachine_Ant.SetStartState(ANT_STATE::ANT_STATE_PATROL_IDLE);
             // “o˜^
             enemyController->RegisterStateMachine(stateMachine_Ant);

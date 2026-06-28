@@ -22,9 +22,9 @@ using namespace EnemyData;
 //*----------------------------------------------------------------------------------------
 void EnemyStateFactory::Create(StateMachine<EnemyController>& _out, int _createState, RendererEngine& _renderer)
 {
-	switch (_createState)
+	switch ((ENEMY_TYPE)_createState)
 	{
-	case ENEMY_TYPE_ANT_Normal:
+	case ENEMY_TYPE::GIANT_ANT_Normal:
 		CreateAntState(_out, _renderer);
 		break;
 	default:

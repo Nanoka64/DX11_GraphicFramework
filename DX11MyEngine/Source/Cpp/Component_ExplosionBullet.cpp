@@ -260,8 +260,8 @@ void ExplosionBullet::LateUpdate(RendererEngine& renderer)
         auto targets = Master::m_pCollisionManager->CheckSphere(pos, bulletParam->_explosionRadius, mask);
 
         // 範囲内の全員にダメージ
-        for (auto& target : targets) {
-
+        for (auto& target : targets)
+        {
             if (auto obj = target->get_OwnerObj().lock())
             {
                 // ダメージ

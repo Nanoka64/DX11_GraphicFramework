@@ -5,11 +5,13 @@ namespace EnemyData
 	/// <summary>
 	/// “G‚ÌŽí—Þ
 	/// </summary>
-	enum ENEMY_TYPE
+	enum class ENEMY_TYPE
 	{
-		ENEMY_TYPE_ANT_Normal,
+		GIANT_ANT_Normal,	// ƒAƒŠ
 
-		ENEMY_TYPE_NUM,
+		OCTAHEDRON,			// ”ª–Ê‘Ì
+
+		NUM,
 	};
 
 
@@ -64,6 +66,8 @@ namespace EnemyData
 	/// </summary>
 	struct BaseEnemyData
 	{
+		ENEMY_TYPE _enmyType = ENEMY_TYPE::GIANT_ANT_Normal;
+
 		float _hp = 0.0f;
 		float _attack = 0.0f;
 		float _moveSpeed = 0.0f;

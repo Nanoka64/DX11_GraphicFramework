@@ -149,6 +149,7 @@ int c_Game_Play::Update(SceneManager *pOwner)
     // プレイヤーが死んでいたら、リザルトへ
     if (Master::m_pDataManager->get_IsPlayerDead())
     {
+        // スローモーション
         Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
         Master::m_pDataManager->set_IsMissionCleared(false);    // ミッション失敗
@@ -160,6 +161,7 @@ int c_Game_Play::Update(SceneManager *pOwner)
     // 敵が居なくなったらリザルトへ
     if (m_EnemyNum == 0)
     {
+        // スローモーション
         Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
         Master::m_pDataManager->set_IsMissionCleared(true);     // ミッションクリア
