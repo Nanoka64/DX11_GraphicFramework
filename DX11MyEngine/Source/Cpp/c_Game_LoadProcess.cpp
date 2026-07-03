@@ -320,30 +320,99 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     /* 八面体生成 */
     {
-        //// マテリアル取得
-        //auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
-        //auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
+        // マテリアル取得
+        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Objector_body");
+        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Objector_shield");
 
-        //SetupMaterialInfo matInfo[2];
-        //matInfo[0].Index = 0;
-        //matInfo[0].pMaterialData = matPtr1;
-        //matInfo[1].Index = 1;
-        //matInfo[1].pMaterialData = matPtr2;
+        SetupMaterialInfo matInfo[2];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr1;
+        matInfo[1].Index = 1;
+        matInfo[1].pMaterialData = matPtr2;
 
-        //CreateModelInfo model;
-        //model.pRenderer = m_pRenderer;
-        //model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
-        //model.ObjTag = "Octahedron";
-        //model.IsAnim = false;
-        //model.MatNum = 2;
-        //model.IsActive = true;
-        //model.SetupMaterial = matInfo;
-        //model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-        //auto obj = MeshFactory::CreateModel(model);
-        //obj->set_IsStatic(false);
-        //obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
-        //obj->get_Component<MyTransform>()->set_Pos(-100.0f, 100.0f, 100);
-        //obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        CreateModelInfo model;
+        model.pRenderer = m_pRenderer;
+        model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
+        model.ObjTag = "Octahedron";
+        model.IsAnim = false;
+        model.MatNum = 2;
+        model.IsActive = true;
+        model.SetupMaterial = matInfo;
+        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+
+        for (int i = 0; i < 5; i++)
+        {
+            auto obj = MeshFactory::CreateModel(model);
+            obj->set_IsStatic(false);
+            obj->get_Component<MyTransform>()->set_Scale(1.0f, 1.0f, 1.0f);
+            obj->get_Component<MyTransform>()->set_Pos(-200.0f, 200.0f, 100);
+            obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // 動的オブジェクト
+            obj->set_IsStatic(false);
+
+            // ポーズ中は停止
+            obj->set_IsUpdateAllowedDuringPause(false);
+
+            //
+            // エネミーコントローラー追加
+            //
+            auto enemyController = obj->add_Component<EnemyController>();
+
+            //
+            // 移動コンポーネントの追加
+            //
+            obj->add_Component<MoveLogic>();
+
+            //
+            // 派閥コンポーネント追加
+            //
+            auto faction = obj->add_Component<Faction>();
+            faction->set_Faction(FACTION::ENEMY);
+
+            //
+            // 体力コンポーネント追加
+            //
+            auto health = obj->add_Component<Health>();
+            float hp = ENEMY_OCTAHEDRON_BASE_HP * Master::m_pDataManager->get_EnemyDifficultyFactor()._hpRate;
+            health->set_MaxHP(hp);
+            health->set_CrntHP(hp);
+
+            //
+            // 物理コンポーネント追加
+            //
+            auto physics = obj->add_Component<Physics>();
+            physics->set_AirDrag(1.0f);
+            physics->set_Restitution(0.0f);     // 跳ねない
+            physics->set_GravityScale(0.0f);    // 無重力
+            physics->set_Mass(1000.0f);
+            physics->set_MoveDrag(1.0f);
+
+            //
+            // コライダーの追加
+            //
+            auto collider = obj->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(20.0f, 20.0f, 20.0f));
+            collider->set_Center(VEC3(0.0f, 10.0f, 0.0f));
+            // 衝突カテゴリ
+            collider->set_CollisionCategory(COLLISION_CATEGORY::ENEMY);
+
+            unsigned hitMask = UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+            collider->set_CollisionBitMask(hitMask);
+
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(collider);
+
+            //
+            // ステートの登録
+            //
+            enemyController->Start(*m_pRenderer);
+            StateMachine<EnemyController> stateMachine_Octahedron(enemyController.get());
+            EnemyStateFactory::Create(stateMachine_Octahedron, (int)ENEMY_TYPE::OCTAHEDRON, *m_pRenderer);
+            stateMachine_Octahedron.SetStartState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_IDLE);
+            // 登録
+            enemyController->RegisterStateMachine(stateMachine_Octahedron);
+        }
     }
 
     /* 地面の生成 */
@@ -364,17 +433,17 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.MaterialData = matInfo;
         mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
         mesh.IsNormalMap = true;
-		mesh.TilingScale = VEC2(30.0f, 30.0f);
+		mesh.TilingScale = VEC2(60.0f, 60.0f);
         mesh.ObjLayer = 90;
 
         auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        obj->get_Transform().lock()->set_Scale(200.0f, 1.0f, 200.0f);
+        obj->get_Transform().lock()->set_Scale(400.0f, 1.0f, 400.0f);
         obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
         obj->get_Transform().lock()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
         // コライダーの追加
         auto collider = obj->add_Component<BoxCollider>();
-        collider->set_Size(VEC3(200.0f, 1.0f, 200.0f));
+        collider->set_Size(VEC3(400.0f, 1.0f, 400.0f));
         collider->set_Center(VEC3(0, -1.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
         collider->set_IsStatic(true);
         // 衝突カテゴリ

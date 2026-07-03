@@ -26,6 +26,7 @@ public:
 	int GetIntRandom(int _min, int _max);
 	float GetFloatRandom(float _min, float _max);
     VECTOR3::VEC3 GetVEC3Random(const VECTOR3::VEC3& _min, const VECTOR3::VEC3& _max);
+	bool GetBoolRandom(float _trueProbability = 0.5f); // trueの確率を指定してboolを返す
 
 private:
 	// コピー禁止

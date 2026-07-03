@@ -137,7 +137,6 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 	auto target = Master::m_pGameObjectManager->get_ObjectByTagConst("Player");
 	m_pTarget = target;
 
-	m_pAnimatorComp.lock()->set_IsAnim(m_IsAnim);
 	m_StateTimer += deltaTime;	// タイマー進める
 	
 	// ステートの実行
@@ -145,7 +144,11 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 
 	m_IsOnDamage = false;	//　ダメージフラグを初期化
 
-	m_pAnimatorComp.lock()->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
+	if (auto animComp = m_pAnimatorComp.lock())
+	{
+		animComp->set_IsAnim(m_IsAnim);
+		animComp->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
+	}
 
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 	VEC3 newPos = transform->get_VEC3ToPos();

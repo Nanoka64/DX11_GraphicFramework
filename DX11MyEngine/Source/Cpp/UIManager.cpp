@@ -11,10 +11,10 @@ using namespace VECTOR2;
 using namespace VECTOR3;
 using namespace VECTOR4;
 
-constexpr int NUM_DEFAULT__SPRITE = 30;
-constexpr int NUM_MAX__SPRITE = 300;       
-constexpr int NUM_DEFAULT__BUTTON = 15;
-constexpr int NUM_MAX__BUTTON = 30;       
+constexpr int NUM_DEFAULT__SPRITE = 32;
+constexpr int NUM_MAX__SPRITE = 256;       
+constexpr int NUM_DEFAULT__BUTTON = 16;
+constexpr int NUM_MAX__BUTTON = 32;       
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -60,7 +60,6 @@ bool UIManager::Init(RendererEngine &renderer)
         {
             // アクティブに
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
-
         },
         // 返却時に実行 ******************************************************************************************
         [](GameObject *obj)
@@ -157,7 +156,6 @@ bool UIManager::Init(RendererEngine &renderer)
         NUM_DEFAULT__BUTTON,  // デフォルト数
         NUM_MAX__BUTTON       // 最大数
     ));
-
 
 	return true;
 }

@@ -491,6 +491,12 @@
     <ClCompile Include="Source\Cpp\ObjectFactory.cpp" />
     <ClCompile Include="Source\Cpp\ObjectPool.cpp" />
     <ClCompile Include="Source\Cpp\ObjectSelect.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_AT_AttackLaser01State.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_AT_DeadState.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_AT_IdleState.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_AT_MoveState.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_AT_TrackingState.cpp" />
+    <ClCompile Include="Source\Cpp\Octahedron_CommonStateProcess.cpp" />
     <ClCompile Include="Source\Cpp\RandomManager.cpp" />
     <ClCompile Include="Source\Cpp\RenderPipeline.cpp" />
     <ClCompile Include="Source\Cpp\IState.cpp" />

@@ -94,3 +94,17 @@ VECTOR3::VEC3 RandomManager::GetVEC3Random(const VECTOR3::VEC3& _min, const VECT
 
     return result;
 }
+
+//*---------------------------------------------------------------------------------------
+//*【?】trueかfalseをランダム取得
+//*
+//* [引数]
+//* _trueProbability : trueの確率（0.0～1.0） 
+//* [返値]
+//* float : ランダム値
+//*----------------------------------------------------------------------------------------
+bool RandomManager::GetBoolRandom(float _trueProbability)
+{
+	std::bernoulli_distribution dist(_trueProbability);
+	return dist(m_RandomEngine);
+}

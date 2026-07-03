@@ -166,9 +166,6 @@
     <Filter Include="ソース ファイル\Game\Component\Player">
       <UniqueIdentifier>{f1d6915a-5824-41c8-bd1f-817eea48205c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Component\Weapon">
-      <UniqueIdentifier>{209a994f-57aa-40b1-a209-2727fce6b4b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Tool\Debug">
       <UniqueIdentifier>{72429b56-0b56-4e59-a717-5c1b61c0dade}</UniqueIdentifier>
     </Filter>
@@ -216,15 +213,6 @@
     </Filter>
     <Filter Include="ソース ファイル\BaseComponent\Mesh\Effect">
       <UniqueIdentifier>{0e4c2e38-3120-443c-81ec-5b7bd4387c46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Component\Weapon\Bullet">
-      <UniqueIdentifier>{2634a016-9b75-45f7-a1de-9b7c72740b15}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Component\Weapon\Gun">
-      <UniqueIdentifier>{98fe35fe-a629-425a-8351-aaf3ad34af5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Component\Weapon\Gun\State">
-      <UniqueIdentifier>{a128b6e8-5f98-4aa6-9598-5ad70908ef49}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Game\Scene">
       <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
@@ -297,6 +285,18 @@
     </Filter>
     <Filter Include="ソース ファイル\Constant">
       <UniqueIdentifier>{53d4c155-2ccd-4fcb-8e3d-c1c90f153528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Weapon">
+      <UniqueIdentifier>{209a994f-57aa-40b1-a209-2727fce6b4b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Weapon\Bullet">
+      <UniqueIdentifier>{2634a016-9b75-45f7-a1de-9b7c72740b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Weapon\Gun">
+      <UniqueIdentifier>{98fe35fe-a629-425a-8351-aaf3ad34af5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Weapon\Gun\State">
+      <UniqueIdentifier>{a128b6e8-5f98-4aa6-9598-5ad70908ef49}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -767,6 +767,24 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Ant_AT_HitStunState.cpp">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Ant\Active</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_AT_IdleState.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_AT_MoveState.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_AT_TrackingState.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_AT_AttackLaser01State.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_CommonStateProcess.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Octahedron_AT_DeadState.cpp">
+      <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

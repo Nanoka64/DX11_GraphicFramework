@@ -73,7 +73,7 @@ void Camera3D::Start(RendererEngine& renderer)
 //*【?】カメラの操作など
 //*		Updateに書くと更新順で不都合が出る可能性があるので、
 //*		明示的にこれを呼び出す。
-//* 引数：なし
+//* 引数：1.RendererEngine
 //* 返値：void
 //*----------------------------------------------------------------------------------------
 void Camera3D::LateUpdate(RendererEngine &renderer)

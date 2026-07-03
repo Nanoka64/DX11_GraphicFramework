@@ -84,6 +84,8 @@ bool WeaponDataManager::Init()
 
 
     // 敵の武器 ************************************************************************************
+    
+    // アリ
     if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_EASY.json", gunData) == false) {           // イージー用
         assert(false);
     }
@@ -103,7 +105,13 @@ bool WeaponDataManager::Init()
     if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_IMPOSSIBLE.json", gunData) == false) {     // インポッシブル用
         assert(false);
     }
-    m_EnemyWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData);
+    m_EnemyWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData); 
+    
+    // 八面体
+    if (LoadGunWeaponData("Resource/EnemysData/OctahedronLaser01_EASY.json", gunData) == false) {     // インポッシブル用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[5] = std::make_unique<GunWeaponData>(gunData);
 
 
 

@@ -44,6 +44,22 @@ namespace EnemyData
 		ANT_STATE_ACTIVE_DEAD,			// 死亡
 	};
 
+	/// <summary>
+	/// 八面体のステート
+	/// </summary>
+	enum OCTAHEDRON_STATE
+	{
+		// 非アクティブ
+
+		// アクティブ
+		OCTAHEDRON_STATE_ACTIVE_MOVE,			// 移動
+		OCTAHEDRON_STATE_ACTIVE_TRACKING,		// 移動
+		OCTAHEDRON_STATE_ACTIVE_IDLE,			// 待機
+		OCTAHEDRON_STATE_ACTIVE_ATTACK_LASER01,	// レーザー攻撃
+		OCTAHEDRON_STATE_ACTIVE_HIT_STUN,		// 被弾
+		OCTAHEDRON_STATE_ACTIVE_DEAD,			// 死亡
+	};
+
 	inline const char* g_AntStateNames[] =
 	{
 		"PATROL_IDLE",
@@ -60,6 +76,7 @@ namespace EnemyData
 	};
 
 	const float ENEMY_ANT01_BASE_HP = 200.0f;	// アリの基本HP
+	const float ENEMY_OCTAHEDRON_BASE_HP = 1000.0f;	// 八面体の基本HP
 
 	/// <summary>
 	/// 敵の基本データ

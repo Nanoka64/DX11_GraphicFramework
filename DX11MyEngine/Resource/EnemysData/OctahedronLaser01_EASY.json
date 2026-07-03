@@ -1,0 +1,33 @@
+{
+  "level": 0,
+  "name": "AntAcid",
+  "bulletMaxNum": 1,
+  "bulletSimultaneousNum": 3,
+  "fireRate": 12.0,
+  "reloadTime": 1.5,
+  "accuracy": 5.5,
+  "zoomLength": 1.0,
+  "isLaserSight": true,
+  "soundID": 0,
+  "bulletType": "EXPLOSION",
+  "bulletParam": {
+    "damage": 20.0,
+    "damageDistAttenuationRate": 0.5,
+    "speed": 1.0,
+    "acceleration": 0.0,
+    "range": 600.0,
+    "penetrationsCount": 0,
+    "collisionSize": 0.0,
+    "gravityScale": 3.0,
+    "knockbackForce": 20.0,
+    "collisionMask": [ "PLAYER", "BUILDING", "DESTRUCTION_BUILDING" ],
+    "bulletMaterialTag": "Acid_01",
+    "decalMaterialTag": "Decal_Ant_Splash",
+    "hitEffectTag": "BulletHit_Acid",
+    "scale": [ 15.0, 15.0, 15.0 ],
+    "explosionRadius": 50.0,
+    "explosionEffectHandleTag": "Explosion_01",
+    "explosionEffectAliveTime": 5.0,
+    "isSmoke": true
+  }
+}

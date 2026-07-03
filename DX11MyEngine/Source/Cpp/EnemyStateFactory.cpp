@@ -5,6 +5,8 @@
 
 // アリ
 #include "Ant_StateHeader.h"
+// 八面体
+#include "Octahedron_StateHeader.h"
 
 using namespace EnemyData;
 
@@ -24,8 +26,18 @@ void EnemyStateFactory::Create(StateMachine<EnemyController>& _out, int _createS
 {
 	switch ((ENEMY_TYPE)_createState)
 	{
+		/*
+		* アリ
+		*/
 	case ENEMY_TYPE::GIANT_ANT_Normal:
 		CreateAntState(_out, _renderer);
+		break;
+
+		/*
+		* 八面体
+		*/
+	case ENEMY_TYPE::OCTAHEDRON:
+		CreateOctahedronState(_out, _renderer);
 		break;
 	default:
 		break;
@@ -41,8 +53,7 @@ void EnemyStateFactory::Create(StateMachine<EnemyController>& _out, int _createS
 //* &renderer : 描画エンジンの参照
 //*
 //* [返値]
-//* true : 成功
-//* false : 失敗
+//* なし 
 //*----------------------------------------------------------------------------------------
 void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out, RendererEngine& _renderer)
 {
@@ -84,4 +95,39 @@ void EnemyStateFactory::CreateAntState(StateMachine<class EnemyController>& _out
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_ATTACK_ACID, std::move(pATAttackAcid));
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_HIT_STUN, std::move(pATHitStun));
 	_out.RegisterState(ANT_STATE::ANT_STATE_ACTIVE_DEAD, std::move(pATDead));
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】八面体ステートの作成
+//*
+//* [引数]
+//* &_out : 出力先
+//* &renderer : 描画エンジンの参照
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void EnemyStateFactory::CreateOctahedronState(StateMachine<class EnemyController>& _out, RendererEngine& _renderer)
+{
+	// ルート作成
+	std::shared_ptr<Octahedron_AT_IdleState> pPTIdle = std::make_shared<Octahedron_AT_IdleState>();					// PT 待機
+	std::shared_ptr<Octahedron_AT_MoveState> pPTMove = std::make_shared<Octahedron_AT_MoveState>();					// PT 移動
+	std::shared_ptr<Octahedron_AT_TrackingState> pATTracking = std::make_shared<Octahedron_AT_TrackingState>();		// AT 追従
+	std::shared_ptr<Octahedron_AT_AttackLaser01State> pATAttackLaser01 = std::make_shared<Octahedron_AT_AttackLaser01State>();		// AT 追従
+	std::shared_ptr<Octahedron_AT_DeadState> pATDead = std::make_shared<Octahedron_AT_DeadState>();		// AT 追従
+
+	//描画インターフェイス設定
+	// add_childの中で子にもセットしてるのでaddする前に呼んで！
+	pPTIdle->set_Renderer(&_renderer);
+	pPTMove->set_Renderer(&_renderer);
+	pATTracking->set_Renderer(&_renderer);
+	pATAttackLaser01->set_Renderer(&_renderer);
+	pATDead->set_Renderer(&_renderer);
+
+	//ステートマシンに登録
+	_out.RegisterState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_IDLE, std::move(pPTIdle));
+	_out.RegisterState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_MOVE, std::move(pPTMove));
+	_out.RegisterState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_TRACKING, std::move(pATTracking));
+	_out.RegisterState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_ATTACK_LASER01, std::move(pATAttackLaser01));
+	_out.RegisterState(OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_DEAD, std::move(pATDead));
 }

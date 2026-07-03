@@ -59,6 +59,7 @@ public:
 	const float get_Restitution()const { return m_Restitution; }
 	const float get_MoveDrag()const { return m_MoveDrag; }
 	const float get_AirDrag()const { return m_AirDrag; }
+	const float get_AngularDrag()const { return m_AngularDrag; }
 
 
 
@@ -76,5 +77,7 @@ public:
     void set_MoveDrag(float _drag) { m_MoveDrag = _drag; }
     /// <summary> ‹ó’†’ïR‚ÌŒ¸Ši0.0`1.0A1.0‚È‚çŒ¸Š‚È‚µA0.0‚È‚çŠ®‘S‚É~‚Ü‚éj </summary>
     void set_AirDrag(float _drag) { m_AirDrag = _drag; }
+    /// <summary> ‰ñ“]‚Ì’ïR‚ÌŒ¸Ši0.0`1.0A1.0‚È‚çŒ¸Š‚È‚µA0.0‚È‚çŠ®‘S‚É~‚Ü‚éj </summary>
+	void set_AngularDrag(float _drag) { m_AngularDrag = _drag; }
 };
 
