@@ -21,6 +21,7 @@ void Octahedron_AT_IdleState::OnEnter(class EnemyController* pOwner)
 	pOwner->set_IsAnim(false);
 	pOwner->set_MoveLogicState(MOVE_BEHAVIOUR_TYPE::NONE);
 	m_IdleDuration = Master::m_pRandomManager->GetFloatRandom(IDLE_MIN_TIME, IDLE_MAX_TIME);
+
 }
 
 //*---------------------------------------------------------------------------------------

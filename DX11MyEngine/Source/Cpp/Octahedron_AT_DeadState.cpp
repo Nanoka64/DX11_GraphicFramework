@@ -28,8 +28,22 @@ void Octahedron_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	// 移動ベクトルは0
 	pOwner->set_MoveVelocity(VEC3());
 
+	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	VEC3 pos = myTransform->get_VEC3ToPos();
+
+
+	// ****************************************************
+	//				アイテム出現
+	// ****************************************************
+	Master::m_pItemManager->SpawnItemRand(DROP_ITEM_MIN, DROP_ITEM_MAX, pos, 10.0f);
+
+	// ****************************************************
+	//				 死亡音再生
+	// ****************************************************
+	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_OCTAHEDRON_DEAD), pos, SOUND_DEAD_RADIUS);
+
 	// 死亡エフェクトの作成
-	SpawnDeadEffect(pOwner, 20.0f);
+	SpawnDeadEffect(pOwner, 15.0f);
 
 	pOwner->set_MoveLogicState(MOVE_BEHAVIOUR_TYPE::NONE);
 
@@ -125,6 +139,14 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 			pOwner->get_OwnerObj().lock()->get_Component<Physics>()->set_IsEnable(false);
 			pOwner->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 
+
+			// ****************************************************
+			//				 爆発音再生
+			// ****************************************************
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01), crntPos, SOUND_DEAD_RADIUS);
+			//auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+			//VEC3 pos = myTransform->get_VEC3ToPos();
+
 			// 大爆発エフェクト
 			SpawnDeadEffect(pOwner, 40.0f);
 		}
@@ -146,19 +168,9 @@ void Octahedron_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner, flo
 	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
 	VEC3 pos = myTransform->get_VEC3ToPos();
 
-	// ****************************************************
-	//				 死亡音再生
-	// ****************************************************
-	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_DEAD), pos, SOUND_DEAD_RADIUS);
-
-	// ****************************************************
-	//				アイテム出現
-	// ****************************************************
-	Master::m_pItemManager->SpawnItemRand(DROP_ITEM_MIN, DROP_ITEM_MAX, pos, 0.0f);
-
 	// 死亡エフェクト
 	int handle = Master::m_pEffectManager->PlayEffect("Explosion_01");
 	float deadEffectScale = _effectSize;
 	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
-	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + 2.0f, pos.z);
+	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
 }

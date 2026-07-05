@@ -65,18 +65,21 @@ enum class SOUND_ID
 
 
     /* 敵 */
-    ENEMY_ANT_HIT01,        // アリ被弾 
-    ENEMY_ANT_DEAD,         // アリやられる
-    ENEMY_ANT_ACID_SHOOT,   // 酸射出
+    ENEMY_ANT_HIT01,         // アリ被弾 
+    ENEMY_ANT_DEAD,          // アリやられる
+    ENEMY_ANT_ACID_SHOOT,    // 酸射出
+
+	ENEMY_OCTAHEDRON_DEAD, // 八面体の常時音
+	ENEMY_OCTAHEDRON_ALWAYS, // 八面体の常時音
 
     /* アイテム */
-    ITEM_GET,               // 取得
+    ITEM_GET,                // 取得
 
 
     
     /* システム */
-    SYSTEM_MOVING_CURSOR01, // 項目にカーソルがホバーしている状態
-	SYSTEM_DECISION01,      // 決定音
+    SYSTEM_MOVING_CURSOR01,  // 項目にカーソルがホバーしている状態
+	SYSTEM_DECISION01,       // 決定音
     
     TEST,
 
