@@ -22,12 +22,15 @@ class EnemyController :  public IComponent
 private:
 	StateMachine<EnemyController> m_StateMachine;				// ステートマシン
 
-	std::weak_ptr<class Health>m_pHealthComp;					// 体力管理コンポーネント
-	std::weak_ptr<class SkinnedMeshAnimator> m_pAnimatorComp;	// アニメータコンポーネント
-	std::weak_ptr<class Collider> m_pColliderComp;				// コライダーコンポーネント
-	std::weak_ptr<class MoveLogic> m_pMoveLogicComp;			// 移動コンポーネント
-	std::weak_ptr<class Physics> m_pPhysicsComp;				// 物理コンポーネント
-	const GameObject* m_pTarget;								// 攻撃目標
+	class Health* m_pHealthComp;					// 体力管理コンポーネント
+	class SkinnedMeshAnimator* m_pAnimatorComp;		// アニメータコンポーネント
+	class Collider* m_pColliderComp;				// コライダーコンポーネント
+	class MoveLogic* m_pMoveLogicComp;				// 移動コンポーネント
+	class Physics* m_pPhysicsComp;					// 物理コンポーネント
+	class MyTransform* m_pTransformComp;			// トランスフォームコンポーネント
+
+	const GameObject* m_pTarget;					// 攻撃目標
+
 
 	VECTOR3::VEC3 m_MoveVelocity;					// 移動
 	VECTOR3::VEC3 m_StartPos;						// 開始位置
@@ -102,15 +105,24 @@ public:
 	/* 移動ロジックの切り替え */
 	void set_MoveLogicState(UtilityData::MOVE_BEHAVIOUR_TYPE _moveType);
 
-	/* 移動コンポーネントを取得する */
-	std::weak_ptr<class MoveLogic> get_MoveLogicComponent() { return m_pMoveLogicComp; };
-
 	/* 開始時の位置を取得する*/
-	const VECTOR3::VEC3 &get_StartPos() { return m_StartPos; }
+	const VECTOR3::VEC3& get_StartPos() { return m_StartPos; }
 
 	/* 死亡フラグ */
 	bool get_IsDead()const;
 
 	/* ダメージフラグ */
 	bool get_IsOnDamage()const { return m_IsOnDamage; }
+
+
+
+	// =========================================================================================
+	//	各コンポーネントの取得
+	// =========================================================================================
+	class MoveLogic* get_MoveLogicComponent() const { return m_pMoveLogicComp; };
+	class SkinnedMeshAnimator* get_AnimatorComponent() const { return m_pAnimatorComp; };
+	class Collider* get_ColliderComponent() const { return m_pColliderComp; };
+	class Physics* get_PhysicsComponent() const { return m_pPhysicsComp; };
+	class Health* get_HealthComponent() const { return m_pHealthComp; }
+	class MyTransform* get_TransformComponent() const { return m_pTransformComp; }
 };

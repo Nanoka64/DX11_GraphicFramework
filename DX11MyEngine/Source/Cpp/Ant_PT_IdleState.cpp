@@ -73,7 +73,7 @@ int Ant_PT_IdleState::Update(class EnemyController* pOwner)
 		auto targetTransform = target->get_Transform().lock();
 		VEC3 targetPos = targetTransform->get_VEC3ToPos();	// –Ú•WˆÊ’u
 
-		auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+		auto myTransform = pOwner->get_TransformComponent();
 
 		VEC3 myPos = myTransform->get_VEC3ToPos();	// Ž©•ª‚ÌˆÊ’u
 

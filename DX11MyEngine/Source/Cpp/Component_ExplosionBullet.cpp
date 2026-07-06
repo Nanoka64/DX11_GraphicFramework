@@ -154,7 +154,7 @@ void ExplosionBullet::Start(RendererEngine& renderer)
 
                 Master::m_pEffectManager->SetDynamicParameter(exp_smoke_handle, 1, bulletParam->_explosionEffectAliveTime); // ¶‘¶ŽžŠÔ‚ð•ÏX
             }
-
+            
             // ”š”­
             Master::m_pEffectManager->SetScaleEffect(exp_handle, effectExpSize, effectExpSize, effectExpSize);
             Master::m_pEffectManager->SetPositionEffect(exp_handle, pos.x, pos.y, pos.z);

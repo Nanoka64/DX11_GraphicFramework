@@ -270,6 +270,7 @@ namespace UtilityData
 	};
 
 
+
 	constexpr int MAX_BGM_VOLUME = 100;			// BGM音量の最大値
 	constexpr int MIN_BGM_VOLUME = 0;			// BGM音量の最小値
 	constexpr int MAX_SE_VOLUME = 100;			// SE音量の最大値
@@ -299,6 +300,42 @@ namespace UtilityData
 		{
 		}
 	};
+
+	/// <summary>
+	/// カメラシェイク用のパラメータ
+	/// </summary>
+	struct CameraShakeParam
+	{
+		float _duration;			// 揺れの長さ
+		VECTOR3::VEC3 _strength;	// 揺れの強さ（X,Y,Z軸）
+		VECTOR3::VEC3 _pos;			// 揺れの中心位置
+		float _maxRange;			// 揺れの最大範囲（この範囲を超える揺れは発生しない）
+		CameraShakeParam() :
+			_duration(0.0f),
+			_strength(VECTOR3::VEC3()),
+			_pos(VECTOR3::VEC3()),
+			_maxRange(0.0f)
+		{
+		}
+	};
+
+	/// <summary>
+	/// 爆発コマンドのパラメータ
+	/// </summary>
+	struct Command_ExplosionParam
+	{
+		float _scale = 1.0f;	// エフェクトの大きさ
+		VECTOR3::VEC3 _pos;		// エフェクトの位置
+		VECTOR3::VEC3 _rot;		// エフェクトの回転（ラジアン）
+
+		Command_ExplosionParam() :
+			_scale(1.0f),
+			_pos(VECTOR3::VEC3()),
+			_rot(VECTOR3::VEC3())
+		{
+		}
+	};
+
 
 	/// <summary>
 	/// タイトル項目名

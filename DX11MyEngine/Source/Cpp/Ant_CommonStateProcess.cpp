@@ -29,7 +29,7 @@ int Ant_CommonStateProcess::CommonProcess(class EnemyController* pOwner)
 	else
 	{
 		// ステート内で移動処理が実行されるので、移動後の値が取れる
-		auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+		auto myTransform = pOwner->get_TransformComponent();
 		VEC3 newPos = myTransform->get_VEC3ToPos();
 		//newPos.y = 0.0f;
 		myTransform->set_Pos(newPos);

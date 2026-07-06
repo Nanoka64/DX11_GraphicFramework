@@ -84,7 +84,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		}
 
 		auto targetTransform = targetObj->get_Transform().lock();
-		auto myTransform = myObj->get_Transform().lock();
+		auto myTransform = pOwner->get_TransformComponent();
 
 		/* 追いかけ移動を行う */
 		VEC3 targetPos = targetTransform->get_VEC3ToPos();	// 目標位置
@@ -97,7 +97,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		movePram._moveSpeed = pOwner->get_MoveSpeed();
 		movePram._turnSpeed = 0.1f;
 		movePram._targetPos = targetPos;
-		auto move = pOwner->get_MoveLogicComponent().lock();
+		auto move = pOwner->get_MoveLogicComponent();
 		move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 		

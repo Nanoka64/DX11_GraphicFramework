@@ -77,7 +77,7 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
 	// オーナーオブジェクト
-	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	auto myTransform = pOwner->get_TransformComponent();
 	VEC3 myPos = myTransform->get_VEC3ToPos();	// 自分の位置
 	VEC3 startPos = pOwner->get_StartPos();
 
@@ -95,7 +95,7 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	movePram._moveSpeed = pOwner->get_MoveSpeed();
 	movePram._turnSpeed = 0.05f;	// 急に振り向くと変なので、少し優しめに
 	movePram._moveDirection = m_MoveDir;
-	auto move = pOwner->get_MoveLogicComponent().lock();
+	auto move = pOwner->get_MoveLogicComponent();
 	move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 

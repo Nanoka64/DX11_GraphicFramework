@@ -40,6 +40,7 @@ EnemyController::EnemyController(std::weak_ptr<GameObject> pOwner, int updateRan
 	m_GravityVelocity(0.0f),
 	m_pEnemyData(nullptr),
 	m_pTarget(nullptr),
+	m_pTransformComp(nullptr),
 	m_Gravity(18.0f),
 	m_AnimSpeed(1.25f)
 {
@@ -66,34 +67,36 @@ void EnemyController::Start(RendererEngine& renderer)
 	auto ownerObj = m_pOwner.lock();;
 
     // アニメーションコンポーネントの取得
-    m_pAnimatorComp = ownerObj->get_Component<SkinnedMeshAnimator>();
+    m_pAnimatorComp = ownerObj->get_Component<SkinnedMeshAnimator>().get();
 
 	// コライダーの取得
-	m_pColliderComp = ownerObj->get_Component<BoxCollider>();
+	m_pColliderComp = ownerObj->get_Component<BoxCollider>().get();
 
 	// 移動コンポーネントの取得
-	m_pMoveLogicComp = ownerObj->get_Component<MoveLogic>();
+	m_pMoveLogicComp = ownerObj->get_Component<MoveLogic>().get();
 
 	// 物理コンポーネントの取得
-	m_pPhysicsComp = ownerObj->get_Component<Physics>();
+	m_pPhysicsComp = ownerObj->get_Component<Physics>().get();
 
 	// HP管理コンポーネントの取得
-	m_pHealthComp = m_pOwner.lock()->get_Component<Health>();
+	m_pHealthComp = m_pOwner.lock()->get_Component<Health>().get();
 	
+	// トランスフォームコンポーネントの取得
+	m_pTransformComp = ownerObj->get_Transform().lock().get();
 
 	// *********************************************************
 	// ステート内で処理を行うようにしたので要らないかも？
 	// *********************************************************
 	// TODO:処理関数を外から入れるようにする
 	// 被弾時の処理登録
-	m_pHealthComp.lock()->RegisterOnDamage(
+	m_pHealthComp->RegisterOnDamage(
 		[this, &renderer](float _damage)
 		{
 			m_IsOnDamage = true;
 		}
 	);
 	// 死亡時の処理登録
-	m_pHealthComp.lock()->RegisterOnDead(
+	m_pHealthComp->RegisterOnDead(
 		[this, &renderer]
 		{
 
@@ -101,11 +104,11 @@ void EnemyController::Start(RendererEngine& renderer)
 	);
 
 	// 開始時の座標を入れる
-	m_StartPos = m_pOwner.lock()->get_Transform().lock()->get_VEC3ToPos();
+	m_StartPos = m_pTransformComp->get_VEC3ToPos();
 
-	m_pMoveLogicComp.lock()->Register(MOVE_BEHAVIOUR_TYPE::HOMING);
-	m_pMoveLogicComp.lock()->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
-	m_pMoveLogicComp.lock()->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
+	m_pMoveLogicComp->Register(MOVE_BEHAVIOUR_TYPE::HOMING);
+	m_pMoveLogicComp->Register(MOVE_BEHAVIOUR_TYPE::LINEAR);
+	m_pMoveLogicComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
 }
 
 
@@ -144,10 +147,10 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 
 	m_IsOnDamage = false;	//　ダメージフラグを初期化
 
-	if (auto animComp = m_pAnimatorComp.lock())
+	if (m_pAnimatorComp != nullptr)
 	{
-		animComp->set_IsAnim(m_IsAnim);
-		animComp->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
+		m_pAnimatorComp->set_IsAnim(m_IsAnim);
+		m_pAnimatorComp->PlayAnim(Master::m_pTimeManager->get_DeltaTime() * m_AnimSpeed);
 	}
 
 	auto transform = m_pOwner.lock()->get_Transform().lock();
@@ -164,7 +167,7 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 	{
 		m_GravityVelocity = 0.0f;
 		transform->set_Pos(VEC3(0.0f, 100.0f, 0.0f));
-		m_pPhysicsComp.lock()->SetZeroVelocity();
+		m_pPhysicsComp->SetZeroVelocity();
 	}
 }
 
@@ -232,16 +235,14 @@ void EnemyController::ChangeAnimation(const int _newId)
 		return;
 	}
 
-	auto animComp = m_pAnimatorComp.lock();
-
 	// ひとつ前のアニメーションIDセット
-	animComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
+	m_pAnimatorComp->set_PrevAnimIndex(static_cast<int>(m_CrntAnimID));
 
 	m_CrntAnimID = _newId;
 
 	// 現在のアニメーションIDセット
-	animComp->set_AnimIndex(static_cast<int>(_newId));
-	animComp->set_AnimTime(0.0f);
+	m_pAnimatorComp->set_AnimIndex(static_cast<int>(_newId));
+	m_pAnimatorComp->set_AnimTime(0.0f);
 }
 
 //*---------------------------------------------------------------------------------------
@@ -269,8 +270,8 @@ std::shared_ptr<MyTransform> EnemyController::get_TargetTransform() const
 //*----------------------------------------------------------------------------------------
 bool EnemyController::get_IsDead()const
 {
-	if (auto health = m_pHealthComp.lock()){
-		return health->get_IsDead();
+	if (m_pHealthComp != nullptr){
+		return m_pHealthComp->get_IsDead();
 	}
 	else{
 		assert(false);
@@ -287,7 +288,7 @@ bool EnemyController::get_IsDead()const
 //*----------------------------------------------------------------------------------------
 void EnemyController::set_MoveLogicState(UtilityData::MOVE_BEHAVIOUR_TYPE _moveType)
 {
-	m_pMoveLogicComp.lock()->ChangeBehaviour(_moveType);
+	m_pMoveLogicComp->ChangeBehaviour(_moveType);
 }
 
 //*---------------------------------------------------------------------------------------

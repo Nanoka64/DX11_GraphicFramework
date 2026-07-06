@@ -54,7 +54,7 @@ void Octahedron_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-10.0f, 10.0f);
 
 	// 物理コンポーネントの設定
-	auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
+	auto physics = pOwner->get_PhysicsComponent();
 	physics->set_Mass(1.0f);
 	physics->set_GravityScale(10.0f);
 	physics->AddImpulse(knockbackDir);
@@ -104,7 +104,7 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 		}
 
 		float deltaTime = Master::m_pTimeManager->get_DeltaTime();
-		auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+		auto myTransform = pOwner->get_TransformComponent();
 		VEC3 crntPos = myTransform->get_VEC3ToPos();					// 現在の座標
 		VEC3 crntRot = myTransform->get_VEC3ToLocal_RotateToRad();		// 現在のオイラー
 		XMVECTOR crntRotQ = myTransform->get_RotationQuaternion();		// 現在のクオータニオン
@@ -136,7 +136,8 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 		//*****************************************************************************************
 		if (timer > DELETE_TIME)
 		{
-			pOwner->get_OwnerObj().lock()->get_Component<Physics>()->set_IsEnable(false);
+			auto physics = pOwner->get_PhysicsComponent();
+			physics->set_IsEnable(false);
 			pOwner->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 
 
@@ -165,7 +166,7 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 //*----------------------------------------------------------------------------------------
 void Octahedron_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner, float _effectSize)
 {
-	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	auto myTransform = pOwner->get_TransformComponent();
 	VEC3 pos = myTransform->get_VEC3ToPos();
 
 	// 死亡エフェクト

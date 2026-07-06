@@ -66,7 +66,7 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 
 		auto targetTransform = target->get_Transform().lock();
 		VEC3 targetPos = targetTransform->get_VEC3ToPos();	// 目標位置
-		auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+		auto myTransform = pOwner->get_TransformComponent();
 		VEC3 myPos = myTransform->get_VEC3ToPos();			// 自分の位置
 
 		VEC3 targetDir = (targetPos - myPos).Normalize();	// 目標方向
@@ -77,7 +77,7 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 		movePram._moveSpeed = 1.0f;
 		movePram._turnSpeed = 0.5f;
 		movePram._targetPos = targetPos;		
-		auto move = pOwner->get_MoveLogicComponent().lock();
+		auto move = pOwner->get_MoveLogicComponent();
 		move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 		/* 硬直時間を終えたら、攻撃 */

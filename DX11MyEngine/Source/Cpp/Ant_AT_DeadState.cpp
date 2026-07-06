@@ -54,7 +54,7 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 	knockbackDir.y += 5.0f;
 	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
 
-	auto physics = pOwner->get_OwnerObj().lock()->get_Component<Physics>();
+	auto physics = pOwner->get_PhysicsComponent();
 	physics->AddImpulse(knockbackDir);
 
 	// コライダーの判定をオフに
@@ -126,7 +126,9 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 		//*****************************************************************************************
 		if (timer - OVERTURN_TIME > DELETE_TIME)
 		{
-			pOwner->get_OwnerObj().lock()->get_Component<Physics>()->set_IsEnable(false);
+			auto physics = pOwner->get_PhysicsComponent();
+
+			physics->set_IsEnable(false);
 			pOwner->get_OwnerObj().lock()->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DELETE);
 		}
 	}

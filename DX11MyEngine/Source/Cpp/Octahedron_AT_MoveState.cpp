@@ -80,9 +80,15 @@ int Octahedron_AT_MoveState::Update(class EnemyController* pOwner)
 	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
 	// オーナーオブジェクト
-	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	auto myTransform = pOwner->get_TransformComponent();
 	VEC3 myPos = myTransform->get_VEC3ToPos();	// 自分の位置
 	VEC3 startPos = pOwner->get_StartPos();
+
+	// 高さが低い場合は、水平に追従する
+	if (myPos.y < 100.0f)
+	{
+		m_MoveDir.y = 0.0f;
+	}
 
 	/* 親の移動コンポーネントを使い、移動処理を行う */
 	// 方向を変えて、移動させる
@@ -90,7 +96,7 @@ int Octahedron_AT_MoveState::Update(class EnemyController* pOwner)
 	movePram._moveSpeed = pOwner->get_MoveSpeed();
 	movePram._turnSpeed = 0.05f;	// 急に振り向くと変なので、少し優しめに
 	movePram._moveDirection = m_MoveDir;
-	auto move = pOwner->get_MoveLogicComponent().lock();
+	auto move = pOwner->get_MoveLogicComponent();
 	move->set_MoveParam(movePram);	// 移動ロジックにパラメータを渡す
 
 

@@ -601,7 +601,7 @@ void PlayerController::ContinuousAngle(const VECTOR3::VEC3 &_crntRot)
 
 	// クォータニオンの球面線形補間
 	// 普通の線形補間だと、値が飛んでしまうためクォータニオンの場合は球面線形補間を使う
-	XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, 0.5f);
+	XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, 0.9f);
 
 	m_pMyTransformComp.lock()->set_RotationQuaternion(newRotQ);
 }

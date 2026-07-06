@@ -22,7 +22,7 @@ using namespace EnemyData;
 //*----------------------------------------------------------------------------------------
 void Ant_AT_HitStunState::OnEnter(class EnemyController* pOwner)
 {
-	auto myTransform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+	auto myTransform = pOwner->get_TransformComponent();
 	VEC3 pos = myTransform->get_VEC3ToPos();
 	VEC3 rot;
 	rot.x = Tool::RandRange(-3.14f, 3.14f);
@@ -63,9 +63,10 @@ void Ant_AT_HitStunState::OnEnter(class EnemyController* pOwner)
 	scale.z = 1.0f;
 	auto obj = MeshFactory::CreateDecal(decal);
 	obj->get_Component<DecalRenderer>()->Start(*m_pRenderer);
-	obj->get_Transform().lock()->set_Pos(pos);
-	obj->get_Transform().lock()->set_Scale(scale);
-	obj->get_Transform().lock()->set_RotateToRad(1.57f, Tool::RandRange(0.0f, 6.14f), 0.0f);
+	auto decalTransform = obj->get_Transform().lock();
+	decalTransform->set_Pos(pos);
+	decalTransform->set_Scale(scale);
+	decalTransform->set_RotateToRad(1.57f, Tool::RandRange(0.0f, 6.14f), 0.0f);
 	obj->set_Tag("Ant_Splash");
 	auto timer = obj->add_Component<TimerDestruction>();
 	timer->set_LifeTime(8.0f);  // ¶‘¶ŠÔ
