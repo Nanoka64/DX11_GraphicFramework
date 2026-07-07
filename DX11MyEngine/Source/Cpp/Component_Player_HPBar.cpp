@@ -61,7 +61,7 @@ void Player_HPBar::Start(RendererEngine& renderer)
     rectData._anchorMax = VEC2(0.0f, 0.0f);
     rectData._anchorMin = VEC2(0.0f, 0.0f);
     spriteData._tag = "HPBar_Back";
-    spriteData._imagePath = "Resource/Texture/UI/HPBar_Ver2.png";
+    spriteData._imagePath = "Resource/Texture/UI/HPBar_Ver2_ai.png";
     spriteData._layerRank = 101;
     m_pPlayerHPBarBackSpriteObj = Master::m_pUIManager->GetSprite(renderer, rectData, spriteData);
     m_pPlayerHPBarBackSpriteRenderer = m_pPlayerHPBarBackSpriteObj->get_Component<SpriteRenderer>();
