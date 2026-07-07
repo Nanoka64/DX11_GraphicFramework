@@ -8,20 +8,11 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include "LightFunctions_H.hlsli"           // ライトヘッダー
+#include "UtilityFunctions_H.hlsli"         // 汎用関数群
 SamplerState g_sSampler : register(s0);
 Texture2D g_tDiffuseTex : register(t0);     // ディフューズ
 Texture2D g_tNormalTex : register(t1);      // ノーマル
 Texture2D g_tSpecularTex : register(t2);    // スペキュラ
-
-
-// ディザパターン
-static const int ditherPattern[4][4] =
-{
-    { 0, 32,8, 40 },
-    { 48,16,56,24 },
-    { 12,44,4, 36 },
-    { 60,28,52,20 },
-};
 
 /* =========================================================================
 /* - @:入力構造体 - */
@@ -64,13 +55,8 @@ PS_OUT PSMain(PS_IN input)
     // こっちは法線マップなしver
     //float3 normal = GetNorm(normalMap, float3(1.0, 0.0, 0.0), float3(0.0, 0.0, -1.0), input.Normal);
     
-    // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
-    //int x = (int) fmod(input.Pos.x, 4.0f);
-    //int y = (int) fmod(input.Pos.y, 4.0f);
-    // このピクセルの閾値を取得
-    //int dither = ditherPattern[x][y];
-    // 閾値が 10 以下のピクセルはピクセルキルする
-    //clip(dither - 50);
+    // ディザリング
+    //DitheringClip(input.Pos.xy, 60);
     
     // 発光色を求める
     float3 emissiveColor = cb_EmissiveColor * cb_EmissivePower;

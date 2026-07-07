@@ -8,6 +8,7 @@
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
 #include "LightFunctions_H.hlsli"           // ライトヘッダー
+#include "UtilityFunctions_H.hlsli"         // 汎用関数群
 SamplerState g_sSampler : register(s0);
 Texture2D g_tDiffuseTex : register(t0);     // ディフューズ
 Texture2D g_tNormalTex : register(t1);      // ノーマル
@@ -49,6 +50,9 @@ PS_OUT PSMain(PS_IN input)
     
     // 最終出力用
     float4 finalCol = float4(1.0, 1.0, 1.0, 1.0);
+    
+    // ディザリング
+    //DitheringClip(input.Pos.xy, 60);
     
     // ディフューズマップとcpp側で設定したカラーを足す
     finalCol = diffuseMap * cb_DiffuseColor;

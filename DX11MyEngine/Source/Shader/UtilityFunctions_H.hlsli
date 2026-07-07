@@ -112,4 +112,31 @@ float4 GetConvertPosFromDepthToWorld(float depth, float2 uv)
     return worldPos;
 }
 
+
+
+// ディザパターン
+static const int ditherPattern[4][4] =
+{
+    { 0, 32, 8, 40 },
+    { 48, 16, 56, 24 },
+    { 12, 44, 4, 36 },
+    { 60, 28, 52, 20 },
+};
+//*---------------------------------------------------------------------------------------
+//*【?】ディザリングクリップ
+//* 引数：1.スクリーン座標
+//* 引数：2.閾値
+//* 返値：なし
+//*----------------------------------------------------------------------------------------
+void DitheringClip(float2 screenPos, float threshold_value)
+{
+    // このピクセルのスクリーン座標系でのX座標、Y座標を4で割った余りを求める
+    int x = (int) fmod(screenPos.x, 4.0f);
+    int y = (int) fmod(screenPos.y, 4.0f);
+    // このピクセルの閾値を取得
+    int dither = ditherPattern[x][y];
+    // 閾値が 10 以下のピクセルはピクセルキルする
+    clip(dither - threshold_value);
+}
+
 #endif

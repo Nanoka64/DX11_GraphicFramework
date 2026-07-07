@@ -9,6 +9,19 @@ namespace BulletData
     //////////////////////////////////////////////////////////////////////////////////////////
 
     /// <summary>
+	/// 弾の見た目アーキタイプ（3Dモデルかビルボードか）を定義する
+    /// </summary>
+    enum class BULLET_VISUAL_ARCHETYPE
+    {
+        BILLBOARD,          // ビルボード
+        BILLBOARD_TRAIL,    // ビルボード（軌跡付き）
+        MODEL,              // 3Dモデル
+        MODEL_TRAIL,        // 3Dモデル（軌跡付き）
+
+        NUM,
+    };
+
+    /// <summary>
     /// 弾の種類
     /// </summary>
     enum class BULLET_TYPE
