@@ -15,6 +15,7 @@ namespace BulletData
     {
         BILLBOARD,          // ビルボード
         BILLBOARD_TRAIL,    // ビルボード（軌跡付き）
+        LASER,              // レーザー
         MODEL,              // 3Dモデル
         MODEL_TRAIL,        // 3Dモデル（軌跡付き）
 
