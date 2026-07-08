@@ -48,6 +48,31 @@ namespace BulletData
         VECTOR3::VEC3 _scale;       // 弾のデータに持たせてしまったので必要ないかも？（Shot関数内で取り出し）
     };
 
+    struct BulletDataBase
+    {
+        float _damage = 0.0f;                       // 弾のダメージ量
+        float _speed = 0.0f;                        // 弾の速度
+        float _acceleration = 0.0f;                 // 弾の加速度
+        float _range = 0.0f;                        // 弾の射程距離
+        float _gravityScale = 0.0f;                 // 重力の影響を受けるかどうか（0.0fなら受けない）
+        float _knockbackForce = 1.0f;               // ノックバック力
+        int _penetrationsCount = 0;                 // 貫通可能回数
+        float _collisionSize = 0.0f;                // 衝突判定の半径
+        unsigned int _collisionMask = 0;            // どのオブジェクトと衝突するか（COLLISION_CATEGORY）
+        std::string _bulletMaterialTag;             // 使用するマテリアルのタグ（TODO:ビルボードと3Dモデルで分ける必要あるかも）
+        std::string _decalMaterialTag;              // 衝突時に作成するデカールのタグ
+        std::string _hitEffectTag;                  // 衝突時に発生させるエフェクト
+        VECTOR3::VEC3 _scale = VECTOR3::VEC3();     // 弾の大きさ
+
+        /// <summary>
+        /// リセット
+        /// </summary>
+        void Reset()
+        {
+            *this = BulletDataBase();
+        }
+    };
+
     /// <summary>
     /// 通常弾のデータ（全ての武器で必須項目のため、他のデータはこれを継承する）
     /// </summary>

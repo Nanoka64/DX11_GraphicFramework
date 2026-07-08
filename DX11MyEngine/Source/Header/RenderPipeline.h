@@ -55,7 +55,7 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pFinalSceneToneMappingFilter_Sprite;
 
 
-    CB_DOF m_DofData;
+    CB_POSTEFFECT m_PostEffectData;
 
     // シャドウバイアス情報
     CB_SHADOW m_ShadowData;

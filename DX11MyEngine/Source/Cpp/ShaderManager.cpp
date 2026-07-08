@@ -261,7 +261,7 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::DIRECTIONAL_LIGHT)]   = std::make_unique<ConstantBuffer<CB_DIRECTION_LIGHT>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::POINT_LIGHT)]         = std::make_unique<ConstantBuffer<CB_POINT_LIGHT>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::BLUR_WEIGHTS)]        = std::make_unique<ConstantBuffer<CB_BLUR>>();
-	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::POSTEFFECT)]          = std::make_unique<ConstantBuffer<CB_DOF>>();
+	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::POSTEFFECT)]          = std::make_unique<ConstantBuffer<CB_POSTEFFECT>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::SHADOW)]              = std::make_unique<ConstantBuffer<CB_SHADOW>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::SPRITE)]              = std::make_unique<ConstantBuffer<CB_SPRITE>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::DECAL)]               = std::make_unique<ConstantBuffer<CB_DECAL>>();

@@ -10,6 +10,7 @@
 //
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #pragma once
+#include "ConstantBuffers_H.hlsli"
 SamplerState g_sSampler : register(s0);
 Texture2D g_tTexture0 : register(t0); 
 
@@ -37,6 +38,9 @@ float3 ACESToneMapping(float3 x)
     return saturate((x * (a * x + b)) / (x * (c * x + d) + e));
 }
 
+
+
+
 // **************************************************************************
 /* - @:エントリーポイント - */
 // **************************************************************************
@@ -44,7 +48,6 @@ float4 PSMain(PS_IN input) : SV_TARGET
 {
     float3 hdrColor = g_tTexture0.Sample(g_sSampler, input.UV).rgb;
     float3 finalColor = float3(0, 0, 0);
-    
     // 少し赤みを足して世紀末感を出す（定数バッファで変更できるようにすれば演出も作りやすそう）
     //hdrColor.r *= 1.2f;
     //hdrColor.r *= 0.2f;
@@ -55,6 +58,27 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // TODO : エフェクトの見た目が極端に変わってしまうので、一旦飛ばす
     finalColor = ACESToneMapping(hdrColor);
     
+    // 露出
+    finalColor *= exp2(cb_ColorGrading.Exposure);
+
+    // コントラスト
+    finalColor = (finalColor - 0.5f) * cb_ColorGrading.Contrast + 0.5f;
+
+    // 彩度
+    float luminance = dot(
+        finalColor,
+        float3(0.2126f, 0.7152f, 0.0722f)
+    );
+
+    finalColor = lerp(
+        luminance.xxx,
+        finalColor,
+       cb_ColorGrading.Saturation
+    );
+
+    // 色味
+    finalColor *= cb_ColorGrading.ColorTint;
+    
     
     // リニア空間：現実的な正しい世界
     // ガンマ空間：モニタが表示する少し暗い世界
@@ -64,7 +88,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // そのままだと本来よりも暗くなってしまう。
     // 1.0 / 2.2をすることで0.4545...ガンマの逆数となり、
     // この累乗を計算することで正しい明るさで表示される......らしい。
-    finalColor = pow(finalColor, 1.0f / 2.2f);
+    //finalColor = pow(hdrColor, 1.0f / g_ColorGrading.Gamma);
     
     return float4(finalColor, 1.0f);;
 }

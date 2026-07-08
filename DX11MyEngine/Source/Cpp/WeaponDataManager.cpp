@@ -50,7 +50,7 @@ bool WeaponDataManager::Init()
     m_AllWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
     
     // ƒ‰ƒsƒbƒh ************************************************************************************
-    if (LoadGunWeaponData("Resource/WeaponsData/Flamethrower02.json", gunData) == false){
+    if (LoadGunWeaponData("Resource/WeaponsData/Flamethrower01.json", gunData) == false){
         assert(false);
     }
     m_AllWeaponsDataMap[2] = std::make_unique<GunWeaponData>(gunData);

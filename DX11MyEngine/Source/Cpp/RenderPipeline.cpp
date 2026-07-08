@@ -46,7 +46,7 @@ RenderPipeline::RenderPipeline() :
     m_DoF_BlurIncensity(2.0f),
     m_Bloom_BlurIncensity(8.0f),
     m_ShadowData(),
-    m_DofData(),
+    m_PostEffectData(),
     m_ScreenWidth(0),
     m_ScreenHeight(0)
 {
@@ -80,8 +80,15 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
 	m_ShadowData.isEnable = false;
 
     // 被写界深度の設定
-    m_DofData.dof_MaxRange = DOF_MAX_RANGE;
-    m_DofData.dof_MinRange = DOF_MIN_RANGE;
+    m_PostEffectData.Dof.dof_MaxRange = DOF_MAX_RANGE;
+    m_PostEffectData.Dof.dof_MinRange = DOF_MIN_RANGE;
+
+	// カラーグレーディングの設定
+    m_PostEffectData.ColorGrading.Exposure = 0.3;                   // 露出補正（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Contrast = 1.4f;                  // コントラスト（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Saturation = 0.7f;                // 彩度（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Gamma = 1.0f;                     // ガンマ補正（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.ColorTint = { 1.3f, 1.1f, 1.2f }; // 色味（1.0fで補正なし）
 
     // スクリーンの大きさを取得
     m_ScreenWidth = static_cast<float>(renderer.get_ScreenWidth());
@@ -219,22 +226,54 @@ void RenderPipeline::DebugRenderTargetImGui()
 
         if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"ポストエフェクト")))
         {
+            /*
+            * ブルーム
+            */
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"輝度抽出"));
             Master::m_pDebugger->DG_Image(m_pLuminance_RT->get_SRV(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ぼかしの強さ"));
             Master::m_pDebugger->DG_DragFloat("##BloomBlur", 1, &m_Bloom_BlurIncensity, 0.1f, 0.1f, 32.0f);
             Master::m_pDebugger->DG_Separator();
 
+            /*
+            * 被写界深度
+            */
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度"));
             Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ぼかしの強さ"));
             Master::m_pDebugger->DG_DragFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 0.1f, 32.0f);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー開始距離"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##DofMinRange", 1, &m_DofData.dof_MinRange, 1.0f, 0.1f, 1000.0f);
+            Master::m_pDebugger->DG_DragFloat("##DofMinRange", 1, &m_PostEffectData.Dof.dof_MinRange, 1.0f, 0.1f, 1000.0f);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー最大位置"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##DofMaxRange", 1, &m_DofData.dof_MaxRange, 1.0f, 1.0f, 10000.0f);
+            Master::m_pDebugger->DG_DragFloat("##DofMaxRange", 1, &m_PostEffectData.Dof.dof_MaxRange, 1.0f, 1.0f, 10000.0f);
+            Master::m_pDebugger->DG_Separator();
+
+
+            /*
+            * 色味調整
+            */
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味調整"));
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"露出補正"));
+            Master::m_pDebugger->DG_DragFloat("##Exposure", 1, &m_PostEffectData.ColorGrading.Exposure, 0.1f, 0.0f, 100.0f);
+            
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"コントラスト"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##Contrast", 1, &m_PostEffectData.ColorGrading.Contrast, 0.1f, 0.0f, 100.0f);
+            
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"彩度"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##Saturation", 1, &m_PostEffectData.ColorGrading.Saturation, 0.1f, 0.0f, 100.0f);
+            
+			VEC3 colorTint = m_PostEffectData.ColorGrading.ColorTint; 
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragVec3("##ColorTint", &colorTint, 0.1f, 0.0f, 100.0f);
+
+            m_PostEffectData.ColorGrading.ColorTint = colorTint;
+
             Master::m_pDebugger->DG_Separator();
 
             Master::m_pDebugger->DG_TreePop();  // ポストエフェクト終了
@@ -571,7 +610,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);
 
     // 定数バッファに送信
-    m_pDoF_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_DofData);
+    m_pDoF_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_PostEffectData);
 
     // 被写界深度用スプライト
     m_pDoF_Sprite->Draw(renderer);
@@ -643,19 +682,8 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
 {    
-    // ビューポートの設定
-    renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
-    
-    // 深度はGバッファ作成時のもの
-    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);
     renderer.RegisterCullMode(CULL_MODE::BACK);
 
-    // 2Dオブジェクトの描画
-   Master::m_pGameObjectManager->Alpha_2DObjectRenderPass(renderer);
-
-    // レンダリングターゲット解除
-    renderer.ReleaseRenderTargetSetNull();
-    
     // レンダリングターゲットをフレームバッファに変更
     renderer.ChangeRenderTargetFrameBuffer();
 
@@ -664,6 +692,9 @@ void RenderPipeline::CopyToFrameBuffer_PathRender(RendererEngine &renderer)
 
     // トーンマッピングを適用する
     m_pFinalSceneToneMappingFilter_Sprite->Draw(renderer);
+
+    // 2Dオブジェクトの描画
+    Master::m_pGameObjectManager->Alpha_2DObjectRenderPass(renderer);
 
     renderer.ClearRenderTargetView(m_pSceneFinal_RT);
 }
@@ -1128,10 +1159,10 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     // 深度テクスチャ設定
     depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
 
-    depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
-    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;               // スロット8にセット
-    depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_DofData;
-    depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_DofData);
+    depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();                     // VS定数バッファにブラー用の重みテーブルをセット
+    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;                                         // スロット8にセット
+	depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_PostEffectData;       // ポストエフェクトのデータをセット
+    depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_PostEffectData);
     depthOfFieldSprite.PSConstBufferNum = 1;
 
     // スプライト取得

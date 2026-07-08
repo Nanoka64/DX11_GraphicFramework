@@ -223,12 +223,26 @@ struct CB_BLUR
 //					ポストエフェクト情報 - slot 8
 // 
 //=========================================================================================
-// 被写界深度情報
-struct CB_DOF {
-    float dof_MaxRange; // ぼかしの最大距離
-    float dof_MinRange; // ぼかしの開始距離
+struct CB_Dof
+{
+	float dof_MaxRange; // ぼかしの最大距離
+	float dof_MinRange; // ぼかしの開始距離
+	float pad[2];
+};
+struct CB_ColorGrading
+{
+    float Exposure;                 // 露出補正（1.0fで補正なし）
+    float Contrast;                 // コントラスト（1.0fで補正なし）
+    float Saturation;               // 彩度（1.0fで補正なし）
+    float Gamma;                    // ガンマ補正（1.0fで補正なし）
 
-    float pad[2];
+    DirectX::XMFLOAT3 ColorTint;    // 色味（1.0fで補正なし）
+    float padding;
+};
+ 
+struct CB_POSTEFFECT {
+	CB_Dof Dof;                   // 被写界深度情報
+	CB_ColorGrading ColorGrading; // カラーグレーディング情報
 };
 
 //=========================================================================================

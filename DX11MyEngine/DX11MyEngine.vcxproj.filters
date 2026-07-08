@@ -786,6 +786,9 @@
     <ClCompile Include="Source\Cpp\Octahedron_AT_DeadState.cpp">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron\Active</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
+      <Filter>ソース ファイル\Game\Component\Weapon\Bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1252,6 +1255,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\RenderCommand.h">
       <Filter>ソース ファイル\Constant</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Bullet.h">
+      <Filter>ソース ファイル\Game\Component\Weapon\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

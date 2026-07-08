@@ -9,10 +9,10 @@
 #define CONSTANTS_HLSLI
 
 
-static const int POINTLIGHT_MAX_NUM        = 100;                    // ポイントライトの最大数
-static const int DIRECTIONLIGHT_MAX_NUM    = 1;                     // ディレクションライトの最大数
-static const float3 AMBIENT_COLOR = float3(0.15f, 0.15f, 0.15f);    // アンビエントカラー
-static const float SHADOW_STRENGTH = 0.3f;                          // 影の濃さ（color * SHADOW_STRENGTH）
+static const int POINTLIGHT_MAX_NUM     = 100;                      // ポイントライトの最大数
+static const int DIRECTIONLIGHT_MAX_NUM = 1;                        // ディレクションライトの最大数
+static const float SHADOW_STRENGTH      = 0.3f;                     // 影の濃さ（color * SHADOW_STRENGTH）
+static const float3 AMBIENT_COLOR       = float3(0.2f, 0.2f, 0.2f); // アンビエントカラー
 
 
 #endif
