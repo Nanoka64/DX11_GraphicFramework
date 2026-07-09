@@ -69,7 +69,7 @@ public:
     /// <param name="pBullet"></param>
     void RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::shared_ptr<GameObject> pBullet);
 
-    void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::NormalBulletData &_param);
+    void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::BulletDataBase&_param);
     void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::ExplosionBulletData &_param);
     void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::HormingExplosionBulletData &_param);
 

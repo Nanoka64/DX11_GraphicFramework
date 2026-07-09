@@ -331,7 +331,7 @@ void NormalBullet::OnCollisionEnter(const class CollisionInfo& _other)
 //* _pParam : 弾のパラメータ 
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-void NormalBullet::Setup(const BulletData::NormalBulletData* _pParam)
+void NormalBullet::Setup(const BulletData::BulletDataBase* _pParam)
 {
     m_pWeaponData = _pParam;
 
@@ -372,7 +372,7 @@ void NormalBullet::Reset()
 //* [返値]
 //* 爆発弾のデータ 
 //*----------------------------------------------------------------------------------------
-const BulletData::NormalBulletData* NormalBullet::get_Parameter()const
+const BulletData::BulletDataBase* NormalBullet::get_Parameter()const
 {
-    return static_cast<const BulletData::NormalBulletData*>(m_pWeaponData);
+    return static_cast<const BulletData::BulletDataBase*>(m_pWeaponData);
 }

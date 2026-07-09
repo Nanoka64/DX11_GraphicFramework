@@ -1,5 +1,15 @@
 #pragma once
 #include "IComponent.h"
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:Bullet Class --- */
+//
+//  šŒp³FIComponent š
+// 
+// y?zU‚é•‘‚¢‚ğ•t‚¯‘Ö‚¦‚é‚±‚Æ‚ÅA’e‚Ìí—Ş‚ğ•Ï‚¦‚ç‚ê‚é‚æ‚¤‚É‚·‚é
+//		
+// ***************************************************************************************
 class Bullet : public IComponent
 {
 private:
@@ -7,16 +17,16 @@ private:
 	VECTOR3::VEC3 m_PrevPos;	// ‘O‚ÌÀ•W
 	VECTOR3::VEC3 m_MoveDir;
 	int m_CrntPenetrationCount;	// Œ»İ‚ÌŠÑ’Ê”
-	float m_Counter;
 	std::function<void(const class CollisionInfo& _other)> m_CollisionTask;		// Õ“Ë‚Ìˆ—
 	const BulletData::BulletDataBase* m_pBulletData;							// “Ç‚İ‚Æ‚èê—p‚Ì’eƒf[ƒ^‚ğ‚Â
+	StateMachine<Bullet> m_StateMachine;	// ó‘Ô‘JˆÚ‚ÌŠÇ—
 
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual ~Bullet() = default;
 
 	void set_CollisionTask(std::function<void(const class CollisionInfo& _other)> task) { m_CollisionTask = task; }		// Õ“Ë‚Ìˆ—‚Ìİ’è
-	virtual void Setup(const BulletData::NormalBulletData* _pParam) = 0;
+	virtual void Setup(const BulletData::BulletDataBase* _pParam) = 0;
 	virtual void Reset() = 0;
 };
 

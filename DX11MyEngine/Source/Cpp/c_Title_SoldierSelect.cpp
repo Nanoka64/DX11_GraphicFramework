@@ -252,7 +252,7 @@ void c_Title_SoldierSelect::DrawWeaponInfo(const WeaponData::GunWeaponData* weap
 	if (!weaponData) return;
 
 	// 基底データ（全弾種共通のパラメータ）の取得
-	const auto& baseBulletData = std::visit([](const auto& arg) -> const BulletData::NormalBulletData& {
+	const auto& baseBulletData = std::visit([](const auto& arg) -> const BulletData::BulletDataBase& {
 		return arg;
 		}, weaponData->_bulletParam);
 

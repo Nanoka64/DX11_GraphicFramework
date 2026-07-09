@@ -620,7 +620,7 @@ void BulletManager::RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::sha
 //* &_param           : パラメータ
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::NormalBulletData &_param)
+void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::BulletDataBase&_param)
 {
     auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::NORMAL)->second;
     auto obj = pool.get();

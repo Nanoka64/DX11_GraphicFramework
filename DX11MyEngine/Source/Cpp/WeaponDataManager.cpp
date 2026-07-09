@@ -218,9 +218,9 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
     {
         _outData._bulletType = BULLET_TYPE::NORMAL;
 
-        NormalBulletData normalData;
+        BulletDataBase normalData;
         normalData._damage = paramJson.value("damage", 0.0f);                                       // ダメージ値
-        normalData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f); // ダメージ減衰
+        //normalData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f); // ダメージ減衰
         normalData._speed = paramJson.value("speed", 0.0f);                                         // 速度
         normalData._acceleration = paramJson.value("acceleration", 0.0f);                           // 加速度
         normalData._range = paramJson.value("range", 0.0f);                                         // 射程
@@ -259,7 +259,7 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
 
         ExplosionBulletData expData;
         expData._damage = paramJson.value("damage", 0.0f);
-        expData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f);
+        //expData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f);
         expData._speed = paramJson.value("speed", 0.0f);
         expData._acceleration = paramJson.value("acceleration", 0.0f);
         expData._range = paramJson.value("range", 0.0f);

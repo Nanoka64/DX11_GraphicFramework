@@ -16,6 +16,7 @@ private:
 	//BulletData::ExplosionBulletData m_Parameter;	// 弾に関するパラメータ
 	float m_SmokeSpwanTimer = 0.0f;
 	const GameObject* m_pTarget = nullptr;
+
 public:
 	ExplosionBullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~ExplosionBullet();
@@ -27,6 +28,6 @@ public:
 	void OnTriggerEnter(const class CollisionInfo &other);		//　衝突時の処理
 	const BulletData::ExplosionBulletData* get_ExplosionParameter()const;					// パラメータの取得
 	void Reset()override;
-	void Setup(const BulletData::NormalBulletData* _pParam)override;
+	void Setup(const BulletData::BulletDataBase* _pParam)override;
 
 };

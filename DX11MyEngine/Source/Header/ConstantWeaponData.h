@@ -57,7 +57,7 @@ namespace WeaponData
 
         // variantは共用体（union）を使いやすくしてくれるやつ
         // 必ず「_bulletType」と一致したデータを入れる
-        using BulletParamVariant = std::variant<BulletData::NormalBulletData, BulletData::ExplosionBulletData>;
+        using BulletParamVariant = std::variant<BulletData::BulletDataBase, BulletData::ExplosionBulletData>;
         BulletParamVariant _bulletParam;    // 弾のパラメータ
 
         /// <summary>
