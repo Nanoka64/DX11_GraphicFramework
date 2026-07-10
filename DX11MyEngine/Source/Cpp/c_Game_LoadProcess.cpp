@@ -467,7 +467,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     /* スカイボックスの生成 */
     {
         // マテリアル取得
-        auto matPtr = Master::m_pResourceManager->FindMaterial("SkyBox");
+        auto matPtr = Master::m_pResourceManager->FindMaterial("SkyBox01");
 
         SetupMaterialInfo matInfo[1];
         matInfo[0].Index = 0;

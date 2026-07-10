@@ -155,10 +155,15 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         /* スカイボックス */
         {
             Material mat;
-            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadDDS_CubeMap_Texture(L"Resource/Texture/cloudy_skybox.dds");
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadDDS_CubeMap_Texture(L"Resource/Texture/CubeMap/skybox_01.dds");
 
             // マテリアル登録
-            Master::m_pResourceManager->RegisterMaterialData("SkyBox", mat);
+            Master::m_pResourceManager->RegisterMaterialData("SkyBox01", mat); 
+            
+            mat.m_DiffuseMap.Texture = Master::m_pResourceManager->LoadDDS_CubeMap_Texture(L"Resource/Texture/CubeMap/skybox_02.dds");
+            
+            // マテリアル登録
+            Master::m_pResourceManager->RegisterMaterialData("SkyBox02", mat);
         }
     }
 

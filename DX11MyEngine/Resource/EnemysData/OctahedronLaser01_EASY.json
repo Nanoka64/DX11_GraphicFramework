@@ -2,7 +2,7 @@
   "level": 0,
   "name": "AntAcid",
   "bulletMaxNum": 1,
-  "bulletSimultaneousNum": 3,
+  "bulletSimultaneousNum": 1,
   "fireRate": 12.0,
   "reloadTime": 1.5,
   "accuracy": 5.5,
