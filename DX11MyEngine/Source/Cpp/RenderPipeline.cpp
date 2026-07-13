@@ -86,9 +86,9 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
 	// カラーグレーディングの設定
     m_PostEffectData.ColorGrading.Exposure = 0.3;                   // 露出補正（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Contrast = 1.4f;                  // コントラスト（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.Saturation = 0.7f;                // 彩度（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Saturation = 1.4f;                // 彩度（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Gamma = 1.0f;                     // ガンマ補正（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.ColorTint = { 1.3f, 1.1f, 1.2f }; // 色味（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.ColorTint = { 1.0f, 1.0f, 1.0f }; // 色味（1.0fで補正なし）
 
     // スクリーンの大きさを取得
     m_ScreenWidth = static_cast<float>(renderer.get_ScreenWidth());
@@ -271,6 +271,10 @@ void RenderPipeline::DebugRenderTargetImGui()
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味"));
             Master::m_pDebugger->DG_SameLine();
             Master::m_pDebugger->DG_DragVec3("##ColorTint", &colorTint, 0.1f, 0.0f, 100.0f);
+            
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ガンマ"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##Gamma", 1, &m_PostEffectData.ColorGrading.Gamma, 0.1f, 0.0f, 6.0f);
 
             m_PostEffectData.ColorGrading.ColorTint = colorTint;
 

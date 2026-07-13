@@ -848,16 +848,16 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     switch (crntDiffLevel)
     {
     case UtilityData::DIFFICULTY_LEVEL::EASY:
-		color = VEC3(0.8f, 0.8f, 0.8f);
+		color = VEC3(0.4f, 0.4f, 0.4f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::NORMAL:
-        color = VEC3(0.8f, 0.8f, 0.8f);
+        color = VEC3(0.4f, 0.4f, 0.4f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::HARD:
-        color = VEC3(1.0f, 0.7f, 0.7f);
+        color = VEC3(0.6f, 0.4f, 0.4f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::DISASTER:
-        color = VEC3(0.8f, 0.3f, 0.8f);
+        color = VEC3(0.6f, 0.1f, 0.2f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::IMPOSSIBLE:
         color = VEC3(0.9f, 0.0f, 0.0f);
