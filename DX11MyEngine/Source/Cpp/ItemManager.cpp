@@ -6,6 +6,7 @@
 #include "Component_BoxCollider.h"
 #include "Component_Item.h"
 #include "Component_Faction.h"
+#include "Component_Physics.h"
 
 using namespace VECTOR4;
 using namespace VECTOR3;
@@ -104,6 +105,8 @@ bool ItemManager::Init(RendererEngine& renderer)
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);    // ノンデストロイ
             obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);        // ノンアクティブ
 
+            obj->set_IsUpdateAllowedDuringPause(false); // ポーズ中は更新止める
+
             //*****************************************************************************************
             //						コンポーネントの追加
             //*****************************************************************************************
@@ -116,22 +119,24 @@ bool ItemManager::Init(RendererEngine& renderer)
             auto faction = obj->add_Component<Faction>();
             faction->set_Faction(FACTION::ITEM);
 
+            // 物理コンポーネントの追加
+            auto physics = obj->add_Component<Physics>();
+
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
             collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
-            collider->set_Center(VEC3(0, 1.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
-            collider->set_IsStatic(true);
+            collider->set_Center(VEC3(0, 0.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
+            //collider->set_IsStatic(true);
             collider->set_IsTrigger(true);          // 物理判定無し
 			collider->set_IsEnable(false);		    // 最初は無効状態
 
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ITEM);
             // マスク設定
-            collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::PLAYER) | UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING));
+            collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::PLAYER) | UINT_CAST(COLLISION_CATEGORY::ITEM) | UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING));
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
-
 
             return obj.get();
         },

@@ -82,9 +82,6 @@
     <Filter Include="ソース ファイル\Editor\Base">
       <UniqueIdentifier>{4cd08c0b-e04a-49bf-9a70-19657a71d48a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Editor\Inspector">
-      <UniqueIdentifier>{5ca47c66-02af-4005-af24-e6a245cf2226}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Editor\Hierarchy">
       <UniqueIdentifier>{698e1ccf-eb65-4f87-851b-c32aed704bca}</UniqueIdentifier>
     </Filter>
@@ -297,6 +294,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Game\Component\Weapon\Gun\State">
       <UniqueIdentifier>{a128b6e8-5f98-4aa6-9598-5ad70908ef49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Editor\Inspector">
+      <UniqueIdentifier>{5ca47c66-02af-4005-af24-e6a245cf2226}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

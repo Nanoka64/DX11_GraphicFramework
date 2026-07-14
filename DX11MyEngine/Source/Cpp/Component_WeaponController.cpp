@@ -98,7 +98,11 @@ bool WeaponController::Setup(RendererEngine& renderer, int _maxSlot)
 //*----------------------------------------------------------------------------------------
 void WeaponController::Update(RendererEngine& renderer)
 {
-	if (Master::m_pDataManager->get_IsPause())return;	// TODO:ポーズ中なら返す
+	// ポーズ中であれば、武器の操作を受け付けない
+	if (Master::m_pDataManager->get_IsPause())
+	{
+		return;	// ポーズ中なら返す
+	}
 
 
 	// プレイヤーが死んでたら、武器の有効を解除し、操作不能に
@@ -162,7 +166,9 @@ void WeaponController::Update(RendererEngine& renderer)
 		/* 文字 */
 		float width = FLOAT_CAST(Master::m_pDataManager->get_ScreenWidth());
 		float height = FLOAT_CAST(Master::m_pDataManager->get_ScreenHeight());
+		Master::m_pDirectWriteManager->SetOutLine(1.5f, D2D1::ColorF(0.0f, 0.0f, 0.0f));
 		Master::m_pDirectWriteManager->DrawStringToAligment("リロード中", RELOAD_TEXT_POS, "White_20_STD", H_ALIGNMENT::CENTER, V_ALIGNMENT::CENTER, VEC2(width, height));
+		Master::m_pDirectWriteManager->SetOutLine(0.0f);
 	}
 	// リロード中でない場合は、サイズを0.0にする
 	else
@@ -373,6 +379,12 @@ void WeaponController::ClearWeapon()
 	// スプライトをプールへ返す
 	m_pReloadBarSpriteObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 	m_pReloadBarBackSpriteObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+	// ポーズ用の更新・描画フラグを戻す
+	m_pReloadBarSpriteObj->set_IsUpdateAllowedDuringPause(true);
+	m_pReloadBarSpriteObj->set_IsDrawAllowedDuringPause(true);
+	m_pReloadBarBackSpriteObj->set_IsUpdateAllowedDuringPause(true);
+	m_pReloadBarBackSpriteObj->set_IsDrawAllowedDuringPause(true);
 }
 
 
@@ -454,7 +466,13 @@ void WeaponController::SetupReloadSprite(RendererEngine& renderer)
 	rectData._pivot = VEC2(0.5f, 0.5f);
 	spriteData._tag = "ReloadBarBack";
 	spriteData._layerRank = 107;
-	spriteData._color = VEC4(0.1f, 0.1f, 0.1f, 1.0f);	// 黒背景
+	spriteData._color = VEC4(0.05f, 0.05f, 0.05f, 0.8f);	// 黒背景
 	spriteData._shaderType = SHADER_TYPE::FORWARD_UNLIT_UI_NOTEXTURE_SPRITE;
 	m_pReloadBarBackSpriteObj = Master::m_pUIManager->GetSprite(renderer, rectData, spriteData);
+
+	// ポーズ中は更新と描画を止める
+	m_pReloadBarSpriteObj->set_IsUpdateAllowedDuringPause(false);	
+	m_pReloadBarSpriteObj->set_IsDrawAllowedDuringPause(false);	
+	m_pReloadBarBackSpriteObj->set_IsUpdateAllowedDuringPause(false);	
+	m_pReloadBarBackSpriteObj->set_IsDrawAllowedDuringPause(false);
 }

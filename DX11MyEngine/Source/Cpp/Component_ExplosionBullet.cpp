@@ -15,13 +15,13 @@
 #include "CollisionInfo.h"
 #include "ResourceManager.h"
 
-constexpr float DECAL_SIZE_FACTOR        = 100.0f;   // デカールの大きさの補正値
-constexpr float DECAL_Z_AXIS_SIZE_FACTOR = 0.0f;     // デカールの奥行に加算する補正値
-constexpr float DECAL_LIFE_TIME = 1000.0f;             // デカールの生存時間
-constexpr float SHAKE_MAX_RANGE_EXPLOSION_SCALE_FACTOR = 15.0f; // カメラシェイク時、シェイクの最大距離を求める際に掛ける補正値
-constexpr float SHAKE_LENGTH_SCALE_FACTOR = 0.007f;             // カメラシェイク時、シェイクの大きさを求める際に掛ける補正値
-constexpr float SHAKEDURATION = 1.0f;                           // カメラシェイクの持続時間
-constexpr float EFFECT_SCALE_FACTOR = 0.12f;            // そのままだと、エフェクトが大きすぎるので
+constexpr float DECAL_SIZE_FACTOR                       = 100.0f;   // デカールの大きさの補正値
+constexpr float DECAL_Z_AXIS_SIZE_FACTOR                = 0.0f;     // デカールの奥行に加算する補正値
+constexpr float DECAL_LIFE_TIME                         = 1000.0f;  // デカールの生存時間
+constexpr float SHAKE_MAX_RANGE_EXPLOSION_SCALE_FACTOR  = 15.0f;    // カメラシェイク時、シェイクの最大距離を求める際に掛ける補正値
+constexpr float SHAKE_LENGTH_SCALE_FACTOR               = 0.004f;   // カメラシェイク時、シェイクの大きさを求める際に掛ける補正値
+constexpr float SHAKEDURATION                           = 1.0f;     // カメラシェイクの持続時間
+constexpr float EFFECT_SCALE_FACTOR                     = 0.12f;    // そのままだと、エフェクトが大きすぎるので
 
 using namespace UtilityData;
 using namespace VECTOR3;

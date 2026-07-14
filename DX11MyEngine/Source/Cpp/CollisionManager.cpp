@@ -55,6 +55,8 @@ void CollisionManager::CollisionProcess()
         comp->set_IsHit(false);
     }
 
+    int processCount = 0;
+
     // 判定ループ処理
     for (int i = 0; i < m_pCollidersList.size(); i++)
     {
@@ -74,12 +76,16 @@ void CollisionManager::CollisionProcess()
         
         for (int j = i + 1; j < m_pCollidersList.size(); j++)
         {
+
             auto& colB = m_pCollidersList[j];
 
             // 使用フラグチェック
             if (colB->get_IsEnable() == false){
                 continue;
             }
+
+            processCount++;
+
 
             isStaticA = colA->get_IsStatic();
             isStaticB = colB->get_IsStatic();
@@ -115,10 +121,19 @@ void CollisionManager::CollisionProcess()
                 colB->set_IsHit(true);
 
                 // トリガー判定
-                bool isTriggerHit = (colA->get_IsTrigger() || colB->get_IsTrigger());
+                bool isTriggerHit_A = colA->get_IsTrigger();
+                bool isTriggerHit_B = colB->get_IsTrigger();
+
+               if ((isTriggerHit_A || isTriggerHit_B) &&
+                    (colA->get_OwnerObj().lock()->get_Tag() == "Player" ||
+                        colB->get_OwnerObj().lock()->get_Tag() == "Player"))
+                {
+                    int test = 0;
+                    test = 119;
+                }
 
                 // トリガーでない場合は押し出し処理を行う
-                if (isTriggerHit == false)
+                if (isTriggerHit_A == false || isTriggerHit_B == false)
                 {
                     VEC3 pushVector;    // 押し出しベクトル
                     VEC3 currentPos;    // 押し出し反映用
@@ -144,12 +159,18 @@ void CollisionManager::CollisionProcess()
 
 
                     // Aは法線方向に押し出す *******************************************
-                    currentPos = transA->get_VEC3ToPos();
-                    transA->set_Pos(currentPos + (pushVector * ratioA));
+                    if (isTriggerHit_B == false)
+                    {
+                        currentPos = transA->get_VEC3ToPos();
+                        transA->set_Pos(currentPos + (pushVector * ratioA));
+                    }
 
                     // Bは衝突された側なので法線とは逆方向に押し出す ********************
-                    currentPos = transB->get_VEC3ToPos();
-                    transB->set_Pos(currentPos + (-pushVector * ratioB));
+                    if (isTriggerHit_A == false)
+                    {
+                        currentPos = transB->get_VEC3ToPos();
+                        transB->set_Pos(currentPos + (-pushVector * ratioB));
+                    }
                 }
 
                 // Bと衝突したことをAオブジェクト側に伝える
@@ -176,9 +197,13 @@ void CollisionManager::CollisionProcess()
                     colA->get_OwnerObj().lock()->OnCollisionEnter(infoA);
                     colB->get_OwnerObj().lock()->OnCollisionEnter(infoB);
                 }
+
             }
         }
     }
+    Master::m_pDebugger->BeginDebugWindow("CollisionProcess",0);
+    Master::m_pDebugger->DG_TextValue(Tool::U8ToChar(u8"衝突処理回数： % d"), processCount);
+    Master::m_pDebugger->EndDebugWindow();
 }
 
 

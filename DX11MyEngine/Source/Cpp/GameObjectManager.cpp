@@ -42,6 +42,8 @@ GameObjectManager::~GameObjectManager()
 bool GameObjectManager::Init(RendererEngine &renderer)
 {
     m_3DOpaqueList.clear();
+    m_3DTranslucentList.clear();
+    m_2DTranslucentList.clear();
     return true;
 }
 
@@ -220,6 +222,7 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine& renderer)
 {
     int id = 0;
     bool isDrawComponent = Master::m_pDataManager->get_IsDebugMode();
+    bool isPause = Master::m_pDataManager->get_IsPause();   // ポーズフラグ
 
     if (isDrawComponent)
     {
@@ -243,7 +246,10 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine& renderer)
             renderer.RegisterDefaultDepthStencilState(0);
         }
 
-        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true) {
+		// アクティブ且つ、ポーズ中でない、またはポーズ中も描画する設定なら描画
+        if (obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) == true &&
+            obj->get_IsDrawAllowedDuringPause()) 
+        {
             obj->Draw(renderer);
             obj->ComponentRender(renderer);
         }
@@ -282,10 +288,13 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameObjectManager::ObjectShadowRenderPass(RendererEngine &renderer)
 {
+    bool isPause = Master::m_pDataManager->get_IsPause();   // ポーズフラグ
+
     // 描画
     for (auto &obj : m_3DOpaqueList)
     {
-        if ( !obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        if ( !obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) ||
+            isPause && !obj->get_IsDrawAllowedDuringPause())
         {
             continue;
         }
@@ -306,6 +315,7 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
     VEC3 camPos = Master::m_pDataManager->get_CameraPos();    // カメラ座標
     auto begin = m_3DTranslucentList.begin();
     auto end = m_3DTranslucentList.end();
+    bool isPause = Master::m_pDataManager->get_IsPause();   // ポーズフラグ
 
     // カメラ座標から遠い順にソートする
     std::sort(begin, end, [camPos](const std::shared_ptr<GameObject> &a, const std::shared_ptr<GameObject> &b)
@@ -318,7 +328,8 @@ void GameObjectManager::Alpha_ObjectRenderPass(RendererEngine &renderer)
     // 描画
     for (auto &obj : m_3DTranslucentList)
     {
-        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) || 
+            isPause && !obj->get_IsDrawAllowedDuringPause())
         {
             continue;
         }
@@ -339,6 +350,7 @@ void GameObjectManager::Alpha_2DObjectRenderPass(RendererEngine &renderer)
     VEC3 camPos = Master::m_pDataManager->get_CameraPos();    // カメラ座標
     auto begin = m_2DTranslucentList.begin();
     auto end = m_2DTranslucentList.end();
+    bool isPause = Master::m_pDataManager->get_IsPause();   // ポーズフラグ
 
 	// レイヤーの順番にソートする
     std::sort(begin, end, 
@@ -350,7 +362,9 @@ void GameObjectManager::Alpha_2DObjectRenderPass(RendererEngine &renderer)
     // 描画
     for (auto &obj : m_2DTranslucentList)
     {
-        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE))
+        if (!obj->get_IsStatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE) || 
+			// ポーズ中で、ポーズ中は描画しない設定ならスキップ
+            isPause && !obj->get_IsDrawAllowedDuringPause())
         {
             continue;
         }

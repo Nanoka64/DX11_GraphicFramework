@@ -29,6 +29,8 @@ namespace UtilityData
 		BOX_OBB,
 		SPHERE,
 		RAY,
+
+		COLLIDERS,	// 複数コライダーを持つ
 	};
 
 	/// <summary>

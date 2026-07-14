@@ -27,7 +27,7 @@
     "scale": [ 15.0, 15.0, 15.0 ],
     "explosionRadius": 50.0,
     "explosionEffectHandleTag": "Explosion_01",
-    "explosionEffectAliveTime": 5.0,
+    "explosionEffectAliveTime": 2.0,
     "isSmoke": true
   }
 }

@@ -4,6 +4,8 @@
 #include "Component_Item.h"
 #include "Component_Faction.h"
 #include "Component_Health.h"
+#include "Component_BoxCollider.h"
+#include "Component_Physics.h"
 
 using namespace UtilityData;
 using namespace VECTOR4;
@@ -39,7 +41,9 @@ Item::~Item()
 //*----------------------------------------------------------------------------------------
 void Item::Start(RendererEngine& renderer)
 {
-	m_pTransform = m_pOwner.lock()->get_Transform();
+	m_pTransform = m_pOwner.lock()->get_Transform().lock().get();
+	m_pPhysics = m_pOwner.lock()->get_Component<Physics>().get();
+	m_pBoxCollider = m_pOwner.lock()->get_Component<BoxCollider>().get();
 }
 
 //*---------------------------------------------------------------------------------------
@@ -55,14 +59,21 @@ void Item::Update(RendererEngine& renderer)
 {
 	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 	m_Timer += deltaTime;
-	auto myTransform = m_pTransform.lock();
-	VEC3 crntPos = myTransform->get_VEC3ToPos();
+	VEC3 crntPos = m_pTransform->get_VEC3ToPos();
 	
 	// ふわふわする（0～1）
-	crntPos.y = (sinf(m_Timer) * 0.5f) + 0.5f;
-	crntPos.y += 1.0f; // そのままだと下にめり込んでしまうため
+	//crntPos.y += (sinf(m_Timer) * 0.5f) + 0.5f;
+	//crntPos.y += 1.0f; // そのままだと下にめり込んでしまうため
 
-	myTransform->set_Pos(crntPos);
+	// ほぼ停止状態の際は物理コンポーネントを停止し、
+	// コライダーをstaticにする
+	if (m_pPhysics->get_Velocity().LengthSq() < 0.001f)
+	{
+		//m_pPhysics->set_IsEnable(false);
+		//m_pBoxCollider->set_IsStatic(true);
+	}
+
+	m_pTransform->set_Pos(crntPos);
 }
 
 
@@ -95,19 +106,32 @@ void Item::OnTriggerEnter(const class CollisionInfo& _other)
 			case UtilityData::ITEM_TYPE::WEAPON:		AddWeapon(hitObj.get());	break;	// 武器箱
 			default:break;
 			}
+
+			VEC3 pos = m_pTransform->get_VEC3ToPos();
+			//*****************************************************************************************
+			//						アイテム取得音再生
+			//*****************************************************************************************
+			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ITEM_GET), pos, 500.0f);
+
+			// プールへ返す
+			m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 		}
 	}
-
-	VEC3 pos = m_pTransform.lock()->get_VEC3ToPos();
-
-	//*****************************************************************************************
-	//						アイテム取得音再生
-	//*****************************************************************************************
-	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ITEM_GET), pos, 500.0f);
+}
 
 
-	// プールへ返す
-	m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+//*---------------------------------------------------------------------------------------
+//*【?】衝突処理
+//*
+//* [引数]
+//* &other : 衝突相手の情報
+//*
+//* [返値]
+//* void
+//*----------------------------------------------------------------------------------------
+void Item::OnCollisionEnter(const class CollisionInfo& _other)
+{
+
 }
 
 //*---------------------------------------------------------------------------------------
