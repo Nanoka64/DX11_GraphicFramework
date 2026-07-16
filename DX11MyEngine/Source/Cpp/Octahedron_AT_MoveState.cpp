@@ -84,10 +84,10 @@ int Octahedron_AT_MoveState::Update(class EnemyController* pOwner)
 	VEC3 myPos = myTransform->get_VEC3ToPos();	// 自分の位置
 	VEC3 startPos = pOwner->get_StartPos();
 
-	// 高さが低い場合は、水平に追従する
+	// 高さが低い場合は、上方向に移動する
 	if (myPos.y < 100.0f)
 	{
-		m_MoveDir.y = 0.0f;
+		m_MoveDir.y = 0.5f;
 	}
 
 	/* 親の移動コンポーネントを使い、移動処理を行う */

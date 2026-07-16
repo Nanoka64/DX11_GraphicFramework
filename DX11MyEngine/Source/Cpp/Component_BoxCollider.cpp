@@ -47,9 +47,9 @@ void BoxCollider::Start(RendererEngine &renderer)
         MessageBoxA(NULL, "デバッグ用メッシュの生成ができませんでした", "Collider", MB_OK);
     }
 
-    m_pTransform = m_pOwner.lock()->get_Transform();
+    m_pTransform = m_pOwner.lock()->get_Transform().lock().get();
 
-    if (m_pTransform.expired())
+    if (m_pTransform == nullptr)
     {
         MessageBoxA(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
     }

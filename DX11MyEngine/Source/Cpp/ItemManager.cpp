@@ -133,7 +133,10 @@ bool ItemManager::Init(RendererEngine& renderer)
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ITEM);
             // マスク設定
-            collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::PLAYER) | UINT_CAST(COLLISION_CATEGORY::ITEM) | UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING));
+            collider->set_CollisionResponse(COLLISION_CATEGORY::PLAYER, COLLISION_RESPONSE::RESPONSE_OVERLAP);
+            collider->set_CollisionResponse(COLLISION_CATEGORY::ITEM, COLLISION_RESPONSE::RESPONSE_BLOCK);
+            collider->set_CollisionResponse(COLLISION_CATEGORY::BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);
+            collider->set_CollisionResponse(COLLISION_CATEGORY::DESTRUCTION_BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);

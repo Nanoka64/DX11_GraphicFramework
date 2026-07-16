@@ -210,5 +210,14 @@ private:
     CollisionManager &operator=(const CollisionManager &) = delete;
     // ------------------------------------------------------
 
+    /// <summary>
+    /// 最終的な衝突応答を求める（応答がそれぞれ違った場合にどれを優先するかなど）
+    /// </summary>
+    /// <param name="responseA">応答A</param>
+    /// <param name="responseB">応答B</param>
+    /// <returns>最終的な衝突応答</returns>
+    UtilityData::COLLISION_RESPONSE CombineResponse(
+        UtilityData::COLLISION_RESPONSE responseA,
+        UtilityData::COLLISION_RESPONSE responseB);
 };
 

@@ -95,10 +95,13 @@ void CollisionManager::CollisionProcess()
             {
                 continue;
             }
+            
+            bool collisionMaskA = GIGA_Engine::BitFlag::CheckAny(colA->get_CollisionBitMask(), UINT_CAST(colB->get_CollisionCategory()));
+            bool collisionMaskB = GIGA_Engine::BitFlag::CheckAny(colB->get_CollisionBitMask(), UINT_CAST(colA->get_CollisionCategory()));
 
             // 衝突マスクのチェック
-            if ((colA->get_CollisionBitMask() & UINT_CAST(colB->get_CollisionCategory())) == 0 ||
-                (colB->get_CollisionBitMask() & UINT_CAST(colA->get_CollisionCategory())) == 0)
+            if (collisionMaskA == 0 ||
+                collisionMaskB == 0)
             {
                 continue;
             }
@@ -120,20 +123,25 @@ void CollisionManager::CollisionProcess()
                 colA->set_IsHit(true);
                 colB->set_IsHit(true);
 
-                // トリガー判定
-                bool isTriggerHit_A = colA->get_IsTrigger();
-                bool isTriggerHit_B = colB->get_IsTrigger();
+                //// トリガー判定（responseを追加したのでトリガーが要らないかも）
+                //bool isTriggerHit_A = colA->get_IsTrigger();
+                //bool isTriggerHit_B = colB->get_IsTrigger();
 
-               if ((isTriggerHit_A || isTriggerHit_B) &&
-                    (colA->get_OwnerObj().lock()->get_Tag() == "Player" ||
-                        colB->get_OwnerObj().lock()->get_Tag() == "Player"))
-                {
-                    int test = 0;
-                    test = 119;
-                }
+                //--------------------------------
+                // 衝突応答
+                //--------------------------------
+                COLLISION_RESPONSE responseA =
+                    colA->get_Response(colB->get_CollisionCategory());
 
-                // トリガーでない場合は押し出し処理を行う
-                if (isTriggerHit_A == false || isTriggerHit_B == false)
+                COLLISION_RESPONSE responseB =
+                    colB->get_Response(colA->get_CollisionCategory());
+
+                COLLISION_RESPONSE finalResponse =
+                    CombineResponse(responseA, responseB);
+
+
+                // Blockの場合だけ押し出す
+                if (finalResponse == COLLISION_RESPONSE::RESPONSE_BLOCK)
                 {
                     VEC3 pushVector;    // 押し出しベクトル
                     VEC3 currentPos;    // 押し出し反映用
@@ -159,18 +167,12 @@ void CollisionManager::CollisionProcess()
 
 
                     // Aは法線方向に押し出す *******************************************
-                    if (isTriggerHit_B == false)
-                    {
-                        currentPos = transA->get_VEC3ToPos();
-                        transA->set_Pos(currentPos + (pushVector * ratioA));
-                    }
+                    currentPos = transA->get_VEC3ToPos();
+                    transA->set_Pos(currentPos + (pushVector * ratioA));
 
                     // Bは衝突された側なので法線とは逆方向に押し出す ********************
-                    if (isTriggerHit_A == false)
-                    {
-                        currentPos = transB->get_VEC3ToPos();
-                        transB->set_Pos(currentPos + (-pushVector * ratioB));
-                    }
+                    currentPos = transB->get_VEC3ToPos();
+                    transB->set_Pos(currentPos + (-pushVector * ratioB));
                 }
 
                 // Bと衝突したことをAオブジェクト側に伝える
@@ -185,19 +187,22 @@ void CollisionManager::CollisionProcess()
                 infoB.set_HitObject(colA->get_OwnerObj());
                 infoB.set_HitCollider(colA);
 
-
-                // イベント通知
-                if (colA->get_IsTrigger() || colB->get_IsTrigger())
+                // Responseに応じてイベントを通知
+                switch (finalResponse)
                 {
+                case COLLISION_RESPONSE::RESPONSE_OVERLAP:
                     colA->get_OwnerObj().lock()->OnTriggerEnter(infoA);
                     colB->get_OwnerObj().lock()->OnTriggerEnter(infoB);
-                }
-                else
-                {
+                    break;
+
+                case COLLISION_RESPONSE::RESPONSE_BLOCK:
                     colA->get_OwnerObj().lock()->OnCollisionEnter(infoA);
                     colB->get_OwnerObj().lock()->OnCollisionEnter(infoB);
-                }
+                    break;
 
+                case COLLISION_RESPONSE::RESPONSE_IGNORE:
+                    break;
+                }
             }
         }
     }
@@ -1210,4 +1215,43 @@ bool CollisionManager::HitCheck2D_BoxVsPoint(const CollInData2D_AABB& _box, cons
 
     // 当たっている可能性しか残っていない
     return true;
+}
+
+
+
+
+
+
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】最終的な衝突応答を求める
+//* （応答がそれぞれ違った場合にどれを優先するかなど）
+//*
+//* [引数]
+//* _responseA : 応答A 
+//* _responseB : 応答B
+//* [返値]
+//* 最終的な衝突応答
+//*----------------------------------------------------------------------------------------
+COLLISION_RESPONSE CollisionManager::CombineResponse(
+    COLLISION_RESPONSE _responseA,
+    COLLISION_RESPONSE _responseB)
+{
+    // どちらかがIgnoreなら判定しない
+    if (_responseA == COLLISION_RESPONSE::RESPONSE_IGNORE ||
+        _responseB == COLLISION_RESPONSE::RESPONSE_IGNORE)
+    {
+        return COLLISION_RESPONSE::RESPONSE_IGNORE;
+    }
+
+    // どちらかがOverlapなら押し出さない
+    if (_responseA == COLLISION_RESPONSE::RESPONSE_OVERLAP ||
+        _responseB == COLLISION_RESPONSE::RESPONSE_OVERLAP)
+    {
+        return COLLISION_RESPONSE::RESPONSE_OVERLAP;
+    }
+
+    // 両方Blockの場合のみ物理衝突
+    return COLLISION_RESPONSE::RESPONSE_BLOCK;
 }

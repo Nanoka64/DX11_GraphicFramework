@@ -115,7 +115,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 50; i++)
         {
             model.ObjTag = "Ant"/* + std::to_string(i + 1)*/;   // タグ
 
@@ -183,8 +183,10 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ENEMY);
 
-            unsigned hitMask = UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
-            collider->set_CollisionBitMask(hitMask);
+            // 衝突マスクの設定
+            collider->set_CollisionResponse(COLLISION_CATEGORY::BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);              // 建物
+            collider->set_CollisionResponse(COLLISION_CATEGORY::DESTRUCTION_BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);  // 破壊可能建物
+
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
@@ -232,64 +234,64 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     /* 建物 モデルの生成 */
     {
-    //    // マテリアル取得
-    //    auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building01_Top");
-    //    auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building01_Base1");
-    //    auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building01_Base2");
-    //    auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building01_Base3");
+        // マテリアル取得
+        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building01_Top");
+        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building01_Base1");
+        auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building01_Base2");
+        auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building01_Base3");
 
-    //    SetupMaterialInfo matInfo[4];
-    //    matInfo[0].Index = 0;
-    //    matInfo[0].pMaterialData = matPtr1;
-    //    matInfo[1].Index = 1;
-    //    matInfo[1].pMaterialData = matPtr2;
-    //    matInfo[2].Index = 2;
-    //    matInfo[2].pMaterialData = matPtr3;
-    //    matInfo[3].Index = 3;
-    //    matInfo[3].pMaterialData = matPtr4;
+        SetupMaterialInfo matInfo[4];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr1;
+        matInfo[1].Index = 1;
+        matInfo[1].pMaterialData = matPtr2;
+        matInfo[2].Index = 2;
+        matInfo[2].pMaterialData = matPtr3;
+        matInfo[3].Index = 3;
+        matInfo[3].pMaterialData = matPtr4;
 
-    //    CreateModelInfo model;
-    //    model.pRenderer = m_pRenderer;
-    //    model.Path = "Resource/Model/Building/02/Building_01.fbx";
-    //    model.ObjTag = "Building";
-    //    model.IsAnim = false;
-    //    model.MatNum = 4;
-    //    model.SetupMaterial = matInfo;
-    //    model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+        CreateModelInfo model;
+        model.pRenderer = m_pRenderer;
+        model.Path = "Resource/Model/Building/02/Building_01.fbx";
+        model.ObjTag = "Building";
+        model.IsAnim = false;
+        model.MatNum = 4;
+        model.SetupMaterial = matInfo;
+        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
 
-    //    for (int x = -2; x < 3; x++)
-    //    {
-    //        for (int y = -2; y < 3; y++)
-    //        {
-    //            VEC3 scale = VEC3(0.8f);
-    //            auto obj = MeshFactory::CreateModel(model);
-    //            obj->get_Component<MyTransform>()->set_Scale(scale);
-    //            obj->get_Component<MyTransform>()->set_Pos(50.0f * x,  0.0f,  70.0f * y);
-    //            obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+        for (int x = -2; x < 3; x++)
+        {
+            for (int y = -2; y < 3; y++)
+            {
+                VEC3 scale = VEC3(0.8f);
+                auto obj = MeshFactory::CreateModel(model);
+                obj->get_Component<MyTransform>()->set_Scale(scale);
+                obj->get_Component<MyTransform>()->set_Pos(50.0f * x,  0.0f,  70.0f * y);
+                obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
-    //            // ポーズ中は停止
-    //            obj->set_IsUpdateAllowedDuringPause(false);
+                // ポーズ中は停止
+                obj->set_IsUpdateAllowedDuringPause(false);
 
-    //            // 建物制御コンポーネント追加
-    //            obj->add_Component<BuildingController>();
+                // 建物制御コンポーネント追加
+                obj->add_Component<BuildingController>();
 
-    //            // 体力コンポーネントの追加
-    //            auto health = obj->add_Component<Health>();
-				//health->set_MaxHP(600.0f);
-				//health->set_CrntHP(600.0f);
+                // 体力コンポーネントの追加
+                auto health = obj->add_Component<Health>();
+				health->set_MaxHP(600.0f);
+				health->set_CrntHP(600.0f);
 
-    //            // コライダーの追加
-    //            auto collider = obj->add_Component<BoxCollider>();
-    //            collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
-    //            collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
-    //            collider->set_IsStatic(true);
-    //            // 衝突カテゴリ
-    //            collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+                // コライダーの追加
+                auto collider = obj->add_Component<BoxCollider>();
+                collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
+                collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
+                collider->set_IsStatic(true);
+                // 衝突カテゴリ
+                collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
 
-    //            // コライダーの登録
-    //            Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
-    //        }
-    //    }
+                // コライダーの登録
+                Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
+            }
+        }
     }
 
     /* マザーシップの生成 */
@@ -340,7 +342,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
 
-        for (int i = 0; i < 0; i++)
+        for (int i = 0; i < 1; i++)
         {
             auto obj = MeshFactory::CreateModel(model);
             obj->set_IsStatic(false);
@@ -397,8 +399,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             // 衝突カテゴリ
             collider->set_CollisionCategory(COLLISION_CATEGORY::ENEMY);
 
-            unsigned hitMask = UINT_CAST(COLLISION_CATEGORY::BUILDING) | UINT_CAST(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
-            collider->set_CollisionBitMask(hitMask);
+            // 衝突マスクの設定
+            collider->set_CollisionResponse(COLLISION_CATEGORY::BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);              // 建物
+            collider->set_CollisionResponse(COLLISION_CATEGORY::DESTRUCTION_BUILDING, COLLISION_RESPONSE::RESPONSE_BLOCK);  // 破壊可能建物
 
             // コライダーの登録
             Master::m_pCollisionManager->RegisterCollider(collider);
@@ -547,72 +550,72 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     /* 足場 */
     {
-        //// マテリアル取得
-        //auto matPtr = Master::m_pResourceManager->FindMaterial("PointLight");
+        // マテリアル取得
+        auto matPtr = Master::m_pResourceManager->FindMaterial("PointLight");
 
-        //SetupMaterialInfo matInfo[1];
-        //matInfo[0].Index = 0;
-        //matInfo[0].pMaterialData = matPtr;
+        SetupMaterialInfo matInfo[1];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr;
 
-        //CreateUtilityMeshInfo mesh;
-        //mesh.pRenderer = m_pRenderer;
-        //mesh.Type = UTILITY_MESH_TYPE::CUBE;
-        //mesh.MatNum = 1;
-        //mesh.MaterialData = matInfo;
-        //mesh.IsActive = true;
-        //mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-        //mesh.IsNormalMap = true;
+        CreateUtilityMeshInfo mesh;
+        mesh.pRenderer = m_pRenderer;
+        mesh.Type = UTILITY_MESH_TYPE::CUBE;
+        mesh.MatNum = 1;
+        mesh.MaterialData = matInfo;
+        mesh.IsActive = true;
+        mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+        mesh.IsNormalMap = true;
 
-        //auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 10.0f, 0.0f));
-        //obj->get_Transform().lock()->set_Scale(VEC3(5.0f, 1.0f, 5.0f));
-        //obj->set_Tag("Scaffolding");
+        auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        obj->get_Transform().lock()->set_Pos(VEC3(0.0f, 10.0f, 0.0f));
+        obj->get_Transform().lock()->set_Scale(VEC3(5.0f, 1.0f, 5.0f));
+        obj->set_Tag("Scaffolding");
 
-        //// コライダーの追加
-        //auto collider = obj->add_Component<BoxCollider>();
-        //collider->set_Size(VEC3(5.0f, 1.0f, 5.0f));
-        //collider->set_Center(VEC3(0, 0, 0));
-        //collider->set_IsStatic(true);
+        // コライダーの追加
+        auto collider = obj->add_Component<BoxCollider>();
+        collider->set_Size(VEC3(5.0f, 1.0f, 5.0f));
+        collider->set_Center(VEC3(0, 0, 0));
+        collider->set_IsStatic(true);
 
-        //// 衝突カテゴリ
-        //collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
+        // 衝突カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
 
-        //// コライダーの登録
-        //Master::m_pCollisionManager->RegisterCollider(collider);
+        // コライダーの登録
+        Master::m_pCollisionManager->RegisterCollider(collider);
     }
 
 
     /* 足場 */
     {
-        //// マテリアル取得
-        //auto matPtr = Master::m_pResourceManager->FindMaterial("Block");
-        //SetupMaterialInfo matInfo[1];
-        //matInfo[0].Index = 0;
-        //matInfo[0].pMaterialData = matPtr;
-        //CreateUtilityMeshInfo mesh;
-        //mesh.pRenderer = m_pRenderer;
-        //mesh.Type = UTILITY_MESH_TYPE::CUBE;
-        //mesh.MatNum = 1;
-        //mesh.MaterialData = matInfo;
-        //mesh.IsActive = true;
-        //mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
-        //mesh.IsNormalMap = true;
-        //auto obj = MeshFactory::CreateUtilityMesh(mesh);
-        //obj->get_Transform().lock()->set_Pos(VEC3(-50.0f, 1.0f, 90.0f));
-        //obj->get_Transform().lock()->set_Scale(VEC3(5.0f, 1.0f, 5.0f));
-        //obj->set_Tag("Scaffolding");
+        // マテリアル取得
+        auto matPtr = Master::m_pResourceManager->FindMaterial("Block");
+        SetupMaterialInfo matInfo[1];
+        matInfo[0].Index = 0;
+        matInfo[0].pMaterialData = matPtr;
+        CreateUtilityMeshInfo mesh;
+        mesh.pRenderer = m_pRenderer;
+        mesh.Type = UTILITY_MESH_TYPE::CUBE;
+        mesh.MatNum = 1;
+        mesh.MaterialData = matInfo;
+        mesh.IsActive = true;
+        mesh.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+        mesh.IsNormalMap = true;
+        auto obj = MeshFactory::CreateUtilityMesh(mesh);
+        obj->get_Transform().lock()->set_Pos(VEC3(-50.0f, 1.0f, 90.0f));
+        obj->get_Transform().lock()->set_Scale(VEC3(5.0f, 1.0f, 5.0f));
+        obj->set_Tag("Scaffolding");
 
-        //// コライダーの追加
-        //auto collider = obj->add_Component<BoxCollider>();
-        //collider->set_Size(VEC3(5.0f, 1.0f, 5.0f));
-        //collider->set_Center(VEC3(0, 0, 0));
-        //collider->set_IsStatic(true);
+        // コライダーの追加
+        auto collider = obj->add_Component<BoxCollider>();
+        collider->set_Size(VEC3(5.0f, 1.0f, 5.0f));
+        collider->set_Center(VEC3(0, 0, 0));
+        collider->set_IsStatic(true);
 
-        //// 衝突カテゴリ
-        //collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
+        // 衝突カテゴリ
+        collider->set_CollisionCategory(COLLISION_CATEGORY::BUILDING);
 
-        //// コライダーの登録
-        //Master::m_pCollisionManager->RegisterCollider(collider);
+        // コライダーの登録
+        Master::m_pCollisionManager->RegisterCollider(collider);
     }
 
     Master::m_pItemManager->SpawnItemRand(1, 100, VEC3(-120, 5, 80), 1);

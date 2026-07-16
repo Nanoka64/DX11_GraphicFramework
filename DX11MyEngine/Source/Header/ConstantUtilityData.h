@@ -29,8 +29,16 @@ namespace UtilityData
 		BOX_OBB,
 		SPHERE,
 		RAY,
+	};
 
-		COLLIDERS,	// 複数コライダーを持つ
+	/// <summary>
+	/// 衝突した際の処理
+	/// </summary>
+	enum class COLLISION_RESPONSE : unsigned
+	{
+		RESPONSE_IGNORE,	// 判定しない
+		RESPONSE_OVERLAP,	// 判定するが押し出さない
+		RESPONSE_BLOCK,		// 判定して押し出す
 	};
 
 	/// <summary>
@@ -59,6 +67,7 @@ namespace UtilityData
 		{"DESTRUCTION_BUILDING", COLLISION_CATEGORY::DESTRUCTION_BUILDING},
 		{"BUILDING",			 COLLISION_CATEGORY::BUILDING},
 		{"EVERY",				 COLLISION_CATEGORY::EVERY},
+		{"ITEM",				 COLLISION_CATEGORY::ITEM},
 	};
 
 	/// <summary>
@@ -102,6 +111,7 @@ namespace UtilityData
 
 		NUM,
 	};
+
 	/// <summary>
 	/// 設定項目
 	/// </summary>

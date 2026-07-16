@@ -45,9 +45,9 @@ void SphereCollider::Start(RendererEngine &renderer)
     m_pSphereMesh = std::make_unique<DebugMesh>();
     bool res = m_pSphereMesh->Setup(renderer, DEBUG_MESHS_TYPE::CUBE);
 
-    m_pTransform = m_pOwner.lock()->get_Transform();
+    m_pTransform = m_pOwner.lock()->get_Transform().lock().get();
 
-    if (m_pTransform.expired())
+    if (m_pTransform == nullptr)
     {
         MessageBoxA(NULL, "コンポーネントが取得できませんでした。", "Collider", MB_OK);
     }

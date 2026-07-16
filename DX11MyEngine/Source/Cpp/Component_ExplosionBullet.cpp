@@ -136,12 +136,7 @@ void ExplosionBullet::Start(RendererEngine& renderer)
             int exp_handle = Master::m_pEffectManager->PlayEffect(bulletParam->_explosionEffectHandleTag);   // 爆発
 
             float effectExpSize = expSize * EFFECT_SCALE_FACTOR;   // 爆発半径（そのままだと大きすぎるので補正）
-            VEC3 expRot = VEC3(
-                Master::m_pRandomManager->GetFloatRandom(0.0f, 3.14f), 
-                Master::m_pRandomManager->GetFloatRandom(0.0f, 3.14f), 
-                Master::m_pRandomManager->GetFloatRandom(0.0f, 3.14f)
-            );
-
+            VEC3 expRot = Master::m_pRandomManager->GetVEC3Random(0.0f, 3.14f);
 
             if (bulletParam->_isSmoke)
             {
@@ -161,7 +156,6 @@ void ExplosionBullet::Start(RendererEngine& renderer)
             //Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
             // 動的パラメータの設定
             Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, bulletParam->_explosionEffectAliveTime); // 生存時間を変更
-
         };
 }
 
