@@ -19,6 +19,7 @@
 using namespace VECTOR2;
 using namespace VECTOR3;
 using namespace VECTOR4;
+using namespace UtilityData;
 using namespace Tool;
 
 // ***************************************************************************************
@@ -802,6 +803,12 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     bool isStatic = pComp->get_IsStatic();
     bool isDebug = pComp->get_IsDrawDebugMesh();
     COLLISION_JUDGMENT judgmentType = pComp->get_CollisionJudgmentType();
+    COLLISION_CATEGORY category = pComp->get_CollisionCategory();
+    uint32_t collisionBitMask = pComp->get_CollisionBitMask();
+    uint32_t responseBitMask = pComp->get_ResponseBitMask();
+
+    // カテゴリを文字列に変換
+    std::string categoryStr = g_CollisionCategoryStringMap[(category)];
 
     VEC3 center = pComp->get_Center();
     VEC3 size = pComp->get_Size();
@@ -814,6 +821,28 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"使用フラグ"));
         Master::m_pDebugger->DG_SameLine();
         Master::m_pDebugger->DG_CheckBox("##IsEnable", &isEnable);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"衝突カテゴリ : ") + categoryStr);
+
+
+        // 衝突判定を行う対象
+        if (DrawCollisionBitMaskEditor(
+            U8ToChar(u8"判定対象マスク"),
+            collisionBitMask,
+            "CollisionMask"))
+        {
+            pComp->set_CollisionBitMask(collisionBitMask);
+        }
+
+        // 押し戻しなどの物理反応を行う対象
+        if (DrawCollisionBitMaskEditor(
+            U8ToChar(u8"物理反応マスク"),
+            responseBitMask,
+            "ResponseMask"))
+        {
+            pComp->set_ResponseBitMask(responseBitMask);
+        }
+
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"デバッグ用メッシュを表示"));
         Master::m_pDebugger->DG_SameLine();
@@ -874,7 +903,84 @@ void BoxColliderEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     pComp->set_Size(size);
     pComp->set_CollisionJudgmentType(judgmentType);
 }
+bool BoxColliderEditor::DrawCollisionBitMaskEditor(
+    const char* label,
+    uint32_t& bitMask,
+    const char* id)
+{
+    bool isChanged = false;
 
+    ImGui::PushID(id);
+
+    if (ImGui::TreeNode(label))
+    {
+        if (ImGui::Button(
+            U8ToChar(u8"すべてON")))
+        {
+            bitMask =
+                static_cast<unsigned>(
+                    COLLISION_CATEGORY::EVERY);
+
+            isChanged = true;
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(
+            U8ToChar(u8"すべてOFF")))
+        {
+            bitMask =
+                static_cast<unsigned>(
+                    COLLISION_CATEGORY::NONE);
+
+            isChanged = true;
+        }
+
+        ImGui::Separator();
+
+        for (const auto& [category, categoryName] :
+            g_CollisionCategoryStringMap)
+        {
+            if (category == COLLISION_CATEGORY::EVERY ||
+                category == COLLISION_CATEGORY::NONE)
+            {
+                continue;
+            }
+
+            const unsigned categoryBit =
+                static_cast<unsigned>(category);
+
+            bool isEnabled =
+                (bitMask & categoryBit) != 0;
+
+            ImGui::PushID(categoryName.c_str());
+
+            if (ImGui::Checkbox(
+                categoryName.c_str(),
+                &isEnabled))
+            {
+                if (isEnabled)
+                {
+                    bitMask |= categoryBit;
+                }
+                else
+                {
+                    bitMask &= ~categoryBit;
+                }
+
+                isChanged = true;
+            }
+
+            ImGui::PopID();
+        }
+
+        ImGui::TreePop();
+    }
+
+    ImGui::PopID();
+
+    return isChanged;
+}
 
 
 // ***************************************************************************************

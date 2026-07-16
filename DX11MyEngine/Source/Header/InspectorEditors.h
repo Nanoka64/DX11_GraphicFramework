@@ -275,6 +275,12 @@ public:
     bool Init(RendererEngine &renderer) override;
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 
+private:
+    bool DrawCollisionBitMaskEditor(
+        const char* label,
+        uint32_t& bitMask,
+        const char* id);
+
 };
 
 // ***************************************************************************************

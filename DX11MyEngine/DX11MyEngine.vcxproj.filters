@@ -211,18 +211,6 @@
     <Filter Include="ソース ファイル\BaseComponent\Mesh\Effect">
       <UniqueIdentifier>{0e4c2e38-3120-443c-81ec-5b7bd4387c46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Scene">
-      <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Scene\Title">
-      <UniqueIdentifier>{e7cf2ee8-ba38-41b7-9550-8d3f6bbfbb5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Scene\Game">
-      <UniqueIdentifier>{893dea6c-ff6d-4704-8ca4-97c1a21ccf37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Scene\Result">
-      <UniqueIdentifier>{cb343d01-e87d-425e-ba78-85e3a10a87e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Component\Building">
       <UniqueIdentifier>{98a8be31-7d89-4b47-b8b2-05976746ce62}</UniqueIdentifier>
     </Filter>
@@ -265,9 +253,6 @@
     <Filter Include="ソース ファイル\Singleton\Graphic">
       <UniqueIdentifier>{2d2f4f6a-3f73-40e4-b9e4-b250a2984f3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Scene\Head">
-      <UniqueIdentifier>{6b7b7f36-9bb9-44aa-9da9-e255c8167cae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Component\Enemy\State_Octahedron">
       <UniqueIdentifier>{658c3605-c934-40cf-bb95-dc162d12f607}</UniqueIdentifier>
     </Filter>
@@ -297,6 +282,21 @@
     </Filter>
     <Filter Include="ソース ファイル\Editor\Inspector">
       <UniqueIdentifier>{5ca47c66-02af-4005-af24-e6a245cf2226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Scene">
+      <UniqueIdentifier>{8a5958dd-6daa-4a39-b22a-699ee97eaade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Scene\Title">
+      <UniqueIdentifier>{e7cf2ee8-ba38-41b7-9550-8d3f6bbfbb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Scene\Game">
+      <UniqueIdentifier>{893dea6c-ff6d-4704-8ca4-97c1a21ccf37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Scene\Result">
+      <UniqueIdentifier>{cb343d01-e87d-425e-ba78-85e3a10a87e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Scene\Head">
+      <UniqueIdentifier>{6b7b7f36-9bb9-44aa-9da9-e255c8167cae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -36,9 +36,9 @@ namespace UtilityData
 	/// </summary>
 	enum class COLLISION_RESPONSE : unsigned
 	{
-		RESPONSE_IGNORE,	// 判定しない
-		RESPONSE_OVERLAP,	// 判定するが押し出さない
-		RESPONSE_BLOCK,		// 判定して押し出す
+		RESPONSE_IGNORE		= 1 << 0,	// 判定しない
+		RESPONSE_OVERLAP	= 1 << 1,	// 判定するが押し出さない
+		RESPONSE_BLOCK		= 1 << 2,	// 判定して押し出す
 	};
 
 	/// <summary>
@@ -68,6 +68,17 @@ namespace UtilityData
 		{"BUILDING",			 COLLISION_CATEGORY::BUILDING},
 		{"EVERY",				 COLLISION_CATEGORY::EVERY},
 		{"ITEM",				 COLLISION_CATEGORY::ITEM},
+	};
+	// 衝突判定 Enumを文字列に変換するマップ
+	static std::map<COLLISION_CATEGORY, std::string > g_CollisionCategoryStringMap = {
+		{COLLISION_CATEGORY::PLAYER				  ,"PLAYER",			  },
+		{COLLISION_CATEGORY::PLAYER_BULLET		  ,"PLAYER_BULLET",		  },
+		{COLLISION_CATEGORY::ENEMY				  ,"ENEMY",				  },
+		{COLLISION_CATEGORY::ENEMY_BULLET		  ,"ENEMY_BULLET",		  },
+		{COLLISION_CATEGORY::DESTRUCTION_BUILDING ,"DESTRUCTION_BUILDING",},
+		{COLLISION_CATEGORY::BUILDING			  ,"BUILDING",			  },
+		{COLLISION_CATEGORY::EVERY				  ,"EVERY",				  },
+		{COLLISION_CATEGORY::ITEM				  ,"ITEM",				  },
 	};
 
 	/// <summary>

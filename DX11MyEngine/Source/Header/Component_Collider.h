@@ -76,6 +76,8 @@ public:
 	unsigned get_ResponseBitMask()const { return m_ResponseBitMask; }
 	/// <summary> 指定したカテゴリに対応した衝突応答を返す </summary>
 	UtilityData::COLLISION_RESPONSE get_Response(UtilityData::COLLISION_CATEGORY _otherCategory)const;
+	/// <summary> 衝突の応答用ビットマスクの設定 </summary>
+	void set_ResponseBitMask(unsigned _mask) { m_ResponseBitMask = _mask; }
 	/// <summary>衝突の応答（判定のみか、押し出しも行うか）を設定 </summary>
 	/// <param name="_category">衝突のカテゴリ</param>
 	/// <param name="_response">判定時の応答</param>

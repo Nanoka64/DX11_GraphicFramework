@@ -17,6 +17,7 @@ using namespace UtilityData;
 //*----------------------------------------------------------------------------------------
 Collider::Collider(std::weak_ptr<GameObject> pOwner, int updateRank) 
     : IComponent(pOwner, updateRank),
+    m_pTransform(nullptr),
     m_IsEnable(true),
     m_IsTrigger(false),
     m_IsHit(false),
@@ -25,7 +26,8 @@ Collider::Collider(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_Center(VEC3()),
     m_ColliderType(COLLIDER_TYPE::BOX),
     m_CategoryBits(COLLISION_CATEGORY::NONE),
-    m_CollisionBitMask(static_cast<unsigned>(COLLISION_CATEGORY::EVERY))    // 初期値は全衝突にする
+    m_CollisionBitMask(static_cast<unsigned>(COLLISION_CATEGORY::EVERY)),    // 初期値は全衝突にする
+    m_ResponseBitMask(0xFFFFFFFF)
 {
     this->set_Tag("Collider");
 }

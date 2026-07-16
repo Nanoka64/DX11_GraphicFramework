@@ -288,6 +288,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
                 // Õ“ËƒJƒeƒSƒŠ
                 collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
 
+
                 // ƒRƒ‰ƒCƒ_[‚Ì“o˜^
                 Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
             }
@@ -508,7 +509,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsNormalMap = true;
         mesh.ObjLayer = 105;
 
-        for (int i = 0; i < 0; i++)
+        for (int i = 0; i < 20; i++)
         {
             VEC3 pos;
             pos.x = -50.0f;
