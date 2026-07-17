@@ -29,10 +29,10 @@ class GameObject;
 class BulletManager
 {
 private:
-    std::unordered_map<BulletData::BULLET_TYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;      // 弾の連想配列プール
-    std::unordered_map < BulletData::BULLET_TYPE, std::vector<GameObject *>> m_ExtractedBulletMap;  // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
-    std::unique_ptr<ObjectPool<GameObject>> m_pExplosionBulletLightPool;                            // 爆発弾用のライトプール
-    std::vector<GameObject *> m_ExtractedExplosionLightArray;                                       // 取り出した爆発ライトオブジェクトを一時的に保持する（役割が終わっていたら返す）
+    std::unordered_map<BulletData::BULLET_VISUAL_ARCHETYPE, ObjectPool<GameObject>> m_BulletObjectPoolMap;      // 弾の見た目ごとの連想配列プール
+    std::unordered_map < BulletData::BULLET_VISUAL_ARCHETYPE, std::vector<GameObject *>> m_ExtractedBulletMap;  // 取り出した弾オブジェクトを一時的に保持する（役割が終わっていたら返す）
+    std::unique_ptr<ObjectPool<GameObject>> m_pExplosionBulletLightPool;                                        // 爆発弾用のライトプール
+    std::vector<GameObject *> m_ExtractedExplosionLightArray;                                                   // 取り出した爆発ライトオブジェクトを一時的に保持する（役割が終わっていたら返す）
 
 
 public:
@@ -69,9 +69,9 @@ public:
     /// <param name="pBullet"></param>
     void RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::shared_ptr<GameObject> pBullet);
 
-    void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::BulletDataBase&_param);
-    void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::ExplosionBulletData &_param);
-    void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::HormingExplosionBulletData &_param);
+    void Shot(RendererEngine &renderer, const BulletData::BulletSpawnContext& _context, const BulletData::BulletDataBase&_param);
+    //void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::ExplosionBulletData &_param);
+    //void Shot(RendererEngine &renderer, const BulletData::BulletTransformData& _transformData, const BulletData::HormingExplosionBulletData &_param);
 
 private:
     // コピー禁止

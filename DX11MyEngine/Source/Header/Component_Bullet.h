@@ -1,5 +1,9 @@
 #pragma once
 #include "IComponent.h"
+#include "ConstantBulletData.h"
+
+
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -17,16 +21,24 @@ private:
 	VECTOR3::VEC3 m_PrevPos;	// 前の座標
 	VECTOR3::VEC3 m_MoveDir;
 	int m_CrntPenetrationCount;	// 現在の貫通数
-	std::function<void(const class CollisionInfo& _other)> m_CollisionTask;		// 衝突時の処理
 	const BulletData::BulletDataBase* m_pBulletData;							// 読みとり専用の弾データを持つ
-	StateMachine<Bullet> m_StateMachine;	// 状態遷移の管理
+
+    std::array<std::unique_ptr<class IBulletBehaviour>,
+        static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
+    class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
 
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual ~Bullet() = default;
 
-	void set_CollisionTask(std::function<void(const class CollisionInfo& _other)> task) { m_CollisionTask = task; }		// 衝突時の処理の設定
-	virtual void Setup(const BulletData::BulletDataBase* _pParam) = 0;
-	virtual void Reset() = 0;
+    void Start(RendererEngine& renderer) override;
+    void Update(RendererEngine& renderer) override;
+    void LateUpdate(RendererEngine& renderer) override;
+    void Setup(
+        const BulletData::BulletDataBase* _pData,
+        const BulletData::BulletSpawnContext& context);
+
+    void Deactivate(BulletData::BULLET_END_REASON reason);
+    void Reset();
 };
 

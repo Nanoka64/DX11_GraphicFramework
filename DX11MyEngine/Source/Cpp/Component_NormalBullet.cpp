@@ -78,7 +78,7 @@ void NormalBullet::Start(RendererEngine& renderer)
             if (health && hitCategory != COLLISION_CATEGORY::DESTRUCTION_BUILDING)
             {
                 // 弾が保持しているダメージ値を渡す
-                health->TakeDamage(m_pWeaponData->_damage);
+                health->TakeDamage(m_pWeaponData->_commonData._damage);
             }
 
             // 建物に当たったら即消えるようにして、その他は貫通数を減らす
@@ -90,7 +90,7 @@ void NormalBullet::Start(RendererEngine& renderer)
             {
                 m_CrntPenetrationCount++; // 貫通数を増やす
 
-                if (m_CrntPenetrationCount >= m_pWeaponData->_penetrationsCount)
+                if (m_CrntPenetrationCount >= m_pWeaponData->_commonData._penetrationsCount)
                 {
                     m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
                 }
@@ -216,8 +216,8 @@ void NormalBullet::Update(RendererEngine &renderer)
 
     MoveParam param;
     param._moveDirection = m_MoveDir;
-    param._moveSpeed = m_pWeaponData->_speed;
-    param._gravity = m_pWeaponData->_gravityScale;
+    param._moveSpeed = m_pWeaponData->_commonData._speed;
+    param._gravity = m_pWeaponData->_commonData._gravityScale;
 
 	m_PrevPos = crntPos;    // 前回の位置を更新
 
@@ -242,14 +242,15 @@ void NormalBullet::LateUpdate(RendererEngine& renderer)
 
     // 射程距離外で削除
     float distSq = VEC3::DistanceSq(newPos, m_StartPos);
-    if (distSq > m_pWeaponData->_range * m_pWeaponData->_range) {
+    float range = m_pWeaponData->_commonData._range;
+    if (distSq > range * range) {
         m_pOwner.lock()->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);    // ノンアクティブに
     }
     // レイキャストで衝突判定（コライダーの衝突処理をこっちに移動）
     CollInData_Ray ray;
 	ray._point = m_PrevPos;           // 前回の位置からレイを飛ばす
     ray._dir = newPos - m_PrevPos;    // 前回の位置から新しい位置へのベクトル
-    unsigned mask = m_pWeaponData->_collisionMask;
+    unsigned mask = m_pWeaponData->_commonData._collisionMask;
     CollisionInfo hitInfo;
 
     if (Master::m_pCollisionManager->CheckRaycast(ray, mask, &hitInfo))

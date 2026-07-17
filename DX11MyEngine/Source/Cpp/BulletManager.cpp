@@ -131,11 +131,11 @@ bool BulletManager::Init(RendererEngine &renderer)
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //
-    //						通常弾のプール
+    //						ビルボード弾のプール
     // 
     //
     //////////////////////////////////////////////////////////////////////////////////////////
-    m_BulletObjectPoolMap.emplace(BULLET_TYPE::NORMAL,ObjectPool<GameObject>(
+    m_BulletObjectPoolMap.emplace(BULLET_VISUAL_ARCHETYPE::BILLBOARD,ObjectPool<GameObject>(
         // 取得時に実行 ******************************************************************************************
         [&renderer](GameObject *obj) {          
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
@@ -252,11 +252,11 @@ bool BulletManager::Init(RendererEngine &renderer)
     //////////////////////////////////////////////////////////////////////////////////////////
     //
     //
-    //						爆発弾のプール
+    //						3Dモデル弾のプール
     // 
     //
     //////////////////////////////////////////////////////////////////////////////////////////
-    m_BulletObjectPoolMap.emplace(BULLET_TYPE::EXPLOSION, ObjectPool<GameObject>(
+    m_BulletObjectPoolMap.emplace(BULLET_VISUAL_ARCHETYPE::MODEL, ObjectPool<GameObject>(
         // 取得時に実行 ******************************************************************************************
         [&renderer](GameObject* obj)   
         {          
@@ -497,7 +497,7 @@ void BulletManager::Update(RendererEngine &renderer)
 
     Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾プールの確認"));
 
-    for (int i = 0; i < static_cast<int>(BULLET_TYPE::NUM); i++)
+    for (int i = 0; i < static_cast<int>(BULLET_VISUAL_ARCHETYPE::NUM); i++)
     {
         if (m_BulletObjectPoolMap.empty())break;
 
@@ -505,7 +505,7 @@ void BulletManager::Update(RendererEngine &renderer)
         {
             // プール本体の情報 **********************************************************
             // プールが存在するかどうかチェック
-            auto it = m_BulletObjectPoolMap.find(static_cast<BULLET_TYPE>(i));
+            auto it = m_BulletObjectPoolMap.find(static_cast<BULLET_VISUAL_ARCHETYPE>(i));
             if (it != m_BulletObjectPoolMap.end())
             {
                 Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"プール最大数：%d"), it->second.get_MaxNum());
@@ -513,7 +513,7 @@ void BulletManager::Update(RendererEngine &renderer)
 
 
                 // プールから取り出して使用しているオブジェクトの情報 ********************************************************
-                auto& extractedIt = m_ExtractedBulletMap[static_cast<BULLET_TYPE>(i)];
+                auto& extractedIt = m_ExtractedBulletMap[static_cast<BULLET_VISUAL_ARCHETYPE>(i)];
                 Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"使用しているオブジェクト数：%d"), extractedIt.size());
                 
             }
@@ -620,22 +620,22 @@ void BulletManager::RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::sha
 //* &_param           : パラメータ
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::BulletDataBase&_param)
+void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawnContext& _context, const BulletData::BulletDataBase&_param)
 {
-    auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::NORMAL)->second;
+    auto &pool = m_BulletObjectPoolMap.find(_param._visualData._visualArchetype)->second;
     auto obj = pool.get();
     if (obj == nullptr)
     {
         OutputDebugString(L"プールに空きがありません");
         return;
     }
-
+    
     // トランスフォームの設定
     auto transform = obj->get_Transform().lock();
-    transform->set_Pos(_transformData._pos);
-    transform->set_RotationQuaternion(_transformData._rotQ);
+    transform->set_Pos(_context._transform._pos);
+    transform->set_RotationQuaternion(_context._transform._rotQ);
     //transform->set_RotateToRad(_transformData._rotRad);
-    transform->set_Scale(_param._scale);
+    transform->set_Scale(_param._visualData._scale);
 
 
     // 弾コンポーネントのセットアップ
@@ -646,92 +646,92 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_t
     
     // 物理コンポーネントに重力の設定
     auto physics = obj->get_Component<Physics>();
-    physics->set_GravityScale(bulletParam->_gravityScale);
+    physics->set_GravityScale(bulletParam->_commonData._gravityScale);
 
 
     // 弾に合わせたマテリアルに付け替え
-    auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_bulletMaterialTag);
+    auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_visualData._bulletMaterialTag);
     if (auto billboardRes = obj->get_Component<BillboardResource>()) {
         billboardRes->set_Material(matPtr);
     }
 
     // 更新リストに登録
-    m_ExtractedBulletMap[BULLET_TYPE::NORMAL].push_back(obj);
+    m_ExtractedBulletMap[_param._visualData._visualArchetype].push_back(obj);
 }
-
-//*---------------------------------------------------------------------------------------
-//*【?】爆発弾の発射
-//*
-//* [引数]
-//* &renderer         : 描画エンジンの参照
-//* &_transformData   : トランスフォームパラメータ
-//* &_param           : パラメータ
-//* [返値] なし
-//*----------------------------------------------------------------------------------------
-void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::ExplosionBulletData &_param)
-{
-    //*****************************************************************************************
-    //						弾の取り出し
-    //*****************************************************************************************
-    auto &bulletPool = m_BulletObjectPoolMap.find(BULLET_TYPE::EXPLOSION)->second;
-    auto bulletObj = bulletPool.get();
-    if (bulletObj == nullptr)
-    {
-        OutputDebugString(L"プールに空きがありません");
-        return;
-    }
-
-    // トランスフォームの設定
-    auto transform = bulletObj->get_Transform().lock();
-    transform->set_Pos(_transformData._pos);
-    transform->set_RotationQuaternion(_transformData._rotQ);
-    //transform->set_RotateToRad(_transformData._rotRad);
-    transform->set_Scale(_param._scale);
-
-
-    // 弾コンポーネントのセットアップ
-    auto bulletComp = bulletObj->get_Component<ExplosionBullet>();
-    bulletComp->Setup(&_param);
-
-    const auto bulletParam = bulletComp->get_ExplosionParameter();
-
-    // 物理コンポーネントに重力の設定
-    auto physics = bulletObj->get_Component<Physics>();
-    physics->set_GravityScale(bulletParam->_gravityScale);
-
-
-    //auto collider = bulletObj->get_Component<BoxCollider>();
-    //collider->set_Size(VEC3(_transformData._scale));
-
-    // 更新リストに登録
-    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(bulletObj);
-}
-
-//*---------------------------------------------------------------------------------------
-//*【?】ホーミング爆発弾の発射
-//*
-//* [引数]
-//* &renderer         : 描画エンジンの参照
-//* &_transformData   : トランスフォームパラメータ
-//* &_param           : パラメータ
-//* [返値] なし
-//*----------------------------------------------------------------------------------------
-void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::HormingExplosionBulletData &_param)
-{
-    auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::HORMING)->second;
-    auto obj = pool.get();
-    if (obj == nullptr)
-    {
-        OutputDebugStringA("プールに空きがありません");
-        return;
-    }
-
-    auto transform = obj->get_Transform().lock();
-    transform->set_Pos(_transformData._pos);
-    transform->set_RotationQuaternion(_transformData._rotQ);
-    //transform->set_RotateToRad(_transformData._rotRad);
-    transform->set_Scale(_param._scale);
-
-    // 更新リストに登録
-    m_ExtractedBulletMap[BULLET_TYPE::HORMING].push_back(obj);
-}
+//
+////*---------------------------------------------------------------------------------------
+////*【?】爆発弾の発射
+////*
+////* [引数]
+////* &renderer         : 描画エンジンの参照
+////* &_transformData   : トランスフォームパラメータ
+////* &_param           : パラメータ
+////* [返値] なし
+////*----------------------------------------------------------------------------------------
+//void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::ExplosionBulletData &_param)
+//{
+//    //*****************************************************************************************
+//    //						弾の取り出し
+//    //*****************************************************************************************
+//    auto &bulletPool = m_BulletObjectPoolMap.find(BULLET_TYPE::EXPLOSION)->second;
+//    auto bulletObj = bulletPool.get();
+//    if (bulletObj == nullptr)
+//    {
+//        OutputDebugString(L"プールに空きがありません");
+//        return;
+//    }
+//
+//    // トランスフォームの設定
+//    auto transform = bulletObj->get_Transform().lock();
+//    transform->set_Pos(_transformData._pos);
+//    transform->set_RotationQuaternion(_transformData._rotQ);
+//    //transform->set_RotateToRad(_transformData._rotRad);
+//    transform->set_Scale(_param._scale);
+//
+//
+//    // 弾コンポーネントのセットアップ
+//    auto bulletComp = bulletObj->get_Component<ExplosionBullet>();
+//    bulletComp->Setup(&_param);
+//
+//    const auto bulletParam = bulletComp->get_ExplosionParameter();
+//
+//    // 物理コンポーネントに重力の設定
+//    auto physics = bulletObj->get_Component<Physics>();
+//    physics->set_GravityScale(bulletParam->_gravityScale);
+//
+//
+//    //auto collider = bulletObj->get_Component<BoxCollider>();
+//    //collider->set_Size(VEC3(_transformData._scale));
+//
+//    // 更新リストに登録
+//    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(bulletObj);
+//}
+//
+////*---------------------------------------------------------------------------------------
+////*【?】ホーミング爆発弾の発射
+////*
+////* [引数]
+////* &renderer         : 描画エンジンの参照
+////* &_transformData   : トランスフォームパラメータ
+////* &_param           : パラメータ
+////* [返値] なし
+////*----------------------------------------------------------------------------------------
+//void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::HormingExplosionBulletData &_param)
+//{
+//    auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::HORMING)->second;
+//    auto obj = pool.get();
+//    if (obj == nullptr)
+//    {
+//        OutputDebugStringA("プールに空きがありません");
+//        return;
+//    }
+//
+//    auto transform = obj->get_Transform().lock();
+//    transform->set_Pos(_transformData._pos);
+//    transform->set_RotationQuaternion(_transformData._rotQ);
+//    //transform->set_RotateToRad(_transformData._rotRad);
+//    transform->set_Scale(_param._scale);
+//
+//    // 更新リストに登録
+//    m_ExtractedBulletMap[BULLET_TYPE::HORMING].push_back(obj);
+//}
