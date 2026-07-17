@@ -26,8 +26,8 @@
     "hitEffectTag": "BulletHit_Acid",
     "scale": [ 15.0, 15.0, 15.0 ],
     "explosionRadius": 50.0,
-    "explosionEffectHandleTag": "Explosion_01",
+    "explosionEffectHandleTag": "Explosion_Plasma_01",
     "explosionEffectAliveTime": 2.0,
-    "isSmoke": true
+    "isSmoke": false
   }
 }

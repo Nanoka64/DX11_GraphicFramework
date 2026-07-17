@@ -36,7 +36,7 @@ void Ant_AT_HitStunState::OnEnter(class EnemyController* pOwner)
 	// ****************************************************
 	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_HIT01), pos, SOUND_HIT_RADIUS);
 
-	int hit_handle = Master::m_pEffectManager->PlayEffect("EnemyHit_01");
+	int hit_handle = Master::m_pEffectManager->PlayEffect("AntHit_01");
 	Master::m_pEffectManager->SetScaleEffect(hit_handle, 1.0f, 1.0f, 1.0f);
 	Master::m_pEffectManager->SetPositionEffect(hit_handle, pos.x, pos.y + 2.0f, pos.z);	// ˆÊ’u‚ª‘«Œ³‚É‚È‚Á‚Ä‚µ‚Ü‚Á‚Ä‚é‚Ì‚ÅA­‚µã‚É•â³
 	Master::m_pEffectManager->SetRotationEffect(hit_handle, rot.x, rot.y, rot.z);

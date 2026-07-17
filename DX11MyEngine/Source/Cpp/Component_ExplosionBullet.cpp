@@ -145,7 +145,7 @@ void ExplosionBullet::Start(RendererEngine& renderer)
                 // ”š”­‰Œ
                 Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, effectExpSize, effectExpSize, effectExpSize);
                 Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, pos.x, pos.y, pos.z);
-                Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, expRot.x, expRot.y, expRot.z);
+                Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, 0.0f,0.0f,0.0f);
 
                 Master::m_pEffectManager->SetDynamicParameter(exp_smoke_handle, 1, bulletParam->_explosionEffectAliveTime); // ¶‘¶ŠÔ‚ğ•ÏX
             }

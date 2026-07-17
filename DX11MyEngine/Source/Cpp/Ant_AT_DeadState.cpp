@@ -15,6 +15,7 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 using namespace UtilityData;
 using namespace EnemyData;
+using namespace Tool;
 
 //*---------------------------------------------------------------------------------------
 //* @:Ant_AT_DeadState Class 
@@ -51,7 +52,7 @@ void Ant_AT_DeadState::OnEnter(class EnemyController* pOwner)
 
 	// 少し上（Y軸）に向かせることで、綺麗な放物線を描いて吹き飛ばせる
 	knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
-	knockbackDir.y += 5.0f;
+	knockbackDir.y += 6.0f;
 	knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-6.0f, 6.0f);
 
 	auto physics = pOwner->get_PhysicsComponent();
@@ -105,6 +106,7 @@ int Ant_AT_DeadState::Update(class EnemyController* pOwner)
 		VEC3 crntRot = myTransform->get_VEC3ToLocal_RotateToRad();		// 現在のオイラー
 		XMVECTOR crntRotQ = myTransform->get_RotationQuaternion();		// 現在のクオータニオン
 		float timer = pOwner->get_StateTimer();
+
 
 		//*****************************************************************************************
 		//						ひっくり返る
@@ -161,7 +163,7 @@ void Ant_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner)
 	pOwner->set_IsAnim(false);	// アニメーションを停止
 
 	// 死亡エフェクト
-	int handle = Master::m_pEffectManager->PlayEffect("EnemyDead_01");
+	int handle = Master::m_pEffectManager->PlayEffect("AntDead_01");
 	float deadEffectScale = 1.5f;
 	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
 	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + 2.0f, pos.z);

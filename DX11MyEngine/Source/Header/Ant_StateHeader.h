@@ -203,6 +203,7 @@ private:
 	const float SOUND_DEAD_RADIUS = 600.0f;				// 死亡音が聞こえる範囲
 	const int DROP_ITEM_MIN = 0;						// 落とすアイテムの最小数
 	const int DROP_ITEM_MAX = 1;						// 落とすアイテムの最大数
+	int m_FrameCounter = 0;
 
 	DirectX::XMVECTOR m_TargetRotQ;	// ひっくり返った後のクオータニオン
 	DirectX::XMVECTOR m_StartRotQ;	// ひっくり返った後のクオータニオン

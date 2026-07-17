@@ -86,8 +86,9 @@ bool EffectManager::Setup(RendererEngine &renderer)
     // エフェクトの読み込み
     LoadEffect(u"Resource/Effect/Spark.efkefc", "Spark");
     LoadEffect(u"Resource/Effect/Smoke.efkefc", "Smoke");
-    LoadEffect(u"Resource/Effect/EnemyHit_01.efkefc", "EnemyHit_01");
-    LoadEffect(u"Resource/Effect/EnemyDead_01.efkefc", "EnemyDead_01");
+    LoadEffect(u"Resource/Effect/AntHit_01.efkefc", "AntHit_01");
+    LoadEffect(u"Resource/Effect/AntDead_01.efkefc", "AntDead_01");
+    LoadEffect(u"Resource/Effect/AntBloodSpatter_01.efkefc", "AntBloodSpatter_01");
     LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc", "DeadExplosion");
     LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
     //LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
