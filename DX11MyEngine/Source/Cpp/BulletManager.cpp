@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RendererEngine.h"
 #include "BulletManager.h"
+#include "Component_Bullet.h"
 #include "Component_NormalBullet.h"
 #include "Component_ExplosionBullet.h"
 #include "Component_ExplosionLightController.h"
@@ -145,7 +146,7 @@ bool BulletManager::Init(RendererEngine &renderer)
         // 返却時に実行 ******************************************************************************************
         [](GameObject *obj) 
         {
-            auto bulletComp = obj->get_Component<NormalBullet>();
+            auto bulletComp = obj->get_Component<Bullet>();
             bulletComp->Reset();
 
             auto physics = obj->get_Component<Physics>();
@@ -208,7 +209,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             obj->set_IsStatic(false);
 
             // バレットコンポーネントの追加
-            auto bulletComp = obj->add_Component<NormalBullet>();
+            auto bulletComp = obj->add_Component<Bullet>();
 
             // 直線移動
             auto moveComp = obj->add_Component<MoveLogic>();
@@ -262,7 +263,7 @@ bool BulletManager::Init(RendererEngine &renderer)
         {          
             // アクティブに
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE); 
-            auto bulletComp = obj->get_Component<ExplosionBullet>();
+            auto bulletComp = obj->get_Component<Bullet>();
 
             auto trail = obj->get_Component<TrailRenderer>();
 
@@ -273,9 +274,9 @@ bool BulletManager::Init(RendererEngine &renderer)
         // 返却時に実行 ******************************************************************************************
         [this](GameObject* obj)          
         {
-            auto bulletComp = obj->get_Component<ExplosionBullet>();
-            const auto bulletParam = bulletComp->get_ExplosionParameter();
-            float explosionRadius = bulletParam->_explosionRadius;   // 爆発半径を取得
+            auto bulletComp = obj->get_Component<Bullet>();
+            const auto bulletHitParam = bulletComp->get_HitData <ExplosionHitData>();
+            float explosionRadius = bulletHitParam->_explosionRadius;   // 爆発半径を取得
             bulletComp->Reset();
 
             //// コライダーの使用をオフに
@@ -347,7 +348,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             obj->set_IsUpdateAllowedDuringPause(false);                     // ポーズ中は停止
 
             // バレットコンポーネントの追加
-            auto bulletComp = obj->add_Component<ExplosionBullet>();
+            auto bulletComp = obj->add_Component<Bullet>();
 
             // 移動用コンポーネントの追加
             auto moveComp = obj->add_Component<MoveLogic>();
@@ -639,10 +640,10 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawn
 
 
     // 弾コンポーネントのセットアップ
-    auto bulletComp = obj->get_Component<NormalBullet>();
-    bulletComp->Setup(&_param);
+    auto bulletComp = obj->get_Component<Bullet>();
+    bulletComp->Setup(&_param, _context);
 
-    const auto bulletParam = bulletComp->get_Parameter();
+    const auto bulletParam = bulletComp->get_BulletData();
     
     // 物理コンポーネントに重力の設定
     auto physics = obj->get_Component<Physics>();

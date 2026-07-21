@@ -40,5 +40,17 @@ public:
 
     void Deactivate(BulletData::BULLET_END_REASON reason);
     void Reset();
+    const BulletData::BulletDataBase* get_BulletData()const { return  m_pBulletData; }
+
+
+    template<typename T>
+    const T* get_HitData() const
+    {
+        if (!m_pBulletData)
+        {
+            return nullptr;
+        }
+        return std::get_if<T>(&m_pBulletData->_hitData);
+    }
 };
 

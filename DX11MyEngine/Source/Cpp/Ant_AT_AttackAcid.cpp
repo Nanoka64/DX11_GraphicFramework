@@ -100,7 +100,7 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 			default:break;
 			}
 			auto data = static_cast<const WeaponData::GunWeaponData*>(Master::m_pWeaponDataManager->FindEnemysWeaponData(id));
-			data->_bulletParam;
+			data->_bulletData;
 			
 			XMVECTOR rotQuat = myTransform->get_RotationQuaternion();
 
@@ -139,7 +139,7 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 				// 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
 				std::visit([&](auto& param) {
 					Master::m_pBulletManager->Shot(*m_pRenderer, bulletTrans, param);
-					}, data->_bulletParam);
+					}, data->_bulletData);
 
 			}
 			//=========================================================================================

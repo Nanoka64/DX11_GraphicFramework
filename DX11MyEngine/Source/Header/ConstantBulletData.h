@@ -123,6 +123,9 @@ namespace BulletData
         float _collisionSize = 0.0f;                // 衝突判定の半径
     };
 
+    /// <summary>
+    /// 衝突
+    /// </summary>
     struct DirectHitData
     {
         // 必要なら貫通や命中エフェクト固有値を持たせる
@@ -133,7 +136,7 @@ namespace BulletData
     /// <summary>
     /// 爆発弾のデータ
     /// </summary>
-    struct ExplosionHitData
+    struct ExplosionHitData : DirectHitData
     {
         float _explosionRadius = 0.0f;             // 爆発の半径
         std::string _explosionEffectHandleTag;     // 爆発エフェクトのハンドル
@@ -183,6 +186,7 @@ namespace BulletData
         CommonBulletData _commonData;                           // 共通データ
         BulletVisualData _visualData;                           // 見た目データ
         BULLET_MOVE_TYPE _moveType = BULLET_MOVE_TYPE::LINEAR;  // 弾の移動方法
+        BULLET_BEHAVIOUR_TYPE _behaviourType = BULLET_BEHAVIOUR_TYPE::NORMAL;
         BulletHitData _hitData = DirectHitData{};   // ヒットデータ
 
         /// <summary>

@@ -271,7 +271,7 @@ bool GunWeapon::Setup(const WeaponData::BaseWeaponData* _pWeaponData)
     std::visit([&](auto param) {
         m_Range = param._range;
         },
-        gunParam->_bulletParam);
+        gunParam->_bulletData._commonData);
 
 
     // 有効状態に
@@ -454,10 +454,14 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
         BULLET_TYPE type = gunParam->_bulletType;
 
+        BulletSpawnContext spawnContext;
+        spawnContext._transform = bulletTransform;
+
         // 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
         std::visit([&](auto& param) {
-            Master::m_pBulletManager->Shot(renderer, bulletTransform, param);
-            }, gunParam->_bulletParam);
+            Master::m_pBulletManager->Shot(renderer, spawnContext, param);
+            }, 
+            gunParam->_bulletData._commonData);
     }
 
     if (!m_pFlashPointLight.expired()) {
