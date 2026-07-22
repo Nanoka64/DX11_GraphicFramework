@@ -94,7 +94,7 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 			default:break;
 			}
 			auto data = static_cast<const WeaponData::GunWeaponData*>(Master::m_pWeaponDataManager->FindEnemysWeaponData(5));
-			data->_bulletParam;
+			data->_bulletData;
 
 			XMVECTOR rotQuat = myTransform->get_RotationQuaternion();
 
@@ -128,11 +128,11 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 				bulletTrans._scale = 1.0;
 				bulletTrans._rotQ = finalRotQuat;
 
+				BulletSpawnContext spawnContext;
+				spawnContext._transform = bulletTrans;
 
 				// 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
-				std::visit([&](auto& param) {
-					Master::m_pBulletManager->Shot(*m_pRenderer, bulletTrans, param);
-					}, data->_bulletParam);
+					Master::m_pBulletManager->Shot(*m_pRenderer, spawnContext, data->_bulletData);
 
 			}
 			//=========================================================================================

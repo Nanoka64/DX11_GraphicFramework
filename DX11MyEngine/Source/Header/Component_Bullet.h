@@ -23,8 +23,8 @@ private:
 	int m_CrntPenetrationCount;	// 現在の貫通数
 	const BulletData::BulletDataBase* m_pBulletData;							// 読みとり専用の弾データを持つ
 
-    std::array<std::unique_ptr<class IBulletBehaviour>,
-        static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
+    //std::array<std::unique_ptr<class IBulletBehaviour>,
+    //    static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
     class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
 
 public:
@@ -43,14 +43,32 @@ public:
     const BulletData::BulletDataBase* get_BulletData()const { return  m_pBulletData; }
 
 
+    /// <summary>
+    /// 衝突データの取得
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     template<typename T>
     const T* get_HitData() const
     {
-        if (!m_pBulletData)
-        {
+        if (!m_pBulletData){
             return nullptr;
         }
         return std::get_if<T>(&m_pBulletData->_hitData);
+    }
+
+    /// <summary>
+    /// 移動データの取得
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    template<typename T>
+    const T* get_MoveData() const
+    {
+        if (!m_pBulletData) {
+            return nullptr;
+        }
+        return std::get_if<T>(&m_pBulletData->_moveData);
     }
 };
 

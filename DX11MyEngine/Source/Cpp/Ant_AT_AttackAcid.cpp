@@ -135,11 +135,11 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 				bulletTrans._rotQ = finalRotQuat;
 				bulletTrans._pos.y += 3.0f;		// そのままだと、地面に当たってしまうので少し上の方から発射する
 
+				BulletSpawnContext spawnContext;
+				spawnContext._transform = bulletTrans;
 
 				// 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
-				std::visit([&](auto& param) {
-					Master::m_pBulletManager->Shot(*m_pRenderer, bulletTrans, param);
-					}, data->_bulletData);
+				Master::m_pBulletManager->Shot(*m_pRenderer, spawnContext, data->_bulletData);
 
 			}
 			//=========================================================================================

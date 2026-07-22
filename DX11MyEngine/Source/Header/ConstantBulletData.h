@@ -19,24 +19,25 @@ namespace BulletData
     };
 
     /// <summary>
-	/// 弾の見た目アーキタイプ（3Dモデルかビルボードか）を定義する
-    /// </summary>
-    enum class BULLET_VISUAL_ARCHETYPE
-    {
-        BILLBOARD,          // ビルボード
-        MODEL,              // 3Dモデル
-        //LASER,              // レーザー
-
-        NUM,
-    };
-
-    /// <summary>
     /// 弾の移動タイプ
     /// </summary>
     enum class BULLET_MOVE_TYPE
     {
         LINEAR,
         HOMING,
+
+    };
+
+    /// <summary>
+	/// 弾の見た目アーキタイプ（3Dモデルかビルボードか）を定義する
+    /// </summary>
+    enum class BULLET_VISUAL_ARCHETYPE
+    {
+        BILLBOARD,          // ビルボード
+        MODEL,              // 3Dモデル
+        //LASER,            // レーザー
+
+        NUM,
     };
 
     /// <summary>
@@ -91,13 +92,14 @@ namespace BulletData
     struct BulletVisualData
     {
         BULLET_VISUAL_ARCHETYPE _visualArchetype = BULLET_VISUAL_ARCHETYPE::BILLBOARD;
-        std::string _bulletMaterialTag;             // 使用するマテリアルのタグ（TODO:ビルボードと3Dモデルで分ける必要あるかも）
-        VECTOR3::VEC3 _scale = VECTOR3::VEC3();     // 弾の大きさ
+        std::string _bulletMaterialTag;                  // 使用するマテリアルのタグ（TODO:ビルボードと3Dモデルで分ける必要あるかも）
+        VECTOR3::VEC3 _scale = VECTOR3::VEC3();          // 弾の大きさ
 
-        bool _enableTrail = false;                  // 軌跡を使用するか
-        bool _enableFlightSmoke = false;            // 飛行中、煙を発生させるか
-        float _smokeInterval = 0.05f;               // 煙の間隔
-        std::string _smokeEffectTag;                // 煙エフェクトのタグ
+        bool _enableTrail = false;                       // 軌跡を使用するか
+        bool _enableFlightSmoke = false;                 // 飛行中、煙を発生させるか
+        float _smokeInterval = 0.05f;                    // 煙の間隔
+        VECTOR3::VEC3 _trailColor = VECTOR3::VEC3(1.0f); // トレイルカラー
+        std::string _smokeEffectTag;                     // 煙エフェクトのタグ
     };
 
 
@@ -113,9 +115,9 @@ namespace BulletData
     struct CommonBulletData
     {
         float _damage = 0.0f;                       // 弾のダメージ量
+        float _range = 0.0f;                        // 弾の射程距離
         float _speed = 0.0f;                        // 弾の速度
         float _acceleration = 0.0f;                 // 弾の加速度
-        float _range = 0.0f;                        // 弾の射程距離
         float _gravityScale = 0.0f;                 // 重力の影響を受けるかどうか（0.0fなら受けない）
         float _knockbackForce = 1.0f;               // ノックバック力
         int _penetrationsCount = 0;                 // 貫通可能回数
@@ -124,7 +126,24 @@ namespace BulletData
     };
 
     /// <summary>
-    /// 衝突
+    /// 弾の移動データ
+    /// </summary>
+    struct LinearMoveData
+    {
+
+    };
+    /// <summary>
+    /// 追尾弾の移動データ
+    /// </summary>
+    struct HomingMoveData
+    {
+        float _turnSpeed = 0.0f;
+        float _targetingDuration = 0.0f;
+        float _targetingStartDelay = 0.0f;
+    };
+
+    /// <summary>
+    /// 衝突データ
     /// </summary>
     struct DirectHitData
     {
@@ -134,14 +153,14 @@ namespace BulletData
     };
 
     /// <summary>
-    /// 爆発弾のデータ
+    /// 爆発弾の衝突データ
     /// </summary>
     struct ExplosionHitData : DirectHitData
     {
-        float _explosionRadius = 0.0f;             // 爆発の半径
-        std::string _explosionEffectHandleTag;     // 爆発エフェクトのハンドル
-        float _explosionEffectAliveTime = 1.0f;    // 爆発エフェクトの生存時間（1.0ならそのまま）
-        bool _isSmoke = true;                      // 煙を出すかどうか
+        float _explosionRadius = 0.0f;              // 爆発の半径
+        float _explosionEffectAliveTime = 1.0f;     // 爆発エフェクトの生存時間（1.0ならそのまま）
+        std::string _explosionEffectHandleTag;      // 爆発エフェクトのハンドル
+        bool _isSmoke = true;                       // 煙を出すかどうか
 
         /// <summary>
         /// リセット
@@ -153,29 +172,34 @@ namespace BulletData
     };
 
 
-    /// <summary>
-    /// 誘導弾のデータ（爆発アリ）
-    /// </summary>
-    struct HormingExplosionBulletData
-    {
-        float _turningSpeed = 0.0f;                 // ホーミングの回転速度（誘導性能依存）
-        std::weak_ptr<class GameObject> _targetObj; // ホーミングのターゲット
-        float _targetingDuration = 0.0f;            // ホーミングの誘導時間（0.0fならずっと誘導）
-        float _targetingStartDelay = 0.0f;          // ホーミングの誘導開始までの遅延時間
+    ///// <summary>
+    ///// 誘導弾のデータ（爆発アリ）
+    ///// </summary>
+    //struct HormingExplosionBulletData
+    //{
+    //    float _turningSpeed = 0.0f;                 // ホーミングの回転速度（誘導性能依存）
+    //    std::weak_ptr<class GameObject> _targetObj; // ホーミングのターゲット
+    //    float _targetingDuration = 0.0f;            // ホーミングの誘導時間（0.0fならずっと誘導）
+    //    float _targetingStartDelay = 0.0f;          // ホーミングの誘導開始までの遅延時間
+    //    /// <summary>
+    //    /// リセット
+    //    /// </summary>
+    //    void Reset()
+    //    {
+    //        *this = HormingExplosionBulletData();
+    //    }
+    //};
 
 
-        /// <summary>
-        /// リセット
-        /// </summary>
-        void Reset()
-        {
-            *this = HormingExplosionBulletData();
-        }
-    };
-
+    /// <summary> 共用ヒットデータ </summary>
     using BulletHitData = std::variant<
         DirectHitData,
         ExplosionHitData
+    >;
+    /// <summary> 共用移動データ </summary>
+    using BulletMovementData = std::variant<
+        LinearMoveData,
+        HomingMoveData
     >;
 
     /// <summary>
@@ -184,10 +208,9 @@ namespace BulletData
     struct BulletDataBase
     {
         CommonBulletData _commonData;                           // 共通データ
+        BulletMovementData _moveData;                           // 移動データ
         BulletVisualData _visualData;                           // 見た目データ
-        BULLET_MOVE_TYPE _moveType = BULLET_MOVE_TYPE::LINEAR;  // 弾の移動方法
-        BULLET_BEHAVIOUR_TYPE _behaviourType = BULLET_BEHAVIOUR_TYPE::NORMAL;
-        BulletHitData _hitData = DirectHitData{};   // ヒットデータ
+        BulletHitData _hitData = DirectHitData{};               // ヒットデータ
 
         /// <summary>
         /// リセット

@@ -268,10 +268,7 @@ bool GunWeapon::Setup(const WeaponData::BaseWeaponData* _pWeaponData)
     m_AmmoRemaining = gunParam->_bulletMaxNum;
 
     // 射程距離を取得
-    std::visit([&](auto param) {
-        m_Range = param._range;
-        },
-        gunParam->_bulletData._commonData);
+    m_Range = gunParam->_bulletData._commonData._range;
 
 
     // 有効状態に
@@ -458,10 +455,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
         spawnContext._transform = bulletTransform;
 
         // 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
-        std::visit([&](auto& param) {
-            Master::m_pBulletManager->Shot(renderer, spawnContext, param);
-            }, 
-            gunParam->_bulletData._commonData);
+        Master::m_pBulletManager->Shot(renderer, spawnContext, gunParam->_bulletData);
     }
 
     if (!m_pFlashPointLight.expired()) {

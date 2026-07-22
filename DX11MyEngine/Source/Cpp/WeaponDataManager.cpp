@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <nlohmann/json.hpp>
 
 using namespace WeaponData;
 using namespace UtilityData;
@@ -205,6 +204,10 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
         _outData._muzzleFlashEffectScale.z = j["muzzleFlashEffectScale"][2].get<float>();
     }
 
+
+    //*****************************************************************************************
+    //	ここから↓					弾情報自体の読み取り
+    //*****************************************************************************************
     // 弾の種類を文字列から判定
     std::string typeStr = j.value("bulletType", "NORMAL");
     if (!j.contains("bulletParam") || !j["bulletParam"].is_object())
@@ -215,27 +218,51 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
     
     // 通常弾・爆発弾で共通して使うデータ
     BulletDataBase bulletData;
-    auto& common = bulletData._commonData;  // 共通データ
-    auto& visual = bulletData._visualData;  // 見た目データ
+    if (!LoadBulletData(paramJson, bulletData))
+    {
+        return false;
+    }
 
-    common._damage              = paramJson.value("damage", 0.0f);              // ダメージ
-    common._speed               = paramJson.value("speed", 0.0f);               // 速度
-    common._acceleration        = paramJson.value("acceleration", 0.0f);        // 加速度
-    common._range               = paramJson.value("range", 0.0f);               // 射程
-    common._penetrationsCount   = paramJson.value("penetrationsCount", 0);      // 貫通可能回数
-    common._collisionSize       = paramJson.value("collisionSize", 0.0f);       // 当たり判定
-    common._gravityScale        = paramJson.value("gravityScale", 0.0f);        // 重力
-    common._knockbackForce      = paramJson.value("knockbackForce", 0.0f);      // 吹っ飛び力
+    // 完成した弾データを武器へ格納
+    _outData._bulletData = std::move(bulletData);
 
-    bulletData._moveType = BULLET_MOVE_TYPE::LINEAR;    // 一旦直進のみ
+    return true;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】弾データの読み取り
+//*
+//* [引数] 
+//* &_json : json
+//* &_outData : 出力先 
+//* [返値]
+//* true : 読みとり成功
+//* false : 読みとり失敗
+//*----------------------------------------------------------------------------------------
+bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+{
+    //*****************************************************************************************
+    //						共通データの読み取り
+    //*****************************************************************************************
+    _outData._commonData._damage              = _json.value("damage", 0.0f);              // ダメージ
+    _outData._commonData._speed               = _json.value("speed", 0.0f);               // 速度
+    _outData._commonData._acceleration        = _json.value("acceleration", 0.0f);        // 加速度
+    _outData._commonData._range               = _json.value("range", 0.0f);               // 射程
+    _outData._commonData._penetrationsCount   = _json.value("penetrationsCount", 0);      // 貫通可能回数
+    _outData._commonData._collisionSize       = _json.value("collisionSize", 0.0f);       // 当たり判定
+    _outData._commonData._gravityScale        = _json.value("gravityScale", 0.0f);        // 重力
+    _outData._commonData._knockbackForce      = _json.value("knockbackForce", 0.0f);      // 吹っ飛び力
+
+    //bulletData._moveType = BULLET_MOVE_TYPE::LINEAR;    // 一旦直進のみ
 
     // 衝突マスク
-    common._collisionMask = 0;
-    if (paramJson.contains("collisionMask") &&
-        paramJson["collisionMask"].is_array())
+    _outData._commonData._collisionMask = 0;
+    if (_json.contains("collisionMask") &&
+        _json["collisionMask"].is_array())
     {
         // 配列を回してOR演算
-        for (const auto& maskJson : paramJson["collisionMask"])
+        for (const auto& maskJson : _json["collisionMask"])
         {
             const std::string maskName = maskJson.get<std::string>();
             const auto categoryIt = g_CollisionCategoryMap.find(maskName);
@@ -246,143 +273,168 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
                 return false;
             }
 
-            common._collisionMask |= UINT_CAST(categoryIt->second);
+            _outData._commonData._collisionMask |= UINT_CAST(categoryIt->second);
         }
     }
 
-    visual._bulletMaterialTag = paramJson.value("bulletMaterialTag", "");    // 弾そのもののマテリアル
-
-    if (paramJson.contains("scale") &&                                       // 弾の大きさ
-        paramJson["scale"].is_array() &&
-        paramJson["scale"].size() == 3)
+    //*****************************************************************************************
+    //						移動データの読み取り
+    //*****************************************************************************************
+    if (!LoadMovementData(_json, _outData))
     {
-        visual._scale.x = paramJson["scale"][0].get<float>();
-        visual._scale.y = paramJson["scale"][1].get<float>();
-        visual._scale.z = paramJson["scale"][2].get<float>();
+        return false;
     }
 
-    // 命中時の共通情報
-    DirectHitData directHit;
-    directHit._decalMaterialTag = paramJson.value("decalMaterialTag", "");      // デカールマテリアル
-    directHit._hitEffectTag = paramJson.value("hitEffectTag", "");              // ヒットエフェクト
-
-    // 通常弾
-    if (typeStr == "NORMAL")
+    //*****************************************************************************************
+    //						ヒットデータの読み取り
+    //*****************************************************************************************
+    if (!LoadHitData(_json, _outData))
     {
-        _outData._bulletType = BULLET_TYPE::NORMAL;
-        visual._visualArchetype = BULLET_VISUAL_ARCHETYPE::BILLBOARD;
-        bulletData._hitData = directHit;
+        return false;
     }
-    else if (typeStr == "EXPLOSION")
+
+    //*****************************************************************************************
+    //						見た目データの読み取り
+    //*****************************************************************************************
+    if (!LoadVisualData(_json, _outData))
     {
-        _outData._bulletType = BULLET_TYPE::EXPLOSION;
-        visual._visualArchetype = BULLET_VISUAL_ARCHETYPE::MODEL;
-        ExplosionHitData explosionHit;
-        explosionHit._decalMaterialTag = directHit._decalMaterialTag;
-        explosionHit._hitEffectTag = directHit._hitEffectTag;
+        return false;
+    }
 
-        // 派生クラス独自のパラメータを読み込み
-        explosionHit._explosionRadius = paramJson.value("explosionRadius", 0.0f);                        // 爆発半径
-        explosionHit._explosionEffectHandleTag = paramJson.value("explosionEffectHandleTag", "");        // 爆発エフェクトタグ
-        explosionHit._explosionEffectAliveTime = paramJson.value("explosionEffectAliveTime", 1.0f);      // 爆発エフェクトの生存時間（1.0でそのまま）
-        explosionHit._isSmoke = paramJson.value("isSmoke", false);                                       // 煙が出るか
+    return true;
+}
 
-        bulletData._hitData = explosionHit;
+//*---------------------------------------------------------------------------------------
+//*【?】[移動データ] の読み取り
+//*     
+//* [引数] 
+//* &_json : json
+//* &_outData : 出力先 
+//* [返値]
+//* true : 読みとり成功
+//* false : 読みとり失敗
+//*----------------------------------------------------------------------------------------
+bool WeaponDataManager::LoadMovementData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+{
+    const std::string type =
+        _json.value("type", "LINEAR");
+
+    if (type == "LINEAR")
+    {
+        _outData._moveData.emplace<LinearMoveData>();
+    }
+    else if (type == "HOMING")
+    {
+        auto& homing                = _outData._moveData.emplace<HomingMoveData>();
+        homing._turnSpeed           = _json.value("turnSpeed", 0.0f);
+        homing._targetingDuration   = _json.value("targetingDuration", 0.0f);
+        homing._targetingStartDelay = _json.value("targetingStartDelay", 0.0f);
     }
     else
     {
-        // 未対応のbulletType
         return false;
     }
-    // 完成した弾データを武器へ格納
-    _outData._bulletData = std::move(bulletData);
+    return true;
+}
 
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////
-    ////						通常弾
-    //// 
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    //if (typeStr == "NORMAL")
-    //{
-    //    _outData._bulletType = BULLET_TYPE::NORMAL;
+//*---------------------------------------------------------------------------------------
+//*【?】[見た目データ] の読み取り
+//*
+//* [引数] 
+//* &_json : json
+//* &_outData : 出力先 
+//* [返値]
+//* true : 読みとり成功
+//* false : 読みとり失敗
+//*----------------------------------------------------------------------------------------
+bool WeaponDataManager::LoadVisualData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+{
+    using namespace BulletData;
 
-    //    BulletDataBase normalData;
-    //    normalData._damage = paramJson.value("damage", 0.0f);                                       // ダメージ値
-    //    //normalData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f); // ダメージ減衰
-    //    normalData._speed = paramJson.value("speed", 0.0f);                                         // 速度
-    //    normalData._acceleration = paramJson.value("acceleration", 0.0f);                           // 加速度
-    //    normalData._range = paramJson.value("range", 0.0f);                                         // 射程
-    //    normalData._penetrationsCount = paramJson.value("penetrationsCount", 0);                    // 貫通可能回数
-    //    normalData._collisionSize = paramJson.value("collisionSize", 0.0f);                         // 当たり判定
-    //    normalData._gravityScale = paramJson.value("gravityScale", 0.0f);                           // 重力
-    //    normalData._knockbackForce = paramJson.value("knockbackForce", 0.0f);                       // 吹っ飛び力
+    const std::string archetype = _json.value("archetype", "BILLBOARD");
 
-    //    if (paramJson.contains("collisionMask") && paramJson["collisionMask"].is_array()) {         // 衝突マスク
-    //        // 衝突マスク（配列を回してOR演算）
-    //        for (const auto& maskStr : paramJson["collisionMask"]) {
-    //            normalData._collisionMask |= UINT_CAST(g_CollisionCategoryMap[maskStr.get<std::string>()]);
-    //        }
-    //    }
-    //    normalData._bulletMaterialTag = paramJson.value("bulletMaterialTag", "");                   // 弾そのもののマテリアル
-    //    normalData._decalMaterialTag = paramJson.value("decalMaterialTag", "");                     // デカールに使うマテリアル
-    //    normalData._hitEffectTag = paramJson.value("hitEffectTag", "");                             // ヒットエフェクト
+    if (archetype == "BILLBOARD")
+    {
+        _outData._visualData._visualArchetype =  BULLET_VISUAL_ARCHETYPE::BILLBOARD;
+    }
+    else if (archetype == "MODEL")
+    {
+        _outData._visualData._visualArchetype =   BULLET_VISUAL_ARCHETYPE::MODEL;
+    }
+    else
+    {
+        return false;
+    }
 
-    //    if (paramJson["scale"].is_array()){                                                         // 大きさ
-    //        normalData._scale.x = paramJson["scale"][0].get<float>();
-    //        normalData._scale.y = paramJson["scale"][1].get<float>();
-    //        normalData._scale.z = paramJson["scale"][2].get<float>();
-    //    }
+    _outData._visualData._bulletMaterialTag = _json.value("materialTag", "");           // マテリアルタグ
+    _outData._visualData._enableTrail       = _json.value("enableTrail", false);        // トレイルの有無
+    _outData._visualData._enableFlightSmoke = _json.value("enableFlightSmoke", false);  // 飛行煙の有無
+    _outData._visualData._smokeInterval     = _json.value("smokeInterval", 0.05f);      // 飛行煙の間隔
+    _outData._visualData._smokeEffectTag    = _json.value("smokeEffectTag", "");        // 煙エフェクトのタグ
+    _outData._visualData._bulletMaterialTag = _json.value("bulletMaterialTag", "");     // 弾そのもののマテリアル
+    LoadVEC3Data(_json, "trailColor", _outData._visualData._trailColor);                // トレイルカラー
+    LoadVEC3Data(_json, "scale", _outData._visualData._scale);                          // 弾の大きさ
+}
 
-    //    // variantに代入
-    //    _outData._bulletParam = normalData;
-    //}
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////
-    ////						爆発弾
-    //// 
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    //else if (typeStr == "EXPLOSION")
-    //{
-    //    _outData._bulletType = BULLET_TYPE::EXPLOSION;
+//*---------------------------------------------------------------------------------------
+//*【?】[ヒットデータ] の読み取り
+//*
+//* [引数] 
+//* &_json : json
+//* &_outData : 出力先 
+//* [返値]
+//* true : 読みとり成功
+//* false : 読みとり失敗
+//*----------------------------------------------------------------------------------------
+bool WeaponDataManager::LoadHitData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+{
+    using namespace BulletData;
 
-    //    ExplosionBulletData expData;
-    //    expData._damage = paramJson.value("damage", 0.0f);
-    //    //expData._damageDistAttenuationRate = paramJson.value("damageDistAttenuationRate", 0.0f);
-    //    expData._speed = paramJson.value("speed", 0.0f);
-    //    expData._acceleration = paramJson.value("acceleration", 0.0f);
-    //    expData._range = paramJson.value("range", 0.0f);
-    //    expData._penetrationsCount = paramJson.value("penetrationsCount", 0);
-    //    expData._collisionSize = paramJson.value("collisionSize", 0.0f);
-    //    expData._gravityScale = paramJson.value("gravityScale", 0.0f);
-    //    expData._knockbackForce = paramJson.value("knockbackForce", 0.0f);                       // 吹っ飛び力
+    const std::string type = _json.value("type", "DIRECT");
 
-    //    if (paramJson.contains("collisionMask") && paramJson["collisionMask"].is_array()) {
-    //        // 衝突マスク（配列を回してOR演算）
-    //        for (const auto& maskStr : paramJson["collisionMask"]) {
-    //            expData._collisionMask |= UINT_CAST(g_CollisionCategoryMap[maskStr.get<std::string>()]);
-    //        }
-    //    }
-
-    //    expData._bulletMaterialTag = paramJson.value("bulletMaterialTag", "");                  // 弾そのもののマテリアル
-    //    expData._decalMaterialTag = paramJson.value("decalMaterialTag", "");                    // デカールマテリアル
-    //    expData._hitEffectTag = paramJson.value("hitEffectTag", "");                            // ヒットエフェクト
-
-    //    if (paramJson["scale"].is_array()) {                                                     // 大きさ
-    //        expData._scale.x = paramJson["scale"][0].get<float>();
-    //        expData._scale.y = paramJson["scale"][1].get<float>();
-    //        expData._scale.z = paramJson["scale"][2].get<float>();
-    //    }
-
-    //    // 派生クラス独自のパラメータを読み込み
-    //    expData._explosionRadius = paramJson.value("explosionRadius", 0.0f);                        // 爆発半径
-    //    expData._explosionEffectHandleTag = paramJson.value("explosionEffectHandleTag", "");        // 爆発エフェクトタグ
-    //    expData._explosionEffectAliveTime = paramJson.value("explosionEffectAliveTime", 1.0f);      // 爆発エフェクトの生存時間（1.0でそのまま）
-    //    expData._isSmoke = paramJson.value("isSmoke", false);                                       // 煙が出るか
-
-    //    // variantに代入
-    //    _outData._bulletParam = expData;
-    //}
-    //// 他の弾タイプ(EXPLOSION_DELAY, HORMING等)も同様に分岐を追加...
+    if (type == "DIRECT")
+    {
+        auto& direct                = _outData._hitData.emplace<DirectHitData>();
+        direct._decalMaterialTag    = _json.value("decalMaterialTag", "");          // デカールタグ
+        direct._hitEffectTag        = _json.value("hitEffectTag", "");              // ヒットエフェクトタグ
+    }
+    else if (type == "EXPLOSION")
+    {
+        auto& explosion                     = _outData._hitData.emplace<ExplosionHitData>();
+        explosion._decalMaterialTag         = _json.value("decalMaterialTag", "");             // デカールタグ
+        explosion._hitEffectTag             = _json.value("hitEffectTag", "");                 // ヒットエフェクトタグ
+        explosion._explosionRadius          = _json.value("explosionRadius", 0.0f);            // 爆発半径 
+        explosion._explosionEffectHandleTag = _json.value("explosionEffectTag", "");           // 爆発エフェクトタグ
+        explosion._explosionEffectAliveTime = _json.value("explosionEffectAliveTime", 1.0f);   // 爆発エフェクトの生存時間（1.0でそのまま）
+        explosion._isSmoke                  = _json.value("isSmoke", false);                   // 煙が出るか
+    }
+    else
+    {
+        return false;
+    }
 
     return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】VEC3 型の読み取り
+//*
+//* [引数] 
+//* &_json : json
+//* &_tag : タグ
+//* &_outData : 出力先 
+//* [返値]
+//* true : 読みとり成功
+//* false : 読みとり失敗
+//*----------------------------------------------------------------------------------------
+void WeaponDataManager::LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag,VECTOR3::VEC3& _outData)
+{
+    if (_json.contains(_tag) &&                                                      // 弾の大きさ
+        _json[_tag].is_array() &&
+        _json[_tag].size() == 3)
+    {
+        _outData.x = _json[_tag][0].get<float>();
+        _outData.y = _json[_tag][1].get<float>();
+        _outData.z = _json[_tag][2].get<float>();
+    }
 }

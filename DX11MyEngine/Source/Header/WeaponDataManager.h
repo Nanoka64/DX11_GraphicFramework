@@ -2,6 +2,7 @@
 #include "ConstantWeaponData.h"
 #include "ConstantBulletData.h"
 #include "ConstantUtilityData.h"
+#include <nlohmann/json.hpp>
 
 
 // ---------------------------------------------------------------------------------------
@@ -61,5 +62,29 @@ private:
     WeaponDataManager(const WeaponDataManager&) = delete;
     WeaponDataManager& operator=(const WeaponDataManager&) = delete;
     // ------------------------------------------------------
+
+    /// <summary>
+    /// íeÉfÅ[É^ÇÃì«Ç›éÊÇË
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="outData"></param>
+    /// <returns></returns>
+    bool LoadBulletData(
+        const nlohmann::json& json,
+        BulletData::BulletDataBase& outData);    
+    
+    bool LoadMovementData(
+        const nlohmann::json& json,
+        BulletData::BulletDataBase& outData);
+        
+    bool LoadHitData(
+        const nlohmann::json& json,
+        BulletData::BulletDataBase& outData);
+
+    bool LoadVisualData(
+        const nlohmann::json& json,
+        BulletData::BulletDataBase& outData);
+
+    void LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag, VECTOR3::VEC3& _outData);
 };
 
