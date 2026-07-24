@@ -298,6 +298,9 @@
     <Filter Include="ソース ファイル\Game\Scene\Head">
       <UniqueIdentifier>{6b7b7f36-9bb9-44aa-9da9-e255c8167cae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Weapon\Bullet\Behaviour">
+      <UniqueIdentifier>{296eee15-12e9-4b1a-8b3d-f4e51edb9511}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -789,6 +792,9 @@
     <ClCompile Include="Source\Cpp\Component_Bullet.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\BulletBehaviour.cpp">
+      <Filter>ソース ファイル\Game\Component\Weapon\Bullet\Behaviour</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1258,6 +1264,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Bullet.h">
       <Filter>ソース ファイル\Game\Component\Weapon\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BulletBehaviour.h">
+      <Filter>ソース ファイル\Game\Component\Weapon\Bullet\Behaviour</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

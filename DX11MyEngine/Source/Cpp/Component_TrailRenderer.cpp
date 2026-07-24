@@ -76,6 +76,12 @@ void TrailRenderer::Start(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void TrailRenderer::Update(RendererEngine &renderer)
 {
+	// 表示時間が0以下なら問答無用で返す
+	if (m_DrawTime <= 0)
+	{
+		return;
+	}
+
 	auto transform = m_pOwner.lock()->get_Transform().lock();
 	m_CrntTrailPos = transform->get_VEC3ToPos();	// 現在位置を末端位置とする
 
@@ -128,6 +134,12 @@ void TrailRenderer::Update(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void TrailRenderer::Draw(RendererEngine &renderer)
 {
+	// 表示時間が0以下なら問答無用で返す
+	if (m_DrawTime <= 0)
+	{
+		return;
+	}
+
 	// シャドウパス時には返す
 	if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW){
 		return;

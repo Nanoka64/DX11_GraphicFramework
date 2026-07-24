@@ -2,7 +2,7 @@
 PlayerModel,0.4,0.4,0.6,1,1,1,1,1,150,0,0,0,0,Resource/Texture/Wall_S050.jpg,Resource/Texture/DefaultN_Map.png,-1,0
 Soldier_body,1,1,1,1,1,1,1,1,50,0,0,0,0,Resource/Model/Ranger/Textures/Soldier_Body_diffuse.png,Resource/Model/Ranger/Textures/Soldier_Body_normal.png,Resource/Model/Ranger/Textures/Soldier_Body_specular.png,0
 Soldier_head,1,1,1,1,1,1,1,1,50,0,0,0,0,Resource/Model/Ranger/Textures/Soldier_head_diffuse.png,Resource/Model/Ranger/Textures/Soldier_head_normal.png,Resource/Model/Ranger/Textures/Soldier_head_specular.png,0
-Bullet,1,1,1,1,1,1,1,1,200,0,1,1,25,Resource/Texture/rust_coarse_01_arm_1k.jpg,-1,-1,0
+Bullet,1,1,1,1,1,1,1,1,200,1,1,1,1,Resource/Texture/rust_coarse_01_arm_1k.jpg,-1,-1,0
 AssultRifle,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Wall_W030.jpg,-1,-1,0
 DirLight,1,1,1,1,1,1,1,1,100,1,1,1,0.1,Resource/Texture/Light_Img.png,-1,-1,0
 Canonn,1,1,1,1,1,1,1,1,20,0,1,0,200,Resource/Texture/Wall_W040.jpg,Resource/Texture/Wall_W040_n.png,-1,0
@@ -27,7 +27,7 @@ Block,1,1,1,1,1,1,1,1,120,1,1,1,0,Resource/Texture/Materials/concrete_pavement_d
 Decal_BulletHole,1,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/BulletHole.png,Resource/Texture/Particle/BulletHole_n.png,-1,0
 Decal_Ant_Splash,1,1,1,1,1,1,1,1,100,1,1,1,1.5,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 RocketLauncher,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Weapon/RocketLauncher/Simple rocket launcher Tex.png,Resource/Texture/DefaultN_Map.png,-1,0
-Bullet_01,1,1,10,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
+Bullet_01,1,1,10,1,1,1,1,1,100,1,1,10,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_02,1,10,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_03,10,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Acid_01,2,2,0,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1

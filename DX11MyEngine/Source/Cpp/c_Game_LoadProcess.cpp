@@ -42,6 +42,11 @@ using namespace SceneStateEnums;
 using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
+
+
+constexpr int ENEMY_OCT_NUM = 0;
+constexpr int ENEMY_ANT_NUM = 0;
+
 //*---------------------------------------------------------------------------------------
 //* @:c_Game_LoadProcess Class 
 //*Åy?ÅzäJén
@@ -115,7 +120,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
 
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < ENEMY_ANT_NUM; i++)
         {
             model.ObjTag = "Ant"/* + std::to_string(i + 1)*/;   // É^ÉO
 
@@ -343,7 +348,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < ENEMY_OCT_NUM; i++)
         {
             auto obj = MeshFactory::CreateModel(model);
             obj->set_IsStatic(false);

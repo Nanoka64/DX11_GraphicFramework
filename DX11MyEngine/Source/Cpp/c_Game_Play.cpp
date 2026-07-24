@@ -150,10 +150,10 @@ int c_Game_Play::Update(SceneManager *pOwner)
     if (Master::m_pDataManager->get_IsPlayerDead())
     {
         // スローモーション
-        Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
+        //Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
         Master::m_pDataManager->set_IsMissionCleared(false);    // ミッション失敗
-        return c_GAME::c_GO_RESULT_SCENE;
+        //return c_GAME::c_GO_RESULT_SCENE;
     }
     
     auto enemys = Master::m_pGameObjectManager->get_ObjectListByFactionAlive(FACTION::ENEMY);
@@ -162,10 +162,10 @@ int c_Game_Play::Update(SceneManager *pOwner)
     if (m_EnemyNum == 0)
     {
         // スローモーション
-        Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
+        //Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
         Master::m_pDataManager->set_IsMissionCleared(true);     // ミッションクリア
-        return c_GAME::c_GO_RESULT_SCENE;
+        //return c_GAME::c_GO_RESULT_SCENE;
     }
 
     // B-2の移動

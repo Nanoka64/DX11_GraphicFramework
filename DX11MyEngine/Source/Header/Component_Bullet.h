@@ -2,9 +2,6 @@
 #include "IComponent.h"
 #include "ConstantBulletData.h"
 
-
-
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:Bullet Class --- */
@@ -22,11 +19,13 @@ private:
 	VECTOR3::VEC3 m_MoveDir;
 	int m_CrntPenetrationCount;	// 現在の貫通数
 	const BulletData::BulletDataBase* m_pBulletData;							// 読みとり専用の弾データを持つ
+    class MyTransform* m_pMyTransform;
+    BulletData::BulletRuntime m_Runtime;
 
     //std::array<std::unique_ptr<class IBulletBehaviour>,
     //    static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
-    class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
-
+    //class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
+    float m_CrntSpeed;
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual ~Bullet() = default;

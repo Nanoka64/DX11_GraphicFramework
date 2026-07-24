@@ -46,7 +46,8 @@ ResultMove LinearMove_Behaviour::MoveCalculate(float _deltaTime, const MoveParam
 	// 普通の線形補間だと、値が飛んでしまうためクォータニオンの場合は球面線形補間を使う
 	XMVECTOR newRotQ = XMQuaternionSlerp(crntRotQ, targetRotQ, _param._turnSpeed);
 
-	float speed = _param._moveSpeed;
+	float speed = _param._moveSpeed ;
+	speed += _param._acceleration;
 	res._moveVelocity = forward * speed;	// 移動量を計算
 	res._RotQ = newRotQ;
 	return res;

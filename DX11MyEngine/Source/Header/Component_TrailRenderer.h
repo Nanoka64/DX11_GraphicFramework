@@ -38,7 +38,7 @@ private:
 	const UINT MAX_TRAIL_VERTEX_NUM = 256;	// 最大長点数
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertesBuffer;// 頂点バッファ
 	//bool m_IsView;								// カメラに向くようにするか（ビルボード）
-	CB_MATERIAL_SET *m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
+	CB_MATERIAL_SET *m_pCBMaterialDataSet;			// 定数バッファ(マテリアル用)
 	std::shared_ptr<class Texture> m_pTex;
 	bool m_IsPosRand;				// 位置にランダム性を持たせるか
 	VECTOR3::VEC3 m_PosRandVec;		// 位置のランダム値（最小 最大）

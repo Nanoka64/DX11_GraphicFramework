@@ -1,77 +1,32 @@
 #pragma once
 #include "ConstantBulletData.h"
+#include "CollisionInfo.h"
 
-
-// ***************************************************************************************
-// ---------------------------------------------------------------------------------------
-/* --- @:IBulletBehaviour Class --- */
-//
-//  ★★★抽象クラス★★★
-//
-// 【?】弾の振る舞い基底クラス
-//		
-// ***************************************************************************************
-class IBulletBehaviour
+namespace BulletBehaviour
 {
-public:
-    virtual ~IBulletBehaviour() = default;
+    BulletData::BulletMoveResult UpdateMove(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::LinearMoveData& _moveData,
+        float _deltaTime);
 
-    /// <summary> 生成時の処理 </summary>
-    /// <param name="bullet"></param>
-    /// <param name="renderer"></param>
-    virtual void OnSpawn(RendererEngine& renderer,class Bullet& bullet) {}
+    BulletData::BulletMoveResult UpdateMove(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::HomingMoveData& _moveData,
+        float _deltaTime);
 
-    /// <summary> 飛行時の更新処理 </summary>
-    /// <param name="_bullet"></param>
-    /// <param name="_renderer"></param>
-    /// <param name="_deltaTime"></param>
-    virtual void OnFlightUpdate(
-        RendererEngine& _renderer,
-        class Bullet& _bullet,
-        float _deltaTime) {
-    }
+    BulletData::BulletHitResult OnHit(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::DirectHitData& _hitData,
+        const CollisionInfo& _collision,
+        class RendererEngine& _renderer);
 
-    /// <summary> ヒット時の処理 </summary>
-    /// <param name="_bullet"></param>
-    /// <param name="_renderer"></param>
-    /// <param name="_hit"></param>
-    /// <returns></returns>
-    virtual BulletData::BulletHitResult OnHit(
-        RendererEngine& _renderer,
-        class Bullet& _bullet,
-        const class CollisionInfo& _hit) = 0;
-
-    /// <summary> 終了時の処理 </summary>
-    /// <param name="_bullet"></param>
-    /// <param name="_reason"></param>
-    virtual void OnEnd(
-        class Bullet& _bullet,
-        BulletData::BULLET_END_REASON _reason) {
-    }
-
-    /// <summary> パラメータ等のリセット </summary>
-    virtual void Reset() {}
+    BulletData::BulletHitResult OnHit(
+        BulletData::BulletRuntime& runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::ExplosionHitData& _hitData,
+        const CollisionInfo& _collision,
+        class RendererEngine& _renderer);
 };
-
-
-// ***************************************************************************************
-// ---------------------------------------------------------------------------------------
-/* --- @:ExplosionBehaviour Class --- */
-//
-//  ★継承：IBulletBehaviour ★
-// 
-// 【?】爆発弾の振る舞い
-//		
-// ***************************************************************************************
-class ExplosionBehaviour : public IBulletBehaviour
-{
-private:
-
-public:
-    void OnSpawn(RendererEngine& renderer, class Bullet& _bullet) override;
-    void OnFlightUpdate(RendererEngine& renderer, class Bullet& _bullet, float _deltaTime)override;
-    BulletData::BulletHitResult OnHit(RendererEngine& renderer, class Bullet& _bullet, const class CollisionInfo& _hit)override;
-    void OnEnd(class Bullet& _bullet, BulletData::BULLET_END_REASON _reason)override;
-    void Reset()override;
-};
-

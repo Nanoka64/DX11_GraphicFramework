@@ -57,6 +57,16 @@ namespace BulletData
     };
 
     /// <summary>
+    /// 弾の状態
+    /// </summary>
+    enum class BULLET_STATE
+    {
+        FLYING,
+        HOMING,
+        ATTACHED
+    };
+
+    /// <summary>
     /// どういった内容で生存が終了したか
     /// </summary>
     enum class BULLET_END_REASON
@@ -95,17 +105,31 @@ namespace BulletData
         std::string _bulletMaterialTag;                  // 使用するマテリアルのタグ（TODO:ビルボードと3Dモデルで分ける必要あるかも）
         VECTOR3::VEC3 _scale = VECTOR3::VEC3();          // 弾の大きさ
 
-        bool _enableTrail = false;                       // 軌跡を使用するか
-        bool _enableFlightSmoke = false;                 // 飛行中、煙を発生させるか
-        float _smokeInterval = 0.05f;                    // 煙の間隔
+        int _trailDrawTime = 0;                          // 軌跡の表示時間（0なら非表示）
+        float _trailWidth = 0;                           // 軌跡の幅
         VECTOR3::VEC3 _trailColor = VECTOR3::VEC3(1.0f); // トレイルカラー
+        float _smokeInterval = 0.05f;                    // 煙の間隔
         std::string _smokeEffectTag;                     // 煙エフェクトのタグ
+        bool _enableFlightSmoke = false;                 // 飛行中、煙を発生させるか
     };
 
 
+    /// <summary>
+    /// 弾のこうしん返却値
+    /// </summary>
+    struct BulletMoveResult
+    {
+        VECTOR3::VEC3 _velocity;
+        DirectX::XMVECTOR _rotation;
+    };
+
+    /// <summary>
+    /// 弾がヒットした際の返却値
+    /// </summary>
     struct BulletHitResult
     {
-        bool _deactivate = true;
+        bool _deactivate = false;
+        bool _penetration = false;
     };
 
 
@@ -220,6 +244,24 @@ namespace BulletData
             *this = BulletDataBase();
         }
     };
+
+
+
+    struct BulletRuntime
+    {
+        BULLET_STATE _state = BULLET_STATE::FLYING;
+
+        VECTOR3::VEC3 _moveDirection;
+        class MyTransform* _transform = nullptr; 
+        float _currentSpeed = 0.0f;
+        float _traveledDistance = 0.0f;
+        float _stateTime = 0.0f;
+
+        std::weak_ptr<GameObject> _target;
+        std::weak_ptr<GameObject> _attachedObject;
+        VECTOR3::VEC3 _attachedLocalPosition;
+    };
+
 
     ///// <summary>
     ///// 通常弾のデータ（全ての武器で必須項目のため、他のデータはこれを継承する）

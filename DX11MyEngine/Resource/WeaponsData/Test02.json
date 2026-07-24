@@ -1,0 +1,59 @@
+{
+  "level": 0,
+  "name": "TEST",
+  "bulletMaxNum": 3,
+  "bulletSimultaneousNum": 1,
+  "fireRate": 1.0,
+  "reloadTime": 2.0,
+  "accuracy": 0.005,
+  "zoomLength": 2.0,
+  "isLaserSight": true,
+  "soundID": 0,
+  "muzzleFlashEffectTag" : "MuzzleEffect_01",
+  "muzzleFlashEffectScale" : [2.5, 2.5, 2.5],
+  "bulletType": "EXPLOSION",
+  "bulletParam": 
+  {
+    "common" :  
+    {
+      "damage": 200.0,
+      "speed": 200.0,
+      "acceleration": 50.5,
+      "range": 230.0,
+      "penetrationsCount": 0,
+      "collisionSize": 0.0,
+      "gravityScale": 0.0,
+      "knockbackForce" : 20.0,
+      "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
+    },
+    
+    "movement" :
+    {
+      "type" : "LINEAR"
+    },
+    
+    "hit" : 
+    {
+      "type" : "EXPLOSION",
+      "decalMaterialTag" : "",
+      "hitEffectTag" : "BulletHit_Flame",
+      "explosionRadius" : 30.0,
+      "explosionEffectTag" : "Explosion_01",
+      "explosionEffectAliveTime" : 3.0,
+      "isSmoke" : true
+    },
+
+    "visual" :  
+    {
+      "type" : "MODEL",
+      "bulletMaterialTag" : "Bullet_01",
+      "trailDrawTime" : 40,
+      "trailWidth" : 5,
+      "enableFlightSmoke" : false,
+      "smokeInterval" : 0.0,
+      "smokeEffectTag" : "",
+      "trailColor" : [1.0, 10.0, 1.0],
+      "scale" : [3.1,3.1, 3.1]
+    }
+  }
+}

@@ -1,0 +1,338 @@
+#include "pch.h"
+#include "BulletBehaviour.h"
+#include "Component_Transform.h"
+#include "Component_DecalRenderer.h"
+#include "Component_TimerDestruction.h"
+#include "Component_Health.h"
+#include "Component_MoveLogic.h"
+#include "RendererEngine.h"
+#include "GameObjectManager.h"
+#include "GameObject.h"
+#include "InputFactory.h"
+#include "MeshFactory.h"
+#include "CollisionInfo.h"
+#include "ResourceManager.h"
+#include "Component_Collider.h"
+#include "Component_Physics.h"
+#include "Component_3DCamera.h"
+
+
+using namespace GIGA_Engine;
+using namespace UtilityData;
+using namespace VECTOR3;
+using namespace VECTOR4;
+using namespace BulletData;
+
+constexpr float DECAL_SIZE_FACTOR        = 7.0f;   // デカールの大きさの補正値（transformのスケールだと小さすぎるため）
+constexpr float DECAL_Z_AXIS_SIZE_FACTOR = 0.0f;   // デカールの奥行に加算する補正値
+constexpr float DECAL_LIFE_TIME          = 5.0f;   // デカールの生存時間
+constexpr float EFFECTL_SIZE_FACTOR      = 2.0f;   // エフェクトの大きさの補正値（transformのスケールだと小さすぎるため）
+
+constexpr float EXP_SHAKE_MAX_RANGE_EXPLOSION_SCALE_FACTOR  = 15.0f;    // カメラシェイク時、シェイクの最大距離を求める際に掛ける補正値
+constexpr float EXP_SHAKE_LENGTH_SCALE_FACTOR               = 0.004f;   // カメラシェイク時、シェイクの大きさを求める際に掛ける補正値
+constexpr float EXP_SHAKEDURATION                           = 1.0f;     // カメラシェイクの持続時間
+constexpr float EXP_EFFECT_SIZE_FACTOR                      = 0.12f;    // そのままだと、エフェクトが大きすぎるので
+
+
+
+namespace BulletBehaviour
+{
+
+    //*---------------------------------------------------------------------------------------
+    //*【?】移動更新 [直線移動]
+    //*
+    //* [引数]
+    //* &_runtime  : ランタイムデータ
+    //* &_common   : 共通データ
+    //* &_moveData : 移動データ[直線]
+    //* _deltaTime : デルタタイム
+    //*
+    //* [返値] なし
+    //*----------------------------------------------------------------------------------------
+    BulletData::BulletMoveResult UpdateMove(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::LinearMoveData& _moveData,
+        float _deltaTime)
+    {
+        BulletMoveResult result;
+        _runtime._currentSpeed += _common._acceleration * _deltaTime;
+        result._velocity = _runtime._moveDirection * _runtime._currentSpeed;
+        return result;
+    }
+
+    //*---------------------------------------------------------------------------------------
+    //*【?】移動更新 [ホーミング移動]
+    //*
+    //* [引数]
+    //* &_runtime  : ランタイムデータ
+    //* &_common   : 共通データ
+    //* &_moveData : 移動データ[ホーミング]
+    //* _deltaTime : デルタタイム
+    //*
+    //* [返値] なし
+    //*----------------------------------------------------------------------------------------
+    BulletData::BulletMoveResult UpdateMove(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::HomingMoveData& _moveData,
+        float _deltaTime)
+    {
+        BulletMoveResult result;
+
+        return result;
+    }
+
+    //*---------------------------------------------------------------------------------------
+    //*【?】ヒット時の処理 [ダイレクト]
+    //*
+    //* [引数]
+    //* &_runtime   : ランタイムデータ
+    //* &_common    : 共通データ
+    //* &_moveData  : ヒットデータ[ダイレクト]
+    //* &_collision : ヒット時の情報
+    //*
+    //* [返値]
+    //* BulletHitResult
+    //*----------------------------------------------------------------------------------------
+    BulletData::BulletHitResult OnHit(
+        BulletData::BulletRuntime& _runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::DirectHitData& _hitData,
+        const CollisionInfo& _collision,
+        class RendererEngine& _renderer)
+    {
+        BulletHitResult result = { false,false };
+
+        //*****************************************************************************************
+        //						衝突した際の処理
+        //*****************************************************************************************
+        auto hitObj = _collision.get_HitObject().lock();
+        if (!hitObj) return result;
+        COLLISION_CATEGORY hitCategory = _collision.get_HitCollider().lock()->get_CollisionCategory();
+
+        // 相手がHealthComponentを持っているか確認（破壊可能な建物は壊せないように）
+        auto health = hitObj->get_Component<Health>();
+        if (health && hitCategory != COLLISION_CATEGORY::DESTRUCTION_BUILDING)
+        {
+            // 弾が保持しているダメージ値を渡す
+            health->TakeDamage(_common._damage);
+        }
+
+        // 建物に当たったら即消えるようにして、その他は貫通数を減らす
+        if (hitCategory == COLLISION_CATEGORY::BUILDING || hitCategory == COLLISION_CATEGORY::DESTRUCTION_BUILDING)
+        {
+            result._deactivate = true;
+        }
+        else
+        {
+            // 貫通数を増やす
+            result._penetration = true;
+        }
+
+        auto transform = _runtime._transform;
+        VEC3 pos = transform->get_VEC3ToPos();
+
+
+        VEC3 hitNormal = _collision.get_HitNormal();    // 衝突相手の法線
+
+        // 水平方向の向きを求める
+        float yaw = atan2(hitNormal.x, hitNormal.z);
+        // 水平成分の長さ
+        float xzLen = sqrtf(hitNormal.x * hitNormal.x + hitNormal.z * hitNormal.z);
+        // 垂直方向の角度を求める
+        // 法線の逆を向かせたいのでマイナスを付ける
+        float pitch = atan2(-hitNormal.y, xzLen);
+
+        //*****************************************************************************************
+        //						デカールの生成
+        //*****************************************************************************************
+        if (_hitData._decalMaterialTag.empty() == false)
+        {
+            auto matPtr = Master::m_pResourceManager->FindMaterial(_hitData._decalMaterialTag);
+
+            SetupMaterialInfo matInfo[1];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr;
+
+            CreateDecalInfo decal;
+            decal.pRenderer = &_renderer;
+            decal.Type = UTILITY_MESH_TYPE::CUBE;
+            decal.MatNum = 1;
+            decal.MaterialData = matInfo;
+            decal.IsActive = false;
+            decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+            decal.IsNormalMap = false;
+            decal.IsDynamic = true;
+
+            float angleZ = Tool::RandRange(0.0f, 6.14f);
+
+            VEC3 scale = transform->get_VEC3ToScale();
+            scale *= DECAL_SIZE_FACTOR;
+            scale.z += DECAL_Z_AXIS_SIZE_FACTOR;
+
+            auto obj = MeshFactory::CreateDecal(decal);
+            obj->get_Component<DecalRenderer>()->Start(_renderer);
+            obj->get_Transform().lock()->set_Pos(pos);
+            obj->get_Transform().lock()->set_Scale(scale);
+            obj->get_Transform().lock()->set_RotateToRad(pitch, yaw, angleZ);
+            obj->set_Tag("BulletHole");
+            auto timer = obj->add_Component<TimerDestruction>();
+            timer->set_LifeTime(DECAL_LIFE_TIME);  // 生存時間
+        }
+
+        //*****************************************************************************************
+        //						ヒットエフェクトの再生
+        //*****************************************************************************************
+        if (_hitData._hitEffectTag.empty() == false)
+        {
+            VEC3 effectRot = VEC3(pitch, yaw, 0.0f);
+            int effectHandle = Master::m_pEffectManager->PlayEffect(_hitData._hitEffectTag);
+
+            VEC3 effectScale = transform->get_VEC3ToScale();
+            effectScale *= EFFECTL_SIZE_FACTOR;     // 大きさの補正
+
+            // エフェクトパラメータ
+            Master::m_pEffectManager->SetScaleEffect(effectHandle, effectScale.x, effectScale.y, effectScale.z);
+            Master::m_pEffectManager->SetPositionEffect(effectHandle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetRotationEffect(effectHandle, effectRot.x, effectRot.y, effectRot.z);
+        }
+
+        //*****************************************************************************************
+        //						ヒットサウンド再生
+        //*****************************************************************************************
+        Master::m_pSoundManager->Play_RandPitch_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01), pos, 40, 300);
+
+        return result;
+    }
+
+    //*---------------------------------------------------------------------------------------
+    //*【?】ヒット時の処理 [爆発]
+    //*
+    //* [引数]
+    //* &_runtime   : ランタイムデータ
+    //* &_common    : 共通データ
+    //* &_moveData  : ヒットデータ[爆発]
+    //* &_collision : ヒット時の情報
+    //*
+    //* [返値]
+    //* BulletHitResult
+    //*----------------------------------------------------------------------------------------
+    BulletData::BulletHitResult OnHit(
+        BulletData::BulletRuntime& runtime,
+        const BulletData::CommonBulletData& _common,
+        const BulletData::ExplosionHitData& _hitData,
+        const CollisionInfo& _collision,
+        class RendererEngine& _renderer)
+    {
+        BulletHitResult result = { false,false };
+
+        /* 爆発弾は確定で無効 */
+        result._deactivate = true;
+
+        VEC3 crntPos = runtime._transform->get_VEC3ToPos();
+
+        // ****************************************************
+        //				 カメラシェイク
+        // ****************************************************
+        std::shared_ptr<Camera3D> camera;
+        if (camera = Master::m_pDataManager->get_CameraComponent().lock())
+        {
+            float maxRange = _hitData._explosionRadius * EXP_SHAKE_MAX_RANGE_EXPLOSION_SCALE_FACTOR;
+            float shaleLength = _hitData._explosionRadius * EXP_SHAKE_LENGTH_SCALE_FACTOR;
+            camera->DistanceDecay(EXP_SHAKEDURATION, VEC3(shaleLength), crntPos, maxRange);
+        }
+
+
+        // ****************************************************
+        //				 爆発音再生
+        // ****************************************************
+        Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::EXPLOSION01), crntPos, 1500.0f);
+
+
+        VEC3 hitNormal = _collision.get_HitNormal();    // 衝突相手の法線
+
+        // 水平方向の向きを求める
+        float angleY = atan2(hitNormal.x, hitNormal.z);
+        // 水平成分の長さ
+        float xzLen = sqrtf(hitNormal.x * hitNormal.x + hitNormal.z * hitNormal.z);
+        // 垂直方向の角度を求める
+        // 法線の逆を向かせたいのでマイナスを付ける
+        float angleX = atan2(-hitNormal.y, xzLen);
+        float angleZ = Tool::RandRange(0.0f, 6.14f);
+
+        float expSize = _hitData._explosionRadius * 2.0f;   // 元が半径なので2倍に
+        VEC3 scale;
+        scale.x = expSize;
+        scale.y = expSize;
+        scale.z = expSize;
+
+        // エフェクト
+        VEC3 effectRot = VEC3(abs(angleX - 0.05f), angleY, 0.0f);
+        int exp_handle = Master::m_pEffectManager->PlayEffect(_hitData._explosionEffectHandleTag);   // 爆発
+
+        float effectExpSize = expSize * EXP_EFFECT_SIZE_FACTOR;   // 爆発半径（そのままだと大きすぎるので補正）
+        VEC3 expRot = Master::m_pRandomManager->GetVEC3Random(0.0f, 3.14f);
+
+        if (_hitData._isSmoke)
+        {
+            int exp_smoke_handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_01");   // 煙
+
+            // 爆発煙
+            Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, effectExpSize, effectExpSize, effectExpSize);
+            Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, crntPos.x, crntPos.y, crntPos.z);
+            Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, 0.0f, 0.0f, 0.0f);
+
+            Master::m_pEffectManager->SetDynamicParameter(exp_smoke_handle, 1, _hitData._explosionEffectAliveTime); // 生存時間を変更
+        }
+
+        // 爆発
+        Master::m_pEffectManager->SetScaleEffect(exp_handle, effectExpSize, effectExpSize, effectExpSize);
+        Master::m_pEffectManager->SetPositionEffect(exp_handle, crntPos.x, crntPos.y, crntPos.z);
+        //Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
+        // 動的パラメータの設定
+        Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, _hitData._explosionEffectAliveTime); // 生存時間を変更
+
+        unsigned mask = _common._collisionMask;;
+        // 範囲内チェック
+        auto targets = Master::m_pCollisionManager->CheckSphere(crntPos, _hitData._explosionRadius, mask);
+
+        // 範囲内の全員にダメージ
+        for (auto& target : targets)
+        {
+            if (auto obj = target->get_OwnerObj().lock())
+            {
+                // ダメージ
+                if (auto health = obj->get_Component<Health>())
+                {
+                    health->TakeDamage(_common._damage);
+                }
+
+                // 吹っ飛び
+                if (auto physics = obj->get_Component<Physics>())
+                {
+                    auto targetTransform = obj->get_Transform().lock();
+                    VEC3 targetPos = targetTransform->get_VEC3ToPos();
+
+                    VECTOR3::VEC3 knockbackDir = targetPos - crntPos;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
+                    knockbackDir = knockbackDir.Normalize();
+
+                    // 少し上（Y軸）に向かせることで、放物線を描いて飛ばせる
+                    knockbackDir.y += 0.5f;
+                    knockbackDir.x += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);
+                    knockbackDir.z += Master::m_pRandomManager->GetFloatRandom(-0.5f, 0.5f);
+                    knockbackDir = knockbackDir.Normalize();
+
+                    // 衝撃ベクトルの設定
+                    physics->AddImpulse(knockbackDir * _common._knockbackForce);
+
+                    knockbackDir.y = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    knockbackDir.x = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    knockbackDir.z = Master::m_pRandomManager->GetFloatRandom(-1, 1);
+                    physics->AddAngularImpulse(knockbackDir * _common._knockbackForce);
+                }
+            }
+        }
+        return result;
+    }
+};

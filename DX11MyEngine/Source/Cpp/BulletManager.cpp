@@ -2,6 +2,7 @@
 #include "RendererEngine.h"
 #include "BulletManager.h"
 #include "Component_Bullet.h"
+#include "Component_ModelMeshResource.h"
 #include "Component_NormalBullet.h"
 #include "Component_ExplosionBullet.h"
 #include "Component_ExplosionLightController.h"
@@ -14,6 +15,7 @@
 #include "Component_MoveLogic.h"
 #include "Component_Physics.h"
 
+using namespace VECTOR4;
 using namespace VECTOR3;
 using namespace VECTOR2;
 using namespace UtilityData;
@@ -28,8 +30,8 @@ constexpr int NUM_DEFAULT__NORMAL_BULLET    = 100;
 constexpr int NUM_MAX__NORMAL_BULLET        = 150;
 
 // 爆発弾 =====================================================================
-constexpr int NUM_DEFAULT__EXPLOSION_BULLET = 50;
-constexpr int NUM_MAX__EXPLOSION_BULLET     = 100;
+constexpr int NUM_DEFAULT__EXPLOSION_BULLET = 100;
+constexpr int NUM_MAX__EXPLOSION_BULLET     = 150;
 
 // 爆発ライト
 constexpr int NUM_DEFAULT__EXPLOSION_LIG_BULLET = 25;
@@ -141,7 +143,6 @@ bool BulletManager::Init(RendererEngine &renderer)
         [&renderer](GameObject *obj) {          
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
 
-
         },
         // 返却時に実行 ******************************************************************************************
         [](GameObject *obj) 
@@ -152,38 +153,13 @@ bool BulletManager::Init(RendererEngine &renderer)
             auto physics = obj->get_Component<Physics>();
             physics->SetZeroVelocity();
 
-            // コライダーの使用をオフに
-            //auto collider = obj->get_Component<BoxCollider>();
-            //collider->set_IsEnable(false); 
-
-            //// 軌跡データをクリア
-            //auto trail = obj->get_Component<TrailRenderer>();
-            //trail->clear_TrailInfoList();
+            // 軌跡データをクリア
+            auto trail = obj->get_Component<TrailRenderer>();
+            trail->clear_TrailInfoList();
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject *
         {
-            //// マテリアル取得
-            //auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
-            //SetupMaterialInfo matInfo[1];
-            //matInfo[0].Index = 0;
-            //matInfo[0].pMaterialData = matPtr1;
-
-            //// メッシュ作成
-            //CreateModelInfo model;
-            //model.pRenderer = &renderer;
-            //model.Path = "Resource/Model/Weapon/bullet.fbx";
-            //model.ObjTag = "Bullet_Normal";
-            //model.IsAnim = false;
-            //model.MatNum = 1;
-            //model.SetupMaterial = matInfo;
-            //model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-            //auto obj = MeshFactory::CreateModel(model);
-            //if (obj == nullptr) {
-            //    assert(false);
-            //    return nullptr;
-            //}
-
             auto matPtr = Master::m_pResourceManager->FindMaterial("Bullet_01");
 
             SetupMaterialInfo matInfo[1];
@@ -197,7 +173,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             billboard.MatNum = 1;
             billboard.MaterialData = matInfo;
             billboard.IsTransparent = true; // 透明度があり
-            billboard.ObjTag = "Bullet_Normal";
+            billboard.ObjTag = "Bullet";
             auto obj = MeshFactory::CreateBillboard(billboard);
 
             
@@ -218,28 +194,13 @@ bool BulletManager::Init(RendererEngine &renderer)
 
             auto physics = obj->add_Component<Physics>();
 
-            //// 軌跡
-            //auto trail = obj->add_Component<TrailRenderer>();
-            //trail->set_Width(0.5f);
-            //trail->set_MinVertexDistance(10.0f);
-            //trail->set_DrawTime(5.0f);
-            //trail->set_EmissivePower(5.0f);
-            //trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.0f, 1.0f));
-
-            //// コライダーの追加
-            //auto collider = obj->add_Component<BoxCollider>();
-            //collider->set_Size(VEC3(0.5f, 0.5f, 0.5f));
-            //collider->set_Center(VEC3(0.0f, 0.0f, 0.0f));
-            //collider->set_IsEnable(false);  // 初期化時は使用フラグオフに
-            //collider->Start(renderer);
-
-            //// カテゴリ
-            //collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER_BULLET);
-            //// 衝突マスク
-            //collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::ENEMY) | UINT_CAST(COLLISION_CATEGORY::BUILDING));
-
-            //// コライダーの登録
-            //Master::m_pCollisionManager->RegisterCollider(collider);
+            // 軌跡
+            auto trail = obj->add_Component<TrailRenderer>();
+            trail->set_Width(0.5f);
+            trail->set_MinVertexDistance(0.1f);
+            trail->set_DrawTime(2);
+            trail->set_EmissivePower(1.0f);
+            trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.5f, 1.0f));
 
             // 初期化
             bulletComp->Start(renderer);
@@ -263,25 +224,14 @@ bool BulletManager::Init(RendererEngine &renderer)
         {          
             // アクティブに
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE); 
-            auto bulletComp = obj->get_Component<Bullet>();
-
-            auto trail = obj->get_Component<TrailRenderer>();
-
-            //// コライダーの使用をオンに
-            //auto collider = obj->get_Component<BoxCollider>();
-            //collider->set_IsEnable(true);
         },
         // 返却時に実行 ******************************************************************************************
         [this](GameObject* obj)          
         {
             auto bulletComp = obj->get_Component<Bullet>();
-            const auto bulletHitParam = bulletComp->get_HitData <ExplosionHitData>();
-            float explosionRadius = bulletHitParam->_explosionRadius;   // 爆発半径を取得
+            //const auto bulletHitParam = bulletComp->get_HitData <ExplosionHitData>();
+            //float explosionRadius = bulletHitParam->_explosionRadius;   // 爆発半径を取得
             bulletComp->Reset();
-
-            //// コライダーの使用をオフに
-            //auto collider = obj->get_Component<BoxCollider>();
-            //collider->set_IsEnable(false);
 
             // 軌跡データをクリア
             auto trail = obj->get_Component<TrailRenderer>();
@@ -297,30 +247,29 @@ bool BulletManager::Init(RendererEngine &renderer)
             //*****************************************************************************************
             //						爆発用ライトをプールから取り出し
             //*****************************************************************************************
-            auto lightObj = m_pExplosionBulletLightPool->get();
-            if (lightObj == nullptr) {
-                OutputDebugString(L"ライトプールに空きがありません");
-                return;
-            }
+            //auto lightObj = m_pExplosionBulletLightPool->get();
+            //if (lightObj == nullptr) {
+            //    OutputDebugString(L"ライトプールに空きがありません");
+            //    return;
+            //}
 
-            auto ligController = lightObj->get_Component<ExplosionLightController>();
-            lightObj->get_Transform().lock()->set_Pos(pos);
+            //auto ligController = lightObj->get_Component<ExplosionLightController>();
+            //lightObj->get_Transform().lock()->set_Pos(pos);
 
-            ExplosionLightData expLigData;
-            expLigData._explosionLightRadius = explosionRadius * LIGHT_RADIUS_FACTOR;
-            expLigData._normalRadius = transform->get_VEC3ToScale().x;  // 一旦、xスケールを元に
-            expLigData._explosionDuration = 6.0f;
-            ligController->set_Parameter(expLigData);
+            //ExplosionLightData expLigData;
+            //expLigData._explosionLightRadius = explosionRadius * LIGHT_RADIUS_FACTOR;
+            //expLigData._normalRadius = transform->get_VEC3ToScale().x;  // 一旦、xスケールを元に
+            //expLigData._explosionDuration = 6.0f;
+            //ligController->set_Parameter(expLigData);
 
-            // 取り出したオブジェクトとして追加
-            m_ExtractedExplosionLightArray.push_back(lightObj);
+            //// 取り出したオブジェクトとして追加
+            //m_ExtractedExplosionLightArray.push_back(lightObj);
         },
         // 生成時に実行 ******************************************************************************************
         [&renderer]()->GameObject*  
         {
             // マテリアル取得
             auto matPtr1 = Master::m_pResourceManager->FindMaterial("Bullet");
-            matPtr1->m_EmissiveColor = VEC3(1.0f, 1.0f, 0.0f);
             SetupMaterialInfo matInfo[1];
             matInfo[0].Index = 0;
             matInfo[0].pMaterialData = matPtr1;
@@ -329,7 +278,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             CreateModelInfo model;
             model.pRenderer = &renderer;
             model.Path = "Resource/Model/Weapon/bullet.fbx";
-            model.ObjTag = "Bullet_Explosion";
+            model.ObjTag = "Bullet";
             model.IsAnim = false;
             model.MatNum = 1;
             model.SetupMaterial = matInfo;
@@ -357,31 +306,14 @@ bool BulletManager::Init(RendererEngine &renderer)
 
             // 軌跡コンポーネントの追加
             auto trail = obj->add_Component<TrailRenderer>();
-            trail->set_Width(1.0f);
+            trail->set_Width(0.5f);
             trail->set_MinVertexDistance(0.1f);
-            trail->set_DrawTime(20);
-            trail->set_EmissivePower(5.0f);
+            trail->set_DrawTime(2);
+            trail->set_EmissivePower(1.0f);
             trail->set_Color(VECTOR4::VEC4(1.0f, 1.0f, 0.5f, 1.0f));
             //trail->set_PosRandVec(VEC3(0.5f));
 
             auto physics = obj->add_Component<Physics>();
-
-
-            //// 衝突用コライダーの追加
-            //auto collider = obj->add_Component<BoxCollider>();
-            //collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
-            //collider->set_Center(VEC3(0.0f, 0.0f, 0.0f));
-            //collider->set_IsEnable(false);  // 初期化時は使用フラグオフに
-            //collider->set_IsTrigger(true);  // トリガーとして設定
-            //collider->Start(renderer);
-
-            //// カテゴリ
-            //collider->set_CollisionCategory(COLLISION_CATEGORY::PLAYER_BULLET);
-            //// 衝突マスク
-            //collider->set_CollisionBitMask(UINT_CAST(COLLISION_CATEGORY::ENEMY) | UINT_CAST(COLLISION_CATEGORY::BUILDING));
-
-            //// コライダーの登録
-            //Master::m_pCollisionManager->RegisterCollider(collider);
 
             // 初期化
             bulletComp->Start(renderer);
@@ -649,6 +581,13 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawn
     auto physics = obj->get_Component<Physics>();
     physics->set_GravityScale(bulletParam->_commonData._gravityScale);
 
+
+    // 軌跡のパラメータ設定
+    VEC4 trailColor = VEC4(bulletParam->_visualData._trailColor, 1.0f);
+    auto trail = obj->get_Component<TrailRenderer>();
+    trail->set_Color(trailColor);
+    trail->set_DrawTime(bulletParam->_visualData._trailDrawTime);
+    trail->set_Width(bulletParam->_visualData._trailWidth);
 
     // 弾に合わせたマテリアルに付け替え
     auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_visualData._bulletMaterialTag);
