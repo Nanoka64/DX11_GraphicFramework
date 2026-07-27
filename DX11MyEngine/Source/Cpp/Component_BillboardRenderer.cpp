@@ -10,6 +10,8 @@
 using namespace DirectX;
 using namespace VERTEX;
 using namespace RenderData;
+using namespace VECTOR3;
+using namespace VECTOR4;
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
@@ -18,6 +20,7 @@ using namespace RenderData;
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
 BillboardRenderer::BillboardRenderer(std::weak_ptr<class GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank)
+, m_ColorFactor(VEC4(1.0f))
 {
     this->set_Tag("BillboardRenderer");
 }
@@ -140,11 +143,21 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     // ワールド行列セット ==========================
 
 
+    float rollRad =
+        transform->get_VEC3ToRotateToRad().z;
+
+    XMMATRIX rollMtx =
+        XMMatrixRotationZ(rollRad);
+
+    // 先に板をZ回転させ、その後カメラ方向へ向ける
+    XMMATRIX billboardRotMtx =
+        rollMtx * viewInvMtx;
+
     // 明示的に行列を設定
-    XMMATRIX worldMtx = 
+    XMMATRIX worldMtx =
         transform->get_WorldMtx(
-            transform->get_MtxScale(), 
-            viewInvMtx, 
+            transform->get_MtxScale(),
+            billboardRotMtx,
             transform->get_MtxPos()
         );
 
@@ -154,7 +167,8 @@ void BillboardRenderer::Draw(RendererEngine& renderer)
     auto pMatData = meshData->pMaterials.lock();
 
     // マテリアル情報セット ==========================
-    cbMaterial.Diffuse = pMatData->m_DiffuseColor;
+    VEC4 diffuse = pMatData->m_DiffuseColor * m_ColorFactor;
+    cbMaterial.Diffuse = diffuse;
     cbMaterial.Specular = pMatData->m_SpecularColor;
     cbMaterial.SpecularPower = pMatData->m_SpecularPower;
 

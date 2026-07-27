@@ -28,7 +28,7 @@ TrailRenderer::TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 	this->set_Tag("TrailRenderer");
 
 
-	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Acid.png");
+	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Weak_1024.png");
 }
 
 
@@ -147,8 +147,12 @@ void TrailRenderer::Draw(RendererEngine &renderer)
 
 	auto pContext = renderer.get_DeviceContext();
 
-	// 頂点更新
-	VertexUpdate(renderer);
+	// ポーズ中じゃないなら、更新
+	if (!Master::m_pDataManager->get_IsPause())
+	{
+		// 頂点更新
+		VertexUpdate(renderer);
+	}
 
 	// 定数バッファ更新
 	ConstantBufferUpdate(renderer);

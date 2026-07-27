@@ -113,19 +113,21 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
             ARRAYSIZE(g_Skneed_Layout),
             g_Skneed_Layout,
         },
+        // DEFERRED_STD_RT_SPRITE
         {
             /* RT用スプライト */
             SHADER_TYPE::DEFERRED_STD_RT_SPRITE,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         },
-        //DEFERRED_STD_BILLBOARD
+        //DEFERRED_STD_TRAIL
         {
             /* 軌跡 */
             SHADER_TYPE::DEFERRED_STD_TRAIL,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         },
+        // DEFERRED_STD_DECAL
         {
             /* デカール */
             SHADER_TYPE::DEFERRED_STD_DECAL,
@@ -156,6 +158,13 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
         {
             /* 簡易3Dオブジェクト ライティング無し  */
             SHADER_TYPE::FORWARD_UNLIT_STATIC,
+            ARRAYSIZE(g_Static_Layout),
+            g_Static_Layout,
+        }, 
+        //FORWARD_UNLIT_TRAIL
+        {
+            /* 軌跡 ライティング無し  */
+            SHADER_TYPE::FORWARD_UNLIT_TRAIL,
             ARRAYSIZE(g_Static_Layout),
             g_Static_Layout,
         }, 
@@ -552,6 +561,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
         case SHADER_TYPE::FORWARD_UNLIT_STATIC:       // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Static_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
             break; 
+        case SHADER_TYPE::FORWARD_UNLIT_TRAIL:       // 軌跡 ライティング無し
+            hr = this->CompileShader(HLSL__Trail_VS_PATH.c_str(), "VSMain", "vs_5_0", &pVSBlob);
+            break; 
             
         ///////////////////////////////////////////////////
         // ポストエフェクト
@@ -656,6 +668,9 @@ bool ShaderManager::VertexShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADE
             break;
         case SHADER_TYPE::FORWARD_UNLIT_STATIC:             // 簡易3Dオブジェクト ライティング無し
             this->LoadCSOFile(HLSL_CSO__Static_VS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::FORWARD_UNLIT_TRAIL:              // 軌跡 ライティング無し
+            this->LoadCSOFile(HLSL_CSO__Trail_VS_PATH.c_str(),&csoByteCode);
             break;
         case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:     // ガウシアン水平ブラー
             this->LoadCSOFile(HLSL_CSO__XBlur_VS_PATH.c_str(), &csoByteCode);
@@ -787,6 +802,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
         case SHADER_TYPE::FORWARD_UNLIT_STATIC:    // 簡易3Dオブジェクト ライティング無し
             hr = this->CompileShader(HLSL__Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
             break;        
+        case SHADER_TYPE::FORWARD_UNLIT_TRAIL:    // 軌跡 ライティング無し
+            hr = this->CompileShader(HLSL__Simple_PS_PATH.c_str(), "PSMain", "ps_5_0", &pPSBlob);
+            break;        
 
         ///////////////////////////////////////////////////
         // ポストエフェクト
@@ -888,6 +906,9 @@ bool ShaderManager::PixelShaderFactory(SHADER_TYPE type, ShaderInfo* out, SHADER
             this->LoadCSOFile(HLSL_CSO__Sprite_NoTexture_PS_PATH.c_str(), &csoByteCode);
             break;   
         case SHADER_TYPE::FORWARD_UNLIT_STATIC:
+            this->LoadCSOFile(HLSL_CSO__Simple_PS_PATH.c_str(), &csoByteCode);
+            break;
+        case SHADER_TYPE::FORWARD_UNLIT_TRAIL:
             this->LoadCSOFile(HLSL_CSO__Simple_PS_PATH.c_str(), &csoByteCode);
             break;
         case SHADER_TYPE::POST_GAUSSIAN_BLUR_HORIZONTAL:
