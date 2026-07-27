@@ -717,6 +717,9 @@
     <ClCompile Include="Source\Cpp\LightManager.cpp">
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\TransientPointLightPool.cpp">
+      <Filter>ソース ファイル\Singleton\Graphic</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Cpp\ShaderManager.cpp">
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClCompile>
@@ -1191,6 +1194,9 @@
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\LightManager.h">
+      <Filter>ソース ファイル\Singleton\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TransientPointLightPool.h">
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ShaderManager.h">

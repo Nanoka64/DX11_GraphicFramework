@@ -22,6 +22,7 @@ LightManager::~LightManager()
 {
 	m_TemporaryPointLightData.clear();
 	m_TemporaryDirectionLightData.clear();
+	m_TransientPointLightPool.Clear();
 
 	m_pContext = nullptr;
 };
@@ -62,7 +63,24 @@ bool LightManager::Init(std::shared_ptr<RendererEngine> pRenderer)
 //*----------------------------------------------------------------------------------------
 void LightManager::Update()
 {
+	const bool isPause = Master::m_pDataManager->get_IsPause();
+	if (!isPause)
+	{
+		m_TransientPointLightPool.Update(
+			Master::m_pTimeManager->get_DeltaTime(),
+			m_TemporaryPointLightData,
+			POINTLIGHT_MAX_NUM);
+	}
+
 	DirectionLight_SetCBuffer();
+
+	// ポーズ中は直前のポイントライト用バッファを維持する
+	if (isPause)
+	{
+		m_TemporaryPointLightData.clear();
+		return;
+	}
+
 	PointLight_SetCBuffer();
 }
 
@@ -70,6 +88,7 @@ void LightManager::Term()
 {
 	m_TemporaryPointLightData.clear();
 	m_TemporaryDirectionLightData.clear();
+	m_TransientPointLightPool.Clear();
 
 }
 
@@ -144,37 +163,18 @@ void LightManager::PointLight_SetCBuffer()
 	// ライトの個数セット
 	cbPointLight.LightCount = lightCount;
 
-	// ライトが0個以上あるなら
-	if (lightCount > 0) {
+	if (lightCount > 0)
+	{
 		memcpy(cbPointLight.Lights, m_TemporaryPointLightData.data(), lightCount * sizeof(CB_PointLightData));
-
-		/* 定数バッファにセット */
-		Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::POINT_LIGHT, (void*)&cbPointLight, sizeof(CB_POINT_LIGHT));
-
-		//// バッファの更新
-		//memcpy(
-		//	m_pCBPointLightSet->Data.Lights,
-		//	m_TemporaryPointLightData.data(),
-		//	m_TemporaryPointLightData.size() * sizeof(CB_POINT_LIGHT)
-		//);
-
-		//D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-		//// GPUメモリにアクセス
-		//m_pContext->Map(m_pCBPointLightSet->pBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-		//// データのコピー 
-		//memcpy(mappedResource.pData, &m_pCBPointLightSet->Data, sizeof(CB_POINT_LIGHT));
-
-		//// アクセス終了
-		//m_pContext->Unmap(m_pCBPointLightSet->pBuff, 0);
-
-		//// ピクセルシェーダにセット
-		//m_pContext->PSSetConstantBuffers(6, 1, &m_pCBPointLightSet->pBuff);
-
-		// 一時データクリア
-		m_TemporaryPointLightData.clear();
 	}
+
+	// 0灯の場合も送信し、前フレームのライト情報が残らないようにする
+	Master::m_pShaderManager->BindConstantBuffer(
+		CONSTANT_BUFFER_TYPE::POINT_LIGHT,
+		(void*)&cbPointLight,
+		sizeof(CB_POINT_LIGHT));
+
+	m_TemporaryPointLightData.clear();
 }
 
 
@@ -302,4 +302,21 @@ void LightManager::set_DirectionLightData(const CB_DirectionLightData& data)
 	if (m_TemporaryDirectionLightData.size() < DIRECTIONLIGHT_MAX_NUM){
 		m_TemporaryDirectionLightData.push_back(data);
 	}
+}
+
+TransientLightHandle LightManager::PlayTransientPointLight(
+	const VEC3& position,
+	const TransientPointLightDesc& desc)
+{
+	return m_TransientPointLightPool.Play(position, desc);
+}
+
+void LightManager::StopTransientPointLight(TransientLightHandle handle)
+{
+	m_TransientPointLightPool.Stop(handle);
+}
+
+void LightManager::ClearTransientPointLights()
+{
+	m_TransientPointLightPool.Clear();
 }

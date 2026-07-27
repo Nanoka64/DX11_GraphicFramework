@@ -1,5 +1,5 @@
 #pragma once
-
+#include "TransientPointLightPool.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -22,6 +22,7 @@ private:
 	std::vector<CB_PointLightData>	m_TemporaryPointLightData;		// ポイントライト情報の一時保持
 	std::vector<CB_DirectionLightData> m_TemporaryDirectionLightData;  // ディレクションライト情報の一時保持
 
+	TransientPointLightPool m_TransientPointLightPool;
 public:
 	LightManager();
 	~LightManager();
@@ -40,6 +41,18 @@ public:
 	void set_DirectionLightData(const CB_DirectionLightData& data);
 
 	/// ライトビュープロジェクションの設定（多分ディレクションライト専用）
+
+	/// <summary>
+	/// 一時ポイントライトの生成
+	/// </summary>
+	/// <param name="position">位置</param>
+	/// <param name="desc">生成に必要な情報</param>
+	/// <returns>ハンドル</returns>
+	TransientLightHandle PlayTransientPointLight(
+		const VECTOR3::VEC3& position,
+		const TransientPointLightDesc& desc);
+	void StopTransientPointLight(TransientLightHandle handle);
+	void ClearTransientPointLights();
 
 private:
 	// コピー禁止用
