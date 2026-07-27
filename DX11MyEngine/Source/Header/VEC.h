@@ -259,6 +259,7 @@ namespace VECTOR4
 		VEC4 operator+(const VEC4& vec)const { return { this->x + vec.x,this->y + vec.y,this->z + vec.z,this->w + vec.w }; };
 		VEC4 operator-(const VEC4& vec) const { return { this->x - vec.x,this->y - vec.y,this->z - vec.z,this->w - vec.w }; };
 		VEC4 operator*(float scl) const { return { this->x * scl,this->y * scl,this->z * scl,this->w * scl }; };
+		VEC4 operator*(const VEC4& vec) const { return { this->x * vec.x,this->y * vec.y,this->z * vec.z,this->w * vec.w }; };
 		VEC4 operator+() const { return *this; };
 		VEC4 operator-() const { return { -this->x, -this->y, -this->z,-this->w }; };
 		operator DirectX::XMFLOAT4()const { return DirectX::XMFLOAT4(x, y, z, w); }    // XMFLOAT4‚É“n‚·Û‚Ì•ÏŠ·

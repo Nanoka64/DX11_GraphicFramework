@@ -16,6 +16,7 @@ using namespace VECTOR4;
 /// </summary>
 static constexpr const char* g_MissionNames[MISSION_NUM]=
 {
+	"0.デバッグステージ",
 	"1.巨大生物襲来",
 };
 
@@ -207,8 +208,8 @@ void c_Title_MissionSelect::Draw(SceneManager* pOwner)
 			spritePos.x += MOUSE_HOVERTED_ITEM_SLIDEOFFSET;
 		}
 
-		m_pMenuItemRectTransformArray[0].lock()->set_RectPosition(VEC2(spritePos.x, spritePos.y));
-		m_pMenuItemRectTransformArray[0].lock()->set_Size(500.0f, 100.0f);
+		m_pMenuItemRectTransformArray[i].lock()->set_RectPosition(VEC2(spritePos.x, spritePos.y));
+		m_pMenuItemRectTransformArray[i].lock()->set_Size(500.0f, 100.0f);
 
 		i++;
 	}

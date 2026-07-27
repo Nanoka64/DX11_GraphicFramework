@@ -44,8 +44,8 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 
 
-constexpr int ENEMY_OCT_NUM = 0;
-constexpr int ENEMY_ANT_NUM = 0;
+constexpr int ENEMY_OCT_NUM = 1;
+constexpr int ENEMY_ANT_NUM = 50;
 
 //*---------------------------------------------------------------------------------------
 //* @:c_Game_LoadProcess Class 
@@ -517,9 +517,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         for (int i = 0; i < 20; i++)
         {
             VEC3 pos;
-            pos.x = -50.0f;
-            pos.y = 1.0f + i;
-            pos.z = 90.0f + i;
+            pos.x = -140.0f;
+            pos.y = 1.0f;
+            pos.z = 50.0f + i * 10;
             VEC3 col;
             col.x = static_cast<float>(rand() % 255) / 255.0f;
             col.y = static_cast<float>(rand() % 255) / 255.0f;
@@ -624,7 +624,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         Master::m_pCollisionManager->RegisterCollider(collider);
     }
 
-    Master::m_pItemManager->SpawnItemRand(1, 100, VEC3(-120, 5, 80), 1);
+    //Master::m_pItemManager->SpawnItemRand(1, 100, VEC3(-120, 5, 80), 1);
 
 
     /* 武器のサイト用スプライト*/
@@ -896,7 +896,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     //                        爆速ロード防止のため、一時的に処理を停止させる
     //  
     //*****************************************************************************************
-    Sleep(1500);
+    Sleep(1000);
 }
 
 

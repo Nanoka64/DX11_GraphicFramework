@@ -15,7 +15,7 @@ template <typename T>
 class ObjectPool 
 {
 private:
-    std::vector<T*> m_pPoolArray;            // プール配列
+    std::vector<T*> m_pObjects;            // プール配列
     int m_MaxPoolSize;                       // 最大プール数
     std::function<void (T*)> m_pGetFunc;     // 取得時に実行するメソッド   
     std::function<void (T*)> m_pReleaseFunc; // 返却時に実行するメソッド
@@ -35,13 +35,13 @@ public:
         m_MaxPoolSize(_maxPoolSize),
         m_CreateCounter(0)
     {
-        m_pPoolArray.reserve(m_MaxPoolSize);
+        m_pObjects.reserve(m_MaxPoolSize);
 
         // デフォルト分生成
         for (int i = 0; i < _defaultCapacity; i++)
         {
             auto obj = m_pCreateFunc();
-            m_pPoolArray.push_back(obj);
+            m_pObjects.push_back(obj);
 
             m_CreateCounter++;
         }
@@ -49,7 +49,7 @@ public:
 
     ~ObjectPool()
     {
-        m_pPoolArray.clear();
+        m_pObjects.clear();
     };
 
     /// <summary>
@@ -61,7 +61,7 @@ public:
     {
         T *obj = nullptr;
 
-        if (m_pPoolArray.empty()) 
+        if (m_pObjects.empty()) 
         {
             // プールの最大数を越えていたら、ぬるぽ
             if (m_CreateCounter >= m_MaxPoolSize)
@@ -81,8 +81,8 @@ public:
         else 
         {
             // 後ろからオブジェクトを取得し、プールから削除する
-            obj = m_pPoolArray.back();
-            m_pPoolArray.pop_back();
+            obj = m_pObjects.back();
+            m_pObjects.pop_back();
         }
 
         m_pGetFunc(obj);    // 取得時のメソッド実行
@@ -100,7 +100,7 @@ public:
         // 返却時のメソッド実行
         m_pReleaseFunc(obj);
 
-        m_pPoolArray.push_back(obj);
+        m_pObjects.push_back(obj);
     }
 
     /// <summary>
@@ -109,7 +109,7 @@ public:
     /// </summary>
     void clear()
     {
-        m_pPoolArray.clear();
+        m_pObjects.clear();
         m_CreateCounter = 0; 
     }
 

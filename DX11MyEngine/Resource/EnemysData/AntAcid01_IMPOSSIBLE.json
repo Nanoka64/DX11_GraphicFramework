@@ -3,31 +3,68 @@
   "name": "AntAcid",
   "bulletMaxNum": 1,
   "bulletSimultaneousNum": 8,
-  "fireRate": 12.0,
-  "reloadTime": 1.5,
+  "fireRate": 0.0,
+  "reloadTime": 0.0,
   "accuracy": 0.1,
-  "zoomLength": 1.0,
-  "isLaserSight": true,
+  "zoomLength": 0.0,
+  "isLaserSight": false,
   "soundID": 0,
+  "muzzleFlashEffectTag" : "",
+  "muzzleFlashEffectScale" :  [1.0, 1.0, 1.0],
   "bulletType": "EXPLOSION",
-  "bulletParam": {
-    "damage": 20.0,
-    "damageDistAttenuationRate": 0.5,
-    "speed": 50.0,
-    "acceleration": 0.0,
-    "range": 120.0,
-    "penetrationsCount": 0,
-    "collisionSize": 0.0,
-    "gravityScale": 3.0,
-    "knockbackForce" : 10.0,
-    "collisionMask": ["PLAYER", "BUILDING", "DESTRUCTION_BUILDING"],
-    "bulletMaterialTag" : "Acid_01",
-    "decalMaterialTag" : "Decal_Ant_Splash",
-    "hitEffectTag" : "BulletHit_Acid",
-    "scale" : [2.0, 2.0, 2.0],
-    "explosionRadius": 10.0,
-    "explosionEffectHandleTag": "Explosion_01",
-    "explosionEffectAliveTime": 1.0,
-    "isSmoke" : true
+  "bulletParam": 
+  {
+    "common" :  
+    {
+      "aliveFrame" : 240,
+      "speed": 50.0,
+      "damage": 25.0,
+      "acceleration": 0.0,
+      "penetrationsCount": 0,
+      "collisionSize": 0.0,
+      "gravityScale": 2.0,
+      "knockbackForce" : 10.0,
+      "collisionMask": ["PLAYER", "BUILDING", "DESTRUCTION_BUILDING"]
+    },
+    
+    "movement" :
+    {
+      "type" : "LINEAR"
+    },
+    
+    "hit" : 
+    {
+      "type" : "EXPLOSION",
+      "decalMaterialTag" : "Decal_Ant_Splash",
+      "hitEffectTag" : "BulletHit_Acid",
+      "explosionRadius" : 10.0,
+      "explosionEffectTag" : "Explosion_Acid_01",
+      "explosionEffectAliveTime" : 1.0,
+      "isSmoke" : false,
+
+      "expLightColor" : [1, 1, 1],
+      "expLightIntensity" : 8.0,
+      "expLightDuration" : 4.0
+    },
+    "visual" :  
+    {
+      "type" : "BILLBOARD",
+      "bulletMaterialTag" : "Acid_03",
+      "trailDrawTime" : 30,
+      "trailWidth" : 5.0,
+      "enableFlightSmoke" : false,
+      "smokeInterval" : 0.0,              
+      "smokeEffectTag" : "",
+      "trailColor" : [2.0, 10.0, 2.0],
+      "scale" : [3.0, 3.0, 3.0],
+
+      "custom" : 
+      {
+        "type" : "",
+        "startScale" : [0.0,0.0, 0.0],
+        "endScale" : [0.0, 0.0, 0.0],
+        "duration" : 0.0
+      }
+    }
   }
 }

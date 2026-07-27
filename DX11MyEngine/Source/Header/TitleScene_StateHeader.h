@@ -93,7 +93,7 @@ private:
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;							// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
 	const VECTOR2::VEC2 MENU_ITEM_SIZE			= VECTOR2::VEC2(450.0f, 100.0f);	// メニュー項目のサイズ
 	const VECTOR2::VEC2 MENU_ITEM_START_POS		= VECTOR2::VEC2(400.0f, 550.0f);	// 項目の開始位置
-	const float ITEM_POS_Y_BETWEEN_DIST = 120.0f;							// 項目同士のY距離
+	const float ITEM_POS_Y_BETWEEN_DIST = 120.0f;									// 項目同士のY距離
 
 
 	SceneStateEnums::c_TITLE m_NextState = SceneStateEnums::c_TITLE::c_TITLE_MAIN_MENU;	// 次のステート
@@ -171,7 +171,7 @@ private:
 
 
 
-static constexpr UINT MISSION_NUM = 1;	// ミッション数
+static constexpr UINT MISSION_NUM = 2;	// ミッション数
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ private:
 	const VECTOR2::VEC2 MISSION_ITEM_SIZE = VECTOR2::VEC2(400.0f, 70.0f);		// ミッション項目のサイズ
 	const VECTOR2::VEC2 MISSION_ITEM_START_POS = VECTOR2::VEC2(400.0f, 600.0f);	// ミッション項目の開始位置
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;						// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
-	const float ITEM_POS_Y_BETWEEN_DIST = 80.0f;						// ミッション項目同士のY距離
+	const float ITEM_POS_Y_BETWEEN_DIST = 100.0f;								// ミッション項目同士のY距離
 
 	/// <summary>
 	/// ミッション選択中のどの状態か

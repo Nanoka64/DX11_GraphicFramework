@@ -124,7 +124,7 @@ bool ItemManager::Init(RendererEngine& renderer)
 
             // コライダーの追加
             auto collider = obj->add_Component<BoxCollider>();
-            collider->set_Size(VEC3(1.0f, 1.0f, 1.0f));
+            collider->set_Size(VEC3(0.75f, 0.75f, 0.75f));
             collider->set_Center(VEC3(0, 0.0f, 0)); // コライダーの中心を地面の厚み分だけ下げる
             //collider->set_IsStatic(true);
             collider->set_IsTrigger(true);          // 物理判定無し

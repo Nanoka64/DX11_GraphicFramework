@@ -84,9 +84,9 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     m_PostEffectData.Dof.dof_MinRange = DOF_MIN_RANGE;
 
 	// カラーグレーディングの設定
-    m_PostEffectData.ColorGrading.Exposure = 0.3;                   // 露出補正（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Exposure = 0.2;                   // 露出補正（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Contrast = 1.4f;                  // コントラスト（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.Saturation = 1.4f;                // 彩度（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Saturation = 0.8f;                // 彩度（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Gamma = 1.0f;                     // ガンマ補正（1.0fで補正なし）
     m_PostEffectData.ColorGrading.ColorTint = { 1.0f, 1.0f, 1.0f }; // 色味（1.0fで補正なし）
 

@@ -170,7 +170,7 @@ void Octahedron_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner, flo
 	VEC3 pos = myTransform->get_VEC3ToPos();
 
 	// 死亡エフェクト
-	int handle = Master::m_pEffectManager->PlayEffect("Explosion_01");
+	int handle = Master::m_pEffectManager->PlayEffect("Explosion_Acid_01");
 	float deadEffectScale = _effectSize;
 	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
 	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);

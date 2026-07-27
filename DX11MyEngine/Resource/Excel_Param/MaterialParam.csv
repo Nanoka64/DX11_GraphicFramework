@@ -27,12 +27,13 @@ Block,1,1,1,1,1,1,1,1,120,1,1,1,0,Resource/Texture/Materials/concrete_pavement_d
 Decal_BulletHole,1,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/BulletHole.png,Resource/Texture/Particle/BulletHole_n.png,-1,0
 Decal_Ant_Splash,1,1,1,1,1,1,1,1,100,1,1,1,1.5,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 RocketLauncher,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Weapon/RocketLauncher/Simple rocket launcher Tex.png,Resource/Texture/DefaultN_Map.png,-1,0
-Bullet_01,1,1,10,1,1,1,1,1,100,1,1,10,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
+Bullet_01,1,1,10,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_02,1,10,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_03,10,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Acid_01,2,2,0,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
-Acid_02,5,1,1,1,1,1,1,1,100,5,0,0,1,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
-Flame_01,10,1,1,1,1,1,1,1,100,10,0,0,10,Resource/Texture/Particle/Flame1.png,-1,-1,1
+Acid_02,5,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
+Acid_03,0.5,10,0.5,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
+Flame_01,8,3,2,1,1,1,1,1,100,1,0,0,10,Resource/Effect/Texture/flamea.png,-1,-1,1
 Objector_body,0,1,0,1,1,1,1,1,100,0,1,0,3,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,1
 Objector_shield,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,1
 MuzzleFlash_1,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/MazzleFrash1.png,-1,-1,1

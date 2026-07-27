@@ -98,9 +98,12 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Explosion_Smoke_01.efkefc", "Explosion_Smoke_01");
     LoadEffect(u"Resource/Effect/Explosion_Smoke_02.efkefc", "Explosion_Smoke_02");
     LoadEffect(u"Resource/Effect/Explosion_Plasma_01.efkefc", "Explosion_Plasma_01");
+    LoadEffect(u"Resource/Effect/Explosion_Acid_01.efkefc", "Explosion_Acid_01");
     LoadEffect(u"Resource/Effect/Smoke_01.efkefc", "Smoke_01");
     LoadEffect(u"Resource/Effect/Smoke_02.efkefc", "Smoke_02");
     LoadEffect(u"Resource/Effect/Smoke_03.efkefc", "Smoke_03");
+    LoadEffect(u"Resource/Effect/Smoke_04.efkefc", "Smoke_04");
+    LoadEffect(u"Resource/Effect/Smoke_05.efkefc", "Smoke_05");
     LoadEffect(u"Resource/Effect/Fragment.efkefc", "Fragment");
     LoadEffect(u"Resource/Effect/Fragment_Octahedron.efkefc", "Fragment_Octahedron");
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");

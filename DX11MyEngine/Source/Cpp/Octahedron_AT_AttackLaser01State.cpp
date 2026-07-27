@@ -65,7 +65,8 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 
 		VEC3 targetDir = (targetPos - myPos).Normalize();	// –Ú•W•ûŒü
 
-		targetDir = VEC3(0.0f, 1.0f, 0.0f);
+		// ‰º•ûŒü
+		targetDir = VEC3(0.0f, -1.0f, 0.0f);
 
 		// ˆÚ“®‚Í‚³‚¹‚¸‚ÉA–Ú•W‚Ö‚Ì•ûŒü‚¾‚¯Œü‚©‚¹‚é
 		MoveParam movePram;
@@ -79,7 +80,7 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 		if (pOwner->get_StateTimer() > m_PreAttackStunDuration)
 		{
 			// ****************************************************
-			//				 Ž_”­ŽË‰¹Ä¶
+			//				 ”­ŽË‰¹Ä¶
 			// ****************************************************
 			Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ENEMY_ANT_ACID_SHOOT), myPos, SOUND_RADIUS);
 

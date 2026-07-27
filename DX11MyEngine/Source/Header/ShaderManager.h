@@ -49,6 +49,7 @@ enum class SHADER_TYPE
     FORWARD_UNLIT_UI_NOTEXTURE_SPRITE,  // スプライト 標準 UI用  ライティングなし テクスチャ無し
     _FORWARD_STD_BILLBOARD,             // ◆ ビルボード
     FORWARD_UNLIT_STATIC,               // 簡易3Dオブジェクト ライティングなし
+    FORWARD_UNLIT_TRAIL,                // 軌跡 ライティングなし
 
     /////////////////////////////////////////////////////////////////////
     // その他 ポストエフェクト的なやつとか ******************************
