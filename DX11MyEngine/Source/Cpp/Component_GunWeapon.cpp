@@ -268,7 +268,8 @@ bool GunWeapon::Setup(const WeaponData::BaseWeaponData* _pWeaponData)
     m_AmmoRemaining = gunParam->_bulletMaxNum;
 
     // 射程距離を取得
-    m_Range = gunParam->_bulletData._commonData._range;
+    m_Range = 
+        gunParam->_bulletData._commonData._lifeTime * gunParam->_bulletData._commonData._speed;
 
 
     // 有効状態に
@@ -299,6 +300,8 @@ void GunWeapon::SwicthReset()
 
     auto laserPoint = Master::m_pGameObjectManager->get_ObjectByTag("LaserPointBillboard");
     laserPoint->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
+
+    m_IsNowZoom = false;
 
     // レーザーサイトオフ
     if (auto laserLineRenderer = m_pLineRendererComp.lock())

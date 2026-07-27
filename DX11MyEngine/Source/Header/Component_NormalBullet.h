@@ -26,7 +26,7 @@
 //
 //	void OnCollisionEnter(const class CollisionInfo &other);	// 衝突処理
 //	void Reset()override;
-//	void Setup(const BulletData::BulletDataBase* _pParam)override;
-//	const BulletData::BulletDataBase* get_Parameter()const; // パラメータの取得
+//	void Setup(const BulletData::Definition* _pParam)override;
+//	const BulletData::Definition* get_Parameter()const; // パラメータの取得
 //};
 //

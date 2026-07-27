@@ -17,11 +17,12 @@ private:
 	VECTOR3::VEC3 m_StartPos;	// 発射開始位置
 	VECTOR3::VEC3 m_PrevPos;	// 前の座標
 	VECTOR3::VEC3 m_MoveDir;
-	int m_CrntPenetrationCount;	// 現在の貫通数
-	const BulletData::BulletDataBase* m_pBulletData;							// 読みとり専用の弾データを持つ
+    int m_CrntPenetrationCount;	// 現在の貫通数
+	const BulletData::Definition* m_pDefinition;							// 読みとり専用の弾データを持つ
     class MyTransform* m_pMyTransform;
-    BulletData::BulletRuntime m_Runtime;
+    BulletData::RuntimeState m_Runtime;
 
+    class BillboardRenderer *m_pBillboardRenderer;
     //std::array<std::unique_ptr<class IBulletBehaviour>,
     //    static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
     //class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
@@ -34,12 +35,12 @@ public:
     void Update(RendererEngine& renderer) override;
     void LateUpdate(RendererEngine& renderer) override;
     void Setup(
-        const BulletData::BulletDataBase* _pData,
+        const BulletData::Definition* _pData,
         const BulletData::BulletSpawnContext& context);
 
     void Deactivate(BulletData::BULLET_END_REASON reason);
     void Reset();
-    const BulletData::BulletDataBase* get_BulletData()const { return  m_pBulletData; }
+    const BulletData::Definition* get_BulletData()const { return  m_pDefinition; }
 
 
     /// <summary>
@@ -50,10 +51,10 @@ public:
     template<typename T>
     const T* get_HitData() const
     {
-        if (!m_pBulletData){
+        if (!m_pDefinition){
             return nullptr;
         }
-        return std::get_if<T>(&m_pBulletData->_hitData);
+        return std::get_if<T>(&m_pDefinition->_hitData);
     }
 
     /// <summary>
@@ -64,10 +65,10 @@ public:
     template<typename T>
     const T* get_MoveData() const
     {
-        if (!m_pBulletData) {
+        if (!m_pDefinition) {
             return nullptr;
         }
-        return std::get_if<T>(&m_pBulletData->_moveData);
+        return std::get_if<T>(&m_pDefinition->_moveData);
     }
 };
 

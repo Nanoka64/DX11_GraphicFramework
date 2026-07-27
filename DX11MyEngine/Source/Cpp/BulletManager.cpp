@@ -112,7 +112,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             obj->set_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);    // ノンデストロイ
             obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);        // ノンアクティブ
             obj->set_IsUpdateAllowedDuringPause(false);                     // ポーズ中は停止
-            obj->set_Tag("ExplosionLight");
+            obj->set_Tag("FlshLight");
 
             //*****************************************************************************************
             //						コンポーネントの追加
@@ -229,7 +229,7 @@ bool BulletManager::Init(RendererEngine &renderer)
         [this](GameObject* obj)          
         {
             auto bulletComp = obj->get_Component<Bullet>();
-            //const auto bulletHitParam = bulletComp->get_HitData <ExplosionHitData>();
+            //const auto bulletHitParam = bulletComp->get_HitData <ExplosionHitConfig>();
             //float explosionRadius = bulletHitParam->_explosionRadius;   // 爆発半径を取得
             bulletComp->Reset();
 
@@ -553,9 +553,9 @@ void BulletManager::RegisterBullet(BulletData::BULLET_TYPE _bulletType, std::sha
 //* &_param           : パラメータ
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawnContext& _context, const BulletData::BulletDataBase&_param)
+void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawnContext& _context, const BulletData::Definition&_param)
 {
-    auto &pool = m_BulletObjectPoolMap.find(_param._visualData._visualArchetype)->second;
+    auto &pool = m_BulletObjectPoolMap.find(_param._commonVisualData._visualArchetype)->second;
     auto obj = pool.get();
     if (obj == nullptr)
     {
@@ -568,7 +568,7 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawn
     transform->set_Pos(_context._transform._pos);
     transform->set_RotationQuaternion(_context._transform._rotQ);
     //transform->set_RotateToRad(_transformData._rotRad);
-    transform->set_Scale(_param._visualData._scale);
+    transform->set_Scale(_param._commonVisualData._scale);
 
 
     // 弾コンポーネントのセットアップ
@@ -583,95 +583,32 @@ void BulletManager::Shot(RendererEngine &renderer, const BulletData::BulletSpawn
 
 
     // 軌跡のパラメータ設定
-    VEC4 trailColor = VEC4(bulletParam->_visualData._trailColor, 1.0f);
+    VEC4 trailColor = VEC4(bulletParam->_commonVisualData._trailColor, 1.0f);
     auto trail = obj->get_Component<TrailRenderer>();
     trail->set_Color(trailColor);
-    trail->set_DrawTime(bulletParam->_visualData._trailDrawTime);
-    trail->set_Width(bulletParam->_visualData._trailWidth);
+    trail->set_DrawTime(bulletParam->_commonVisualData._trailDrawTime);
+    trail->set_Width(bulletParam->_commonVisualData._trailWidth);
 
     // 弾に合わせたマテリアルに付け替え
-    auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_visualData._bulletMaterialTag);
+    auto matPtr = Master::m_pResourceManager->FindMaterial(bulletParam->_commonVisualData._bulletMaterialTag);
     if (auto billboardRes = obj->get_Component<BillboardResource>()) {
         billboardRes->set_Material(matPtr);
     }
 
     // 更新リストに登録
-    m_ExtractedBulletMap[_param._visualData._visualArchetype].push_back(obj);
+    m_ExtractedBulletMap[_param._commonVisualData._visualArchetype].push_back(obj);
 }
-//
-////*---------------------------------------------------------------------------------------
-////*【?】爆発弾の発射
-////*
-////* [引数]
-////* &renderer         : 描画エンジンの参照
-////* &_transformData   : トランスフォームパラメータ
-////* &_param           : パラメータ
-////* [返値] なし
-////*----------------------------------------------------------------------------------------
-//void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::ExplosionBulletData &_param)
-//{
-//    //*****************************************************************************************
-//    //						弾の取り出し
-//    //*****************************************************************************************
-//    auto &bulletPool = m_BulletObjectPoolMap.find(BULLET_TYPE::EXPLOSION)->second;
-//    auto bulletObj = bulletPool.get();
-//    if (bulletObj == nullptr)
-//    {
-//        OutputDebugString(L"プールに空きがありません");
-//        return;
-//    }
-//
-//    // トランスフォームの設定
-//    auto transform = bulletObj->get_Transform().lock();
-//    transform->set_Pos(_transformData._pos);
-//    transform->set_RotationQuaternion(_transformData._rotQ);
-//    //transform->set_RotateToRad(_transformData._rotRad);
-//    transform->set_Scale(_param._scale);
-//
-//
-//    // 弾コンポーネントのセットアップ
-//    auto bulletComp = bulletObj->get_Component<ExplosionBullet>();
-//    bulletComp->Setup(&_param);
-//
-//    const auto bulletParam = bulletComp->get_ExplosionParameter();
-//
-//    // 物理コンポーネントに重力の設定
-//    auto physics = bulletObj->get_Component<Physics>();
-//    physics->set_GravityScale(bulletParam->_gravityScale);
-//
-//
-//    //auto collider = bulletObj->get_Component<BoxCollider>();
-//    //collider->set_Size(VEC3(_transformData._scale));
-//
-//    // 更新リストに登録
-//    m_ExtractedBulletMap[BULLET_TYPE::EXPLOSION].push_back(bulletObj);
-//}
-//
-////*---------------------------------------------------------------------------------------
-////*【?】ホーミング爆発弾の発射
-////*
-////* [引数]
-////* &renderer         : 描画エンジンの参照
-////* &_transformData   : トランスフォームパラメータ
-////* &_param           : パラメータ
-////* [返値] なし
-////*----------------------------------------------------------------------------------------
-//void BulletManager::Shot(RendererEngine &renderer, const BulletTransformData &_transformData, const BulletData::HormingExplosionBulletData &_param)
-//{
-//    auto &pool = m_BulletObjectPoolMap.find(BULLET_TYPE::HORMING)->second;
-//    auto obj = pool.get();
-//    if (obj == nullptr)
-//    {
-//        OutputDebugStringA("プールに空きがありません");
-//        return;
-//    }
-//
-//    auto transform = obj->get_Transform().lock();
-//    transform->set_Pos(_transformData._pos);
-//    transform->set_RotationQuaternion(_transformData._rotQ);
-//    //transform->set_RotateToRad(_transformData._rotRad);
-//    transform->set_Scale(_param._scale);
-//
-//    // 更新リストに登録
-//    m_ExtractedBulletMap[BULLET_TYPE::HORMING].push_back(obj);
-//}
+
+//*---------------------------------------------------------------------------------------
+//*【?】爆発弾用ライトのプール
+//*
+//* [引数]
+//* &renderer         : 描画エンジンの参照
+//* &_transformData   : トランスフォームパラメータ
+//* &_param           : パラメータ
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void BulletManager::ActivateExplosionLight(RendererEngine& renderer, const BulletData::Definition& _param)
+{
+
+}

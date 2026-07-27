@@ -33,11 +33,11 @@ constexpr float EXP_SHAKE_LENGTH_SCALE_FACTOR               = 0.004f;   // ƒJƒƒ
 constexpr float EXP_SHAKEDURATION                           = 1.0f;     // ƒJƒƒ‰ƒVƒFƒCƒN‚ÌŽ‘±ŽžŠÔ
 constexpr float EXP_EFFECT_SIZE_FACTOR                      = 0.12f;    // ‚»‚Ì‚Ü‚Ü‚¾‚ÆAƒGƒtƒFƒNƒg‚ª‘å‚«‚·‚¬‚é‚Ì‚Å
 
+constexpr float EXP_LIGHT_RADIUS_FACTOR = 10.0f; // ”š”­”ÍˆÍ‚ÉŠ|‚¯‚éA•â³’l
 
 
 namespace BulletBehaviour
 {
-
     //*---------------------------------------------------------------------------------------
     //*y?zˆÚ“®XV [’¼üˆÚ“®]
     //*
@@ -47,12 +47,12 @@ namespace BulletBehaviour
     //* &_moveData : ˆÚ“®ƒf[ƒ^[’¼ü]
     //* _deltaTime : ƒfƒ‹ƒ^ƒ^ƒCƒ€
     //*
-    //* [•Ô’l] ‚È‚µ
+    //* [•Ô’l] BulletMoveResult
     //*----------------------------------------------------------------------------------------
     BulletData::BulletMoveResult UpdateMove(
-        BulletData::BulletRuntime& _runtime,
-        const BulletData::CommonBulletData& _common,
-        const BulletData::LinearMoveData& _moveData,
+        BulletData::RuntimeState& _runtime,
+        const BulletData::CommonConfig& _common,
+        const BulletData::LinearMovementConfig& _moveData,
         float _deltaTime)
     {
         BulletMoveResult result;
@@ -70,15 +70,53 @@ namespace BulletBehaviour
     //* &_moveData : ˆÚ“®ƒf[ƒ^[ƒz[ƒ~ƒ“ƒO]
     //* _deltaTime : ƒfƒ‹ƒ^ƒ^ƒCƒ€
     //*
-    //* [•Ô’l] ‚È‚µ
+    //* [•Ô’l] BulletMoveResult
     //*----------------------------------------------------------------------------------------
     BulletData::BulletMoveResult UpdateMove(
-        BulletData::BulletRuntime& _runtime,
-        const BulletData::CommonBulletData& _common,
-        const BulletData::HomingMoveData& _moveData,
+        BulletData::RuntimeState& _runtime,
+        const BulletData::CommonConfig& _common,
+        const BulletData::HomingMovementConfig& _moveData,
         float _deltaTime)
     {
         BulletMoveResult result;
+
+        return result;
+    }
+    //*---------------------------------------------------------------------------------------
+    //*y?zŒ©‚½–ÚXV []
+    //*
+    //* [ˆø”]
+    //* &_runtime    : ƒ‰ƒ“ƒ^ƒCƒ€ƒf[ƒ^
+    //* &_common     : ‹¤’Êƒf[ƒ^
+    //* &_visualData : Œ©‚½–Úƒf[ƒ^[ƒXƒP[ƒ‹•âŠÔ]
+    //* _deltaTime   : ƒfƒ‹ƒ^ƒ^ƒCƒ€
+    //*
+    //* [•Ô’l] BulletVisualResult
+    //*----------------------------------------------------------------------------------------
+    BulletData::BulletVisualResult UpdateVisual(
+        BulletData::RuntimeState& _runtime,
+        const BulletData::CommonConfig& _common,
+        const BulletData::ScaleLerpVisualConfig& _visualData,
+        float _deltaTime)
+    {
+        BulletVisualResult result;
+
+        _runtime._elapsedTime += _deltaTime;
+
+        float rate = _runtime._elapsedTime / _visualData._duration;
+
+        rate = std::clamp(rate, 0.0f, 1.0f);
+
+        result._scale = VECTOR3::VEC3::Lerp(
+            _visualData._startScale,
+            _visualData._endScale,
+            rate);
+
+        float rate2 = _runtime._aliveTime / _common._lifeTime;
+        result._color = VECTOR4::VEC4::Lerp(
+            VEC4(1.0f),
+            VEC4(0.0f),
+            rate2);
 
         return result;
     }
@@ -96,13 +134,13 @@ namespace BulletBehaviour
     //* BulletHitResult
     //*----------------------------------------------------------------------------------------
     BulletData::BulletHitResult OnHit(
-        BulletData::BulletRuntime& _runtime,
-        const BulletData::CommonBulletData& _common,
-        const BulletData::DirectHitData& _hitData,
+        BulletData::RuntimeState& _runtime,
+        const BulletData::CommonConfig& _common,
+        const BulletData::DirectHitConfig& _hitData,
         const CollisionInfo& _collision,
         class RendererEngine& _renderer)
     {
-        BulletHitResult result = { false,false };
+        BulletHitResult result;
 
         //*****************************************************************************************
         //						Õ“Ë‚µ‚½Û‚Ìˆ—
@@ -117,17 +155,91 @@ namespace BulletBehaviour
         {
             // ’e‚ª•ÛŽ‚µ‚Ä‚¢‚éƒ_ƒ[ƒW’l‚ð“n‚·
             health->TakeDamage(_common._damage);
+
         }
 
-        // Œš•¨‚É“–‚½‚Á‚½‚ç‘¦Á‚¦‚é‚æ‚¤‚É‚µ‚ÄA‚»‚Ì‘¼‚ÍŠÑ’Ê”‚ðŒ¸‚ç‚·
-        if (hitCategory == COLLISION_CATEGORY::BUILDING || hitCategory == COLLISION_CATEGORY::DESTRUCTION_BUILDING)
+        //*****************************************************************************************
+        //						Œš•¨‚È‚Ç‚ÉÕ“Ë‚µ‚½ê‡
+        //*****************************************************************************************
+        if (hitCategory == COLLISION_CATEGORY::BUILDING || 
+            hitCategory == COLLISION_CATEGORY::DESTRUCTION_BUILDING)
         {
-            result._deactivate = true;
+            // Õ“ËŽž‚Ì”½‰ž
+            switch (_hitData._environmentResponse)
+            {
+                /* –³Œø */
+            case ENVIRONMENT_RESPONSE::DEACTIVATE:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+
+                /* ƒXƒ‰ƒCƒh */
+            case ENVIRONMENT_RESPONSE::SLIDE:
+                // •Ç‚É‰ˆ‚Á‚ÄˆÚ“®
+                result._response = BULLET_HIT_RESPONSE::SLIDE;
+                break;
+
+                /* ƒoƒEƒ“ƒh */
+            case ENVIRONMENT_RESPONSE::BOUNCE:
+                result._response = BULLET_HIT_RESPONSE::BOUNCE;
+                break;
+
+                /* ƒAƒ^ƒbƒ`i–¢Žg—pj */
+            case ENVIRONMENT_RESPONSE::ATTACH:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+
+                /* ŠÑ’Ê */
+            case ENVIRONMENT_RESPONSE::PENETRATE:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+
+                /* ‚»‚Ì‘¼ */
+            default:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+            }
         }
+        //*****************************************************************************************
+        //						“G‚âƒvƒŒƒCƒ„[‚È‚Ç‚Ì—L‹@•¨‚ÉÕ“Ë‚µ‚½ê‡
+        //*****************************************************************************************
         else
         {
-            // ŠÑ’Ê”‚ð‘‚â‚·
-            result._penetration = true;
+            // Õ“ËŽž‚Ì”½‰ž
+            switch (_hitData._environmentResponse)
+            {
+                /* –³Œø */
+            case ENVIRONMENT_RESPONSE::DEACTIVATE:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+            
+                /* ƒXƒ‰ƒCƒh */
+            case ENVIRONMENT_RESPONSE::SLIDE:
+                // ‚»‚Ì‚Ü‚Ü’Ê‚è”²‚¯‚³‚¹‚é
+                result._response = BULLET_HIT_RESPONSE::PENETRATE;
+                break;
+
+                /* ƒoƒEƒ“ƒh */
+            case ENVIRONMENT_RESPONSE::BOUNCE:
+                // •ÇˆÈŠOi—L‹@•¨j‚ÉÕ“Ë‚µ‚½Û‚ÍAƒoƒEƒ“ƒh‚³‚¹‚¸A–³Œø‚É‚·‚é
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+            
+                /* ƒAƒ^ƒbƒ`i–¢Žg—pj */
+            case ENVIRONMENT_RESPONSE::ATTACH:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+            
+                /* ŠÑ’Ê */
+            case ENVIRONMENT_RESPONSE::PENETRATE:
+                // ŠÑ’Ê”‚ð‘‚â‚·
+                result._response = BULLET_HIT_RESPONSE::PENETRATE_COUNT;
+                break;
+            
+                /* ‚»‚Ì‘¼ */
+            default:
+                result._response = BULLET_HIT_RESPONSE::DEACTIVATE;
+                break;
+            }
         }
 
         auto transform = _runtime._transform;
@@ -219,17 +331,14 @@ namespace BulletBehaviour
     //* BulletHitResult
     //*----------------------------------------------------------------------------------------
     BulletData::BulletHitResult OnHit(
-        BulletData::BulletRuntime& runtime,
-        const BulletData::CommonBulletData& _common,
-        const BulletData::ExplosionHitData& _hitData,
+        BulletData::RuntimeState& runtime,
+        const BulletData::CommonConfig& _common,
+        const BulletData::ExplosionHitConfig& _hitData,
         const CollisionInfo& _collision,
         class RendererEngine& _renderer)
     {
-        BulletHitResult result = { false,false };
-
-        /* ”š”­’e‚ÍŠm’è‚Å–³Œø */
-        result._deactivate = true;
-
+        BulletHitResult result;
+        
         VEC3 crntPos = runtime._transform->get_VEC3ToPos();
 
         // ****************************************************
@@ -292,6 +401,21 @@ namespace BulletBehaviour
         //Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
         // “®“Iƒpƒ‰ƒ[ƒ^‚ÌÝ’è
         Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, _hitData._explosionEffectAliveTime); // ¶‘¶ŽžŠÔ‚ð•ÏX
+
+        //*****************************************************************************************
+        //						”š”­Žž‚Éƒpƒb‚ÆŒõ‚ç‚¹‚é
+        //*****************************************************************************************
+        TransientPointLightDesc desc;
+        desc._color = _hitData._expLightColor;
+        desc._startRange = _hitData._explosionRadius * EXP_LIGHT_RADIUS_FACTOR;
+        desc._endRange = 0.0f;
+        desc._startIntensity = _hitData._expLightIntensity;
+        desc._endIntensity = 0.0f;
+        desc._duration = _hitData._expLightDuration;
+        auto handle = Master::m_pLightManager->PlayTransientPointLight(
+            crntPos,
+            desc);
+
 
         unsigned mask = _common._collisionMask;;
         // ”ÍˆÍ“àƒ`ƒFƒbƒN

@@ -7,29 +7,63 @@
   "reloadTime": 2.0,
   "accuracy": 0.005,
   "zoomLength": 2.0,
-  "isLaserSight": false,
+  "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_Rocket_01",
   "muzzleFlashEffectScale" : [2.0, 2.0, 2.0],
   "bulletType": "EXPLOSION",
-  "bulletParam": {
-    "damage": 200.0,
-    "damageDistAttenuationRate": 0.5,
-    "speed": 150.0,
-    "acceleration": 0.0,
-    "range": 2000.0,
-    "penetrationsCount": 0,
-    "collisionSize": 0.0,
-    "gravityScale": 1.0,
-    "knockbackForce" : 20.0,
-    "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
-    "bulletMaterialTag" : "Bullet_01",
-    "decalMaterialTag" : "Decal_BulletHole",
-    "hitEffectTag" : "BulletHit_Standard",
-    "scale" : [0.5, 0.5, 1.5],
-    "explosionRadius": 10.0,
-    "explosionEffectHandleTag": "Explosion_01",
-    "explosionEffectAliveTime": 1.0,
-    "isSmoke" : true
+  "bulletParam": 
+  {
+    "common" :  
+    {
+      "aliveFrame" : 300,
+      "speed": 10.0,
+      "damage": 200.0,
+      "acceleration": 100.0,
+      "penetrationsCount": 0,
+      "collisionSize": 0.0,
+      "gravityScale": 1.0,
+      "knockbackForce" : 20.0,
+      "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
+    },
+    
+    "movement" :
+    {
+      "type" : "LINEAR"
+    },
+    
+    "hit" : 
+    {
+      "type" : "EXPLOSION",
+      "decalMaterialTag" : "",
+      "hitEffectTag" : "BulletHit_Flame",
+      "explosionRadius" : 10.0,
+      "explosionEffectTag" : "Explosion_01",
+      "explosionEffectAliveTime" : 1.0,
+      "isSmoke" : true,
+
+      "expLightColor" : [0.8, 0.4, 0.1],
+      "expLightIntensity" : 8.0,
+      "expLightDuration" : 5.0
+    },
+
+    "visual" :  
+    {
+      "type" : "MODEL",
+      "bulletMaterialTag" : "Bullet_01",
+      "trailDrawTime" : 10,
+      "trailWidth" : 1.5,
+      "enableFlightSmoke" : true,
+      "smokeInterval" : 0.005,
+      "smokeSize" : 1.0,                     
+      "smokeEffectTag" : "Smoke_03",
+      "trailColor" : [1.0, 2.0, 1.0],
+      "scale" : [5.0,5.0, 5.0],
+
+      "custom" :
+      {
+
+      }
+    }
   }
 }

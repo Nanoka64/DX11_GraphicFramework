@@ -37,91 +37,91 @@ bool WeaponDataManager::Init()
 {
     GunWeaponData gunData;
     
-    // TEST ************************************************************************************
-    if (LoadGunWeaponData("Resource/WeaponsData/Test01.json", gunData) == false) {
-        assert(false);
-    }
-    m_AllWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
-    if (LoadGunWeaponData("Resource/WeaponsData/Test02.json", gunData) == false) {
-        assert(false);
-    }
-    m_AllWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
-    
-    
-    //// スタンダード ************************************************************************************
-    //if (LoadGunWeaponData("Resource/WeaponsData/AssultRifle01.json", gunData) == false){
+    //// TEST ************************************************************************************
+    //if (LoadGunWeaponData("Resource/WeaponsData/Flamethrower03.json", gunData) == false) {
     //    assert(false);
     //}
     //m_AllWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
-
-    //if (LoadGunWeaponData("Resource/WeaponsData/Launcher01.json", gunData) == false){
+    //if (LoadGunWeaponData("Resource/WeaponsData/Test02.json", gunData) == false) {
     //    assert(false);
     //}
     //m_AllWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
     //
-    //// ラピッド ************************************************************************************
-    //if (LoadGunWeaponData("Resource/WeaponsData/Flamethrower01.json", gunData) == false){
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[2] = std::make_unique<GunWeaponData>(gunData);
-    //
-    //if (LoadGunWeaponData("Resource/WeaponsData/Launcher02.json", gunData) == false){
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[3] = std::make_unique<GunWeaponData>(gunData);
+    
+    // スタンダード ************************************************************************************
+    if (LoadGunWeaponData("Resource/WeaponsData/AssultRifle01.json", gunData) == false){
+        assert(false);
+    }
+    m_AllWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
 
-    //// スカウト ************************************************************************************
-    //if (LoadGunWeaponData("Resource/WeaponsData/AssultRifle02.json", gunData) == false) {
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/WeaponsData/Launcher01.json", gunData) == false){
+        assert(false);
+    }
+    m_AllWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
+    
+    // ラピッド ************************************************************************************
+    if (LoadGunWeaponData("Resource/WeaponsData/Flamethrower03.json", gunData) == false){
+        assert(false);
+    }
+    m_AllWeaponsDataMap[2] = std::make_unique<GunWeaponData>(gunData);
+    
+    if (LoadGunWeaponData("Resource/WeaponsData/Launcher02.json", gunData) == false){
+        assert(false);
+    }
+    m_AllWeaponsDataMap[3] = std::make_unique<GunWeaponData>(gunData);
 
-    //if (LoadGunWeaponData("Resource/WeaponsData/Sniper01.json", gunData) == false) {
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[5] = std::make_unique<GunWeaponData>(gunData);
-    // 
-    //// ヘビー ************************************************************************************
-    //if (LoadGunWeaponData("Resource/WeaponsData/Shotgun01.json", gunData) == false) {
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[6] = std::make_unique<GunWeaponData>(gunData);
+    // スカウト ************************************************************************************
+    if (LoadGunWeaponData("Resource/WeaponsData/AssultRifle03.json", gunData) == false) {
+        assert(false);
+    }
+    m_AllWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData);
 
-    //if (LoadGunWeaponData("Resource/WeaponsData/Launcher03.json", gunData) == false) {
-    //    assert(false);
-    //}
-    //m_AllWeaponsDataMap[7] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/WeaponsData/Sniper01.json", gunData) == false) {
+        assert(false);
+    }
+    m_AllWeaponsDataMap[5] = std::make_unique<GunWeaponData>(gunData);
+     
+    // ヘビー ************************************************************************************
+    if (LoadGunWeaponData("Resource/WeaponsData/Shotgun01.json", gunData) == false) {
+        assert(false);
+    }
+    m_AllWeaponsDataMap[6] = std::make_unique<GunWeaponData>(gunData);
+
+    if (LoadGunWeaponData("Resource/WeaponsData/Launcher03.json", gunData) == false) {
+        assert(false);
+    }
+    m_AllWeaponsDataMap[7] = std::make_unique<GunWeaponData>(gunData);
 
 
-    //// 敵の武器 ************************************************************************************
-    //
-    //// アリ
-    //if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_EASY.json", gunData) == false) {           // イージー用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
-    //if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_NORMAL.json", gunData) == false) {         // ノーマル用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
-    //if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_HARD.json", gunData) == false) {           // ハード用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[2] = std::make_unique<GunWeaponData>(gunData);
-    //if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_DISASTER.json", gunData) == false) {       // ディザスター用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[3] = std::make_unique<GunWeaponData>(gunData);
-    //if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_IMPOSSIBLE.json", gunData) == false) {     // インポッシブル用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData); 
-    //
-    //// 八面体
-    //if (LoadGunWeaponData("Resource/EnemysData/OctahedronLaser01_EASY.json", gunData) == false) {     // インポッシブル用
-    //    assert(false);
-    //}
-    //m_EnemyWeaponsDataMap[5] = std::make_unique<GunWeaponData>(gunData);
+    // 敵の武器 ************************************************************************************
+    
+    // アリ
+    if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_EASY.json", gunData) == false) {           // イージー用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_NORMAL.json", gunData) == false) {         // ノーマル用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_HARD.json", gunData) == false) {           // ハード用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[2] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_DISASTER.json", gunData) == false) {       // ディザスター用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[3] = std::make_unique<GunWeaponData>(gunData);
+    if (LoadGunWeaponData("Resource/EnemysData/AntAcid01_IMPOSSIBLE.json", gunData) == false) {     // インポッシブル用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[4] = std::make_unique<GunWeaponData>(gunData); 
+    
+    // 八面体
+    if (LoadGunWeaponData("Resource/EnemysData/OctahedronLaser01_EASY.json", gunData) == false) {     // インポッシブル用
+        assert(false);
+    }
+    m_EnemyWeaponsDataMap[5] = std::make_unique<GunWeaponData>(gunData);
 
 
 
@@ -228,7 +228,7 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
     const json& paramJson = j["bulletParam"];
     
     // 通常弾・爆発弾で共通して使うデータ
-    BulletDataBase bulletData;
+    Definition bulletData;
     if (!LoadBulletData(paramJson, bulletData))
     {
         return false;
@@ -251,7 +251,7 @@ bool WeaponDataManager::LoadGunWeaponData(const std::string& _filepath, WeaponDa
 //* true : 読みとり成功
 //* false : 読みとり失敗
 //*----------------------------------------------------------------------------------------
-bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::Definition& _outData)
 {
     //*****************************************************************************************
     //						共通データの読み取り
@@ -261,10 +261,16 @@ bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::
     const nlohmann::json hitJson        = _json["hit"];
     const nlohmann::json visualJson     = _json["visual"];
 
+    constexpr float BULLET_REFERENCE_FPS = 60.0f;
+
+    _outData._commonData._aliveFrame =commonJson.value("aliveFrame", 0);                       // 生存期間
+    _outData._commonData._lifeTime =                                                           // 実際の生存期間
+        static_cast<float>(_outData._commonData._aliveFrame) /BULLET_REFERENCE_FPS;
+    
     _outData._commonData._damage              = commonJson.value("damage", 0.0f);              // ダメージ
     _outData._commonData._speed               = commonJson.value("speed", 0.0f);               // 速度
     _outData._commonData._acceleration        = commonJson.value("acceleration", 0.0f);        // 加速度
-    _outData._commonData._range               = commonJson.value("range", 0.0f);               // 射程
+    //_outData._commonData._range               = commonJson.value("range", 0.0f);               // 射程
     _outData._commonData._penetrationsCount   = commonJson.value("penetrationsCount", 0);      // 貫通可能回数
     _outData._commonData._collisionSize       = commonJson.value("collisionSize", 0.0f);       // 当たり判定
     _outData._commonData._gravityScale        = commonJson.value("gravityScale", 0.0f);        // 重力
@@ -330,18 +336,18 @@ bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::
 //* true : 読みとり成功
 //* false : 読みとり失敗
 //*----------------------------------------------------------------------------------------
-bool WeaponDataManager::LoadMovementData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+bool WeaponDataManager::LoadMovementData(const nlohmann::json& _json, BulletData::Definition& _outData)
 {
     const std::string type =
         _json.value("type", "LINEAR");
 
     if (type == "LINEAR")
     {
-        _outData._moveData.emplace<LinearMoveData>();
+        _outData._moveData.emplace<LinearMovementConfig>();
     }
     else if (type == "HOMING")
     {
-        auto& homing                = _outData._moveData.emplace<HomingMoveData>();
+        auto& homing                = _outData._moveData.emplace<HomingMovementConfig>();
         homing._turnSpeed           = _json.value("turnSpeed", 0.0f);
         homing._targetingDuration   = _json.value("targetingDuration", 0.0f);
         homing._targetingStartDelay = _json.value("targetingStartDelay", 0.0f);
@@ -363,7 +369,7 @@ bool WeaponDataManager::LoadMovementData(const nlohmann::json& _json, BulletData
 //* true : 読みとり成功
 //* false : 読みとり失敗
 //*----------------------------------------------------------------------------------------
-bool WeaponDataManager::LoadHitData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+bool WeaponDataManager::LoadHitData(const nlohmann::json& _json, BulletData::Definition& _outData)
 {
     using namespace BulletData;
 
@@ -371,19 +377,32 @@ bool WeaponDataManager::LoadHitData(const nlohmann::json& _json, BulletData::Bul
 
     if (type == "DIRECT")
     {
-        auto& direct                = _outData._hitData.emplace<DirectHitData>();
+        auto& direct                = _outData._hitData.emplace<DirectHitConfig>();
         direct._decalMaterialTag    = _json.value("decalMaterialTag", "");          // デカールタグ
         direct._hitEffectTag        = _json.value("hitEffectTag", "");              // ヒットエフェクトタグ
+        
+        std::string environmentResponseStr = _json.value("environmentResponse", "");   // 衝突応答
+        const auto environmentIt = g_EnvironmentResponenseMap.find(environmentResponseStr);
+        // 未定義
+        if (environmentIt == g_EnvironmentResponenseMap.end()){
+            return false;
+        }
+        direct._environmentResponse = environmentIt->second;
     }
     else if (type == "EXPLOSION")
     {
-        auto& explosion                     = _outData._hitData.emplace<ExplosionHitData>();
+        auto& explosion                     = _outData._hitData.emplace<ExplosionHitConfig>();
         explosion._decalMaterialTag         = _json.value("decalMaterialTag", "");             // デカールタグ
         explosion._hitEffectTag             = _json.value("hitEffectTag", "");                 // ヒットエフェクトタグ
         explosion._explosionRadius          = _json.value("explosionRadius", 0.0f);            // 爆発半径 
         explosion._explosionEffectHandleTag = _json.value("explosionEffectTag", "");           // 爆発エフェクトタグ
         explosion._explosionEffectAliveTime = _json.value("explosionEffectAliveTime", 1.0f);   // 爆発エフェクトの生存時間（1.0でそのまま）
         explosion._isSmoke                  = _json.value("isSmoke", false);                   // 煙が出るか
+
+        LoadVEC3Data(_json, "expLightColor", explosion._expLightColor);                        // 爆発時のライトカラー
+        explosion._expLightDuration         = _json.value("expLightDuration", 0.0f);           // 爆発時のライト持続時間
+        explosion._expLightIntensity        = _json.value("expLightIntensity", 0.0f);          // 爆発時のライト強度
+
     }
     else
     {
@@ -404,34 +423,49 @@ bool WeaponDataManager::LoadHitData(const nlohmann::json& _json, BulletData::Bul
 //* true : 読みとり成功
 //* false : 読みとり失敗
 //*----------------------------------------------------------------------------------------
-bool WeaponDataManager::LoadVisualData(const nlohmann::json& _json, BulletData::BulletDataBase& _outData)
+bool WeaponDataManager::LoadVisualData(const nlohmann::json& _json, BulletData::Definition& _outData)
 {
     using namespace BulletData;
 
-    const std::string archetype = _json.value("type", "BILLBOARD");
+    const std::string archetype   = _json.value("type", "BILLBOARD");
 
     if (archetype == "BILLBOARD")
     {
-        _outData._visualData._visualArchetype = BULLET_VISUAL_ARCHETYPE::BILLBOARD;
+        _outData._commonVisualData._visualArchetype = BULLET_VISUAL_ARCHETYPE::BILLBOARD;
     }
     else if (archetype == "MODEL")
     {
-        _outData._visualData._visualArchetype = BULLET_VISUAL_ARCHETYPE::MODEL;
+        _outData._commonVisualData._visualArchetype = BULLET_VISUAL_ARCHETYPE::MODEL;
     }
     else
     {
         return false;
     }
 
-    _outData._visualData._bulletMaterialTag = _json.value("bulletMaterialTag", "");     // 弾そのもののマテリアル
-    _outData._visualData._trailDrawTime     = _json.value("trailDrawTime", 0);          // トレイルの有無
-    _outData._visualData._trailWidth = _json.value("trailWidth", 0.0f);                 // トレイルの幅
-    _outData._visualData._enableFlightSmoke = _json.value("enableFlightSmoke", false);  // 飛行煙の有無
-    _outData._visualData._smokeInterval     = _json.value("smokeInterval", 0.05f);      // 飛行煙の間隔
-    _outData._visualData._smokeEffectTag    = _json.value("smokeEffectTag", "");        // 煙エフェクトのタグ
-    LoadVEC3Data(_json, "trailColor", _outData._visualData._trailColor);                // トレイルカラー
-    LoadVEC3Data(_json, "scale", _outData._visualData._scale);                          // 弾の大きさ
+    _outData._commonVisualData._bulletMaterialTag = _json.value("bulletMaterialTag", "");     // 弾そのもののマテリアル
+    _outData._commonVisualData._trailDrawTime     = _json.value("trailDrawTime", 0);          // トレイルの有無
+    _outData._commonVisualData._trailWidth        = _json.value("trailWidth", 0.0f);          // トレイルの幅
+    _outData._commonVisualData._enableFlightSmoke = _json.value("enableFlightSmoke", false);  // 飛行煙の有無
+    _outData._commonVisualData._smokeInterval     = _json.value("smokeInterval", 0.05f);      // 飛行煙の間隔
+    _outData._commonVisualData._smokeSize         = _json.value("smokeSize", 0.0f);           // 飛行煙のサイズ
+    _outData._commonVisualData._smokeEffectTag    = _json.value("smokeEffectTag", "");        // 煙エフェクトのタグ
+    LoadVEC3Data(_json, "trailColor", _outData._commonVisualData._trailColor);                // トレイルカラー
+    LoadVEC3Data(_json, "scale", _outData._commonVisualData._scale);                          // 弾の大きさ
 
+
+    //*****************************************************************************************
+    //						カスタムデータの読み込み
+    //*****************************************************************************************
+    const nlohmann::json& customJson = _json["custom"];
+    const std::string custom_type = customJson.value("type", "");
+
+    if (custom_type == "ScaleLerp")
+    {
+        auto& customVisual = _outData._customVisualData.emplace<ScaleLerpVisualConfig>();
+        LoadVEC3Data(customJson, "startScale", customVisual._startScale);                // 弾の大きさ
+        LoadVEC3Data(customJson, "endScale", customVisual._endScale);                    // 弾の大きさ
+        customVisual._duration = customJson.value("duration", 0.0);                            // 煙エフェクトのタグ
+    }
     return true;
 }
 

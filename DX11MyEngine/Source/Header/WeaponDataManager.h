@@ -71,19 +71,19 @@ private:
     /// <returns></returns>
     bool LoadBulletData(
         const nlohmann::json& json,
-        BulletData::BulletDataBase& outData);    
+        BulletData::Definition& outData);    
     
     bool LoadMovementData(
         const nlohmann::json& json,
-        BulletData::BulletDataBase& outData);
+        BulletData::Definition& outData);
         
     bool LoadHitData(
         const nlohmann::json& json,
-        BulletData::BulletDataBase& outData);
+        BulletData::Definition& outData);
 
     bool LoadVisualData(
         const nlohmann::json& json,
-        BulletData::BulletDataBase& outData);
+        BulletData::Definition& outData);
 
     void LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag, VECTOR3::VEC3& _outData);
 };

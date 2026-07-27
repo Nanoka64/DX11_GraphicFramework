@@ -1,29 +1,29 @@
 {
   "level": 0,
-  "name": "ART-26",
-  "bulletMaxNum": 120,
+  "name": "TEST",
+  "bulletMaxNum": 300,
   "bulletSimultaneousNum": 1,
-  "fireRate": 12.0,
+  "fireRate": 60.0,
   "reloadTime": 1.5,
-  "accuracy": 0.03,
+  "accuracy": 0.1,
   "zoomLength": 1.0,
   "isLaserSight": true,
   "soundID": 0,
-  "muzzleFlashEffectTag" : "MuzzleEffect_01",
-  "muzzleFlashEffectScale" :  [1.0, 1.0, 1.0],
+  "muzzleFlashEffectTag" : "",
+  "muzzleFlashEffectScale" : [0.5, 0.5, 0.5],
   "bulletType": "NORMAL",
   "bulletParam": 
   {
     "common" :  
     {
-      "aliveFrame" : 52,
-      "speed": 228.0,
-      "damage": 35.0,
+      "aliveFrame" : 150,
+      "speed": 40.0,
+      "damage": 1.0,
       "acceleration": 0.0,
       "penetrationsCount": 0,
       "collisionSize": 0.0,
       "gravityScale": 0.0,
-      "knockbackForce" : 4.0,
+      "knockbackForce" : 0.0,
       "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
     },
     
@@ -35,30 +35,30 @@
     "hit" : 
     {
       "type" : "DIRECT",
-      "decalMaterialTag" : "Decal_BulletHole",
-      "hitEffectTag" : "BulletHit_Standard",
-      "environmentResponse" : "BOUNCE"
+      "decalMaterialTag" : "",
+      "hitEffectTag" : "",
+      "environmentResponse" : "SLIDE"
     },
 
     "visual" :  
     {
       "type" : "BILLBOARD",
-      "bulletMaterialTag" : "Bullet_01",
-      "trailDrawTime" : 2,
-      "trailWidth" : 1,
+      "bulletMaterialTag" : "Flame_01",
+      "trailDrawTime" : 0,
+      "trailWidth" : 3.0,
       "enableFlightSmoke" : false,
       "smokeInterval" : 0.0,              
       "smokeSize" : 0.0,                     
       "smokeEffectTag" : "",
-      "trailColor" : [10.0, 10.0, 5.0],
-      "scale" :  [0.15, 0.15, 0.15],
+      "trailColor" : [10.0, 1.0, 3.0],
+      "scale" : [0.1,0.1, 0.1],
 
       "custom" : 
       {
-        "type" : "",
+        "type" : "ScaleLerp",
         "startScale" : [0.0,0.0, 0.0],
-        "endScale" : [0.0, 0.0, 0.0],
-        "duration" : 0.0
+        "endScale" : [12.0, 12.0, 12.0],
+        "duration" : 3.0
       }
     }
   }

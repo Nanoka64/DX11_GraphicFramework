@@ -1,31 +1,65 @@
 {
-  "level": 5,
+  "level": 0,
   "name": "スティンガーK41",
-  "bulletMaxNum": 6,
+  "bulletMaxNum": 7,
   "bulletSimultaneousNum": 1,
   "fireRate": 0.5,
   "reloadTime": 2.5,
-  "accuracy": 0.00,
-  "zoomLength": 2.5,
-  "isLaserSight": false,
+  "accuracy": 0.0,
+  "zoomLength": 3.0,
+  "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_01",
-  "muzzleFlashEffectScale" : [2.0, 2.0, 2.0],
+  "muzzleFlashEffectScale" :  [2.0, 2.0, 2.0],
   "bulletType": "NORMAL",
-  "bulletParam": {
-    "damage": 250.0,
-    "damageDistAttenuationRate": 0.5,
-    "speed": 600.0,
-    "acceleration": 0.0,
-    "range": 2500.0,
-    "penetrationsCount": 5,
-    "collisionSize": 0.0,
-    "gravityScale": 10.0,
-    "knockbackForce" : 120.0,
-    "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
-    "bulletMaterialTag" : "Bullet_03",
-    "decalMaterialTag" : "Decal_BulletHole",
-    "hitEffectTag" : "BulletHit_Standard",
-    "scale" : [0.25, 0.25, 0.25]
+  "bulletParam": 
+  {
+    "common" :  
+    {
+      "aliveFrame" : 60,
+      "speed": 700.0,
+      "damage": 250.0,
+      "acceleration": 0.0,
+      "penetrationsCount": 6,
+      "collisionSize": 0.0,
+      "gravityScale": 0.0,
+      "knockbackForce" : 4.0,
+      "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
+    },
+    
+    "movement" :
+    {
+      "type" : "LINEAR"
+    },
+    
+    "hit" : 
+    {
+      "type" : "DIRECT",
+      "decalMaterialTag" : "Decal_BulletHole",
+      "hitEffectTag" : "BulletHit_Standard",
+      "environmentResponse" : "PENETRATE"
+    },
+
+    "visual" :  
+    {
+      "type" : "BILLBOARD",
+      "bulletMaterialTag" : "Bullet_03",
+      "trailDrawTime" : 20,
+      "trailWidth" : 1.0,
+      "enableFlightSmoke" : true,
+      "smokeInterval" : 0.05,              
+      "smokeSize" : 0.5,                     
+      "smokeEffectTag" : "Smoke_03",
+      "trailColor" : [10.0, 10.0, 10.0],
+      "scale" :  [0.25, 0.25, 0.25],
+
+      "custom" : 
+      {
+        "type" : "",
+        "startScale" : [0.0,0.0, 0.0],
+        "endScale" : [0.0, 0.0, 0.0],
+        "duration" : 0.0
+      }
+    }
   }
 }

@@ -332,7 +332,7 @@
 ////* _pParam : 弾のパラメータ 
 ////* [返値]なし
 ////*----------------------------------------------------------------------------------------
-//void NormalBullet::Setup(const BulletData::BulletDataBase* _pParam)
+//void NormalBullet::Setup(const BulletData::Definition* _pParam)
 //{
 //    m_pWeaponData = _pParam;
 //
@@ -373,7 +373,7 @@
 ////* [返値]
 ////* 爆発弾のデータ 
 ////*----------------------------------------------------------------------------------------
-//const BulletData::BulletDataBase* NormalBullet::get_Parameter()const
+//const BulletData::Definition* NormalBullet::get_Parameter()const
 //{
-//    return static_cast<const BulletData::BulletDataBase*>(m_pWeaponData);
+//    return static_cast<const BulletData::Definition*>(m_pWeaponData);
 //}

@@ -255,6 +255,8 @@ void c_Title_SoldierSelect::DrawWeaponInfo(const WeaponData::GunWeaponData* weap
 	const auto& baseBulletData = weaponData->_bulletData;
 	const auto& commonData = baseBulletData._commonData;
 
+	float range = commonData._speed * commonData._lifeTime;
+
 	/* 各パラメータの変換 */
 	std::wstring laserSightStr = weaponData->_isLaserSight ? L"装備" : L"----";																		// レーザーサイト
 	std::wstring zoomStr = weaponData->_zoomLength > 1.0f ? FormatFloat(weaponData->_zoomLength) + L"倍" : L"----";									// ズーム
@@ -262,7 +264,7 @@ void c_Title_SoldierSelect::DrawWeaponInfo(const WeaponData::GunWeaponData* weap
 	std::wstring speedStr = L"秒速" + FormatFloat(commonData._speed) + L"m";																	// 弾速
 	std::wstring penetrationsStr = commonData._penetrationsCount > 0 ? std::to_wstring(commonData._penetrationsCount) + L"回" : L"なし";	// 貫通可能回数
 	std::wstring reloadTimeStr = FormatFloat(weaponData->_reloadTime) + L"秒";																		// リロード時間
-	std::wstring rangeStr = FormatFloat(commonData._range) + L"m";																				// 射程距離
+	std::wstring rangeStr = FormatFloat(range) + L"m";																				// 射程距離
 	std::wstring accuracyStr;																				// 精度
 
 	if (weaponData->_accuracy <= 0.01f)accuracyStr = L"S";
@@ -286,7 +288,7 @@ void c_Title_SoldierSelect::DrawWeaponInfo(const WeaponData::GunWeaponData* weap
 		using T = std::decay_t<decltype(arg)>; // 型を推論
 
 		// 爆発弾の場合のみ、爆発半径の文字列を追加する
-		if constexpr (std::is_same_v<T, BulletData::ExplosionHitData>) {
+		if constexpr (std::is_same_v<T, BulletData::ExplosionHitConfig>) {
 			extraLabelStr = L"爆発半径：";
 			extraValueStr = FormatFloat(arg._explosionRadius, 1) + L"m";
 		}

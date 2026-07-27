@@ -324,7 +324,7 @@
 ////* [à¯êî]Ç»Çµ
 ////* [ï‘íl]Ç»Çµ
 ////*----------------------------------------------------------------------------------------
-//void ExplosionBullet::Setup(const BulletData::BulletDataBase* _pParam)
+//void ExplosionBullet::Setup(const BulletData::Definition* _pParam)
 //{
 //    if (m_pOwner.expired())return;
 //    auto owner = m_pOwner.lock();

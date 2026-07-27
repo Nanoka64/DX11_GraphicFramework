@@ -1,31 +1,65 @@
 {
-  "level": 5,
+  "level": 0,
   "name": "ヘクターG3",
   "bulletMaxNum": 28,
   "bulletSimultaneousNum": 3,
   "fireRate": 2.5,
   "reloadTime": 1.7,
   "accuracy": 0.05,
-  "zoomLength": 1.4,
+  "zoomLength": 1.5,
   "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_01",
-  "muzzleFlashEffectScale" : [2.5, 2.5, 2.5],
+  "muzzleFlashEffectScale" :  [2.5, 2.5, 2.5],
   "bulletType": "NORMAL",
-  "bulletParam": {
-    "damage": 60.0,
-    "damageDistAttenuationRate": 0.5,
-    "speed": 300.0,
-    "acceleration": 0.0,
-    "range": 300.0,
-    "penetrationsCount": 3,
-    "collisionSize": 0.0,
-    "gravityScale": 0.0,
-    "knockbackForce" : 20.0,
-    "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"],
-    "bulletMaterialTag" : "Bullet_02",
-    "decalMaterialTag" : "Decal_BulletHole",
-    "hitEffectTag" : "BulletHit_Standard",
-    "scale" : [0.7, 0.7, 0.7]
+  "bulletParam": 
+  {
+    "common" :  
+    {
+      "aliveFrame" : 60,
+      "speed": 300.0,
+      "damage": 60.0,
+      "acceleration": 0.0,
+      "penetrationsCount": 3,
+      "collisionSize": 0.0,
+      "gravityScale": 0.0,
+      "knockbackForce" : 10.0,
+      "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
+    },
+    
+    "movement" :
+    {
+      "type" : "LINEAR"
+    },
+    
+    "hit" : 
+    {
+      "type" : "DIRECT",
+      "decalMaterialTag" : "Decal_BulletHole",
+      "hitEffectTag" : "BulletHit_Standard",
+      "environmentResponse" : "BOUNCE"
+    },
+
+    "visual" :  
+    {
+      "type" : "BILLBOARD",
+      "bulletMaterialTag" : "Bullet_02",
+      "trailDrawTime" : 10,
+      "trailWidth" : 3.0,
+      "enableFlightSmoke" : false,
+      "smokeInterval" : 0.0,              
+      "smokeSize" : 0.0,                     
+      "smokeEffectTag" : "",
+      "trailColor" : [10.0, 10.0, 10.0],
+      "scale" :  [0.7, 0.7, 0.7],
+
+      "custom" : 
+      {
+        "type" : "",
+        "startScale" : [0.0,0.0, 0.0],
+        "endScale" : [0.0, 0.0, 0.0],
+        "duration" : 0.0
+      }
+    }
   }
 }
