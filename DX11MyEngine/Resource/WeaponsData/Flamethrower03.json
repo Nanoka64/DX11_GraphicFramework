@@ -5,7 +5,7 @@
   "bulletSimultaneousNum": 1,
   "fireRate": 60.0,
   "reloadTime": 1.5,
-  "accuracy": 0.1,
+  "accuracy": 0.0,
   "zoomLength": 1.0,
   "isLaserSight": true,
   "soundID": 0,

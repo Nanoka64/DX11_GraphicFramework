@@ -130,24 +130,31 @@ void BoxCollider::Update(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void BoxCollider::Draw(RendererEngine &renderer)
 {
-    if (m_IsDrawDebugMesh == false)return;
+	if (m_IsDrawDebugMesh == false || m_pBoxMesh == nullptr)return;
 
-    auto pContext = renderer.get_DeviceContext();
-    XMMATRIX localMat = XMMatrixIdentity();
+	auto owner = m_pOwner.lock();
+	if (!owner)return;
 
-    auto transform = m_pOwner.lock()->get_Transform().lock();
-    VEC3 ownerPos = transform->get_VEC3ToPos();
+	auto transform = owner->get_Transform().lock();
+	if (!transform)return;
 
-    XMVECTOR scl = m_Size;
-    XMVECTOR pos = ownerPos + m_Center; // 中心位置のオフセットを足す
+	// CollisionManagerと同じ中心座標を使用する
+	const VEC3 colliderCenter = transform->get_VEC3ToPos() + m_Center;
 
-    XMMATRIX mtxS = XMMatrixScalingFromVector(scl);
-    XMMATRIX mtxT = XMMatrixTranslationFromVector(pos);
+	// m_Sizeは判定側では半サイズとして使用されるため、描画時は全体の大きさに変換する
+	const VEC3 colliderFullSize = m_Size * 2.0f;
 
-    localMat = transform->get_ExcludingRotWorldMtx(mtxS, mtxT);
+	const XMMATRIX scaleMtx = XMMatrixScaling(
+		colliderFullSize.x,
+		colliderFullSize.y,
+		colliderFullSize.z);
+	const XMMATRIX translationMtx = XMMatrixTranslation(
+		colliderCenter.x,
+		colliderCenter.y,
+		colliderCenter.z);
 
-    // メッシュ表示
-    m_pBoxMesh->Draw(renderer, localMat);
+	// 現在の衝突判定と同じ、回転を含まないAABBとして表示する
+	m_pBoxMesh->Draw(renderer, scaleMtx * translationMtx);
 }
 
 

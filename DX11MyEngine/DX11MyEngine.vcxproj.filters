@@ -22,12 +22,6 @@
     <Filter Include="HLSL\HEAD">
       <UniqueIdentifier>{f5a48783-a24c-4e7a-a256-732187e33055}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\NotUsed">
-      <UniqueIdentifier>{1c0f11d1-07fb-4aae-8efa-2b848e834433}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\NotUsed\TestScene">
-      <UniqueIdentifier>{bb0cec7b-ef20-4c49-a09e-a43dd20746dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="memo">
       <UniqueIdentifier>{c73a07c9-11ad-455c-bdc6-e65eda9d600d}</UniqueIdentifier>
     </Filter>

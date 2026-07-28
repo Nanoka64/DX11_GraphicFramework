@@ -22,7 +22,7 @@ Collider::Collider(std::weak_ptr<GameObject> pOwner, int updateRank)
     m_IsTrigger(false),
     m_IsHit(false),
     m_IsStatic(false),
-    m_IsDrawDebugMesh(false),
+    m_IsDrawDebugMesh(true),
     m_Center(VEC3()),
     m_ColliderType(COLLIDER_TYPE::BOX),
     m_CategoryBits(COLLISION_CATEGORY::NONE),

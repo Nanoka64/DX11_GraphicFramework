@@ -143,9 +143,9 @@ void Camera3D::CamraControl(RendererEngine& renderer)
 	m_Angle_H -= (float)lX * sensitivity;
 	m_Angle_V += (float)lY * sensitivity;
 
-	if (m_Angle_V >= 1.5f)	// ‰º‚ðŒü‚­
+	if (m_Angle_V >= 1.57f)	// ‰º‚ðŒü‚­
 	{
-		m_Angle_V = 1.5f;
+		m_Angle_V = 1.57f;
 	}
 	if (m_Angle_V <= -1.3f)	// ã
 	{

@@ -160,7 +160,7 @@ void EnemyController::LateUpdate(RendererEngine& renderer)
 	strPos.y += 5.0f;
 	std::string stateName = EnemyData::g_AntStateNames[m_StateMachine.get_CrntStateIndex()];
 
-	Master::m_pDirectWriteManager->DrawString3D(stateName, strPos, "White_20_STD");
+	//Master::m_pDirectWriteManager->DrawString3D(stateName, strPos, "White_20_STD");
 
 	// ¢ŠE‚Ì— ‘¤‚É—‰º‚µ‚½ê‡
 	if (newPos.y < -100.0f)

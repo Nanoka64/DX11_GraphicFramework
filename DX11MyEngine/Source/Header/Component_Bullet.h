@@ -26,7 +26,7 @@ private:
     //std::array<std::unique_ptr<class IBulletBehaviour>,
     //    static_cast<size_t>(BulletData::BULLET_BEHAVIOUR_TYPE::NUM)> m_Behaviours;
     //class IBulletBehaviour* m_pCurrentBehaviour = nullptr;
-    float m_CrntSpeed;
+    //float m_CrntSpeed;
 public:
 	Bullet(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	virtual ~Bullet() = default;

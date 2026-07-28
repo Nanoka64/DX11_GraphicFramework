@@ -37,8 +37,7 @@ Bullet::Bullet(std::weak_ptr<GameObject> pOwner, int updateRank) :
     m_pDefinition(nullptr),
     m_pMyTransform(nullptr),
     //m_pCurrentBehaviour(nullptr),
-    m_CrntPenetrationCount(0),
-    m_CrntSpeed(0.0f)
+    m_CrntPenetrationCount(0)
 {
     this->set_Tag("Bullet");
 }
@@ -69,10 +68,11 @@ void Bullet::Update(RendererEngine& renderer)
 
     MoveParam param;
     param._moveDirection = m_MoveDir;
-    param._moveSpeed = m_pDefinition->_commonData._speed;
+    param._moveSpeed = m_Runtime._currentSpeed;
     param._acceleration = m_pDefinition->_commonData._acceleration;
     param._gravity = m_pDefinition->_commonData._gravityScale;
-
+    
+    m_PrevPos = crntPos;
 
     // 移動処理
     moveComp->set_MoveParam(param);	// 移動ロジックにパラメータを渡す
@@ -192,7 +192,8 @@ void Bullet::LateUpdate(RendererEngine& renderer)
     {
         VEC3 hitPoint = hitInfo.get_HitPoint();
         VEC3 normal = hitInfo.get_HitNormal().Normalize();
-
+        
+        m_PrevPos = hitPoint;
 
         // トランスフォームの設定
         m_Runtime._transform = m_pMyTransform;
@@ -209,6 +210,7 @@ void Bullet::LateUpdate(RendererEngine& renderer)
                     renderer);
             },
             m_pDefinition->_hitData);
+            
 
         switch (result._response)
         {
@@ -224,6 +226,12 @@ void Bullet::LateUpdate(RendererEngine& renderer)
             /* 貫通数増やす */
         case BULLET_HIT_RESPONSE::PENETRATE_COUNT:
             m_CrntPenetrationCount++;
+
+            // 貫通可能回数を超えた
+            if(m_CrntPenetrationCount >= m_pDefinition->_commonData._penetrationsCount)
+            {
+                Deactivate(BULLET_END_REASON::HIT);
+            }
             break;
 
             /* 壁沿い移動 */
@@ -231,7 +239,6 @@ void Bullet::LateUpdate(RendererEngine& renderer)
         {
             // 衝突点に位置を合わせる
             m_pMyTransform->set_Pos(hitPoint);
-            m_PrevPos = hitPoint;
 
             VEC3 slideDir =
                 m_MoveDir - normal * VEC3::Dot(m_MoveDir, normal);
@@ -329,10 +336,9 @@ void Bullet::Setup(
     m_MoveDir = m_pMyTransform->get_WorldForward().Normalize();
     
     // 速度
-    m_CrntSpeed = _pData->_commonData._speed;
+    m_Runtime._currentSpeed = _pData->_commonData._speed;
     m_CrntPenetrationCount = 0;
 
-    m_Runtime._currentSpeed = m_CrntSpeed;
 
     m_Runtime._startRotZ = Master::m_pRandomManager->GetFloatRandom(-3.0f,3.0f);
 }
@@ -375,5 +381,12 @@ void Bullet::Reset()
     m_Runtime.Reset();
     auto moveLogic = m_pOwner.lock()->get_Component<MoveLogic>();
     moveLogic->ParamReset();
+
+    // ビルボードのカラーを元に戻す
+    if (m_pBillboardRenderer != nullptr)
+    {
+        m_pBillboardRenderer->set_ColorFactor(1.0f);
+    }
+
     m_pBillboardRenderer = nullptr;
 }

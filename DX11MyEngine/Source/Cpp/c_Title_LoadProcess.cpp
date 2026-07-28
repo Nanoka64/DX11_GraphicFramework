@@ -104,6 +104,23 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
         return;
     }
 
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Cursor_L.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Cursor_R.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Decoration01.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/ConfigBackGround.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Frame08.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Frame07.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Frame10.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/Manual.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/Radar.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/HPBar_Ver2_ai.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/BulletGage.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/GunIcon_AR_01.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/GunIcon_RL_01.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/MissionCleared.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/UI/MissionFailed.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Particle04_bokashi_hard.png");
+    Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Title/Game_Load_01.png");
 
     // CSVからマテリアルデータの読み込み
     if (!Master::m_pResourceManager->ImportCSV_AllMaterialData("Resource/Excel_Param/MaterialParam.csv"))

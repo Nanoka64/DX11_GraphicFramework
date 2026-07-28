@@ -71,7 +71,6 @@ int Ant_AT_AttackAcidState::Update(class EnemyController* pOwner)
 
 		VEC3 targetDir = (targetPos - myPos).Normalize();	// –Ú•W•ûŒü
 
-
 		// ˆÚ“®‚Í‚³‚¹‚¸‚ÉA–Ú•W‚Ö‚Ì•ûŒü‚¾‚¯Œü‚©‚¹‚é
 		MoveParam movePram;
 		movePram._moveSpeed = 1.0f;

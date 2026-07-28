@@ -247,6 +247,7 @@ namespace BulletBehaviour
 
 
         VEC3 hitNormal = _collision.get_HitNormal();    // 衝突相手の法線
+        VEC3 hitPoint = _collision.get_HitPoint();      // 衝突位置
 
         // 水平方向の向きを求める
         float yaw = atan2(hitNormal.x, hitNormal.z);
@@ -285,7 +286,7 @@ namespace BulletBehaviour
 
             auto obj = MeshFactory::CreateDecal(decal);
             obj->get_Component<DecalRenderer>()->Start(_renderer);
-            obj->get_Transform().lock()->set_Pos(pos);
+            obj->get_Transform().lock()->set_Pos(hitPoint);
             obj->get_Transform().lock()->set_Scale(scale);
             obj->get_Transform().lock()->set_RotateToRad(pitch, yaw, angleZ);
             obj->set_Tag("BulletHole");
@@ -306,14 +307,14 @@ namespace BulletBehaviour
 
             // エフェクトパラメータ
             Master::m_pEffectManager->SetScaleEffect(effectHandle, effectScale.x, effectScale.y, effectScale.z);
-            Master::m_pEffectManager->SetPositionEffect(effectHandle, pos.x, pos.y, pos.z);
+            Master::m_pEffectManager->SetPositionEffect(effectHandle, hitPoint.x, hitPoint.y, hitPoint.z);
             Master::m_pEffectManager->SetRotationEffect(effectHandle, effectRot.x, effectRot.y, effectRot.z);
         }
 
         //*****************************************************************************************
         //						ヒットサウンド再生
         //*****************************************************************************************
-        Master::m_pSoundManager->Play_RandPitch_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01), pos, 40, 300);
+        Master::m_pSoundManager->Play_RandPitch_3D(SOUND_TYPE::SE, SOUND_ID_TO_INT(SOUND_ID::ROCOCHET01), hitPoint, 40, 300);
 
         return result;
     }
@@ -360,6 +361,7 @@ namespace BulletBehaviour
 
 
         VEC3 hitNormal = _collision.get_HitNormal();    // 衝突相手の法線
+        VEC3 hitPoint = _collision.get_HitPoint();      // 衝突位置
 
         // 水平方向の向きを求める
         float angleY = atan2(hitNormal.x, hitNormal.z);
@@ -389,7 +391,7 @@ namespace BulletBehaviour
 
             // 爆発煙
             Master::m_pEffectManager->SetScaleEffect(exp_smoke_handle, effectExpSize, effectExpSize, effectExpSize);
-            Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, crntPos.x, crntPos.y, crntPos.z);
+            Master::m_pEffectManager->SetPositionEffect(exp_smoke_handle, hitPoint.x, hitPoint.y, hitPoint.z);
             Master::m_pEffectManager->SetRotationEffect(exp_smoke_handle, 0.0f, 0.0f, 0.0f);
 
             Master::m_pEffectManager->SetDynamicParameter(exp_smoke_handle, 1, _hitData._explosionEffectAliveTime); // 生存時間を変更
@@ -397,7 +399,7 @@ namespace BulletBehaviour
 
         // 爆発
         Master::m_pEffectManager->SetScaleEffect(exp_handle, effectExpSize, effectExpSize, effectExpSize);
-        Master::m_pEffectManager->SetPositionEffect(exp_handle, crntPos.x, crntPos.y, crntPos.z);
+        Master::m_pEffectManager->SetPositionEffect(exp_handle, hitPoint.x, hitPoint.y, hitPoint.z);
         //Master::m_pEffectManager->SetRotationEffect(exp_handle, expRot.x, expRot.y, expRot.z);
         // 動的パラメータの設定
         Master::m_pEffectManager->SetDynamicParameter(exp_handle, 1, _hitData._explosionEffectAliveTime); // 生存時間を変更
@@ -413,13 +415,13 @@ namespace BulletBehaviour
         desc._endIntensity = 0.0f;
         desc._duration = _hitData._expLightDuration;
         auto handle = Master::m_pLightManager->PlayTransientPointLight(
-            crntPos,
+            hitPoint,
             desc);
 
 
         unsigned mask = _common._collisionMask;;
         // 範囲内チェック
-        auto targets = Master::m_pCollisionManager->CheckSphere(crntPos, _hitData._explosionRadius, mask);
+        auto targets = Master::m_pCollisionManager->CheckSphere(hitPoint, _hitData._explosionRadius, mask);
 
         // 範囲内の全員にダメージ
         for (auto& target : targets)
@@ -438,7 +440,7 @@ namespace BulletBehaviour
                     auto targetTransform = obj->get_Transform().lock();
                     VEC3 targetPos = targetTransform->get_VEC3ToPos();
 
-                    VECTOR3::VEC3 knockbackDir = targetPos - crntPos;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
+                    VECTOR3::VEC3 knockbackDir = targetPos - hitPoint;   // 爆心地から外（衝突オブジェクト）へ向かうベクトル
                     knockbackDir = knockbackDir.Normalize();
 
                     // 少し上（Y軸）に向かせることで、放物線を描いて飛ばせる
