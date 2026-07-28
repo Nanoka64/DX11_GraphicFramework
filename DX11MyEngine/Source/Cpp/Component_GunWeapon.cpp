@@ -404,7 +404,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
     // はるか遠くにある仮想のターゲット位置を計算
     float targetDistance = 1000.0f;
-    XMVECTOR targetPos = XMVectorMultiplyAdd(-lookDir, XMVectorReplicate(targetDistance), vCamPos);
+    XMVECTOR targetPos = XMVectorMultiplyAdd(lookDir, XMVectorReplicate(targetDistance), vCamPos);
 
 	VEC3 firePos;
 	firePos.x = pos.x + (camForward.m128_f32[0] * 2.0f);

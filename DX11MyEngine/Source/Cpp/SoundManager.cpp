@@ -365,10 +365,6 @@ bool SoundManager::Update(RendererEngine& renderer)
 		cameraLook = cameraComp->get_LookDir();
 	}
 
-	// 何故かパンが反転してしまうため
-	cameraLook = -cameraLook;
-
-
     // カメラの位置と向きからリスナーの情報を更新
     m_Listener.Position.x = cameraPos.x;
     m_Listener.Position.y = cameraPos.y;

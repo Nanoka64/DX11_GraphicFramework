@@ -507,10 +507,10 @@ void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"手前クリップ"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_SliderFloat("##NearClip", 1, &nearClip, 0.0f, 600.0f);
+        Master::m_pDebugger->DG_DragFloat("##NearClip", 1, &nearClip, 1.0f, 0.0f, 600.0f);
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"奥側クリップ"));
         Master::m_pDebugger->DG_SameLine();
-        Master::m_pDebugger->DG_SliderFloat("##FarClip", 1, &farClip,  0.0f, 30000.0f);
+        Master::m_pDebugger->DG_DragFloat("##FarClip", 1, &farClip, 1.0f, 0.0f, 30000.0f);
 
         Master::m_pDebugger->DG_BulletText(U8ToChar(u8"水平アングル"));
         Master::m_pDebugger->DG_SameLine();

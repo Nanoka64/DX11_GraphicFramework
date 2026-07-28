@@ -151,9 +151,6 @@
     <Filter Include="ソース ファイル\Game\Component">
       <UniqueIdentifier>{d5c4c426-4745-498a-9983-68356c09d097}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Component\Character">
-      <UniqueIdentifier>{c5b77df7-9a72-44d0-9b54-ab56bb2a353b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Component\Player">
       <UniqueIdentifier>{f1d6915a-5824-41c8-bd1f-817eea48205c}</UniqueIdentifier>
     </Filter>
@@ -294,6 +291,9 @@
     </Filter>
     <Filter Include="ソース ファイル\Game\Component\Weapon\Bullet\Behaviour">
       <UniqueIdentifier>{296eee15-12e9-4b1a-8b3d-f4e51edb9511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Component\Character">
+      <UniqueIdentifier>{c5b77df7-9a72-44d0-9b54-ab56bb2a353b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,7 @@ m_Fov(45.0f),
 m_NearClipDist(0.4f),
 m_FarClipDist(2000.0f),
 m_IsControl(true),
+m_CameraMode(CAMERA_MODE::TPS),
 m_Shaker()
 {
 	this->set_Tag("Camera3D"); 
@@ -80,7 +81,6 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 {
 	if (Master::m_pDataManager->get_IsPause())return;	// TODO:ポーズ中なら返す
 
-
 	m_IsControl = Master::m_pDataManager->get_IsCameraControl();
 
 	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
@@ -98,21 +98,38 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 	}
 
 	VEC3 focusObjPos = m_pFocusObject.lock()->get_Transform().lock()->get_VEC3ToPos();
-	focusObjPos += m_FocusOffset;
 
 	// 注視点を設定
 	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, CAMERA_MOVE_FACTOR);	// ガタガタする
 	//float followSpeed = 10.0f;
 	//m_FocusPoint = VEC3::Lerp(m_FocusPoint, focusObjPos, followSpeed * deltaTime);
-	m_FocusPoint = focusObjPos;
 
-	// 方向ベクトルを作る
-	VEC3 lookDir;
-	lookDir.x = m_PosOffset.x * cosf(m_Angle_V) * cosf(m_Angle_H);
-	lookDir.y = m_PosOffset.y * sinf(m_Angle_V);
-	lookDir.z = m_PosOffset.z * cosf(m_Angle_V) * sinf(m_Angle_H);
+	// 注フォーカスされるオブジェクトにオフセット位置を足したものを、注視点とする
+	m_FocusPoint = focusObjPos + m_FocusOffset;
 
-	m_CameraPos = lookDir + m_FocusPoint;
+	// 注視点からカメラへの方向ベクトルを作る
+	VEC3 focusToCamera;
+	focusToCamera.x = cosf(m_Angle_V) * cosf(m_Angle_H);
+	focusToCamera.y = sinf(m_Angle_V);
+	focusToCamera.z = cosf(m_Angle_V) * sinf(m_Angle_H);
+
+	// カメラ位置決定
+	m_CameraPos = m_FocusPoint + focusToCamera * m_PosOffset;
+
+	// そのままでは「注視点->カメラ」になっているため、反転させる
+    m_LookDir = -focusToCamera;
+
+
+	//VEC3 forward;
+	//forward.x = -cosf(m_Angle_V) * cosf(m_Angle_H);
+	//forward.y = -sinf(m_Angle_V);
+	//forward.z = -cosf(m_Angle_V) * sinf(m_Angle_H);
+
+	//forward = forward.Normalize();
+
+	//m_CameraPos = m_FocusPoint;
+	//m_FocusPoint = m_CameraPos + forward;
+	//m_LookDir = forward;
 
 	// シェイクの適用
 	if (Master::m_pDataManager->get_UserConfigData()._isCameraShake)
@@ -121,8 +138,6 @@ void Camera3D::LateUpdate(RendererEngine &renderer)
 		m_Shaker.Update(deltaTime);
 		m_CameraPos = m_Shaker.Apply(m_CameraPos);
 	}
-
-    m_LookDir = lookDir;
 
 	// カメラの位置
 	m_pOwner.lock()->get_Transform().lock()->set_Pos(m_CameraPos);

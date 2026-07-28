@@ -12,6 +12,13 @@
 // ***************************************************************************************
 class Camera3D : public IComponent
 {
+public:
+	enum class CAMERA_MODE
+	{
+		TPS,
+		FPS,
+	};
+
 private:
 	std::weak_ptr<class GameObject> m_pFocusObject;		// フォーカス対象
 	VECTOR3::VEC3 m_FocusPoint;			// 注視位置
@@ -21,7 +28,7 @@ private:
 	VECTOR3::VEC3 m_PosOffset;			// 対象からどのくらい離れて球面移動するか
 	VECTOR3::VEC3 m_FocusOffset;		// フォーカス位置のオフセット
 	Tool::VEC3_Shaker m_Shaker;			// シェイク用
-
+	CAMERA_MODE m_CameraMode;
 
 	float m_Angle_H;	// 水平方向アングル
 	float m_Angle_V;	// 垂直方向アングル

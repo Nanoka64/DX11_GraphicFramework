@@ -6,7 +6,7 @@
   "fireRate": 6.0,
   "reloadTime": 2.5,
   "accuracy": 0.05,
-  "zoomLength": 2.0,
+  "zoomLength": 1.0,
   "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_Rocket_01",

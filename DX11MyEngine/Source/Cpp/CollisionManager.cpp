@@ -593,7 +593,7 @@ std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTO
 bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class CollisionInfo* _outHitInfo)
 {
     bool isHit = false;
-    float closestDist = FLT_MIN;
+    float closestDistSq = FLT_MAX;
     CollisionInfo tempHitInfo;
 
     // 判定ループ処理
@@ -624,9 +624,9 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
         if (HitCheck_Raycast(col, trans, _ray, &distance, &tempHitInfo))
         {
             // 最小距離のコライダーを調べる
-            if (distance > 0.0f && closestDist < distance)
+            if (distance > 0.0f && distance < closestDistSq)
             {
-                closestDist = distance;
+                closestDistSq = distance;
                 isHit = true;
                 *_outHitInfo = tempHitInfo;  // 衝突情報格納
             }

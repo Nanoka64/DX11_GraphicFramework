@@ -28,7 +28,7 @@ TrailRenderer::TrailRenderer(std::weak_ptr<GameObject> pOwner, int updateRank)
 	this->set_Tag("TrailRenderer");
 
 
-	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Weak_1024.png");
+	m_pTex = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/Particle/Gradient/gradient-horizontal-mirror.png");
 }
 
 
@@ -74,7 +74,7 @@ void TrailRenderer::Start(RendererEngine &renderer)
 //* &renderer : 描画エンジンの参照
 //* [返値]なし
 //*----------------------------------------------------------------------------------------
-void TrailRenderer::Update(RendererEngine &renderer)
+void TrailRenderer::LateUpdate(RendererEngine &renderer)
 {
 	// 表示時間が0以下なら問答無用で返す
 	if (m_DrawTime <= 0)

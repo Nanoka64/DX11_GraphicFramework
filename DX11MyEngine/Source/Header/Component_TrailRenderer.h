@@ -50,7 +50,7 @@ public:
 
 
 	void Start(RendererEngine &renderer) override;		// 初期化
-	void Update(RendererEngine &renderer) override;		// 更新処理
+	void LateUpdate(RendererEngine &renderer) override;		// 更新処理
 	void Draw(RendererEngine &renderer)override;		// 描画処理
 
 	void set_Width(const float _w) { m_Width = _w; };	// 幅の設定
