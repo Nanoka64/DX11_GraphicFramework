@@ -17,7 +17,8 @@
     "common" :  
     {
       "aliveFrame" : 30,
-      "speed": 100.0,
+      "speed": 150.0,
+      "maxSpeed": 150.0,
       "damage": 30.0,
       "acceleration": 0.0,
       "penetrationsCount": 3,

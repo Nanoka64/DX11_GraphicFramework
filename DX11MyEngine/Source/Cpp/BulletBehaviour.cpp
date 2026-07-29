@@ -15,6 +15,7 @@
 #include "Component_Collider.h"
 #include "Component_Physics.h"
 #include "Component_3DCamera.h"
+#include "IMoveBehaviour.h"
 
 
 using namespace GIGA_Engine;
@@ -49,15 +50,22 @@ namespace BulletBehaviour
     //*
     //* [返値] BulletMoveResult
     //*----------------------------------------------------------------------------------------
-    BulletData::BulletMoveResult UpdateMove(
+    MoveParam UpdateMove(
         BulletData::RuntimeState& _runtime,
         const BulletData::CommonConfig& _common,
         const BulletData::LinearMovementConfig& _moveData,
         float _deltaTime)
     {
-        BulletMoveResult result;
-        _runtime._currentSpeed += _common._acceleration * _deltaTime;
-        result._velocity = _runtime._moveDirection * _runtime._currentSpeed;
+        MoveParam result;
+        //_runtime._currentSpeed += _common._acceleration * _deltaTime;
+        result._moveDirection = _runtime._moveDirection;
+        result._moveSpeed = _runtime._currentSpeed;
+        result._acceleration = _common._acceleration;
+        result._gravity = _common._gravityScale;
+        result._maxSpeed = _common._maxSpeed;
+
+        _runtime._state = BULLET_STATE::FLYING;
+
         return result;
     }
 
@@ -70,15 +78,58 @@ namespace BulletBehaviour
     //* &_moveData : 移動データ[ホーミング]
     //* _deltaTime : デルタタイム
     //*
-    //* [返値] BulletMoveResult
+    //* [返値] MoveParam
     //*----------------------------------------------------------------------------------------
-    BulletData::BulletMoveResult UpdateMove(
+    MoveParam UpdateMove(
         BulletData::RuntimeState& _runtime,
         const BulletData::CommonConfig& _common,
         const BulletData::HomingMovementConfig& _moveData,
         float _deltaTime)
     {
-        BulletMoveResult result;
+        MoveParam result;
+        result._gravity = _common._gravityScale;
+        result._moveSpeed = _runtime._currentSpeed;
+        result._moveDirection = _runtime._moveDirection;
+        result._maxSpeed = _common._maxSpeed;
+        _runtime._state = BULLET_STATE::FLYING;
+
+        // 加速開始時間か
+        if (_runtime._aliveTime >= _moveData._accelerationStartDelay)
+        {
+            result._acceleration = _common._acceleration;
+        }
+
+        // ホーミング終了時間
+        float targetingEnd =
+            _moveData._targetingStartDelay +
+            _moveData._targetingDuration;
+
+        // 追尾可能時間か
+        bool inTargetingTime =
+            _runtime._aliveTime >= _moveData._targetingStartDelay &&
+            _runtime._aliveTime < targetingEnd;
+
+        if (!inTargetingTime) {
+            return result;
+        }
+
+        const auto target = _runtime._pTarget.lock();
+        if (!target) {
+            return result;
+        }
+        const auto targetTransform = target->get_TransformConst();
+        result._targetPos = targetTransform->get_VEC3ToPos();   // 目標座標
+        result._turnSpeed = _moveData._turnSpeed;               // ターン速度
+
+        // 目標へのベクトル
+        VEC3 toTarget = result._targetPos - _runtime._transform->get_VEC3ToPos();
+        if (toTarget.LengthSq() > 0.0001f)
+        {
+            // 追尾終了後に使用する方向として保存
+            _runtime._moveDirection = toTarget.Normalize();
+            result._moveDirection = _runtime._moveDirection;
+            _runtime._state = BULLET_STATE::HOMING;
+        }
 
         return result;
     }

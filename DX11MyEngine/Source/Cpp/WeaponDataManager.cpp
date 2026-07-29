@@ -54,7 +54,7 @@ bool WeaponDataManager::Init()
     }
     m_AllWeaponsDataMap[0] = std::make_unique<GunWeaponData>(gunData);
 
-    if (LoadGunWeaponData("Resource/WeaponsData/Launcher01.json", gunData) == false){
+    if (LoadGunWeaponData("Resource/WeaponsData/Missile01.json", gunData) == false){
         assert(false);
     }
     m_AllWeaponsDataMap[1] = std::make_unique<GunWeaponData>(gunData);
@@ -269,6 +269,7 @@ bool WeaponDataManager::LoadBulletData(const nlohmann::json& _json, BulletData::
     
     _outData._commonData._damage              = commonJson.value("damage", 0.0f);              // ダメージ
     _outData._commonData._speed               = commonJson.value("speed", 0.0f);               // 速度
+    _outData._commonData._maxSpeed            = commonJson.value("maxSpeed", 0.0f);            // 最大速度
     _outData._commonData._acceleration        = commonJson.value("acceleration", 0.0f);        // 加速度
     //_outData._commonData._range               = commonJson.value("range", 0.0f);               // 射程
     _outData._commonData._penetrationsCount   = commonJson.value("penetrationsCount", 0);      // 貫通可能回数
@@ -347,10 +348,13 @@ bool WeaponDataManager::LoadMovementData(const nlohmann::json& _json, BulletData
     }
     else if (type == "HOMING")
     {
-        auto& homing                = _outData._moveData.emplace<HomingMovementConfig>();
-        homing._turnSpeed           = _json.value("turnSpeed", 0.0f);
-        homing._targetingDuration   = _json.value("targetingDuration", 0.0f);
-        homing._targetingStartDelay = _json.value("targetingStartDelay", 0.0f);
+        auto& homing                    = _outData._moveData.emplace<HomingMovementConfig>();
+        homing._turnSpeed               = _json.value("turnSpeed", 0.0f);                       // 旋回速度
+        homing._targetingDuration       = _json.value("targetingDuration", 0.0f);               // 追尾期間
+        homing._accelerationStartDelay  = _json.value("accelerationStartDelay", 0.0f);          // 発射後、加速するまでの時間
+        homing._targetingStartDelay     = _json.value("targetingStartDelay", 0.0f);             // 追尾開始するまでの時間
+        homing._lockOnRange             = _json.value("lockOnRange", 0.0f);                     // ロックオン射程
+        homing._lockOnHalfAngleDeg      = _json.value("lockOnHalfAngleDeg", 0.0f);              // ロックオン角度
     }
     else
     {

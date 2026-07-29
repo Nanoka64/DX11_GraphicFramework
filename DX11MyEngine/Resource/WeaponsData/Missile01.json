@@ -1,11 +1,11 @@
 {
   "level": 0,
-  "name": "ハウンドカノンTA-1",
+  "name": "ミサイル",
   "bulletMaxNum": 3,
   "bulletSimultaneousNum": 1,
-  "fireRate": 1.0,
+  "fireRate": 1.5,
   "reloadTime": 2.0,
-  "accuracy": 0.005,
+  "accuracy": 0.001,
   "zoomLength": 2.0,
   "isLaserSight": true,
   "soundID": 0,
@@ -16,21 +16,27 @@
   {
     "common" :  
     {
-      "aliveFrame" : 300,
-      "speed": 10.0,
-      "maxSpeed": 1000.0,
+      "aliveFrame" : 1200,
+      "speed": 1.0,
+      "maxSpeed": 100.0,
       "damage": 200.0,
       "acceleration": 100.0,
       "penetrationsCount": 0,
       "collisionSize": 0.0,
-      "gravityScale": 1.0,
+      "gravityScale": 2.0,
       "knockbackForce" : 20.0,
       "collisionMask": ["ENEMY", "BUILDING", "DESTRUCTION_BUILDING"]
     },
     
     "movement" :
     {
-      "type" : "LINEAR"
+      "type" : "HOMING",
+      "turnSpeed" : 0.1,
+      "targetingStartDelay" : 3.0,
+      "accelerationStartDelay" : 1.0,
+      "targetingDuration" : 10.0,
+      "lockOnRange" : 500.0,
+      "lockOnHalfAngleDeg" : 90.0
     },
     
     "hit" : 
@@ -53,10 +59,10 @@
       "type" : "MODEL",
       "bulletMaterialTag" : "Bullet_01",
       "trailDrawTime" : 10,
-      "trailWidth" : 1.5,
+      "trailWidth" : 1.0,
       "enableFlightSmoke" : true,
-      "smokeInterval" : 0.005,
-      "smokeSize" : 1.0,                     
+      "smokeInterval" : 0.001,
+      "smokeSize" : 0.5,                     
       "smokeEffectTag" : "Smoke_03",
       "trailColor" : [1.0, 2.0, 1.0],
       "scale" : [5.0,5.0, 5.0],

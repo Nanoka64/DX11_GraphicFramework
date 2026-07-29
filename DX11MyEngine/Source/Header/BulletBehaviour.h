@@ -2,15 +2,17 @@
 #include "ConstantBulletData.h"
 #include "CollisionInfo.h"
 
+struct MoveParam;
+
 namespace BulletBehaviour
 {
-    BulletData::BulletMoveResult UpdateMove(
+    MoveParam UpdateMove(
         BulletData::RuntimeState& _runtime,
         const BulletData::CommonConfig& _common,
         const BulletData::LinearMovementConfig& _moveData,
         float _deltaTime);
 
-    BulletData::BulletMoveResult UpdateMove(
+    MoveParam UpdateMove(
         BulletData::RuntimeState& _runtime,
         const BulletData::CommonConfig& _common,
         const BulletData::HomingMovementConfig& _moveData,

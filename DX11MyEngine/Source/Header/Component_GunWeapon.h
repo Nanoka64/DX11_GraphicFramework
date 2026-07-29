@@ -41,7 +41,7 @@ public:
 
 	std::weak_ptr<class PointLight> get_FlashPointLight() { return m_pFlashPointLight; }	// フラッシュライト取得
 	const WeaponData::GunWeaponData* get_GunWeaponData()const;		// 武器のパラメータ取得
-
+	std::weak_ptr < class GameObject >SelectHomingTarget(const VECTOR3::VEC3& _cameraPos, const VECTOR3::VEC3& _fw, float _rockOnRange, float _rockOnHalfAngleDeg);
 
 	bool get_IsNowZoom()const { return m_IsNowZoom; }								// ズームフラグの取得
 	bool get_IsStopFire()const { return m_IsStopFire; }								// 攻撃中止フラグの取得

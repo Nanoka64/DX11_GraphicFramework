@@ -18,6 +18,7 @@
     {
       "aliveFrame" : 900,
       "speed": 50.0,
+      "maxSpeed": 50.0,
       "damage": 25.0,
       "acceleration": 0.0,
       "penetrationsCount": 0,
@@ -37,13 +38,13 @@
       "type" : "EXPLOSION",
       "decalMaterialTag" : "Decal_Ant_Splash",
       "hitEffectTag" : "BulletHit_Acid",
-      "explosionRadius" : 50.0,
+      "explosionRadius" : 100.0,
       "explosionEffectTag" : "Explosion_Acid_01",
       "explosionEffectAliveTime" : 2.0,
       "isSmoke" : true,
 
       "expLightColor" : [0, 1, 0],
-      "expLightIntensity" : 30.0,
+      "expLightIntensity" : 10.0,
       "expLightDuration" : 10.0
     },
     "visual" :  

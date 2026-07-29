@@ -95,6 +95,7 @@ int Ant_AT_TrackingState::Update(class EnemyController *pOwner)
 		// 親の移動コンポーネントを使い、移動処理を行う
 		MoveParam movePram;
 		movePram._moveSpeed = pOwner->get_MoveSpeed();
+		movePram._maxSpeed = pOwner->get_MoveSpeed();
 		movePram._turnSpeed = 0.1f;
 		movePram._targetPos = targetPos;
 		auto move = pOwner->get_MoveLogicComponent();

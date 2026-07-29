@@ -104,6 +104,7 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Smoke_03.efkefc", "Smoke_03");
     LoadEffect(u"Resource/Effect/Smoke_04.efkefc", "Smoke_04");
     LoadEffect(u"Resource/Effect/Smoke_05.efkefc", "Smoke_05");
+    LoadEffect(u"Resource/Effect/Smoke_06.efkefc", "Smoke_06");
     LoadEffect(u"Resource/Effect/Fragment.efkefc", "Fragment");
     LoadEffect(u"Resource/Effect/Fragment_Octahedron.efkefc", "Fragment_Octahedron");
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");

@@ -18,6 +18,7 @@
     {
       "aliveFrame" : 180,
       "speed": 50.0,
+      "maxSpeed": 50.0,
       "damage": 25.0,
       "acceleration": 0.0,
       "penetrationsCount": 0,
@@ -46,9 +47,10 @@
       "bulletMaterialTag" : "Acid_02",
       "trailDrawTime" : 0,
       "trailWidth" : 0,
-      "enableFlightSmoke" : false,
-      "smokeInterval" : 0.0,              
-      "smokeEffectTag" : "",
+      "enableFlightSmoke" : true,
+      "smokeInterval" : 0.001,              
+      "smokeSize" : 2.0,
+      "smokeEffectTag" : "Smoke_06",
       "trailColor" : [1.0, 1.0, 1.0],
       "scale" : [2.0, 2.0, 2.0],
 

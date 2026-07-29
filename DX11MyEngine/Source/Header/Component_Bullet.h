@@ -19,7 +19,6 @@ private:
 	VECTOR3::VEC3 m_MoveDir;
     int m_CrntPenetrationCount;	// 現在の貫通数
 	const BulletData::Definition* m_pDefinition;							// 読みとり専用の弾データを持つ
-    class MyTransform* m_pMyTransform;
     BulletData::RuntimeState m_Runtime;
 
     class BillboardRenderer *m_pBillboardRenderer;

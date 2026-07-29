@@ -424,6 +424,21 @@ void GunWeapon::Fire(RendererEngine& renderer)
     // これを弾やマズルフラッシュの基準となる回転クォータニオンにする
     XMVECTOR rotQuat = XMQuaternionRotationRollPitchYaw(pitch, yaw, 0.0f);
 
+    // =====================================================================
+    // ホーミング弾の場合は対象の探索
+    // =====================================================================
+    std::weak_ptr<GameObject> homingTarget;
+    if (const auto* homing =
+        std::get_if<HomingMovementConfig>(
+            &gunParam->_bulletData._moveData))
+    {
+        homingTarget = SelectHomingTarget(
+            cameraPos,
+            fw.Normalize(),
+            homing->_lockOnRange,
+            homing->_lockOnHalfAngleDeg);
+    }
+
     // 同時発射
     for (int i = 0; i < gunParam->_bulletSimultaneousNum; i++)
     {
@@ -456,6 +471,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
 
         BulletSpawnContext spawnContext;
         spawnContext._transform = bulletTransform;
+        spawnContext._target = homingTarget;
 
         // 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
         Master::m_pBulletManager->Shot(renderer, spawnContext, gunParam->_bulletData);
@@ -484,6 +500,65 @@ void GunWeapon::Fire(RendererEngine& renderer)
     // 弾数減らす
     m_AmmoRemaining--;
 }
+
+//*---------------------------------------------------------------------------------------
+//*【?】追尾対象を見つける
+//*
+//* [引数] 
+//*_cameraPos&          : カメラ座標 
+//*_fw&                 : 前方向
+//*_rockOnRange         : ロックオン射程 
+//*_rockOnHalfAngleDeg  : ロックオン角度（デグリー）
+//* 
+//* [返値] 
+//* 追尾対象の参照ポインタ
+//*----------------------------------------------------------------------------------------
+std::weak_ptr <class GameObject>GunWeapon::SelectHomingTarget(const VECTOR3::VEC3& _cameraPos, const VECTOR3::VEC3& _fw, float _rockOnRange, float _rockOnHalfAngleDeg)
+{
+    const auto candidates = Master::m_pGameObjectManager->get_ObjectListByFactionAlive(FACTION::ENEMY);
+
+    float rangeSq = _rockOnRange * _rockOnRange;
+    const float minDot = cosf(Tool::DegToRad(_rockOnHalfAngleDeg));
+
+    std::shared_ptr<GameObject> bestTarget;
+    float bestDot = minDot;
+    float bestDistanceSq = FLT_MAX;
+
+    for (const auto &candidate : candidates)
+    {
+        const auto transform = candidate->get_Transform().lock();
+        if (!transform) {
+            continue;
+        }
+
+        VEC3 toTarget = transform->get_VEC3ToPos() - _cameraPos;
+        float distanceSq = toTarget.LengthSq();
+
+        // 範囲内チェック
+        if (distanceSq <= 0.00001f || distanceSq > rangeSq){
+            continue;
+        }
+
+        float dot = VEC3::Dot(_fw, toTarget.Normalize());
+        
+        // ロックオン角度内か
+        if (dot < minDot){
+            continue;
+        }
+        bool closerToAim = dot > bestDot;
+        bool sameAimAndNearer = fabsf(dot - bestDot) <= 0.0001f && distanceSq < bestDistanceSq;
+
+        if (closerToAim || sameAimAndNearer)
+        {
+            bestTarget = candidate;
+            bestDot = dot;
+            bestDistanceSq = distanceSq;
+        }
+    }
+
+    return bestTarget;
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】UI表示に必要な武器データを取得する

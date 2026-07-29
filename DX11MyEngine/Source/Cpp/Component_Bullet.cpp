@@ -35,7 +35,6 @@ Bullet::Bullet(std::weak_ptr<GameObject> pOwner, int updateRank) :
     m_PrevPos(VEC3()),
     m_MoveDir(VEC3()),
     m_pDefinition(nullptr),
-    m_pMyTransform(nullptr),
     //m_pCurrentBehaviour(nullptr),
     m_CrntPenetrationCount(0)
 {
@@ -62,21 +61,65 @@ void Bullet::Start(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void Bullet::Update(RendererEngine& renderer)
 {
-    VEC3 crntPos = m_pMyTransform->get_VEC3ToPos();
+    VEC3 crntPos = m_Runtime._transform->get_VEC3ToPos();
     float deltaTime = Master::m_pTimeManager->get_DeltaTime();
     auto moveComp = m_pOwner.lock()->get_Component<MoveLogic>();
 
-    MoveParam param;
-    param._moveDirection = m_MoveDir;
-    param._moveSpeed = m_Runtime._currentSpeed;
-    param._acceleration = m_pDefinition->_commonData._acceleration;
-    param._gravity = m_pDefinition->_commonData._gravityScale;
-    
+    // 前の位置として保持
     m_PrevPos = crntPos;
 
-    // 移動処理
-    moveComp->set_MoveParam(param);	// 移動ロジックにパラメータを渡す
+    // 移動パラメータ
+    MoveParam param;
 
+    // 移動
+    std::visit([&](const auto& moveData)
+        {
+            using MoveType = std::decay_t<decltype(moveData)>;
+
+            /* 直進 */
+            if constexpr (std::is_same_v <MoveType, BulletData::LinearMovementConfig>)
+            {
+                m_Runtime._moveDirection = m_MoveDir;
+
+                param =
+                    BulletBehaviour::UpdateMove(
+                        m_Runtime,
+                        m_pDefinition->_commonData,
+                        moveData,
+                        deltaTime);
+            }
+            /* ホーミング */
+            else if constexpr (std::is_same_v <MoveType, BulletData::HomingMovementConfig>)
+            {
+                param =
+                    BulletBehaviour::UpdateMove(
+                        m_Runtime,
+                        m_pDefinition->_commonData,
+                        moveData,
+                        deltaTime);
+
+                // 追尾終了後の直進方向として保持
+                m_MoveDir = param._moveDirection;
+            }
+        },
+        m_pDefinition->_moveData);
+    /*
+    * 移動ロジックの切り替え
+    */
+    if (m_Runtime._state == BULLET_STATE::HOMING)
+    {
+        moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::HOMING);
+    }
+    else
+    {
+        moveComp->ChangeBehaviour(MOVE_BEHAVIOUR_TYPE::LINEAR);
+    }
+
+
+    // 移動ロジックにパラメータを渡す
+    moveComp->set_MoveParam(param);	
+
+    
     // 見た目処理
     if (m_pDefinition->_customVisualData.valueless_by_exception() == false)
     {
@@ -101,7 +144,7 @@ void Bullet::Update(RendererEngine& renderer)
                             deltaTime);
 
                     // スケール変更
-                    m_pMyTransform->set_Scale(
+                    m_Runtime._transform->set_Scale(
                         visual_result._scale);
 
                     // ビルボードのカラーを変更
@@ -111,15 +154,11 @@ void Bullet::Update(RendererEngine& renderer)
 
 
                     float ease = Tool::Easing::EaseOutQuint(m_Runtime._elapsedTime / m_pDefinition->_commonData._lifeTime);
-                    m_pMyTransform->set_RotateToRad(VEC3(0.0, 0.0, m_Runtime._startRotZ + (ease * 5.0f)));
+                    m_Runtime._transform->set_RotateToRad(VEC3(0.0, 0.0, m_Runtime._startRotZ + (ease * 5.0f)));
                 }
             },
             m_pDefinition->_customVisualData);
     }
-
-
-
-
 
     //m_Runtime._moveDirection = m_MoveDir;
 
@@ -154,7 +193,7 @@ void Bullet::LateUpdate(RendererEngine& renderer)
     float deltaTime = Master::m_pTimeManager->get_DeltaTime();
 
     // 移動後の位置
-    VEC3 newPos = m_pMyTransform->get_VEC3ToPos();
+    VEC3 newPos = m_Runtime._transform->get_VEC3ToPos();
 
     m_Runtime._aliveTime += deltaTime;
     m_Runtime._smokeTime += deltaTime;
@@ -194,9 +233,6 @@ void Bullet::LateUpdate(RendererEngine& renderer)
         VEC3 normal = hitInfo.get_HitNormal().Normalize();
         
         m_PrevPos = hitPoint;
-
-        // トランスフォームの設定
-        m_Runtime._transform = m_pMyTransform;
 
         // 衝突時の処理
         BulletHitResult result = std::visit(
@@ -238,7 +274,7 @@ void Bullet::LateUpdate(RendererEngine& renderer)
         case BULLET_HIT_RESPONSE::SLIDE:
         {
             // 衝突点に位置を合わせる
-            m_pMyTransform->set_Pos(hitPoint);
+            m_Runtime._transform->set_Pos(hitPoint);
 
             VEC3 slideDir =
                 m_MoveDir - normal * VEC3::Dot(m_MoveDir, normal);
@@ -273,7 +309,7 @@ void Bullet::LateUpdate(RendererEngine& renderer)
             }
             VEC3 resolvedPos = hitPoint + normal * SKIN_WIDTH + remaining;
 
-            m_pMyTransform->set_Pos(resolvedPos);
+            m_Runtime._transform->set_Pos(resolvedPos);
             m_PrevPos = resolvedPos;
 
             // 反射
@@ -319,7 +355,7 @@ void Bullet::Setup(
     _context._transform;
 
     // トランスフォームのポインタを取得
-    m_pMyTransform = m_pOwner.lock()->get_Transform().lock().get();
+    auto transform = m_pOwner.lock()->get_Transform().lock().get();
 
     m_pBillboardRenderer = nullptr;
 
@@ -329,15 +365,19 @@ void Bullet::Setup(
     }
 
     // 開始位置
-    m_StartPos = m_pMyTransform->get_VEC3ToPos();
+    m_StartPos = transform->get_VEC3ToPos();
     m_PrevPos = m_StartPos;
     
     // 前方向ベクトル
-    m_MoveDir = m_pMyTransform->get_WorldForward().Normalize();
+    m_MoveDir = transform->get_WorldForward().Normalize();
     
-    // 速度
-    m_Runtime._currentSpeed = _pData->_commonData._speed;
     m_CrntPenetrationCount = 0;
+
+    m_Runtime._transform = transform;
+    m_Runtime._pTarget = _context._target;
+    m_Runtime._moveDirection = m_MoveDir;
+    m_Runtime._currentSpeed = _pData->_commonData._speed;
+    m_Runtime._state = BULLET_STATE::FLYING;
 
 
     m_Runtime._startRotZ = Master::m_pRandomManager->GetFloatRandom(-3.0f,3.0f);

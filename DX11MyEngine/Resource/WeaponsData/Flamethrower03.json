@@ -18,6 +18,7 @@
     {
       "aliveFrame" : 150,
       "speed": 40.0,
+      "maxSpeed": 100.0,
       "damage": 1.0,
       "acceleration": 0.0,
       "penetrationsCount": 0,

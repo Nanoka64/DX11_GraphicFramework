@@ -93,6 +93,7 @@ int Ant_AT_MoveState::Update(class EnemyController* pOwner)
 	// •ûŒü‚ð•Ï‚¦‚ÄAˆÚ“®‚³‚¹‚é
 	MoveParam movePram;
 	movePram._moveSpeed = pOwner->get_MoveSpeed();
+	movePram._maxSpeed = pOwner->get_MoveSpeed();
 	movePram._turnSpeed = 0.05f;	// ‹}‚ÉU‚èŒü‚­‚Æ•Ï‚È‚Ì‚ÅA­‚µ—D‚µ‚ß‚É
 	movePram._moveDirection = m_MoveDir;
 	auto move = pOwner->get_MoveLogicComponent();

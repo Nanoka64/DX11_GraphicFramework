@@ -138,6 +138,7 @@ namespace BulletData
     {
         int _aliveFrame = 0;                        // 生存フレーム数
         float _speed = 0.0f;                        // 発射時の速度（1フレームに進む距離）
+        float _maxSpeed = 0.0f;                     // 最大速度
         float _lifeTime = 0.0f;                     // 生存期間（_aliveFrame / 60）
         float _damage = 0.0f;                       // 命中時に与える基本ダメージ
         float _acceleration = 0.0f;                 // 1秒あたりの速度変化量
@@ -165,9 +166,13 @@ namespace BulletData
     /// </summary>
     struct HomingMovementConfig
     {
-        float _turnSpeed = 0.0f;                   // 1秒あたりの旋回速度
-        float _targetingDuration = 0.0f;           // 追尾を継続する時間。0.0fの扱いは更新処理側で定義する
-        float _targetingStartDelay = 0.0f;         // 発射してから追尾を開始するまでの時間
+        float _turnSpeed = 0.0f;                 // 1秒あたりの旋回速度
+        float _targetingDuration = 0.0f;         // 追尾を継続する時間。0.0fの扱いは更新処理側で定義する
+        float _accelerationStartDelay = 0.0f;    // 発射してから加速するまでの時間
+        float _targetingStartDelay = 0.0f;       // 加速してから追尾を開始するまでの時間
+
+        float _lockOnRange = 0.0f;               // ロックオン有効距離
+        float _lockOnHalfAngleDeg = 0.0f;        // Lockオン角度
     };
 
     //*****************************************************************************************
@@ -254,6 +259,8 @@ namespace BulletData
     {
         VECTOR3::VEC3 _velocity;        // 1秒あたりの移動量
         DirectX::XMVECTOR _rotation;    // 移動後に適用する回転クォータニオン
+
+        float _speed = 0.0f;
     };
 
     /// <summary>
@@ -341,8 +348,8 @@ namespace BulletData
         float _aliveTime = 0.0f;
         float _startRotZ = 0.0;
         float _smokeTime = 0.0f; 
-        std::weak_ptr<GameObject> _target;                  // 追尾対象
-        std::weak_ptr<GameObject> _attachedObject;          // 吸着している対象
+        std::weak_ptr<class GameObject> _pTarget;           // 追尾対象
+        std::weak_ptr<class GameObject> _pAttachedObject;   // 吸着している対象
         VECTOR3::VEC3 _attachedLocalPosition;               // 吸着対象から見た命中位置
 
         /// <summary>
