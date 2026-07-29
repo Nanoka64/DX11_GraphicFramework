@@ -14,14 +14,17 @@ struct MoveParam
     VECTOR3::VEC3 _targetPos;       // 目標位置
     float _moveSpeed;               // 移動速度
     float _acceleration;            // 加速度
-	float _turnSpeed;               // 回転速度 
+    float _maxSpeed;                // 最大速度
+    float _turnSpeed;               // 回転速度 
     float _gravity;                 // 重力
     bool _isAcceleration;           // 加速度があるか
+
 
     MoveParam() : 
         _moveDirection(VECTOR3::VEC3()),
         _targetPos(VECTOR3::VEC3()),
         _acceleration(0.0f),
+        _maxSpeed(0.0f),
         _turnSpeed(0.0f),
         _moveSpeed(0.0f),
         _isAcceleration(false),

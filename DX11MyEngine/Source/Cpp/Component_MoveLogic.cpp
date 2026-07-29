@@ -19,6 +19,7 @@ MoveLogic::MoveLogic(std::weak_ptr<GameObject> pOwner, int updateRank)
     :IComponent(pOwner, updateRank),
     m_pMoveBehaviour(nullptr),
     m_GravityVelocity(0.0f),
+    m_AccelerationSpeed(0.0f),
     m_CrntMoveVelocity(VEC3())
 {
     this->set_Tag("MoveLogic");
@@ -77,15 +78,21 @@ void MoveLogic::Calculate(const MoveParam& _param)
         {
             ResultMove res;
 
+            m_AccelerationSpeed += _param._acceleration * deltaTime;
+
+            // 加速度を上書きしないよう、
+            MoveParam effectiveParam = _param;
+            effectiveParam._acceleration = m_AccelerationSpeed;
 
             // 移動計算を呼び出す
-            res = m_pMoveBehaviour->MoveCalculate(deltaTime, _param, *pTransform);
+            res = m_pMoveBehaviour->MoveCalculate(deltaTime, effectiveParam, *pTransform);
 
             // 加速度
             //float accelerationSpeed = _param._acceleration * deltaTime;
 
             // 目標速度に近づける
             //m_CrntMoveVelocity = VEC3::Lerp(m_CrntMoveVelocity, res._moveVelocity, accelerationSpeed);
+
 
             // 移動ベクトルと回転ベクトルをもとに、新しい位置と回転を計算する
             VEC3 crntPos = pTransform->get_VEC3ToPos();
@@ -121,6 +128,9 @@ void MoveLogic::Calculate(const MoveParam& _param)
 void MoveLogic::ParamReset()
 {
     m_GravityVelocity = 0.0f;
+    m_AccelerationSpeed = 0.0f;
+    m_CrntMoveVelocity = VEC3();
+    m_MoveParam = MoveParam();
 }
 
 

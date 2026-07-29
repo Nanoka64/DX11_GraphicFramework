@@ -21,7 +21,8 @@ private:
     IMoveBehaviour *m_pMoveBehaviour = nullptr;	// 現在の移動挙動
     VECTOR3::VEC3 m_CrntMoveVelocity;           // 現在の移動ベクトル
     float m_GravityVelocity;
-	MoveParam m_MoveParam;                      // 移動パラメータ
+	float m_AccelerationSpeed;
+    MoveParam m_MoveParam;                      // 移動パラメータ
     bool m_IsGrounded;                          // 接地しているか
 
 public:

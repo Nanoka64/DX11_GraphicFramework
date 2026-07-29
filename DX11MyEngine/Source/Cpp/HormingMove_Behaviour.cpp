@@ -40,7 +40,13 @@ ResultMove HormingMove_Behaviour::MoveCalculate(float _deltaTime, const MovePara
 	VEC3 crntPos = _transform.get_VEC3ToPos();
 	VEC3 crntRot = _transform.get_VEC3ToRotateToRad();
 	VEC3 targetDir = (_param._targetPos - crntPos).Normalize();		// 目標の方向
-	VEC3 moveVelocity = targetDir * _param._moveSpeed;				// 目標への移動ベクトル
+	float speed = _param._moveSpeed + _param._acceleration;
+	if (speed >= _param._maxSpeed)
+	{
+		speed = _param._maxSpeed;
+	}
+	VEC3 moveVelocity = targetDir * speed;							// 目標への移動ベクトル
+
 
 	//目標の方向ベクトルから角度値を算出c
 	float targetAngleY = atan2(targetDir.x, targetDir.z);
