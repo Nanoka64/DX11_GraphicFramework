@@ -30,7 +30,7 @@ RocketLauncher,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Weapon/RocketLauncher/
 Bullet_01,1,1,10,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_02,1,10,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
 Bullet_03,10,1,1,1,1,1,1,1,100,1,1,1,1,Resource/Texture/Particle/Particle04_bokashi_hard.png,-1,-1,1
-Acid_01,2,2,0,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
+Acid_01,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 Acid_02,5,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 Acid_03,0.5,10,0.5,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 Flame_01,8,3,2,1,1,1,1,1,100,1,0,0,10,Resource/Effect/Texture/flamea.png,-1,-1,1

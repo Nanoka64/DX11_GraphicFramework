@@ -264,40 +264,40 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
 
-        for (int x = -2; x < 3; x++)
-        {
-            for (int y = -2; y < 3; y++)
-            {
-                VEC3 scale = VEC3(0.8f);
-                auto obj = MeshFactory::CreateModel(model);
-                obj->get_Component<MyTransform>()->set_Scale(scale);
-                obj->get_Component<MyTransform>()->set_Pos(50.0f * x,  0.0f,  70.0f * y);
-                obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+    //    for (int x = -2; x < 3; x++)
+    //    {
+    //        for (int y = -2; y < 3; y++)
+    //        {
+    //            VEC3 scale = VEC3(0.8f);
+    //            auto obj = MeshFactory::CreateModel(model);
+    //            obj->get_Component<MyTransform>()->set_Scale(scale);
+    //            obj->get_Component<MyTransform>()->set_Pos(50.0f * x,  0.0f,  70.0f * y);
+    //            obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
 
-                // ポーズ中は停止
-                obj->set_IsUpdateAllowedDuringPause(false);
+    //            // ポーズ中は停止
+    //            obj->set_IsUpdateAllowedDuringPause(false);
 
-                // 建物制御コンポーネント追加
-                obj->add_Component<BuildingController>();
+    //            // 建物制御コンポーネント追加
+    //            obj->add_Component<BuildingController>();
 
-                // 体力コンポーネントの追加
-                auto health = obj->add_Component<Health>();
-				health->set_MaxHP(600.0f);
-				health->set_CrntHP(600.0f);
+    //            // 体力コンポーネントの追加
+    //            auto health = obj->add_Component<Health>();
+				//health->set_MaxHP(600.0f);
+				//health->set_CrntHP(600.0f);
 
-                // コライダーの追加
-                auto collider = obj->add_Component<BoxCollider>();
-                collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
-                collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
-                collider->set_IsStatic(true);
-                // 衝突カテゴリ
-                collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+    //            // コライダーの追加
+    //            auto collider = obj->add_Component<BoxCollider>();
+    //            collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
+    //            collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
+    //            collider->set_IsStatic(true);
+    //            // 衝突カテゴリ
+    //            collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
 
 
-                // コライダーの登録
-                Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
-            }
-        }
+    //            // コライダーの登録
+    //            Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
+    //        }
+    //    }
     }
 
     /* マザーシップの生成 */
