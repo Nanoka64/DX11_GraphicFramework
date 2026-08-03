@@ -239,65 +239,151 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
     /* 建物 モデルの生成 */
     {
-        // マテリアル取得
-        auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building01_Top");
-        auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building01_Base1");
-        auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building01_Base2");
-        auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building01_Base3");
+        {
+            // マテリアル取得
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building01_Top");
+            auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building01_Base1");
+            auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building01_Base2");
+            auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building01_Base3");
+            //auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_SupportPillar");
+            //auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_TopPillar");
+            //auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_TopToroid");
+            //auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_Top");
+            //auto matPtr5 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_BaseGround");
+            //auto matPtr6 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_Wall");
 
-        SetupMaterialInfo matInfo[4];
-        matInfo[0].Index = 0;
-        matInfo[0].pMaterialData = matPtr1;
-        matInfo[1].Index = 1;
-        matInfo[1].pMaterialData = matPtr2;
-        matInfo[2].Index = 2;
-        matInfo[2].pMaterialData = matPtr3;
-        matInfo[3].Index = 3;
-        matInfo[3].pMaterialData = matPtr4;
+            SetupMaterialInfo matInfo[6];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr1;
 
-        CreateModelInfo model;
-        model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Building/02/Building_01.fbx";
-        model.ObjTag = "Building";
-        model.IsAnim = false;
-        model.MatNum = 4;
-        model.SetupMaterial = matInfo;
-        model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
+            matInfo[1].Index = 1;
+            matInfo[1].pMaterialData = matPtr2;
 
-    //    for (int x = -2; x < 3; x++)
-    //    {
-    //        for (int y = -2; y < 3; y++)
-    //        {
-    //            VEC3 scale = VEC3(0.8f);
-    //            auto obj = MeshFactory::CreateModel(model);
-    //            obj->get_Component<MyTransform>()->set_Scale(scale);
-    //            obj->get_Component<MyTransform>()->set_Pos(50.0f * x,  0.0f,  70.0f * y);
-    //            obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+            matInfo[2].Index = 2;
+            matInfo[2].pMaterialData = matPtr3;
 
-    //            // ポーズ中は停止
-    //            obj->set_IsUpdateAllowedDuringPause(false);
+            matInfo[3].Index = 3;
+            matInfo[3].pMaterialData = matPtr4;
 
-    //            // 建物制御コンポーネント追加
-    //            obj->add_Component<BuildingController>();
+            //matInfo[4].Index = 4;
+            //matInfo[4].pMaterialData = matPtr5;
 
-    //            // 体力コンポーネントの追加
-    //            auto health = obj->add_Component<Health>();
-				//health->set_MaxHP(600.0f);
-				//health->set_CrntHP(600.0f);
-
-    //            // コライダーの追加
-    //            auto collider = obj->add_Component<BoxCollider>();
-    //            collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
-    //            collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
-    //            collider->set_IsStatic(true);
-    //            // 衝突カテゴリ
-    //            collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+            //matInfo[5].Index = 5;
+            //matInfo[5].pMaterialData = matPtr6;
 
 
-    //            // コライダーの登録
-    //            Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
-    //        }
-    //    }
+            CreateModelInfo model;
+            model.pRenderer = m_pRenderer;
+            //model.Path = "Resource/Model/Building/03/Building_Tower_1.fbx";
+            model.Path = "Resource/Model/Building/02/Building_01.fbx";
+            model.ObjTag = "Building";
+            model.IsAnim = false;
+            model.MatNum = 4;
+            model.SetupMaterial = matInfo;
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+
+            // 建物を5x5のグリッドで配置
+            for (int x = -2; x < 3; x++)
+            {
+                for (int y = -2; y < 3; y++)
+                {
+                    VEC3 scale = VEC3(0.8f);
+                    auto obj = MeshFactory::CreateModel(model);
+                    obj->get_Component<MyTransform>()->set_Scale(scale);
+                    obj->get_Component<MyTransform>()->set_Pos(50.0f * x, 0.0f, 70.0f * y);
+                    obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+                    // ポーズ中は停止
+                    obj->set_IsUpdateAllowedDuringPause(false);
+
+                    // 建物制御コンポーネント追加
+                    obj->add_Component<BuildingController>();
+
+                    // 体力コンポーネントの追加
+                    auto health = obj->add_Component<Health>();
+                    health->set_MaxHP(600.0f);
+                    health->set_CrntHP(600.0f);
+
+                    // コライダーの追加
+                    auto collider = obj->add_Component<BoxCollider>();
+                    collider->set_Size(VEC3(20.0f * scale.x, 30.0f * scale.y, 10.0f * scale.z));
+                    collider->set_Center(VEC3(0.0f, 30.0f * scale.y, 0.0f));
+                    collider->set_IsStatic(true);
+                    // 衝突カテゴリ
+                    collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+
+
+                    // コライダーの登録
+                    Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
+                }
+            }
+        }
+
+        // タワー
+        {
+            auto matPtr1 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_SupportPillar");
+            auto matPtr2 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_TopPillar");
+            auto matPtr3 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_TopToroid");
+            auto matPtr4 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_Top");
+            auto matPtr5 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_BaseGround");
+            auto matPtr6 = Master::m_pResourceManager->FindMaterial("Building_Tower_1_Wall");
+
+            SetupMaterialInfo matInfo[6];
+            matInfo[0].Index = 0;
+            matInfo[0].pMaterialData = matPtr1;
+
+            matInfo[1].Index = 1;
+            matInfo[1].pMaterialData = matPtr2;
+
+            matInfo[2].Index = 2;
+            matInfo[2].pMaterialData = matPtr3;
+
+            matInfo[3].Index = 3;
+            matInfo[3].pMaterialData = matPtr4;
+
+            matInfo[4].Index = 4;
+            matInfo[4].pMaterialData = matPtr5;
+
+            matInfo[5].Index = 5;
+            matInfo[5].pMaterialData = matPtr6;            
+            CreateModelInfo model;
+            model.pRenderer = m_pRenderer;
+            model.ObjTag = "Building";
+            model.IsAnim = false;
+            model.Path = "Resource/Model/Building/03/Building_Tower_1.fbx";
+            model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
+            model.MatNum = 6;
+            model.SetupMaterial = matInfo;
+
+            VEC3 scale = VEC3(1.0f);
+            auto obj = MeshFactory::CreateModel(model);
+            obj->get_Component<MyTransform>()->set_Scale(scale);
+            obj->get_Component<MyTransform>()->set_Pos(-200.0f, 0.0f, 150.0f);
+            obj->get_Component<MyTransform>()->set_RotateToDeg(0.0f, 0.0f, 0.0f);
+
+            // ポーズ中は停止
+            obj->set_IsUpdateAllowedDuringPause(false);
+
+            // 建物制御コンポーネント追加
+            obj->add_Component<BuildingController>();
+
+            // 体力コンポーネントの追加
+            auto health = obj->add_Component<Health>();
+            health->set_MaxHP(1600.0f);
+            health->set_CrntHP(1600.0f);
+
+            // コライダーの追加
+            auto collider = obj->add_Component<BoxCollider>();
+            collider->set_Size(VEC3(20.0f * scale.x, 50.0f * scale.y, 10.0f * scale.z));
+            collider->set_Center(VEC3(0.0f, 50.0f * scale.y, 0.0f));
+            collider->set_IsStatic(true);
+            // 衝突カテゴリ
+            collider->set_CollisionCategory(COLLISION_CATEGORY::DESTRUCTION_BUILDING);
+
+            // コライダーの登録
+            Master::m_pCollisionManager->RegisterCollider(obj->get_Component<BoxCollider>());
+        }
+
     }
 
     /* マザーシップの生成 */
