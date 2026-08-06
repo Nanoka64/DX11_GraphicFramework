@@ -109,11 +109,15 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
 		Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM, (void*)&cbTransform, sizeof(CB_TRANSFORM));
 
         // メッシュの描画
-        for (u_int meshIdx = 0; meshIdx < meshNum; meshIdx++)
+        for (uint32_t meshIdx = 0; meshIdx < meshNum; meshIdx++)
         {
+			// メッシュが非表示なら飛ばす
+            if(pMeshes[meshIdx].get_IsVisible() == false) continue;
+
             aiMesh *mesh = pScene->mMeshes[meshIdx];
             auto mat = matList[mesh->mMaterialIndex].lock();
 
+            // マテリアルが設定されていればマテリアル情報をセット
             if (mat != nullptr)
             {
                 // 定数バッファにマテリアル情報セット ==========================
@@ -150,8 +154,8 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
                 }
             }
 
+            // メッシュの描画
             pMeshes[meshIdx].Draw(renderer);
-
 
             // ブレンドオフ
             Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
@@ -190,4 +194,81 @@ void ModelMeshRenderer::set_MeshResource(std::shared_ptr<class ModelMeshResource
     m_pMeshResource = meshResource;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】メッシュ数取得
+//*
+//* [引数] なし
+//* [返値]
+//* uint32_t : メッシュ数
+//*----------------------------------------------------------------------------------------
+uint32_t ModelMeshRenderer::get_MeshNum()const
+{
+    auto pMeshResource = m_pMeshResource.lock();
+    if (pMeshResource == nullptr) {
+        return 0;
+    }
 
+    return pMeshResource->get_ModelData().lock()->get_MeshNum();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】指定メッシュの表示 / 非表示を設定
+//*
+//* [引数]
+//* meshIdx : メッシュインデックス
+//* _flag : true:表示する false:表示しない
+//*
+//* [返値]
+//* bool : 成功したかどうか 
+//*----------------------------------------------------------------------------------------
+bool ModelMeshRenderer::set_IsMeshVisible(uint32_t _meshIdx, bool _flag)
+{
+	auto pMeshResource = m_pMeshResource.lock();
+    if (pMeshResource == nullptr){
+        return false;
+    }
+    
+    // メッシュ数
+    uint32_t meshNum = get_MeshNum();
+
+    // 範囲外ならfalse
+    if (_meshIdx >= meshNum || _meshIdx < 0){
+        return false;
+    }
+
+    // メッシュデータを取得して、表示 / 非表示を設定
+	auto modelData = pMeshResource->get_ModelData().lock();
+    auto meshes = modelData->get_Meshes();
+	meshes[_meshIdx].set_IsVisible(_flag);
+
+    return true;
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】指定メッシュの表示 / 非表示のフラグを取得
+//*
+//* [引数]
+//* meshIdx : メッシュインデックス
+//*
+//* [返値]
+//* true : 表示 
+//* false : 非表示
+//*----------------------------------------------------------------------------------------
+bool ModelMeshRenderer::get_IsMeshVisible(uint32_t _meshIdx)const
+{
+    auto pMeshResource = m_pMeshResource.lock();
+    if (pMeshResource == nullptr){
+        return false;
+    }
+    
+    // メッシュ数
+    uint32_t meshNum = get_MeshNum();
+    // 範囲外ならfalse
+    if (_meshIdx >= meshNum || _meshIdx < 0){
+        return false;
+    }
+    // メッシュデータを取得して、表示 / 非表示を設定
+    auto modelData = pMeshResource->get_ModelData().lock();
+    auto meshes = modelData->get_Meshes();
+    return meshes[_meshIdx].get_IsVisible();
+}

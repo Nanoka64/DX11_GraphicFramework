@@ -17,7 +17,10 @@ ModelMesh::ModelMesh():
 	m_pIndices(nullptr),
 	m_VertexNum(0),
 	m_IndexNum(0),
+	m_IsVisible(true),
 	m_pVertexBuffer(nullptr),
+	m_VertexStride(0),
+	m_MeshType(MESH_TYPE::STATIC),
 	m_pIndexBuffer(nullptr)
 {
 
@@ -45,6 +48,9 @@ ModelMesh::~ModelMesh()
 //*----------------------------------------------------------------------------------------
 void ModelMesh::Draw(RendererEngine& render)
 {
+	// ”ñ•\Ž¦‚È‚ç•`‰æ‚µ‚È‚¢
+	if (!m_IsVisible) return;
+
 	auto pDeviceContext = render.get_DeviceContext();
 	uint32_t stride[1] = { m_VertexStride };
 	uint32_t offset[1] = { 0 };

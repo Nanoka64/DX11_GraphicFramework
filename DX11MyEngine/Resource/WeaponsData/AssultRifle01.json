@@ -1,6 +1,6 @@
 {
   "level": 0,
-  "name": "バウンドライフル",
+  "name": "ART-26",
   "bulletMaxNum": 120,
   "bulletSimultaneousNum": 1,
   "fireRate": 12.0,
@@ -38,7 +38,7 @@
       "type" : "DIRECT",
       "decalMaterialTag" : "Decal_BulletHole",
       "hitEffectTag" : "BulletHit_Standard",
-      "environmentResponse" : "BOUNCE"
+      "environmentResponse" : "DEACTIVATE"
     },
 
     "visual" :  

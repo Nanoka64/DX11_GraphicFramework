@@ -225,6 +225,32 @@ public:
 
 };
 
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:ModelMeshRenderer Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】モデルレンダラーの確認用エディタ
+//
+// ***************************************************************************************
+class ModelMeshRendererEditor : public EditorBase
+{
+private:
+
+public:
+    ModelMeshRendererEditor()
+        : EditorBase()
+    {
+    };
+    ~ModelMeshRendererEditor()
+    {
+    };
+    bool Init(RendererEngine& renderer) override;
+    void OnEditorGUI(RendererEngine& renderer, class GameObject& pObj) override;
+};
+
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:ModelMeshResourceEditor Class --- */
@@ -250,6 +276,7 @@ public:
     void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
 
 };
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------

@@ -10,6 +10,7 @@
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
+#include "Component_ModelMeshRenderer.h"
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
 #include "Component_TrailRenderer.h"
@@ -395,7 +396,7 @@ bool PlayerControllerEditor::Init(RendererEngine &renderer)
 
 void PlayerControllerEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    // ディレクショナルライトコンポーネントの取得
+    // コンポーネントの取得
     auto pComp = pObj.get_Component<PlayerController>();
 
     if (pComp == nullptr)
@@ -476,7 +477,7 @@ bool Camera3DEditor::Init(RendererEngine &renderer)
 
 void Camera3DEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    // ディレクショナルライトコンポーネントの取得
+    // コンポーネントの取得
     auto pComp = pObj.get_Component<Camera3D>();
 
     if (pComp == nullptr)
@@ -575,7 +576,7 @@ bool SkinnedMeshAnimatorEditor::Init(RendererEngine &renderer)
 
 void SkinnedMeshAnimatorEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
 {
-    // ディレクショナルライトコンポーネントの取得
+    // コンポーネントの取得
     auto pComp = pObj.get_Component<SkinnedMeshAnimator>();
 
     if (pComp == nullptr)
@@ -624,6 +625,55 @@ void SkinnedMeshAnimatorEditor::OnEditorGUI(RendererEngine &renderer, GameObject
 
     // 反映
 }
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:ModelMeshRendererEditor Class --- */
+//
+// ***************************************************************************************
+bool ModelMeshRendererEditor::Init(RendererEngine& renderer)
+{
+    return true;
+}
+
+void ModelMeshRendererEditor::OnEditorGUI(RendererEngine& renderer, GameObject& pObj)
+{
+    // コンポーネントの取得
+    auto pComp = pObj.get_Component<ModelMeshRenderer>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+	uint32_t meshNum= pComp->get_MeshNum();		// メッシュ数
+    bool isWireFrame = pComp->get_IsDrawWireframe();
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"モデルレンダラー")))
+    {
+		Master::m_pDebugger->DG_Separator();    // 区切り線
+
+        // メッシュの表示非表示の切り替え
+        for (uint32_t i = 0; i < meshNum; i++)
+        {
+            bool isVisible = pComp->get_IsMeshVisible(i);
+            if (Master::m_pDebugger->DG_CheckBox(U8ToChar(u8"メッシュ") + std::to_string(i + 1), &isVisible))
+            {
+                pComp->set_IsMeshVisible(i, isVisible);
+            }
+		}
+
+        // ワイヤーフレームモードの切り替え
+        if (Master::m_pDebugger->DG_CheckBox(U8ToChar(u8"ワイヤーフレーム"),&isWireFrame))
+        {
+            pComp->set_IsDrawWireframe(isWireFrame);
+        }
+
+        Master::m_pDebugger->DG_TreePop();
+    }
+}
+
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------

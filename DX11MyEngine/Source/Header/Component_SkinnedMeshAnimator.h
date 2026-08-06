@@ -32,7 +32,7 @@ private:
 	/***********アニメーション関連***********/
 	std::vector<BoneInfo> m_BoneList;				     // ボーンリスト
 	std::vector<NodeInfo *> m_NodeList;					 // Nodeツリー情報
-	std::unordered_map<std::string, int> m_BoneIndexMap; // Node名からBoneListのインデックスを引くためのマップ
+	std::unordered_map<std::string, uint32_t> m_BoneIndexMap; // Node名からBoneListのインデックスを引くためのマップ
 	std::vector<AnimationData*> m_Animations;			 // 読み取ったアニメーション
 
 	double m_AnimationTime = 0.0;						 // 現在のアニメーション時間(ticks)

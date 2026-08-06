@@ -17,6 +17,7 @@ private:
 	bool m_IsDrawWireframe;
 	int m_DebugDrawBoneNum;
 
+
 public:
 	ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~ModelMeshRenderer();
@@ -26,12 +27,11 @@ public:
 	void Draw(RendererEngine &renderer) override;		// 描画処理
 	void set_MeshResource(std::shared_ptr<class ModelMeshResource> meshResource);
 
-
 	/* ワイヤーフレームで表示するかどうか */
 	bool get_IsDrawWireframe()const { return m_IsDrawWireframe; };
 	void set_IsDrawWireframe(bool _flag) { m_IsDrawWireframe = _flag; }
 
-
-
+	uint32_t get_MeshNum()const;
+	bool set_IsMeshVisible(uint32_t _meshIdx, bool _flag);
+	bool get_IsMeshVisible(uint32_t _meshIdx)const;
 };
-

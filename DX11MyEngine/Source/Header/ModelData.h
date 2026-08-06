@@ -109,14 +109,14 @@ struct AnimationData {
 class ModelData
 {
 private:
-    UINT m_VertexNum;		// 頂点数
-    UINT m_IndexNum;		// インデックス数
-    UINT m_MeshNum;			// メッシュ数
-    UINT m_BoneNum;			// ボーン数
-    UINT m_AnimNum;			// アニメーション数
-    UINT m_MaterialNum;		// マテリアル数
+    uint32_t m_VertexNum;		// 頂点数
+    uint32_t m_IndexNum;		// インデックス数
+    uint32_t m_MeshNum;			// メッシュ数
+    uint32_t m_BoneNum;			// ボーン数
+    uint32_t m_AnimNum;			// アニメーション数
+    uint32_t m_MaterialNum;		// マテリアル数
 
-	SHADER_TYPE m_ShaderType; // 使用するシェーダタイプ
+	SHADER_TYPE m_ShaderType;		// 使用するシェーダタイプ
 	SHADER_TYPE m_ShadowShaderType; // シャドウ用シェーダタイプ
 
     Assimp::Importer m_Importer;			// インポーター
@@ -134,8 +134,8 @@ private:
 	//CB_MATERIAL_SET   *m_pCBMaterialDataSet;		// マテリアル用
 
 	/***********アニメーション関連***********/
-	std::vector<NodeInfo *> m_pNodeList;				 // Nodeツリー情報
-	std::unordered_map<std::string, int> m_BoneIndexMap; // Node名からBoneListのインデックスを引くためのマップ
+	std::vector<NodeInfo *> m_pNodeList;					// Nodeツリー情報
+	std::unordered_map<std::string, uint32_t> m_BoneIndexMap; // Node名からBoneListのインデックスを引くためのマップ
 	std::vector<AnimationData *>m_pAnimations;			 // 読み取ったアニメーション
 
 public:
@@ -151,12 +151,12 @@ public:
 	// ****************************************************************************************************************************************
 	/* アクセスメソッド */
 	// ****************************************************************************************************************************************
-	UINT get_VertexNum() const { return m_VertexNum; }
-	UINT get_IndexNum() const { return m_IndexNum; }
-	UINT get_MeshNum() const { return m_MeshNum; }
-	UINT get_BoneNum() const { return m_BoneNum; }
-	UINT get_AnimNum() const { return m_AnimNum; }
-	UINT get_MaterialNum() const { return m_MaterialNum; }
+	uint32_t get_VertexNum() const { return m_VertexNum; }
+	uint32_t get_IndexNum() const { return m_IndexNum; }
+	uint32_t get_MeshNum() const { return m_MeshNum; }
+	uint32_t get_BoneNum() const { return m_BoneNum; }
+	uint32_t get_AnimNum() const { return m_AnimNum; }
+	uint32_t get_MaterialNum() const { return m_MaterialNum; }
 
 	/* メッシュ・頂点データ */
 	ModelMesh *get_Meshes() const { return m_pMeshes; }
@@ -171,7 +171,7 @@ public:
 
 	/* アニメーション関連 */
 	const std::vector<NodeInfo *> &get_NodeList() const { return m_pNodeList; }
-	const std::unordered_map<std::string, int> &get_BoneIndexMap() const { return m_BoneIndexMap; }
+	const std::unordered_map<std::string, uint32_t> &get_BoneIndexMap() const { return m_BoneIndexMap; }
 	const std::vector<AnimationData *> &get_Animations() const { return m_pAnimations; }
 
 	// シェーダタイプ取得

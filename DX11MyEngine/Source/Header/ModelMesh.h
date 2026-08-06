@@ -35,7 +35,7 @@ private:
 	ID3D11Buffer* m_pIndexBuffer;
 
 	MESH_TYPE m_MeshType;		// メッシュの種類
-
+	bool m_IsVisible;			// メッシュの表示・非表示
 
 public:
 	ModelMesh();
@@ -50,7 +50,9 @@ public:
 	unsigned int get_VertexNum()const { return m_VertexNum; };		// メッシュに含まれる頂点数取得
 	//VERTEX::VERTEX_Skneed* get_Vertices() const { return m_pVertex; };
 
-	MESH_TYPE get_MeshType() const { return m_MeshType; }	// メッシュの種類取得
+	MESH_TYPE get_MeshType() const { return m_MeshType; }			// メッシュの種類取得
+	bool get_IsVisible() const { return m_IsVisible; }				// メッシュの表示・非表示取得
+	void set_IsVisible(bool isVisible) { m_IsVisible = isVisible; }	// メッシュの表示・非表示設定
 
 private:
 	bool CreateVertexBuffer(RendererEngine& render, const void* pVertexData, UINT vertexNum, UINT vertexStride);	// 頂点バッファの作成

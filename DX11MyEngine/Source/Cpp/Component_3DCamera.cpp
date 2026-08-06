@@ -153,10 +153,13 @@ void Camera3D::CamraControl(RendererEngine& renderer)
 	float sensitivity = Master::m_pDataManager->get_UserConfigData()._mouseSensitivity * MOUSE_SCALE;
 
 	lY = Master::m_pDataManager->get_UserConfigData()._isInvertY ? -lY : lY;
+	
+	// FOVの比率を計算
+	float fovFactor = m_Fov / Master::m_pDataManager->get_DefaultFov();
 
 	// マウスの移動量を計算
-	m_Angle_H -= (float)lX * sensitivity;
-	m_Angle_V += (float)lY * sensitivity;
+	m_Angle_H -= (float)lX * sensitivity * fovFactor;
+	m_Angle_V += (float)lY * sensitivity * fovFactor;
 
 	if (m_Angle_V >= 1.57f)	// 下を向く
 	{

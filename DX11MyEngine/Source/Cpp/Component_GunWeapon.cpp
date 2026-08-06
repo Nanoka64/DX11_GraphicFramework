@@ -26,7 +26,7 @@ using namespace BulletData;
 using namespace WeaponData;
 using namespace UtilityData;
 
-constexpr float LASER_POINTER_SCALE = 0.25f;	// レーザーポインタの大きさ
+constexpr float LASER_POINTER_SCALE = 0.2f;	// レーザーポインタの大きさ
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
