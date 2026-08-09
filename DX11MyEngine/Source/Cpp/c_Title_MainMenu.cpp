@@ -43,7 +43,7 @@ void c_Title_MainMenu::OnEnter(SceneManager* pOwner)
 		buttonData._text = g_TitleMenuItemNames[i];
 		buttonData._layerRank = 105;
 		buttonData._inputValidationState = UIData::STATE::PRESSED;
-		buttonData._onClicFunction = [this, i]() {m_NextState = m_MenuItemInfoArray[i]._nextState; };
+		buttonData._onClicFunction = [this, i]() { m_NextState = m_MenuItemInfoArray[i]._nextState; };
 		buttonData._textOffsetPos = VEC2(100.0f, 25.0f);
 		rectTrans._size = MENU_ITEM_SIZE;
 		rectTrans._pos = pos;
@@ -143,6 +143,10 @@ int c_Title_MainMenu::Update(SceneManager* pOwner)
 	//m_NextState = c_TITLE_MAIN_MENU;
 
 	int i = 0;
+
+	//
+	// ボタンの状態を確認
+	//
 	for (auto &button : m_pButtonArray)
 	{
 		UIData::STATE state = button.lock()->get_State();
@@ -153,6 +157,7 @@ int c_Title_MainMenu::Update(SceneManager* pOwner)
 		{
 		case UIData::STATE::NORMAL:
 			break;
+			// ハイライト状態
 		case UIData::STATE::HIGH_LIGHTED:
 			if (m_CrntSelectItem != static_cast<TITLEMENU_ITEM>(i))
 			{
@@ -209,4 +214,49 @@ void c_Title_MainMenu::Draw(SceneManager* pOwner)
 	Master::m_pDirectWriteManager->SetOutLine(3.0f, D2D1::ColorF(0.0f, 0.0f, 0.0f));
 	Master::m_pDirectWriteManager->DrawString("☆作戦司令本部", VECTOR2::VEC2(40.0f, 500.0f), "White_40_STD");
 	Master::m_pDirectWriteManager->SetOutLine(0.0f);
+}
+//*---------------------------------------------------------------------------------------
+//*【?】ボタンが押された際の処理
+//*
+//* [引数] 
+//* *_pOwner : オーナー
+//* _type    : 押されたボタンの種類
+//* 
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void c_Title_MainMenu::Button_OnClicFunction(SceneManager* pOwner, UtilityData::TITLEMENU_ITEM _type)
+{
+	switch (_type)
+	{
+	case UtilityData::TITLEMENU_ITEM::MISSION_SELECT:break;
+	case UtilityData::TITLEMENU_ITEM::SOLDER_SELECT:break;
+	case UtilityData::TITLEMENU_ITEM::CONFIG:break;
+	case UtilityData::TITLEMENU_ITEM::EXIT:
+		m_NextState = m_MenuItemInfoArray[UINT_CAST(_type)]._nextState;
+		break;
+	}
+}
+
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】フェードイン処理
+//*
+//* [引数] なし
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void c_Title_MainMenu::FadeInMenuItems()
+{
+
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】フェードアウト処理
+//*
+//* [引数] なし
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void c_Title_MainMenu::FadeOutMenuItems()
+{
+
 }

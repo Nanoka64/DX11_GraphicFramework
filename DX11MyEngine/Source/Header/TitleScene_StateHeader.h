@@ -83,18 +83,28 @@ public:
 /* --- @:c_Title_MainMenu Class --- */
 //
 // 【?】タイトルシーンの子ステート
-//		タイトル項目の選択をする
+//		メインメニュー
 //
 // ***************************************************************************************
 class c_Title_MainMenu : public IState<SceneManager>
 {
 private:
+	// メニュー項目の状態
+	enum class MENU_ITEM_STATE
+	{
+		NONE,
+		FADE_IN,
+		FADE_OUT,
+		WAIT,
+	};
+
 	/* 定数 */
 	const float MOUSE_HOVERTED_ITEM_SLIDEOFFSET = 50.0f;							// マウスカーソルが項目の上に乗った際に、項目をどれくらいずらすか
 	const VECTOR2::VEC2 MENU_ITEM_SIZE			= VECTOR2::VEC2(450.0f, 100.0f);	// メニュー項目のサイズ
 	const VECTOR2::VEC2 MENU_ITEM_START_POS		= VECTOR2::VEC2(400.0f, 550.0f);	// 項目の開始位置
 	const float ITEM_POS_Y_BETWEEN_DIST = 120.0f;									// 項目同士のY距離
-
+	const float FADE_IN_DURATION = 0.5f;											// フェードインにかかる時間
+	const float FADE_OUT_DURATION = 0.5f;											// フェードアウトにかかる時間
 
 	SceneStateEnums::c_TITLE m_NextState = SceneStateEnums::c_TITLE::c_TITLE_MAIN_MENU;	// 次のステート
 
@@ -103,6 +113,10 @@ private:
 	std::weak_ptr<class ButtonUI> m_pButtonArray[static_cast<int>(UtilityData::TITLEMENU_ITEM::NUM)];					// メニュー項目のButtonUI配列  
 	std::weak_ptr<class RectTransform> m_pMenuItemRectTransformArray[static_cast<int>(UtilityData::TITLEMENU_ITEM::NUM)]; // メニュー項目のRectTransform配列
 	UtilityData::TITLEMENU_ITEM m_CrntSelectItem;	// 現在選択中の項目
+	
+	MENU_ITEM_STATE m_MenuItemState;	// メニュー項目の状態
+	float m_FadeTimer;					// フェード用のタイマー
+	
 	bool m_IsInit;	// 既に初期化済みか
 
 
@@ -111,6 +125,9 @@ public:
 	void OnExit(SceneManager* pOwner)override;
 	int Update(SceneManager* pOwner)override;
 	void Draw(SceneManager* pOwner)override;
+	void FadeInMenuItems();
+	void FadeOutMenuItems();
+	void Button_OnClicFunction(SceneManager* pOwner, UtilityData::TITLEMENU_ITEM _type);	// ボタンが押された際の処理
 };
 
 

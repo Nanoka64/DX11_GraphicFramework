@@ -345,6 +345,8 @@
     <ClInclude Include="Source\Header\TimeManager.h" />
     <ClInclude Include="Source\Header\TitleScene_StateHeader.h" />
     <ClInclude Include="Source\Header\TragetManager.h" />
+    <ClInclude Include="Source\Header\Tween.h" />
+    <ClInclude Include="Source\Header\TweenManager.h" />
     <ClInclude Include="Source\Header\UIManager.h" />
     <ClInclude Include="Source\Header\VEC.h" />
     <ClInclude Include="Source\Header\VERTEX.h" />
@@ -648,6 +650,8 @@
     <ClCompile Include="Source\Cpp\Root_TitleSceneState.cpp" />
     <ClCompile Include="Source\Cpp\TimeManager.cpp" />
     <ClCompile Include="Source\Cpp\TragetManager.cpp" />
+    <ClCompile Include="Source\Cpp\Tween.cpp" />
+    <ClCompile Include="Source\Cpp\TweenManager.cpp" />
     <ClCompile Include="Source\Cpp\UIManager.cpp" />
     <ClCompile Include="Source\Cpp\VertexBuffer.cpp" />
     <ClCompile Include="Source\Cpp\VertexShader.cpp" />

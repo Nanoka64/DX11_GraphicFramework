@@ -256,9 +256,6 @@
     <Filter Include="ソース ファイル\Engine\State">
       <UniqueIdentifier>{75ef6144-9f7a-4683-a5e9-1a09cea23061}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Engine\State\Factory">
-      <UniqueIdentifier>{fb5eec92-bea1-412c-b470-79f3cfeef390}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Engine\Tool">
       <UniqueIdentifier>{b611cbcb-2a22-4c94-a969-28aa8eee683e}</UniqueIdentifier>
     </Filter>
@@ -267,15 +264,6 @@
     </Filter>
     <Filter Include="ソース ファイル\Engine\Tool\Math">
       <UniqueIdentifier>{d5ed85c1-c2a3-4c88-b79d-6b51f760cf3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\Tool\CBuff">
-      <UniqueIdentifier>{397a2345-101d-4671-bc9c-cd48818a6347}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\Tool\BIt">
-      <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\Tool\Debug">
-      <UniqueIdentifier>{72429b56-0b56-4e59-a717-5c1b61c0dade}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Singleton">
       <UniqueIdentifier>{1e12f4f9-01e9-43b3-a45a-8ab752c8a575}</UniqueIdentifier>
@@ -298,6 +286,18 @@
     <Filter Include="ソース ファイル\Engine\Graphics\Frustum">
       <UniqueIdentifier>{1c611a1b-33f7-4178-a2c7-dc576bb73001}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\StateFactory">
+      <UniqueIdentifier>{1a9eeeef-f0da-47f3-a365-29d517591dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Tool\Utils">
+      <UniqueIdentifier>{e6765cc9-2aa2-4e2f-8722-4fd8ebeaeadc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Graphics\ConstantBuffer">
+      <UniqueIdentifier>{397a2345-101d-4671-bc9c-cd48818a6347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\Tool\BIt">
+      <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -317,9 +317,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\ModelMesh.cpp">
       <Filter>ソース ファイル\Engine\Graphics\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\Helper.cpp">
-      <Filter>ソース ファイル\Engine\Tool</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\InputFactory.cpp">
       <Filter>ソース ファイル\Engine\Tool\KeyInput</Filter>
@@ -546,12 +543,6 @@
     <ClCompile Include="Source\Cpp\Component_EnemyController.cpp">
       <Filter>ソース ファイル\Game\Component\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\SceneFactory.cpp">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Component_TimerDestruction.cpp">
       <Filter>ソース ファイル\Engine\BaseComponent\Utility</Filter>
     </ClCompile>
@@ -597,9 +588,6 @@
     <ClCompile Include="Source\Cpp\Component_WeaponBase.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\WeaponStateFactory.cpp">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Gun_IdleState.cpp">
       <Filter>ソース ファイル\Game\Component\Weapon\Gun\State</Filter>
     </ClCompile>
@@ -617,9 +605,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_BuildingController.cpp">
       <Filter>ソース ファイル\Game\Component\Building</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\BuildingStateFactory.cpp">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Building_State.cpp">
       <Filter>ソース ファイル\Game\Component\Building\State_Building</Filter>
@@ -795,6 +780,27 @@
     <ClCompile Include="Source\Cpp\Frustum.cpp">
       <Filter>ソース ファイル\Engine\Graphics\Frustum</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\BuildingStateFactory.cpp">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\SceneFactory.cpp">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\WeaponStateFactory.cpp">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Helper.cpp">
+      <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\TweenManager.cpp">
+      <Filter>ソース ファイル\Singleton\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Tween.cpp">
+      <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -806,9 +812,6 @@
     <ClInclude Include="Source\Header\Window.h">
       <Filter>ソース ファイル\Engine\App</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Path.h">
-      <Filter>ソース ファイル\Engine\Tool</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\pch.h">
       <Filter>ソース ファイル\Engine\PCH</Filter>
     </ClInclude>
@@ -817,9 +820,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\ModelMesh.h">
       <Filter>ソース ファイル\Engine\Graphics\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\Helper.h">
-      <Filter>ソース ファイル\Engine\Tool</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\FontConfig.h">
       <Filter>ソース ファイル\Engine\Graphics\Whrite</Filter>
@@ -837,7 +837,7 @@
       <Filter>ソース ファイル\Engine\Tool\Math</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantBufferStructs.h">
-      <Filter>ソース ファイル\Engine\Tool\CBuff</Filter>
+      <Filter>ソース ファイル\Engine\Graphics\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Texture.h">
       <Filter>ソース ファイル\Engine\Graphics\Texture</Filter>
@@ -1037,12 +1037,6 @@
     <ClInclude Include="Source\Header\Component_EnemyController.h">
       <Filter>ソース ファイル\Game\Component\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\SceneFactory.h">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\EnemyStateFactory.h">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Ant_StateHeader.h">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Ant</Filter>
     </ClInclude>
@@ -1094,9 +1088,6 @@
     <ClInclude Include="Source\Header\Component_WeaponBase.h">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\WeaponStateFactory.h">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\Gun_StateHeader.h">
       <Filter>ソース ファイル\Game\Component\Weapon\Gun\State</Filter>
     </ClInclude>
@@ -1132,9 +1123,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantEnemyData.h">
       <Filter>ソース ファイル\Constant</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\BuildingStateFactory.h">
-      <Filter>ソース ファイル\Engine\State\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_MiniMapRader.h">
       <Filter>ソース ファイル\Game\Component\UI</Filter>
@@ -1245,10 +1233,10 @@
       <Filter>ソース ファイル\Engine\BaseComponent\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantBuffer.h">
-      <Filter>ソース ファイル\Engine\Tool\CBuff</Filter>
+      <Filter>ソース ファイル\Engine\Graphics\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\IConstantBuffer.h">
-      <Filter>ソース ファイル\Engine\Tool\CBuff</Filter>
+      <Filter>ソース ファイル\Engine\Graphics\ConstantBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_MuzzleFlashEffect.h">
       <Filter>ソース ファイル\Game\Component\Weapon</Filter>
@@ -1270,6 +1258,30 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Frustum.h">
       <Filter>ソース ファイル\Engine\Graphics\Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\BuildingStateFactory.h">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EnemyStateFactory.h">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\SceneFactory.h">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\WeaponStateFactory.h">
+      <Filter>ソース ファイル\Game\StateFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Helper.h">
+      <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Path.h">
+      <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Tween.h">
+      <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TweenManager.h">
+      <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
