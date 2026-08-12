@@ -52,7 +52,15 @@ void c_Title_SoldierSelect::OnEnter(SceneManager *pOwner)
 		m_pButtonArray[i] = m_pButtonsObjArray[i]->get_Component<ButtonUI>();								// ボタンコンポーネント取得
 		m_pButtonArray[i].lock()->set_Color(VEC4(10.0f, 10.0f, 0.0f, 1.0f), UIData::STATE::HIGH_LIGHTED);	// 選択されている状態で「黄色」に
 		m_pButtonArray[i].lock()->set_Color(VEC4(5.0f, 5.0f, 0.0f, 1.0f), UIData::STATE::PRESSED);
+		m_pButtonArray[i].lock()->set_Color(VEC4(1.0f, 1.0f, 1.0f, 1.0f), UIData::STATE::DISABLED);			// 無効状態でも元の色のままにする
 		m_pMenuItemRectTransformArray[i] = m_pButtonsObjArray[i]->get_RectTransform();						// ボタンのレクトトランスフォーム取得
+
+
+		// Tweenでメニュー項目を下から上に登場させる
+		VEC2* currentPos = m_pMenuItemRectTransformArray[i].lock()->get_RectPositionPtr();
+		float* tweenPosY = &currentPos->y;
+		Master::m_pTweenManager->AddTween(tweenPosY, currentPos->y, currentPos->y + 500, 0.25f, Tool::TweenType::LINEAR);
+
 
 		m_ItemInfoArray[i]._pos = pos;
 		m_ItemInfoArray[i]._name = g_SoldierNames[i];
@@ -194,7 +202,7 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 			spritePos.x += MOUSE_HOVERTED_ITEM_SLIDEOFFSET;
 		}
 
-		m_pMenuItemRectTransformArray[i].lock()->set_RectPosition(VEC2(spritePos.x, spritePos.y));
+		//m_pMenuItemRectTransformArray[i].lock()->set_RectPosition(VEC2(spritePos.x, spritePos.y));
 											  
 		// 文字表示
 		//Master::m_pDirectWriteManager->DrawString(item._name, menuItemPos, "White_40_STD");
@@ -219,8 +227,8 @@ void c_Title_SoldierSelect::Draw(SceneManager *pOwner)
 	// 装備を決定したときのテキスト表示 ************************************************************************
 	if (m_DecisionTextDrawTimer > 0.0f) {
 		std::string decisionText = g_SoldierNames[m_DecisionSoldierTypeIndex];
-		float textY = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.y - 40.0f;
-		float textX = m_ItemInfoArray[m_DecisionSoldierTypeIndex]._pos.x - 150.0f;
+		float textY = m_pMenuItemRectTransformArray[m_DecisionSoldierTypeIndex].lock()->get_RectPosition().y - 40.0f;
+		float textX = m_pMenuItemRectTransformArray[m_DecisionSoldierTypeIndex].lock()->get_RectPosition().x - 150.0f;
 
 		Master::m_pDirectWriteManager->SetColor(D2D1::ColorF(D2D1::ColorF(0.0f, 1.0f, 1.0f)));	// 水色
 		Master::m_pDirectWriteManager->DrawString("[" + decisionText + "]" + "を装備しました", VEC2(textX, textY), "White_30_STD");

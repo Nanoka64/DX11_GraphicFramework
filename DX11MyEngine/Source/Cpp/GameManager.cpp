@@ -3,6 +3,9 @@
 #include "SceneManager.h"
 #include "RendererEngine.h"
 #include "DirectWriteManager.h"
+#include "Component_3DCamera.h"
+
+using namespace RenderData;
 
 
 //*---------------------------------------------------------------------------------------
@@ -36,6 +39,12 @@ GameManager::~GameManager()
 //*----------------------------------------------------------------------------------------
 bool GameManager::Init(RendererEngine& renderer)
 {
+	// パイプラインの作成
+	if (!renderer.CreateRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT))
+	{
+		return false;
+	}
+
 	// シーン管理クラスの生成
 	m_pSceneManager = new SceneManager();
 
@@ -56,13 +65,29 @@ bool GameManager::Init(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameManager::Update(RendererEngine& renderer)
 {
+	float deltaTime = Master::m_pTimeManager->get_DeltaTime();
+
 	// シーンの更新
 	m_pSceneManager->Update(renderer);
 
-	// 弾の更新
-	Master::m_pBulletManager->Update(renderer);
+	// オブジェクト更新
+	Master::m_pGameObjectManager->ObjectUpdate(renderer);
+
+	// 衝突判定
+	Master::m_pCollisionManager->CollisionProcess();
+
+	// 遅延更新
+	Master::m_pGameObjectManager->ObjectLateUpdate(renderer);
+	
+	// Tweenの更新
+	Master::m_pTweenManager->Update(deltaTime);
+
 	// UIの更新
 	Master::m_pUIManager->Update(renderer);
+
+	// 弾の更新
+	Master::m_pBulletManager->Update(renderer);
+
 	// アイテムの更新
 	Master::m_pItemManager->Update(renderer);
 
@@ -82,6 +107,11 @@ void GameManager::Update(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void GameManager::Draw(RendererEngine& renderer)
 {
+	// レンダリングパイプラインの実行
+	if (auto camera = Master::m_pDataManager->get_CameraComponent().lock()) {
+		renderer.ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE::DEFAULT, camera.get());
+	}
+
 	m_pSceneManager->Draw(renderer);
 }
 

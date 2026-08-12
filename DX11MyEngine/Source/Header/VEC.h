@@ -257,8 +257,10 @@ namespace VECTOR4
 
 		// オーバーロード
 		VEC4 operator+(const VEC4& vec)const { return { this->x + vec.x,this->y + vec.y,this->z + vec.z,this->w + vec.w }; };
+		VEC4 operator+(const float& scl)const { return { this->x + scl,this->y + scl,this->z + scl,this->w + scl }; };
 		VEC4 operator-(const VEC4& vec) const { return { this->x - vec.x,this->y - vec.y,this->z - vec.z,this->w - vec.w }; };
-		VEC4 operator*(float scl) const { return { this->x * scl,this->y * scl,this->z * scl,this->w * scl }; };
+		VEC4 operator-(const float& scl) const { return { this->x - scl,this->y - scl,this->z - scl,this->w - scl }; };
+		VEC4 operator*(const float& scl) const { return { this->x * scl,this->y * scl,this->z * scl,this->w * scl }; };
 		VEC4 operator*(const VEC4& vec) const { return { this->x * vec.x,this->y * vec.y,this->z * vec.z,this->w * vec.w }; };
 		VEC4 operator+() const { return *this; };
 		VEC4 operator-() const { return { -this->x, -this->y, -this->z,-this->w }; };
@@ -367,8 +369,10 @@ namespace VECTOR2
 
 		// オーバーロード
 		VEC2 operator+(const VEC2& vec)const { return { this->x + vec.x,this->y + vec.y}; };
+		VEC2 operator+(const float& scl)const { return { this->x + scl,this->y + scl }; };
 		VEC2 operator-(const VEC2& vec) const { return { this->x - vec.x,this->y - vec.y }; };
-		VEC2 operator*(float scl) const { return { this->x * scl,this->y * scl }; };
+		VEC2 operator-(const float& scl) const { return { this->x - scl,this->y - scl}; };
+		VEC2 operator*(const float& scl) const { return { this->x * scl,this->y * scl }; };
 		VEC2 operator*(const VEC2& vec) const { return { this->x * vec.x,this->y * vec.y}; };
 		VEC2 operator+() const { return *this; };
 		VEC2 operator-() const { return { -this->x, -this->y }; };

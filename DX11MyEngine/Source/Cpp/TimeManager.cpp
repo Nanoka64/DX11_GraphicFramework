@@ -76,6 +76,11 @@ void TimeManager::Update()
 	{
 		m_DeltaTime = MAX_DELTA_TIME;
 	}
+
+
+
+	// タイマー処理更新
+	TimersUpdate();
 }
 
 void TimeManager::TriggerHitStop(float _duration, float _scale)
@@ -89,4 +94,35 @@ void TimeManager::TriggerHitStop(float _duration, float _scale)
 	{
 		m_HitStopScale = _scale;
 	}
+}
+
+void TimeManager::TimersUpdate()
+{
+	for(auto it = m_Timers.begin(); it  != m_Timers.end(); )
+	{
+		it->_remainingTime -= m_DeltaTime;
+		if (it->_remainingTime <= 0.0f)
+		{
+			// タイマーが終了したらコールバックを呼び出す
+			if (it->_callback)
+			{
+				it->_callback();
+			}
+			// タイマーをリストから削除
+			it = m_Timers.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void TimeManager::AddTimer(float _duration, std::function<void()> _callback)
+{
+	Timer newTimer;
+	newTimer._remainingTime = _duration;
+	newTimer._callback = _callback;
+
+	m_Timers.push_back(newTimer);
 }

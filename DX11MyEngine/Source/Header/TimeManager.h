@@ -1,6 +1,16 @@
 #pragma once
 #include <chrono>
 
+/// <summary>
+/// タイマー構造体
+///</summary>
+struct Timer
+{
+	float _remainingTime;				// 残り時間
+	std::function<void()> _callback;	// コールバック関数
+};
+
+
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:TimeManager Class --- */
@@ -22,6 +32,8 @@ private:
 	float m_HitStopScale;	// 停止時間のスケール（倍率）
 	std::chrono::steady_clock::time_point m_PrevTime;
 
+	std::vector<Timer> m_Timers; // タイマーのリスト
+
 public:
 	TimeManager();
 	~TimeManager();
@@ -35,11 +47,13 @@ public:
 
 	void TriggerHitStop(float _duration, float _scale = 0.5f);
 
+	void AddTimer(float _duration, std::function<void()> _callback);
 private:
 	// コピー禁止
 	TimeManager(const TimeManager&) = delete;
 	TimeManager& operator=(const TimeManager&) = delete;
 	// ------------------------------------------------------
 
+	void TimersUpdate();
 };
 

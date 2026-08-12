@@ -37,6 +37,7 @@ UIManager               *Master::m_pUIManager           = nullptr;   // UI管理
 RandomManager           *Master::m_pRandomManager       = nullptr;   // 乱数管理
 WeaponDataManager       *Master::m_pWeaponDataManager   = nullptr;   // 武器データ管理
 ItemManager             *Master::m_pItemManager         = nullptr;   // アイテム管理
+TweenManager            *Master::m_pTweenManager        = nullptr;   // Tween管理
 
 //*---------------------------------------------------------------------------------------
 //* @:DXApp Class 
@@ -106,6 +107,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pRandomManager        = new RandomManager();          // 乱数管理
     Master::m_pWeaponDataManager    = new WeaponDataManager();      // 武器管理
     Master::m_pItemManager          = new ItemManager();            // アイテム管理
+    Master::m_pTweenManager         = new TweenManager();            // Tween管理
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/

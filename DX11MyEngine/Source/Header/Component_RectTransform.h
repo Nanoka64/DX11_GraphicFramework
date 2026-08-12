@@ -56,6 +56,7 @@ public:
 	VECTOR2::VEC2 get_Pivot()const { return m_Pivot; }
 	VECTOR2::VEC2 get_SizeDelta()const { return m_SizeDelta; }
 	VECTOR2::VEC2 get_RectPosition()const { return m_AnchoredPosition; }
+	VECTOR2::VEC2* get_RectPositionPtr() { return &m_AnchoredPosition; }
 	float get_Width()const { return m_CalculatedWidth; }
 	float get_Height()const { return m_CalculatedHeight; }
 

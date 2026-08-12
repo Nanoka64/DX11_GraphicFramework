@@ -18,6 +18,7 @@
 #include "RandomManager.h"
 #include "WeaponDataManager.h"
 #include "ItemManager.h"
+#include "TweenManager.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ public:
 	static LightManager			* m_pLightManager;		// ライト管理
 	static DirectWriteManager	* m_pDirectWriteManager;// 文字管理
 	static BlendManager			* m_pBlendManager;		// ブレンド管理
+	static TweenManager			* m_pTweenManager;		// Tween管理
 	static GameObjectManager	* m_pGameObjectManager;	// オブジェクト管理
 	static ResourceManager		* m_pResourceManager;	// リソース管理
 	static EditorManager		* m_pEditorManager;		// エディタ管理

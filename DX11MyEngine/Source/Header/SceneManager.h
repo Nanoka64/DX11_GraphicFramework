@@ -3,8 +3,7 @@
 //      * Includes *
 //--------------------------------------------------------------------------------------
 #include "Model.h"
-#include "RootSceneState.h"
-
+#include "StateMachine.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -16,23 +15,8 @@
 class SceneManager
 {
 private:
-	std::shared_ptr<GameObject>  m_pPlayer;
-	std::shared_ptr<GameObject>  m_pCameraObj;
-	std::shared_ptr<class Camera3D>  m_pCameraComp;
-
-	int m_CrntSceneState;	
-
-	VECTOR3::VEC3 m_V1;
-	VECTOR3::VEC3 m_V2;
-	VECTOR3::VEC3 m_V3;
-
 	// ステートマシン
 	StateMachine<SceneManager> m_StateMachine;
-
-	std::shared_ptr<GameObject> m_pTempObj;
-	std::shared_ptr<GameObject> m_pAnt[2];
-	std::shared_ptr<GameObject> m_pBomber[3];
-
 	bool m_IsClose;
 
 public:
