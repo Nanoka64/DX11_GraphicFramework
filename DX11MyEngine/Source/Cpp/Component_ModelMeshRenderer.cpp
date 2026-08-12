@@ -126,6 +126,7 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
                 cbMaterial.SpecularPower = mat->m_SpecularPower;
                 cbMaterial.EmissivePower = mat->m_EmissivePower;
                 cbMaterial.EmissiveColor = mat->m_EmissiveColor;
+                cbMaterial.EnvironmentReflectionStrength = mat->m_EnvironmentReflectionStrength;
                 Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
                 //ブレンドステート設定 ==========================

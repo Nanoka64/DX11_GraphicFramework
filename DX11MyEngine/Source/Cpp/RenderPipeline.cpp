@@ -1083,6 +1083,10 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
         m_pShadowMap_RT->get_Width(),
         m_pShadowMap_RT->get_Height()
     );
+    // 環境反射用のキューブマップを設定
+    sprite.pTextureMap[6] =
+        Master::m_pResourceManager->LoadDDS_CubeMap_Texture(
+            L"Resource/Texture/CubeMap/skybox_01.dds");
     sprite.ShaderType = SHADER_TYPE::DEFERRED_STD_RT_SPRITE;
 
     // スプライト取得

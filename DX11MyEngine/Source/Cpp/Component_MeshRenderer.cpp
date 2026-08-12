@@ -95,6 +95,7 @@ void MeshRenderer::Draw(RendererEngine& renderer)
         cbMaterial.SpecularPower = pMatData->m_SpecularPower;
         cbMaterial.EmissivePower = pMatData->m_EmissivePower;
         cbMaterial.EmissiveColor = pMatData->m_EmissiveColor;
+        cbMaterial.EnvironmentReflectionStrength = pMatData->m_EnvironmentReflectionStrength;
         cbMaterial.OffsetUV ;
 
         // 定数バッファをセット ==========================

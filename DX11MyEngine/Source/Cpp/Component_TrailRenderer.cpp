@@ -293,6 +293,7 @@ void TrailRenderer::ConstantBufferUpdate(RendererEngine& renderer)
 	cbMaterial.EmissiveColor = VEC3(m_Color.x, m_Color.y, m_Color.z);
 	cbMaterial.Specular = VEC4(1.0f, 1.0f, 1.0f, 0.1f);
 	cbMaterial.SpecularPower = 100.0f;
+	cbMaterial.EnvironmentReflectionStrength = 0.0f;
 	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL, (void*)&cbMaterial, sizeof(CB_MATERIAL));
 
 

@@ -25,7 +25,7 @@ Texture2D<float4> g_tSpecularTexture : register(t2);        // rgbにスペキ�
 Texture2D<float4> g_tEmissiveMapTexture : register(t3);     // エミッシブ
 Texture2D<float4> g_tDepthTexture : register(t4);           // rに深度値 gbaにエミッシブカラー
 Texture2D<float4> g_tShadowMapTexture : register(t5);       // シャドウマップ
-
+TextureCube g_tEnvironmentCube : register(t6);              // 環境マップ
 
 /* =========================================================================
 /* - @:出力構造体 - */
@@ -76,7 +76,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     spcPow *= 255;
     
     // エミッシブ値を復元
-    float3 emissiveColor = emissiveTex.rgb; // デプスのGBAにエミッシブカラー入れてる
+    float3 emissiveColor = emissiveTex.rgb; // デプスのRGBにエミッシブカラー入れてる
     
     OUT_DiffAndSpec dirLig;             // ディレクション用
     dirLig.Diffuse = float3(0, 0, 0);
@@ -232,6 +232,31 @@ float4 PSMain(PS_IN input) : SV_TARGET
     //// shadowFactor : 1.0 = 光が当たっている, 0.0 = 影
     //    finalCol.xyz = lerp(shadowColor, finalCol.xyz, shadowFactor);
         //}
+    
+    
+    //float reflectionStrength = emissiveTex.a;
+
+    //if (reflectionStrength > 0.0f)
+    //{
+    //    float3 N = normalize(normal);
+    //    float3 toEye = normalize(cb_EyePos - worldPos.xyz);
+
+    //// カメラから表面へ入ってくる向き
+    //    float3 reflectionDir = reflect(-toEye, N);
+
+    //    float3 environmentColor =
+    //    g_tEnvironmentCube.Sample(g_sSampler, reflectionDir).rgb;
+
+    //// 正面よりも斜めから見た方が強く反射する
+    //    float fresnel =
+    //    pow(1.0f - saturate(dot(N, toEye)), 5.0f);
+
+    //    float reflectionWeight =
+    //    saturate(reflectionStrength * lerp(0.15f, 1.0f, fresnel));
+
+    //    finalCol.rgb =
+    //    lerp(finalCol.rgb, environmentColor, reflectionWeight);
+    //}
     
     //************************************************************************
     // 最終調整

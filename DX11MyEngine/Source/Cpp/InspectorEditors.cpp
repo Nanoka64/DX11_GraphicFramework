@@ -10,6 +10,7 @@
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
 #include "Component_ModelMeshResource.h"
+#include "Component_IMeshResource.h"
 #include "Component_ModelMeshRenderer.h"
 #include "Component_BoxCollider.h"
 #include "Component_SphereCollider.h"
@@ -736,6 +737,7 @@ void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &
                 VEC3 emissiveCol    = mat->m_EmissiveColor;
                 float specPow       = mat->m_SpecularPower;
                 float emissivePow   = mat->m_EmissivePower;
+                float reflectionStrength   = mat->m_EnvironmentReflectionStrength;
 
                 ID3D11ShaderResourceView* diffSRV = nullptr;
                 ID3D11ShaderResourceView* norSRV = nullptr;
@@ -807,6 +809,13 @@ void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &
                         mat->m_EmissivePower = emissivePow;
                     }
 
+                    Master::m_pDebugger->DG_BulletText(U8ToChar(u8"反射強度"));
+                    Master::m_pDebugger->DG_SameLine();
+                    if (Master::m_pDebugger->DG_DragFloat("##ReflectionStrength" + std::to_string(i), 1, &reflectionStrength, 0.01f, 0.0f, 1.0f))
+                    {
+                        mat->m_EnvironmentReflectionStrength = reflectionStrength;
+                    }
+
                     Master::m_pDebugger->DG_TreePop();
                 }
             }
@@ -823,6 +832,168 @@ void ModelMeshResourceEditor::OnEditorGUI(RendererEngine &renderer, GameObject &
     */
 
     // 反映
+}
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:MeshResourceEditor Class --- */
+//
+// ***************************************************************************************
+bool MeshResourceEditor::Init(RendererEngine& renderer)
+{
+    return true;
+}
+
+void MeshResourceEditor::OnEditorGUI(RendererEngine& renderer, GameObject& pObj)
+{
+    auto pComp = pObj.get_Component<IMeshResource>();
+
+    if (pComp == nullptr)
+    {
+        return;
+    }
+
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"メッシュリソース")))
+    {
+        Master::m_pDebugger->DG_Separator();
+
+        auto meshData = pComp->m_pMeshData;
+        if (meshData == nullptr)
+        {
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"メッシュデータ：未設定"));
+            Master::m_pDebugger->DG_TreePop();
+            return;
+        }
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"頂点数：%u"), meshData->NumVertex);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"インデックス数：%u"), meshData->NumIndex);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"頂点ストライド：%u byte"), meshData->VertexStride);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"マテリアル数：%u"), meshData->NumMaterial);
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"シェーダー種類：%d"), static_cast<int>(pComp->get_ShaderType()));
+        Master::m_pDebugger->DG_BulletText(
+            U8ToChar(u8"動的頂点バッファ：%s"),
+            meshData->IsDynamic ? U8ToChar(u8"はい") : U8ToChar(u8"いいえ"));
+        Master::m_pDebugger->DG_BulletText(
+            U8ToChar(u8"頂点バッファ：%s"),
+            meshData->pVertexBuffer != nullptr ? U8ToChar(u8"有効") : U8ToChar(u8"未設定"));
+        Master::m_pDebugger->DG_BulletText(
+            U8ToChar(u8"インデックスバッファ：%s"),
+            meshData->pIndexBuffer != nullptr ? U8ToChar(u8"有効") : U8ToChar(u8"未設定"));
+
+        Master::m_pDebugger->DG_Separator();
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"カリングモード"));
+
+        if (Master::m_pDebugger->DG_RadioButton(
+            U8ToChar(u8"なし##MeshResourceCullNone"),
+            meshData->CullMode == RenderData::CULL_MODE::NONE))
+        {
+            meshData->CullMode = RenderData::CULL_MODE::NONE;
+        }
+        Master::m_pDebugger->DG_SameLine();
+        if (Master::m_pDebugger->DG_RadioButton(
+            U8ToChar(u8"表面##MeshResourceCullFront"),
+            meshData->CullMode == RenderData::CULL_MODE::FRONT))
+        {
+            meshData->CullMode = RenderData::CULL_MODE::FRONT;
+        }
+        Master::m_pDebugger->DG_SameLine();
+        if (Master::m_pDebugger->DG_RadioButton(
+            U8ToChar(u8"裏面##MeshResourceCullBack"),
+            meshData->CullMode == RenderData::CULL_MODE::BACK))
+        {
+            meshData->CullMode = RenderData::CULL_MODE::BACK;
+        }
+
+        auto material = meshData->pMaterials.lock();
+        if (material == nullptr)
+        {
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"マテリアル：未設定"));
+            Master::m_pDebugger->DG_TreePop();
+            return;
+        }
+
+        if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"マテリアル")))
+        {
+            VEC4 diffuseColor = material->m_DiffuseColor;
+            VEC4 specularColor = material->m_SpecularColor;
+            VEC3 emissiveColor = material->m_EmissiveColor;
+            float specularPower = material->m_SpecularPower;
+            float emissivePower = material->m_EmissivePower;
+            float reflectionStrength = material->m_EnvironmentReflectionStrength;
+
+            ID3D11ShaderResourceView* diffuseSRV = nullptr;
+            ID3D11ShaderResourceView* normalSRV = nullptr;
+            ID3D11ShaderResourceView* specularSRV = nullptr;
+
+            if (auto texture = material->m_DiffuseMap.Texture.lock())
+            {
+                diffuseSRV = texture->get_SRV();
+            }
+            if (auto texture = material->m_NormalMap.Texture.lock())
+            {
+                normalSRV = texture->get_SRV();
+            }
+            if (auto texture = material->m_SpecularMap.Texture.lock())
+            {
+                specularSRV = texture->get_SRV();
+            }
+
+            Master::m_pDebugger->DG_Separator();
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ディフューズ色"));
+            Master::m_pDebugger->DG_Image(diffuseSRV, VEC2(100.0f, 100.0f));
+            if (Master::m_pDebugger->DG_ColorEdit4("##MeshResourceDiffuse", &diffuseColor))
+            {
+                material->m_DiffuseColor = diffuseColor;
+            }
+
+            Master::m_pDebugger->DG_Separator();
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ノーマルマップ"));
+            Master::m_pDebugger->DG_Image(normalSRV, VEC2(100.0f, 100.0f));
+
+            Master::m_pDebugger->DG_Separator();
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ色"));
+            Master::m_pDebugger->DG_Image(specularSRV, VEC2(100.0f, 100.0f));
+            if (Master::m_pDebugger->DG_ColorEdit4("##MeshResourceSpecular", &specularColor))
+            {
+                material->m_SpecularColor = specularColor;
+            }
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ強度"));
+            Master::m_pDebugger->DG_SameLine();
+            if (Master::m_pDebugger->DG_DragFloat(
+                "##MeshResourceSpecularPower", 1, &specularPower, 1.0f, 0.0f, 255.0f))
+            {
+                material->m_SpecularPower = specularPower;
+            }
+
+            Master::m_pDebugger->DG_Separator();
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"エミッシブ色"));
+            if (Master::m_pDebugger->DG_ColorEdit3("##MeshResourceEmissive", &emissiveColor))
+            {
+                material->m_EmissiveColor = emissiveColor;
+            }
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"エミッシブ強度"));
+            Master::m_pDebugger->DG_SameLine();
+            if (Master::m_pDebugger->DG_DragFloat(
+                "##MeshResourceEmissivePower", 1, &emissivePower, 0.5f, 0.0f, 255.0f))
+            {
+                material->m_EmissivePower = emissivePower;
+            }
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"反射強度"));
+            Master::m_pDebugger->DG_SameLine();
+            if (Master::m_pDebugger->DG_DragFloat(
+                "##MeshResourceReflectionStrength", 1, &reflectionStrength, 0.01f, 0.0f, 1.0f))
+            {
+                material->m_EnvironmentReflectionStrength = reflectionStrength;
+            }
+
+            Master::m_pDebugger->DG_TreePop();
+        }
+
+        Master::m_pDebugger->DG_TreePop();
+    }
 }
 
 

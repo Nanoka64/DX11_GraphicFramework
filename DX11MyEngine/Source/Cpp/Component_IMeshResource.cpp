@@ -164,6 +164,7 @@ bool IMeshResource::Setup(RendererEngine& renderer, SHADER_TYPE shaderType, UTIL
 	}
 
 	if(m_pMeshData ==nullptr)return false;
+	m_pMeshData->NumMaterial = materialNum;
 
 	// 定数バッファの作成
 	if (!CreateCBuffer(pDevice))	return false;	

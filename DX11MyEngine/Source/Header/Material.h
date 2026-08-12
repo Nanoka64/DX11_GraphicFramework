@@ -16,6 +16,7 @@ public:
     VECTOR4::VEC4 m_SpecularColor;  // スペキュラ反射光
 
     float m_SpecularPower;          // スペキュラの絞り強さ
+    float m_EnvironmentReflectionStrength;  // 環境反射の強さ
 
     VECTOR3::VEC3 m_EmissiveColor;  // 発光色
     float m_EmissivePower;          // 自己発光の強さ（ブルーム強度）
@@ -31,6 +32,7 @@ public:
         m_DiffuseColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
         m_SpecularColor(VECTOR4::VEC4(1.f, 1.f, 1.f, 1.f)),
         m_SpecularPower(0.0f),
+        m_EnvironmentReflectionStrength(0.0f),
         m_BlendMode(BLEND_MODE::NONE),
         m_EmissivePower(0.0f),
         m_EmissiveColor(VECTOR3::VEC3(0.0f,0.0f,0.0f))

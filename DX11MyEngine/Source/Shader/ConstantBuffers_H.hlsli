@@ -111,16 +111,16 @@ cbuffer CB_Bones : register(b3)
 //* =========================================================================
 cbuffer CB_MATERIAL : register(b4)        
 { // スロット4マテリアル
-    float4 cb_DiffuseColor; // ディフューズカラー
+    float4 cb_DiffuseColor;                 // ディフューズカラー
     
-    float4 cb_SpecularColor; // スペキュラカラー
+    float4 cb_SpecularColor;                // スペキュラカラー
     
-    float cb_SpecularPower; // スペキュラの強さ
-    float cb_EmissivePower; // エミッシブの強さ
-    float2 cb_OffsetUV;     // UVオフセット
+    float cb_SpecularPower;                 // スペキュラの強さ
+    float cb_EmissivePower;                 // エミッシブの強さ
+    float2 cb_OffsetUV;                     // UVオフセット
     
-    float3 cb_EmissiveColor;// エミッシブカラー
-    float pad0;
+    float3 cb_EmissiveColor;                // エミッシブカラー
+    float cb_EnvironmentReflectionStrength; // 環境反射の強さ
     
     //float2 pad0;
     // 16バイト境界調整（シェーダは16バイトが都合がいいらしい 上のfloatといい感じに合わせるため float3）

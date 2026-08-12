@@ -101,18 +101,18 @@ struct CB_BONES_DATA_SET
 // 
 //=========================================================================================
 struct CB_MATERIAL {
-    DirectX::XMFLOAT4 Diffuse;    // ディフューズ反射光
+    DirectX::XMFLOAT4 Diffuse;              // ディフューズ反射光
 
-    DirectX::XMFLOAT4 Specular;   // スペキュラ反射光
+    DirectX::XMFLOAT4 Specular;             // スペキュラ反射光
 
-    float SpecularPower;          // スペキュラの強さ
-    float EmissivePower;          // 自己発光の強さ（ブルーム強度）
-    DirectX::XMFLOAT2 OffsetUV;   // UVオフセット（エネルギーの流れる感じとかの表現に使えそう ヘクトルみたいな）
+    float SpecularPower;                    // スペキュラの強さ
+    float EmissivePower;                    // 自己発光の強さ（ブルーム強度）
+    DirectX::XMFLOAT2 OffsetUV;             // UVオフセット（エネルギーの流れる感じとかの表現に使えそう ヘクトルみたいな）
 
-    DirectX::XMFLOAT3 EmissiveColor;    // 発光カラー
-    float Padding;
+    DirectX::XMFLOAT3 EmissiveColor;        // 発光カラー
+	float EnvironmentReflectionStrength;    // 環境反射の強さ
 
-    //float Padding[2];             // パディング(16バイトアラインメント ※詳細はUtilityHeader.hlsli側を見て)
+     // パディング(16バイトアラインメント ※詳細はUtilityHeader.hlsli側を見て)
 };
 
 struct CB_MATERIAL_SET {
