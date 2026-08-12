@@ -119,6 +119,7 @@ enum class BGM_ID
     BGM_TITLE_01,
 	BGM_GAME_01,
     BGM_VICTORY01,
+    BGM_HANGEKI,
 
     NUM
 };

@@ -277,6 +277,12 @@ namespace Tool
         return (1 - t) * start + t * end;
     }
 
+    template<typename T>
+    inline T Lerp(const T& start, const T& end, float t)
+    {
+        return start + (end - start) * t;
+    }
+
     inline VECTOR2::VEC2 VEC2_Lerp(VECTOR2::VEC2 start, VECTOR2::VEC2 end, float t)
     {
         return {

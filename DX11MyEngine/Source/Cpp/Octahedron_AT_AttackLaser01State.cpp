@@ -141,7 +141,7 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 			//						攻撃が終了したら、移動ステートへ
 			//
 			//=========================================================================================
-			return ANT_STATE::ANT_STATE_ACTIVE_MOVE;
+			return OCTAHEDRON_STATE::OCTAHEDRON_STATE_ACTIVE_MOVE;
 		}
 	}
 

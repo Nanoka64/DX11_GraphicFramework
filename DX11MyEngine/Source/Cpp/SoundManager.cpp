@@ -295,6 +295,7 @@ bool SoundManager::InitXA2Sound(void)
 	Load_Wav("Resource/Sound/BGM/Flash_Shadow.wav", SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_TITLE_01));
 	Load_Wav("Resource/Sound/BGM/MusMus-BGM-170.wav", SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_GAME_01));
 	Load_Wav("Resource/Sound/BGM/Victory.wav", SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_VICTORY01));
+	Load_Wav("Resource/Sound/BGM/Hangeki.wav", SOUND_TYPE::BGM, SOUND_ID_TO_INT(BGM_ID::BGM_HANGEKI));
 
 	// É{ÉCÉX
 	Load_Wav("Resource/Sound/Voice/Ranger/an000_01.wav",SOUND_TYPE::VOICE, SOUND_ID_TO_INT(VOICE_ID::SOLDIER_R_SHOUT_01));

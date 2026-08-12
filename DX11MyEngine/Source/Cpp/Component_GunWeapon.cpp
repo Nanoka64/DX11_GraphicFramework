@@ -480,7 +480,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
     if (!m_pFlashPointLight.expired()) {
         // ƒtƒ‰ƒbƒVƒ…
         m_pFlashPointLight.lock()->set_Range(5.0f);
-        m_pFlashPointLight.lock()->set_Intensity(8.0f);
+        m_pFlashPointLight.lock()->set_Intensity(6.0f);
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 0.8f, 0.0f));
     }
 
