@@ -39,7 +39,7 @@ Acid_01,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resou
 Acid_02,5,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 Acid_03,0.5,10,0.5,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/Ant_Hit1.png,Resource/Texture/Particle/Ant_Hit1_n.png,-1,1
 Flame_01,8,3,2,1,1,1,1,1,100,1,0,0,10,Resource/Effect/Texture/flamea.png,-1,-1,1
-Objector_body,0,1,0,1,1,1,1,1,100,0,1,0,3,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,1
-Objector_shield,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,1
+Objector_body,0,1,0,1,1,1,1,1,100,0,1,0,3,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,0
+Objector_shield,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Model/Enemy/Octahedron/textures/shieldSurface.jpg,-1,-1,0
 MuzzleFlash_1,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/MazzleFrash1.png,-1,-1,1
 MuzzleFlash_2,1,1,1,1,1,1,1,1,100,0,0,0,0,Resource/Texture/Particle/MazzleFrash2.png,-1,-1,1

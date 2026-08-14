@@ -9,6 +9,8 @@ namespace RenderData
 		ID3D11Buffer* _vertexBuffer;
 		ID3D11Buffer* _indexBuffer;
 		UINT _indexCount;
+		UINT _stride;
+		UINT _offset;
 
 		class Material* _material;
 		SHADER_TYPE _shaderType;

@@ -553,10 +553,11 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     // 表カリング スカイボックスはボックスの内側に表示しているため
     renderer.RegisterCullMode(CULL_MODE::FRONT);    
 
-    auto skybox = Master::m_pGameObjectManager->get_ObjectByTag("Skybox");
-    if (skybox)
+
+	m_pSkyRenderer = Master::m_pDataManager->get_SkyRenderer();
+    if (auto skyRenderer = m_pSkyRenderer.lock())
     {
-        skybox->get_Component<SkyRenderer>()->Draw(renderer);
+        skyRenderer->Draw(renderer);
     }
 
     // ************************************************************************

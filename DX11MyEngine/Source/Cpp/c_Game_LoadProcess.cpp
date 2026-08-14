@@ -579,6 +579,9 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         auto obj = MeshFactory::CreateSkybox(skyInfo);
         obj->get_Transform().lock()->set_Scale(1.0f, 1.0f, 1.0f);
         obj->get_Transform().lock()->set_Pos(0.0f, 0.0f, 0.0f);
+
+		// スカイレンダラーをデータマネージャに登録
+		Master::m_pDataManager->set_SkyRenderer(obj->get_Component<SkyRenderer>());
     }
 
     /* ポイントライトの生成 (Cubuで分かりやすく)*/

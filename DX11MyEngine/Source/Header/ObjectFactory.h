@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:ObjectFactory  --- */
@@ -11,52 +9,40 @@
 // ***************************************************************************************
 namespace ObjectFactory {
 
+	// 共有ポインタの型定義
+	using ObjectPtr = std::shared_ptr<GameObject>;
+
+    //=========================================================================================
+    //
+	//						生成時に指定する情報
+    //
+    //=========================================================================================
     /// <summary>
     /// 生成するオブジェクトの情報
     /// </summary>
     struct BaseCreateObjectInfo
     {
-        std::string _tag = "GameObject";
+        std::string _tag = "Empty";
     };
 
 
+    //=========================================================================================
+    //
+    //						生成関数群
+    //
+    //=========================================================================================
 
-
-
-    /// <summary>
-    /// 空のオブジェクトの生成
-    /// </summary>
-    /// <returns>空オブジェクト</returns>
-    static std::shared_ptr<GameObject> CreateEmpty();
+    static ObjectPtr CreateEmpty(const BaseCreateObjectInfo& _info);   // 空オブジェクト
 
     /// <summary>
     /// 3Dオブジェクト生成関数群
     /// </summary>
     namespace Primitive3D
     {
-        /// <summary>
-        /// キューブの生成
-        /// </summary>
-        /// <returns>キューブ</returns>
-        static std::shared_ptr<GameObject> CreateCube();
-
-        /// <summary>
-        /// 平面の生成
-        /// </summary>
-        /// <returns>平面</returns>
-        static std::shared_ptr<GameObject> CreatePlane();
-
-        /// <summary>
-        /// 平面の生成
-        /// </summary>
-        /// <returns>平面</returns>
-        static std::shared_ptr<GameObject> CreateQuad();
-
-        /// <summary>
-        /// 3Dモデルの生成
-        /// </summary>
-        /// <returns>3Dモデル</returns>
-        static std::shared_ptr<GameObject> CreateModel();
+        static ObjectPtr CreateCube();      // キューブ
+        static ObjectPtr CreatePlane();     // プレーン
+        static ObjectPtr CreateQuad();      // クアッド
+        static ObjectPtr CreateModel();     // モデル
     };
 
     /// <summary>
@@ -64,17 +50,8 @@ namespace ObjectFactory {
     /// </summary>
     namespace Light
     {
-        /// <summary>
-        /// ポイントライトの生成
-        /// </summary>
-        /// <returns>ポイントライト</returns>
-        static std::shared_ptr<GameObject> CreatePointLight();
-
-        /// <summary>
-        /// ディレクションライトの生成
-        /// </summary>
-        /// <returns>ディレクションライト</returns>
-        static std::shared_ptr<GameObject> CreateDirectionalLight();
+        static ObjectPtr CreatePointLight();        // ポイントライト
+		static ObjectPtr CreateDirectionalLight();  // ディレクショナルライト
     };
 
     /// <summary>
@@ -82,16 +59,15 @@ namespace ObjectFactory {
     /// </summary>
     namespace UI
     {
-        /// <summary>
-        /// スプライトの生成
-        /// </summary>
-        /// <returns>スプライト</returns>
-        static std::shared_ptr<GameObject> CreateSprite();
+        static ObjectPtr CreateSprite();            // スプライト
+        static ObjectPtr CreateButton();            // ボタン
+    };
 
-        /// <summary>
-        /// ボタンの生成
-        /// </summary>
-        /// <returns>ボタン</returns>
-        static std::shared_ptr<GameObject> CreateButton();
+    /// <summary>
+    /// その他
+    /// </summary>
+    namespace Other
+    {
+		static ObjectPtr CreateSkyBox(const BaseCreateObjectInfo& _info);   // スカイボックス
     };
 }

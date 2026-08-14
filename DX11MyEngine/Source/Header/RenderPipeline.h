@@ -23,6 +23,8 @@ private:
     class DX_RenderTarget *m_pSceneFinal_RT;	// シーン最終合成用
     class DX_RenderTarget *m_pLuminance_RT;		// 輝度抽出用
     class DX_RenderTarget *m_pShadowMap_RT;		// シャドウマップ（ライトから見た深度を書き込む）
+    
+	std::weak_ptr<class SkyRenderer> m_pSkyRenderer;  // スカイボックス描画用
 
     //class DX_RenderTarget *m_pSceneCopy_RT;	
 

@@ -30,7 +30,7 @@ private:
 	UtilityData::UserConfigData m_UserConfigData;				// ユーザ設定データ
 	UtilityData::DIFFICULTY_LEVEL m_SelectDifficultyLevel;		// 選択された難易度
 	std::array<EnemyData::EnemyDifficultyFactor, UINT_CAST(UtilityData::DIFFICULTY_LEVEL::NUM)> m_EnemyDifficultyFactorArray;	// 難易度係数（敵ごとでは無く、一旦一括で管理）
-
+	std::weak_ptr<class SkyRenderer> m_pSkyRenderer;	// スカイレンダラーの参照
 
 	float m_PlayerHP;		// プレイヤーの体力
 	bool m_IsCameraControl;	// カメラ制御の有無
@@ -96,6 +96,9 @@ public:
 
 	void set_SelectWeaponID(int _id, int _slot) { m_SelectWeaponID[_slot] = _id; }	// 武器選択で選択した武器のIDを設定
 	int get_SelectWeaponID( int _slot)const { return m_SelectWeaponID[_slot]; }	// 武器選択で選択した武器のIDを取得
+
+	void set_SkyRenderer(std::shared_ptr<class SkyRenderer> _pSkyRenderer) { m_pSkyRenderer = _pSkyRenderer; }	// スカイレンダラーの設定
+	std::weak_ptr<class SkyRenderer> get_SkyRenderer() { return m_pSkyRenderer; }	// スカイレンダラーの取得
 
 private:
 	// コピー禁止

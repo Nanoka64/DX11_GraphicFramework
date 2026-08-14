@@ -145,27 +145,6 @@
     <Filter Include="ソース ファイル\Engine\BaseComponent">
       <UniqueIdentifier>{3b7d2d54-5de9-4946-863e-76d7b31b612a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh">
-      <UniqueIdentifier>{b0993894-71f6-4681-a4e5-247cb2e61410}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\Model">
-      <UniqueIdentifier>{768b8687-7ced-438d-882f-5caf8a78b77d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\UtilityMesh">
-      <UniqueIdentifier>{56b764bb-d086-4f11-a45c-d49b2261655d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\BillBoard">
-      <UniqueIdentifier>{9b6c5c76-07f1-4a10-b99d-2d507ca258d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\UI">
-      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\Sky">
-      <UniqueIdentifier>{a002f88e-90e5-42e9-90ec-d0d7e75b918c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Engine\BaseComponent\Mesh\Effect">
-      <UniqueIdentifier>{0e4c2e38-3120-443c-81ec-5b7bd4387c46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Engine\BaseComponent\Camera">
       <UniqueIdentifier>{fb43e8a1-5573-4ccd-bd25-3ff510b7fdb1}</UniqueIdentifier>
     </Filter>
@@ -298,6 +277,27 @@
     <Filter Include="ソース ファイル\Engine\Tool\BIt">
       <UniqueIdentifier>{89db6851-77a7-422c-82fd-f22f26d927e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer">
+      <UniqueIdentifier>{ac47db59-6955-4a73-8202-430de1b587e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\BillBoard">
+      <UniqueIdentifier>{9b6c5c76-07f1-4a10-b99d-2d507ca258d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\Effect">
+      <UniqueIdentifier>{0e4c2e38-3120-443c-81ec-5b7bd4387c46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\Model">
+      <UniqueIdentifier>{768b8687-7ced-438d-882f-5caf8a78b77d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\Sky">
+      <UniqueIdentifier>{a002f88e-90e5-42e9-90ec-d0d7e75b918c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\UI">
+      <UniqueIdentifier>{a7e8cbd8-99e5-46f4-a1f8-78cca893f140}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh">
+      <UniqueIdentifier>{56b764bb-d086-4f11-a45c-d49b2261655d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -412,7 +412,7 @@
       <Filter>ソース ファイル\Engine\BaseComponent\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SpriteRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UI</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\DX_RenderTarget.cpp">
       <Filter>ソース ファイル\Engine\Graphics\RT</Filter>
@@ -424,28 +424,28 @@
       <Filter>ソース ファイル\Engine\Tool\BIt</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SkinnedMeshAnimator.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_ModelMeshResource.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_ModelMeshRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_IMeshResource.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UtilityMesh</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_MeshRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UtilityMesh</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_BillboardRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\BillBoard</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\BillBoard</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_BillboardResource.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\BillBoard</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\BillBoard</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_SkyRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Sky</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Sky</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp">
       <Filter>ソース ファイル\Engine\Graphics\PostEffect</Filter>
@@ -562,10 +562,10 @@
       <Filter>ソース ファイル\Engine\BaseComponent\UI</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_LineRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_TrailRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\ObjectFactory.cpp">
       <Filter>ソース ファイル\Engine\Obj</Filter>
@@ -739,7 +739,7 @@
       <Filter>ソース ファイル\Game\Scene\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_DecalRenderer.cpp">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Component_DistortionEffect.cpp">
       <Filter>ソース ファイル\Engine\BaseComponent\Effect</Filter>
@@ -800,6 +800,9 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\Tween.cpp">
       <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\RenderQueue.cpp">
+      <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -933,7 +936,7 @@
       <Filter>ソース ファイル\Engine\BaseComponent\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UI</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\DX_RenderTarget.h">
       <Filter>ソース ファイル\Engine\Graphics\RT</Filter>
@@ -945,28 +948,28 @@
       <Filter>ソース ファイル\Engine\Tool\BIt</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_ModelMeshResource.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_ModelMeshRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Model</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_IMeshResource.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UtilityMesh</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_MeshRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\UtilityMesh</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_BillboardRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\BillBoard</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\BillBoard</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_BillboardResource.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\BillBoard</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\BillBoard</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_SkyRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Sky</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Sky</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\GaussianBlur.h">
       <Filter>ソース ファイル\Engine\Graphics\PostEffect</Filter>
@@ -1062,10 +1065,10 @@
       <Filter>ソース ファイル\Engine\BaseComponent\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_LineRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_TrailRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ObjectFactory.h">
       <Filter>ソース ファイル\Engine\Obj</Filter>
@@ -1224,7 +1227,7 @@
       <Filter>ソース ファイル\Game\Component\UI</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_DecalRenderer.h">
-      <Filter>ソース ファイル\Engine\BaseComponent\Mesh\Effect</Filter>
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Octahedron_StateHeader.h">
       <Filter>ソース ファイル\Game\Component\Enemy\State_Octahedron</Filter>
@@ -1245,9 +1248,6 @@
       <Filter>ソース ファイル\Engine\BaseComponent\Move</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ConstantRenderData.h">
-      <Filter>ソース ファイル\Constant</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\RenderCommand.h">
       <Filter>ソース ファイル\Constant</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Component_Bullet.h">
@@ -1282,6 +1282,12 @@
     </ClInclude>
     <ClInclude Include="Source\Header\TweenManager.h">
       <Filter>ソース ファイル\Singleton\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RenderQueue.h">
+      <Filter>ソース ファイル\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\RenderCommand.h">
+      <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
