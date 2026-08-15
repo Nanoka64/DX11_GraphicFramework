@@ -36,7 +36,7 @@ bool EffectManager::Setup(RendererEngine &renderer)
     UINT screenH = renderer.get_ScreenHeight();
 
     // エフェクトのマネージャーの作成
-    m_EfkManager = ::Effekseer::Manager::Create(8000);
+    m_EfkManager = ::Effekseer::Manager::Create(PERTICLE_BUFFER);
 
     // Create a  graphics device
     // 描画デバイスの作成
@@ -45,7 +45,7 @@ bool EffectManager::Setup(RendererEngine &renderer)
 
     // Create a renderer of effects
     // エフェクトのレンダラーの作成
-    m_EfkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, 8000);
+    m_EfkRenderer = ::EffekseerRendererDX11::Renderer::Create(graphicsDevice, PERTICLE_BUFFER);
 
     // Specify rendering modules
     // 描画モジュールの設定
@@ -196,6 +196,7 @@ void EffectManager::UpdateEffect(RendererEngine& renderer)
 //*----------------------------------------------------------------------------------------
 void EffectManager::DrawEffect()
 {
+    //m_EfkRenderer->SetMaintainGammaColorInLinearColorSpace(true);
     // エフェクトの描画開始処理
     m_EfkRenderer->BeginRendering();
     // エフェクトの描画
@@ -259,6 +260,24 @@ int EffectManager::PlayEffect(const std::string& _key)
     return m_EfkManager->Play(m_EffectMap[_key], 0, 0, 0);
 }
 
+// エフェクトが再生中かどうかを確認
+bool EffectManager::IsPlayingEffect(int handle)
+{
+    return m_EfkManager->Exists(handle);
+}
+
+// 全てのエフェクトの停止
+void EffectManager::StopAllEffects()
+{
+    m_EfkManager->StopAllEffects();
+}
+
+// 動的パラメータの設定
+void EffectManager::SetDynamicParameter(int handle, int32_t _index, float _param)
+{
+    m_EfkManager->SetDynamicInput(handle, _index, _param);
+}
+
 // エフェクトを停止
 void EffectManager::StopEffect(int handle)
 {
@@ -284,20 +303,30 @@ void EffectManager::SetScaleEffect(int handle, float x, float y, float z)
     m_EfkManager->SetScale(handle, x, y, z);
 }
 
-// エフェクトが再生中かどうかを確認
-bool EffectManager::IsPlayingEffect(int handle)
+//
+// VECTOR3::VEC3を使ったオーバーロード関数の実装
+//
+
+// エフェクトの位置を設定
+void EffectManager::SetPositionEffect(int handle, const VECTOR3::VEC3& _v)
 {
-    return m_EfkManager->Exists(handle);
+    m_EfkManager->SetLocation(handle, _v.x, _v.y, _v.z);
 }
 
-// 全てのエフェクトの停止
-void EffectManager::StopAllEffects()
+// エフェクトの回転（ラジアン）を設定
+void EffectManager::SetRotationEffect(int handle, const VECTOR3::VEC3& _v)
 {
-    m_EfkManager->StopAllEffects();
+    m_EfkManager->SetRotation(handle, _v.x, _v.y, _v.z);
 }
 
-// 動的パラメータの設定
-void EffectManager::SetDynamicParameter(int handle, int32_t _index, float _param)
+// エフェクト全体の色を設定
+void EffectManager::SetAllColorEffect(int handle, const Effekseer::Color& _color)
 {
-    m_EfkManager->SetDynamicInput(handle, _index, _param);
+    m_EfkManager->SetAllColor(handle, _color);
+}
+
+// エフェクトの大きさを設定
+void EffectManager::SetScaleEffect(int handle, const VECTOR3::VEC3& _v)
+{
+    m_EfkManager->SetScale(handle, _v.x, _v.y, _v.z);
 }

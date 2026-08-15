@@ -56,7 +56,8 @@ float4 PSMain(PS_IN input) : SV_TARGET
     
     // トーンマッピング処理
     // TODO : エフェクトの見た目が極端に変わってしまうので、一旦飛ばす
-    finalColor = ACESToneMapping(hdrColor);
+    //finalColor = ACESToneMapping(hdrColor);
+    finalColor = hdrColor;
     
     // 露出
     finalColor *= exp2(cb_ColorGrading.Exposure);

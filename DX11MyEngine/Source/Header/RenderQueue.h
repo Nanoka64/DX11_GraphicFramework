@@ -11,6 +11,6 @@ private:
     std::vector<RenderData::RenderCommandData> m_ForwardOpaqueItems;
     std::vector<RenderData::RenderCommandData> m_TransparentItems;
 
-    std::vector<RenderData::ObjectRenderData> m_ObjectData;
+    //std::vector<RenderData::ObjectRenderData> m_ObjectData;
 };
 
