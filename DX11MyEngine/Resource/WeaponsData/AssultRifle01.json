@@ -10,7 +10,7 @@
   "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_01",
-  "muzzleFlashEffectScale" :  [0.3, 0.3, 0.3],
+  "muzzleFlashEffectScale" :  [0.6, 0.6, 0.6],
   "bulletType": "NORMAL",
   "bulletParam": 
   {
