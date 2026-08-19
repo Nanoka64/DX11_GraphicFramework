@@ -245,6 +245,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Source\Header\Component_Render.h" />
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h" />
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="Source\Cpp\Component_Item.cpp" />
     <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp" />
     <ClCompile Include="Source\Cpp\Component_Physics.cpp" />
+    <ClCompile Include="Source\Cpp\Component_Render.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Config.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Manual.cpp" />
     <ClCompile Include="Source\Cpp\c_MissionSelect_DifficultSelect.cpp" />

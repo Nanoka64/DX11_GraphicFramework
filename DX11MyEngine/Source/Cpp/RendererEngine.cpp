@@ -635,6 +635,25 @@ void RendererEngine::CleanupDX11()
     SAFE_RELEASE(m_pd3dDevice)
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】メインカメラフラスタムの更新
+//*
+//* [引数] なし
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RendererEngine::UpdateMainCameraFrustum()
+{
+    DirectX::BoundingFrustum viewFrustum;
+
+    // 透視投影行列からフラスタムを作成
+    DirectX::BoundingFrustum::CreateFromMatrix(viewFrustum, m_Proj);
+
+    const DirectX::XMMATRIX invView =
+        DirectX::XMMatrixInverse(nullptr, m_View);
+
+    viewFrustum.Transform(m_MainCameraFrustum, invView);
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】ワールド座標をスクリーン座標へ変換
@@ -799,6 +818,9 @@ void RendererEngine::ExecuteDefaultRendererPipeline(RENDER_PIPELINE_STATE type, 
         MessageBoxA(NULL, "ビュー行列を定数バッファに送信できませんでした", "Error", MB_OK);
         return;
     };
+
+    // メインカメラフラスタムの更新
+    UpdateMainCameraFrustum();
 
     // パイプライン実行
     m_pRendererPipeline->Execute(*this);

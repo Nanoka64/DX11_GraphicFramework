@@ -5,7 +5,6 @@
 //using namespace DirectX;
 #include "ConstantRenderData.h"
 
-
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:RendererEngine Class --- */
@@ -59,6 +58,9 @@ private:
 
     class RenderPipeline *m_pRendererPipeline;      // 描画パイプラインの実体を持つ
 	CB_WINDOW_SET *m_pCBWindowSet;                  // ウインドウ情報の定数バッファセット
+
+    DirectX::BoundingFrustum m_MainCameraFrustum;
+
 public:
     RendererEngine();
     ~RendererEngine();
@@ -82,6 +84,8 @@ private:
     void EnableDebugLayer();                    // デバッグレイヤーの有効化
 
 
+    void UpdateMainCameraFrustum(); // メインカメラフラスタムの更新
+
 public:
     inline ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
     inline ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
@@ -93,6 +97,7 @@ public:
     inline UINT get_ScreenHeight()const { return m_ScreenHeight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
     D3D11_VIEWPORT get_CrntViewPort()const { return m_CrntViewPort; }   // ビューポートの取得
+    const DirectX::BoundingFrustum& get_MainCameraFrustum() const { return m_MainCameraFrustum; }   // メインカメラのフラスタム取得
     
     /// <summary>
     /// ワールド座標をスクリーン座標へ変換

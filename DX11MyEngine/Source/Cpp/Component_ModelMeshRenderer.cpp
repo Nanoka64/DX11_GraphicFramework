@@ -2,6 +2,7 @@
 #include "RendererEngine.h"
 #include "Texture.h"
 #include "GameObject.h"
+#include "DebugMesh.h"
 #include "DirectWriteManager.h"
 #include "Component_ModelMeshRenderer.h"
 #include "Component_ModelMeshResource.h"
@@ -18,7 +19,7 @@ using namespace RenderData;
 //* 引数：1.オーナーオブジェクト
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
-ModelMeshRenderer::ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank),
+ModelMeshRenderer::ModelMeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : Render(pOwner, updateRank),
 m_IsDrawWireframe(false),
 m_DebugDrawBoneNum(0)
 {
@@ -46,6 +47,8 @@ void ModelMeshRenderer::Start(RendererEngine &renderer)
 {
     // 初期化時に自身にMeshResourceコンポーネントがあれば設定する
     this->set_MeshResource(m_pOwner.lock()->get_Component<ModelMeshResource>());
+
+
 }
 
 
@@ -272,4 +275,45 @@ bool ModelMeshRenderer::get_IsMeshVisible(uint32_t _meshIdx)const
     auto modelData = pMeshResource->get_ModelData().lock();
     auto meshes = modelData->get_Meshes();
     return meshes[_meshIdx].get_IsVisible();
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】表示するかどうか
+//*     フラスタムの判定 
+//*
+//* [引数]
+//* & frustum : フラスタム
+//*
+//* [返値]
+//* true : 表示
+//* false : 非表示
+//*----------------------------------------------------------------------------------------
+bool ModelMeshRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) const
+{
+    const auto resource = m_pMeshResource.lock();
+    if (!resource)
+        return true;
+    
+    // モデルデータ＆ローカル境界があるか
+    auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
+    if (!modelData || !modelData->get_HasLocalBounds())
+        return true;
+
+    // オーナーからトランスフォームを取得する
+    const auto owner = m_pOwner.lock();
+    const auto transform = owner ? owner->get_Transform().lock() : nullptr;
+    if (!transform)
+        return true;
+
+
+    DirectX::BoundingBox worldBounds;
+
+    // バウンディングボックスをワールド変換
+    modelData->get_LocalBounds().Transform(
+        worldBounds,
+        transform->get_WorldMtx());
+
+    // 判定する
+    return _frustum.Intersects(worldBounds);
 }

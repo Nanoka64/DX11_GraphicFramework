@@ -19,7 +19,8 @@ using namespace VECTOR4;
 //* std::weak_ptr<class GameObject> : オーナーオブジェクト
 //* updateRank : 更新レイヤー
 //*----------------------------------------------------------------------------------------
-BillboardRenderer::BillboardRenderer(std::weak_ptr<class GameObject> pOwner, int updateRank) : IComponent(pOwner, updateRank)
+BillboardRenderer::BillboardRenderer(std::weak_ptr<class GameObject> pOwner, int updateRank) : 
+    Render(pOwner, updateRank)
 , m_ColorFactor(VEC4(1.0f))
 {
     this->set_Tag("BillboardRenderer");

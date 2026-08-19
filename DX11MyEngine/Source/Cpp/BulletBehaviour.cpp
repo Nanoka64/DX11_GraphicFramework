@@ -390,7 +390,7 @@ namespace BulletBehaviour
         class RendererEngine& _renderer)
     {
         BulletHitResult result;
-        
+
         VEC3 crntPos = runtime._transform->get_VEC3ToPos();
 
         // ****************************************************
@@ -422,6 +422,40 @@ namespace BulletBehaviour
         // 法線の逆を向かせたいのでマイナスを付ける
         float angleX = atan2(-hitNormal.y, xzLen);
         float angleZ = Tool::RandRange(0.0f, 6.14f);
+
+        // デカールの作成
+        {
+            //auto matPtr = Master::m_pResourceManager->FindMaterial(_hitData._decalMaterialTag);
+
+            //SetupMaterialInfo matInfo[1];
+            //matInfo[0].Index = 0;
+            //matInfo[0].pMaterialData = matPtr;
+
+            //CreateDecalInfo decal;
+            //decal.pRenderer = &_renderer;
+            //decal.Type = UTILITY_MESH_TYPE::CUBE;
+            //decal.MatNum = 1;
+            //decal.MaterialData = matInfo;
+            //decal.IsActive = false;
+            //decal.ShaderType = SHADER_TYPE::DEFERRED_STD_DECAL;
+            //decal.IsNormalMap = false;
+            //decal.IsDynamic = true;
+
+            //float expSize = _hitData._explosionRadius * 1.5f;   // 元が半径なので2倍に
+            //VEC3 scale;
+            //scale.x = expSize;
+            //scale.y = expSize;
+            //scale.z = expSize;
+
+            //auto obj = MeshFactory::CreateDecal(decal);
+            //obj->get_Component<DecalRenderer>()->Start(_renderer);
+            //obj->get_Transform().lock()->set_Pos(hitPoint);
+            //obj->get_Transform().lock()->set_Scale(scale);
+            //obj->get_Transform().lock()->set_RotateToRad(angleX, angleY, angleZ);
+            //obj->set_Tag("BulletHole");
+            //auto timer = obj->add_Component<TimerDestruction>();
+            //timer->set_LifeTime(DECAL_LIFE_TIME);  // 生存時間
+        }
 
         float expSize = _hitData._explosionRadius * 2.0f;   // 元が半径なので2倍に
         VEC3 scale;

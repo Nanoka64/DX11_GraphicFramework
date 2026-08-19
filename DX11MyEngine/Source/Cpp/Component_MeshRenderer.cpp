@@ -17,7 +17,7 @@ using namespace Tool::UV;
 //* 引数：1.オーナーオブジェクト
 //* 引数：2.更新レイヤー
 //*----------------------------------------------------------------------------------------
-MeshRenderer::MeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : IComponent(pOwner,updateRank)
+MeshRenderer::MeshRenderer(std::weak_ptr<GameObject> pOwner, int updateRank) : Render(pOwner,updateRank)
 {
     this->set_Tag("MeshRenderer");
 }
@@ -164,5 +164,26 @@ void MeshRenderer::set_MeshResource(std::weak_ptr<class IMeshResource> meshResou
     m_pMeshResource = meshResource;
 }
 
+
+//*---------------------------------------------------------------------------------------
+//*【?】表示するかどうか
+//*     フラスタムの判定 
+//*
+//* [引数]
+//* & frustum : フラスタム
+//*
+//* [返値]
+//* true : 表示
+//* false : 非表示
+//*----------------------------------------------------------------------------------------
+bool MeshRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) const
+{
+    const auto resource = m_pMeshResource.lock();
+    if (!resource)
+        return true;
+
+    resource->m_pMeshData;
+
+}
 
 

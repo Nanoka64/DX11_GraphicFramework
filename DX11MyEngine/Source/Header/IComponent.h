@@ -33,6 +33,17 @@ public:
 	virtual void OnTriggerStay(const class CollisionInfo& _other) {}	// トリガー 当たっている間
 	virtual void OnTriggerExit(const class CollisionInfo& _other) {}	// トリガー 離れた瞬間
 
+	/// <summary>
+	// 表示するかどうか（レンダラーなどで使う）
+	// 未対応なら表示
+	/// </summary>
+	/// <param name="frustum"></param>
+	/// <returns></returns>
+	virtual bool IsVisible(const DirectX::BoundingFrustum& frustum) const
+	{
+		return true;
+	}
+
 	int get_UpdateRank() const { return m_UpdateRank; }	// 更新の順番取得
 	std::weak_ptr<GameObject> get_OwnerObj()const { return m_pOwner; };
 

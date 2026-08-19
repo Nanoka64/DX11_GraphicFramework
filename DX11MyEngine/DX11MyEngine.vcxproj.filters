@@ -804,6 +804,9 @@
     <ClCompile Include="Source\Cpp\RenderQueue.cpp">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_Render.cpp">
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1288,6 +1291,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\RenderCommand.h">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_Render.h">
+      <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

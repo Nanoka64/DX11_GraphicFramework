@@ -1,5 +1,6 @@
 #pragma once
 #include "IComponent.h"
+#include "Component_Render.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -10,7 +11,7 @@
 // 【?】モデルメッシュ描画用のコンポーネント
 //
 // ***************************************************************************************
-class ModelMeshRenderer : public IComponent
+class ModelMeshRenderer : public Render
 {
 private:
 	std::weak_ptr<class ModelMeshResource> m_pMeshResource;	// メッシュ情報の参照
@@ -25,6 +26,9 @@ public:
 	void Start(RendererEngine &renderer) override;		// 初期化
 	void Update(RendererEngine &renderer) override;	// 更新処理
 	void Draw(RendererEngine &renderer) override;		// 描画処理
+	bool IsVisible(const DirectX::BoundingFrustum& _frustum) const override;
+
+	
 	void set_MeshResource(std::shared_ptr<class ModelMeshResource> meshResource);
 
 	/* ワイヤーフレームで表示するかどうか */
@@ -34,4 +38,5 @@ public:
 	uint32_t get_MeshNum()const;
 	bool set_IsMeshVisible(uint32_t _meshIdx, bool _flag);
 	bool get_IsMeshVisible(uint32_t _meshIdx)const;
+
 };

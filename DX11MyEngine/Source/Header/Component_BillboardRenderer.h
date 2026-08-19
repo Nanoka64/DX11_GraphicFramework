@@ -1,5 +1,6 @@
 #pragma once
 #include "IComponent.h"
+#include "Component_Render.h"
 
 
 // ***************************************************************************************
@@ -11,7 +12,7 @@
 // 【?】ビルボードの描画を行うコンポーネント
 //
 // ***************************************************************************************
-class BillboardRenderer : public IComponent
+class BillboardRenderer : public Render
 {
 private:
 	std::weak_ptr<class BillboardResource>m_pResource;	// ビルボードリソースの参照	

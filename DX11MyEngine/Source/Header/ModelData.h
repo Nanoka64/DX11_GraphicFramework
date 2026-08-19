@@ -125,6 +125,9 @@ private:
     std::vector<BoneInfo> m_BoneList;		// ボーンリスト
     std::vector<std::weak_ptr<Material>> m_pMaterialList;	// マテリアルリスト
 
+	DirectX::BoundingBox m_LocalBounds;		// モデルのローカル座標における境界
+	bool m_HasLocalBounds;					// ローカル境界を保持しているか
+
 	// ボーン変換用定数バッファ
 	CB_BONES_DATA m_BonesData;						// 定数バッファ用ボーン変換データ
 
@@ -160,7 +163,10 @@ public:
 
 	/* メッシュ・頂点データ */
 	ModelMesh *get_Meshes() const { return m_pMeshes; }
-	
+	const DirectX::BoundingBox& get_LocalBounds() const { return m_LocalBounds; }
+	bool get_HasLocalBounds() const { return m_HasLocalBounds; }
+
+
 	/* ボーン・マテリアル */
 	const std::vector<BoneInfo> &get_BoneList() const { return m_BoneList; }
 	const std::vector<std::weak_ptr<Material>> &get_MaterialList() const { return m_pMaterialList; }
@@ -168,6 +174,7 @@ public:
 	/* Assimp関連 */
 	const Assimp::Importer &get_Importer() const { return m_Importer; }
 	const aiScene *get_Scene() const { return m_pScene; }
+
 
 	/* アニメーション関連 */
 	const std::vector<NodeInfo *> &get_NodeList() const { return m_pNodeList; }

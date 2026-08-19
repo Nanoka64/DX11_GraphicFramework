@@ -37,6 +37,7 @@
 #include <d3d12.h>          // directX12
 #include <DirectXMath.h>    // 数学系
 #include <DirectXTex.h>     // テクスチャ読み込み
+#include <DirectXCollision.h> // コリジョン関係（BoundingBoxやFrusumなど）
 #pragma comment(lib, "d3d11.lib")			  // directX11ライブラリのリンク
 
 
