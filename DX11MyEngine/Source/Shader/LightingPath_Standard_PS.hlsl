@@ -220,6 +220,26 @@ float4 PSMain(PS_IN input) : SV_TARGET
         finalCol.xyz = ambientColor + dirLightColor + pointLightColor + emissiveColor;
     }
     
+    //// フォグ（TODO:スカイボックスに適用されないので、どうしようか）
+    //float3 FogColor = { 0.6f, 0.7f, 0.8f };
+    //float FogStart = 30.0f;
+    //float FogEnd = 150.0f;
+    
+    //float distanceFromCamera =
+    //    distance(worldPos.xyz, cb_EyePos);
+    //float fogFactor =
+    //    saturate(
+    //        (FogEnd - distanceFromCamera) /
+    //        (FogEnd - FogStart)
+    //    );
+    //finalCol.rgb =
+    //    lerp(
+    //        FogColor,
+    //        finalCol.rgb,
+    //        fogFactor
+    //    );
+
+    
     // シャドウマップの範囲内か
     //if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f &&
     //shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)

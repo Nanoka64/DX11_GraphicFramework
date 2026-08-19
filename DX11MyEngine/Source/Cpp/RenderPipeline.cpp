@@ -84,7 +84,7 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     m_PostEffectData.Dof.dof_MinRange = DOF_MIN_RANGE;
 
 	// カラーグレーディングの設定
-    m_PostEffectData.ColorGrading.Exposure = 0.1f;                    // 露出補正（1.0fで補正なし）
+    m_PostEffectData.ColorGrading.Exposure = 0.1f;                   // 露出補正（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Contrast = 1.25f;                  // コントラスト（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Saturation = 1.2f;                 // 彩度（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Gamma = 1.0f;                      // ガンマ補正（1.0fで補正なし）
@@ -130,6 +130,7 @@ void RenderPipeline::Execute(RendererEngine& renderer)
         // レンダーターゲットデバッグ表示
         DebugRenderTargetImGui();
     }
+
 
     // パス終了時にSRVを解除する
     ID3D11ShaderResourceView* nullSRVs[8] = { nullptr };
@@ -1165,8 +1166,9 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
             m_pSceneFinal_RT->get_Width(),
             m_pSceneFinal_RT->get_Height()
         );
-    // 深度テクスチャ設定
-    depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
+    // 深度テクスチャとシーンテクスチャ設定
+    depthOfFieldSprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("RT_SceneFinal");
+    depthOfFieldSprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
 
     depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();                     // VS定数バッファにブラー用の重みテーブルをセット
     depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;                                         // スロット8にセット

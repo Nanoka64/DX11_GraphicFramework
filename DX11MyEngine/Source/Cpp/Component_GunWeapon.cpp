@@ -407,9 +407,9 @@ void GunWeapon::Fire(RendererEngine& renderer)
     XMVECTOR targetPos = XMVectorMultiplyAdd(lookDir, XMVectorReplicate(targetDistance), vCamPos);
 
 	VEC3 firePos;
-	firePos.x = pos.x + (camForward.m128_f32[0] * 2.0f);
-    firePos.y = pos.y + (camForward.m128_f32[1] * 2.0f);
-    firePos.z = pos.z + (camForward.m128_f32[2] * 2.0f);
+	firePos.x = pos.x + (camForward.m128_f32[0] * 1.5f);
+    firePos.y = pos.y + (camForward.m128_f32[1] * 1.5f);
+    firePos.z = pos.z + (camForward.m128_f32[2] * 1.5f);
 
     // 発射位置からターゲット位置への「弾の方向ベクトル」を求める
     XMVECTOR vFirePos = XMVectorSet(firePos.x, firePos.y, firePos.z, 1.0f);
@@ -480,7 +480,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
     if (!m_pFlashPointLight.expired()) {
         // フラッシュ
         m_pFlashPointLight.lock()->set_Range(5.0f);
-        m_pFlashPointLight.lock()->set_Intensity(6.0f);
+        m_pFlashPointLight.lock()->set_Intensity(3.0f);
         m_pFlashPointLight.lock()->set_LightColor(VEC3(1.0f, 0.8f, 0.0f));
     }
 

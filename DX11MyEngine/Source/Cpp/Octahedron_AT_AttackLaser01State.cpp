@@ -133,7 +133,7 @@ int Octahedron_AT_AttackLaser01State::Update(class EnemyController* pOwner)
 				spawnContext._transform = bulletTrans;
 
 				// 弾データを共用体で持っているので、弾タイプにあったパラメータを入れるようにする
-					Master::m_pBulletManager->Shot(*m_pRenderer, spawnContext, data->_bulletData);
+				//Master::m_pBulletManager->Shot(*m_pRenderer, spawnContext, data->_bulletData);
 
 			}
 			//=========================================================================================

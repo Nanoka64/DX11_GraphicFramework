@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameObject.h"
 #include "CollisionInfo.h"
+#include "RendererEngine.h"
 
 //*---------------------------------------------------------------------------------------
 //* @:GameObject3D Class 
@@ -79,6 +80,11 @@ void GameObject::ComponentRender(RendererEngine &renderer)
 {
 	for (auto &comp : m_pComponentMap)
 	{
+		// •\¦‚·‚é‚©
+		if(!comp.second->IsVisible(renderer.get_MainCameraFrustum()))
+		{
+			continue;
+		}
 		comp.second->Draw(renderer);
 	}
 }

@@ -44,8 +44,8 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 
 
-constexpr int ENEMY_OCT_NUM = 1;
-constexpr int ENEMY_ANT_NUM = 50;
+constexpr int ENEMY_OCT_NUM = 100;
+constexpr int ENEMY_ANT_NUM = 0;
 
 //*---------------------------------------------------------------------------------------
 //* @:c_Game_LoadProcess Class 
@@ -716,31 +716,32 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     //Master::m_pItemManager->SpawnItemRand(1, 100, VEC3(-120, 5, 80), 1);
 
 
-    /* 武器のサイト用スプライト*/
-    {
-        CreateSpriteInfo sprite;
-        sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/crosshair094.png");
-        sprite.IsActive = true;
-        sprite.ObjTag = "GunSight01";
-        sprite.pRenderer = m_pRenderer;
-        sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
-        sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
-        sprite.Width = 50.0f;
-        sprite.Height = 50.0f;
-        sprite.IsActive = true;
-        sprite.IsTransparent = true;
-        auto obj = MeshFactory::CreateSprite(sprite);
-        if (obj)
-        {
-            obj->get_RectTransform().lock()->set_AnchorMax(VEC2(0.5f, 0.5f));
-            obj->get_RectTransform().lock()->set_AnchorMin(VEC2(0.5f, 0.5f));
-            obj->get_RectTransform().lock()->set_RectPosition(VEC2(-30.0f, 0.0f));
-            obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
-        }
-    }
 
     /* 画面上のUIの生成 */
     {
+
+        /* 武器のサイト用スプライト*/
+        {
+            CreateSpriteInfo sprite;
+            sprite.pTextureMap[0] = Master::m_pResourceManager->LoadWIC_Texture(L"Resource/Texture/crosshair094.png");
+            sprite.IsActive = true;
+            sprite.ObjTag = "GunSight01";
+            sprite.pRenderer = m_pRenderer;
+            sprite.ShaderType = SHADER_TYPE::FORWARD_UNLIT_UI_SPRITE;
+            sprite.Type = SPRITE_USAGE_TYPE::NORMAL;
+            sprite.Width = 50.0f;
+            sprite.Height = 50.0f;
+            sprite.IsActive = true;
+            sprite.IsTransparent = true;
+            auto obj = MeshFactory::CreateSprite(sprite);
+            if (obj)
+            {
+                obj->get_RectTransform().lock()->set_AnchorMax(VEC2(0.5f, 0.5f));
+                obj->get_RectTransform().lock()->set_AnchorMin(VEC2(0.5f, 0.5f));
+                obj->get_RectTransform().lock()->set_RectPosition(VEC2(-30.0f, 0.0f));
+                obj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_DONT_DESTROY);
+            }
+        }
 		// ミニマップレーダー
         {
             auto obj = GIGA_Engine::Instantiate2D(std::make_shared<GameObject>(), true);

@@ -26,6 +26,7 @@ ModelData::ModelData() :
     //m_pCBTransformSet(nullptr),
     //m_pCBMaterialDataSet(nullptr),
     m_pMeshes(nullptr),
+    m_HasLocalBounds(false),
     m_ShaderType(SHADER_TYPE::NONE),
     m_ShadowShaderType(SHADER_TYPE::NONE)
 {
@@ -58,17 +59,18 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 {
     // aiProcess_FlipUVs ＵＶ値をdirect3Dに合うようにしてくれる (Ｖ軸の反転)
     // 他のフラグもあったほうがいいやつらしい https://qiita.com/dpals39/items/1681d9101e58b5aefa27
-    u_int flag = 
-        aiProcess_CalcTangentSpace |      // タンジェント空間パラメータの計算
-        aiProcess_GenNormals |            // 法線の生成（すでにある場合は無視される）
-        aiProcess_MakeLeftHanded |        // 左手座標系に変換
-        aiProcess_FlipWindingOrder |      // 頂点の順番を反転
-        aiProcess_FlipUVs |               // UV反転
-        aiProcess_OptimizeMeshes |        // メッシュの最適化
-        aiProcess_Triangulate |           // 三角形化
-        aiProcess_JoinIdenticalVertices | // 重複頂点の結合
-        aiPrimitiveType_LINE |            // 線分も読み込む
-        aiPrimitiveType_POINT;            // 点も読み込む
+    u_int flag =
+        aiProcess_CalcTangentSpace |        // タンジェント空間パラメータの計算
+        aiProcess_GenNormals |              // 法線の生成（すでにある場合は無視される）
+        aiProcess_MakeLeftHanded |          // 左手座標系に変換
+        aiProcess_FlipWindingOrder |        // 頂点の順番を反転
+        aiProcess_FlipUVs |                 // UV反転
+        aiProcess_OptimizeMeshes |          // メッシュの最適化
+        aiProcess_Triangulate |             // 三角形化
+        aiProcess_JoinIdenticalVertices |   // 重複頂点の結合
+        aiPrimitiveType_LINE |              // 線分も読み込む
+        aiPrimitiveType_POINT |             // 点も読み込む
+        aiProcess_GenBoundingBoxes;         // バウンディングボックス生成（mAABBに格納される）
 
     // 不要なノードを勝手に追加しないようにする https://qiita.com/24ban/items/3cdb37188b74bcf1028c
     m_Importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
@@ -94,11 +96,52 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
     if (m_pScene->HasMeshes())
     {
         m_MeshNum = m_pScene->mNumMeshes;	// メッシュ数取得
-
         m_pMeshes = new ModelMesh[m_MeshNum];
+
+        bool hasBounds = false;         // ローカル境界を保持しているか
+        DirectX::XMFLOAT3 localMin{};   
+        DirectX::XMFLOAT3 localMax{};
+
+
         for (u_int meshIdx = 0; meshIdx < m_MeshNum; ++meshIdx)
         {
             aiMesh *pMeshData = m_pScene->mMeshes[meshIdx];
+
+            // 頂点を持つメッシュだけ境界へ含める
+            if (pMeshData->HasPositions() &&
+                pMeshData->mNumVertices > 0)
+            {
+                const aiVector3D& meshMin = pMeshData->mAABB.mMin;
+                const aiVector3D& meshMax = pMeshData->mAABB.mMax;
+
+                if (!hasBounds)
+                {
+                    localMin = {
+                        meshMin.x,
+                        meshMin.y,
+                        meshMin.z
+                    };
+
+                    localMax = {
+                        meshMax.x,
+                        meshMax.y,
+                        meshMax.z
+                    };
+
+                    hasBounds = true;
+                }
+                // 既に設定している場合は、設定している境界と現在のメッシュの境界を比べる
+                else
+                {
+                    localMin.x = std::min(localMin.x, meshMin.x);
+                    localMin.y = std::min(localMin.y, meshMin.y);
+                    localMin.z = std::min(localMin.z, meshMin.z);
+
+                    localMax.x = std::max(localMax.x, meshMax.x);
+                    localMax.y = std::max(localMax.y, meshMax.y);
+                    localMax.z = std::max(localMax.z, meshMax.z);
+                }
+            }
 
             // ボーン情報の抽出
             if (pMeshData->HasBones()) {
@@ -112,6 +155,25 @@ bool ModelData::Setup(RendererEngine &renderer, const char *filePath)
 
             m_VertexNum += pMeshData->mNumVertices;
             m_BoneNum += pMeshData->mNumBones;
+        }
+
+        // ローカル境界の中心位置と、大きさを求める
+        if (hasBounds)
+        {
+            const DirectX::XMFLOAT3 center = {
+                (localMin.x + localMax.x) * 0.5f,
+                (localMin.y + localMax.y) * 0.5f,
+                (localMin.z + localMax.z) * 0.5f
+            };
+
+            const DirectX::XMFLOAT3 extents = {
+                (localMax.x - localMin.x) * 0.5f,
+                (localMax.y - localMin.y) * 0.5f,
+                (localMax.z - localMin.z) * 0.5f
+            };
+
+            m_LocalBounds = DirectX::BoundingBox(center, extents);
+            m_HasLocalBounds = true;
         }
     }
 
@@ -284,6 +346,7 @@ void ModelData::NodeExtraction(const aiNode *pNode, int parentIdx)
             tempMat.d1, tempMat.d2, tempMat.d3, tempMat.d4
         )
     );
+
 
     // 現在のノードインデックスを保持
     int myIndex = static_cast<int>(m_pNodeList.size());
