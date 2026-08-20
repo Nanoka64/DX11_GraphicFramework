@@ -13,6 +13,8 @@ Texture2D g_tSceneBlurTexture0 : register(t0);  // ƒƒCƒ“ƒV[ƒ“‚Ì‚Ú‚©‚µƒeƒNƒXƒ`ƒ
 Texture2D g_tSceneTexture1 : register(t1);     // [“xƒeƒNƒXƒ`ƒƒ
 Texture2D g_tDepathTexture1 : register(t2);     // [“xƒeƒNƒXƒ`ƒƒ
 
+float CalcDoF(float viewDepth);
+float CalcFog(float viewDepth);
 
 /* =========================================================================
 /* - @:“ü—Í\‘¢‘Ì - */
@@ -34,7 +36,7 @@ float4 PSMain(PS_IN input) : SV_TARGET
     float depth = g_tDepathTexture1.Sample(g_sClampSampler, input.UV).r;
     float4 finalColor = float4(0.0, 0.0, 0.0, 1.0);
     
-    //// [“x‚ª1.0f ‚É‹ß‚¢”wŒi‚Í”–‚­‚Ú‚©‚·
+    // [“x‚ª1.0f ‚É‹ß‚¢”wŒi‚Í”–‚­‚Ú‚©‚·
     //if (depth >= 0.9999)
     //{
     //    blurColor.a = 0.5f;
@@ -62,31 +64,55 @@ float4 PSMain(PS_IN input) : SV_TARGET
     // DoF
     //--------------------------------
     // [“x‚É‰‚¶‚Ä‚Ú‚©‚µ‚Ì‹­‚³‚ğ•Ï‰»‚³‚¹‚é
-    float blurFactor =  
-        saturate(
-            (viewDepth - cb_DoF_MinRange) /
-            (cb_DoF_MaxRange - cb_DoF_MinRange)
-        );
+    float blurFactor = CalcDoF(viewDepth);
     finalColor = lerp(sceneColor, blurColor, blurFactor);
     
     //--------------------------------
     // Fog
     //--------------------------------
-    float3 FogColor = { 0.6f, 0.7f, 0.8f};
-    float FogStart = 30.0f;
-    float FogEnd = 150.0f;
-    float fogFactor =
-        saturate(
-            (viewDepth - FogStart) /
-            (FogEnd - FogStart)
-        );
+    if (cb_Fog.End > 1.0f)
+    {
+        float fogFactor = CalcFog(viewDepth);
     
-    finalColor.rgb =
+        finalColor.rgb =
         lerp(
             finalColor.rgb,
-            FogColor,
+            cb_Fog.Color,
             fogFactor
         );
+    }
     
     return finalColor;
+}
+
+//*---------------------------------------------------------------------------------------
+//*y?zDOF‚ğ‹‚ß‚é
+//* [ˆø”]
+//* viewDepth : ƒrƒ…[‹óŠÔ[“x’l
+//* [•Ô’l]
+//* float : 
+//*----------------------------------------------------------------------------------------
+float CalcDoF(float viewDepth)
+{
+    return saturate(
+        (viewDepth - cb_Dof.MinRange)
+        / cb_Dof.MaxRange
+    );
+}
+
+//*---------------------------------------------------------------------------------------
+//*y?zƒtƒHƒO‚ğ‹‚ß‚é
+//* [ˆø”]
+//* viewDepth : ƒrƒ…[‹óŠÔ[“x’l
+//* [•Ô’l]
+//* float : 
+//*----------------------------------------------------------------------------------------
+float CalcFog(float viewDepth)
+{
+    float fogRange = max(cb_Fog.End - cb_Fog.Start, 0.0001f);   // 0 œZ–h~
+    
+    return saturate(
+        (viewDepth - cb_Fog.Start)
+        / fogRange
+    );
 }

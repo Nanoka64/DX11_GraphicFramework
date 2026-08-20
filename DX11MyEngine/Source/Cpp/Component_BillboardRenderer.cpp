@@ -225,3 +225,40 @@ void BillboardRenderer::set_BillboardResource(std::weak_ptr<BillboardResource> b
 {
     m_pResource = billboardResource;
 }
+
+//*---------------------------------------------------------------------------------------
+//*【?】表示するかどうか
+//*     フラスタムの判定 
+//*
+//* [引数]
+//* & frustum : フラスタム
+//*
+//* [返値]
+//* true : 表示
+//* false : 非表示
+//*----------------------------------------------------------------------------------------
+bool BillboardRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) const
+{
+    const auto resource = m_pResource.lock();
+    if (!resource)
+        return true;
+
+    const auto& bounds = resource->get_LocalBounds();
+
+    // オーナーからトランスフォームを取得する
+    const auto owner = m_pOwner.lock();
+    const auto transform = owner ? owner->get_Transform().lock() : nullptr;
+    if (!transform)
+        return true;
+
+    DirectX::BoundingSphere worldSphere;
+
+    // バウンディングスフィアをワールド変換
+    // ※スフィアなので回転は考慮しなくていい
+    bounds.Sphere.Transform(
+        worldSphere,
+        transform->get_WorldMtx());
+
+    // 判定する
+    return _frustum.Intersects(worldSphere);
+}

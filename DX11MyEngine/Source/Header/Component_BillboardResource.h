@@ -37,7 +37,6 @@ private:
 
 	FIXED_AXIS_BITFLAG m_FixedAxisBitFlag;	// 固定軸を決めるためのフラグ（Y軸固定など）
 
-
 	std::shared_ptr<MeshResourceData> m_pMeshData;	// メッシュ情報
 	//CB_TRANSFORM_SET* m_pCBTransformSet;			// 定数バッファ(ワールド行列用)
 	//CB_MATERIAL_SET* m_pCBMaterialDataSet;		// 定数バッファ(マテリアル用)
@@ -61,6 +60,7 @@ public:
 	/// <returns></returns>
 	virtual bool CreateCBuffer(ID3D11Device* pDevice);
 
+	const MeshLocalBounds& get_LocalBounds() const { return m_pMeshData->LocalBounds; }
 	UINT get_NumVertex()const { return m_pMeshData->NumVertex; };		// 頂点数取得
 	UINT get_NumIndex()const { return m_pMeshData->NumIndex; };			// インデックス数取得
 	UINT get_NumMaterial()const { return m_pMeshData->NumMaterial; };	// マテリアル数取得

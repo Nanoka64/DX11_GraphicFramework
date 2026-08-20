@@ -33,20 +33,28 @@ extern const WORD g_PlaneIndices[];
 //	UINT NumMaterial;					// マテリアル数
 //};
 
+struct MeshLocalBounds
+{
+	DirectX::BoundingBox Box{};
+	DirectX::BoundingSphere Sphere{};
+	bool IsValid = false;
+};
+
 /// <summary>
 /// メッシュの情報（主にユーティリティメッシュ用）
 /// </summary>
 struct MeshResourceData 
 {
-	ID3D11Buffer* pVertexBuffer;						// 頂点バッファ
-	UINT VertexStride;									// 頂点一つのサイズ（sizeof(VERTEX_Static)など）
-	UINT NumVertex;										// 頂点数
-	ID3D11Buffer* pIndexBuffer;							// インデックスバッファ
-	UINT NumIndex;										// インデックス数
-	RenderData::CULL_MODE CullMode;									// カリングモード
-	std::weak_ptr<Material> pMaterials;					// マテリアル（基本一つだけ）
-	UINT NumMaterial;
-	bool IsDynamic;										// 動的メッシュか（バッファの切り替え）
+	ID3D11Buffer* pVertexBuffer;		// 頂点バッファ
+	UINT VertexStride;					// 頂点一つのサイズ（sizeof(VERTEX_Static)など）
+	UINT NumVertex;						// 頂点数
+	ID3D11Buffer* pIndexBuffer;			// インデックスバッファ
+	UINT NumIndex;						// インデックス数
+	MeshLocalBounds LocalBounds;		// ローカル境界
+	RenderData::CULL_MODE CullMode;		// カリングモード
+	std::weak_ptr<Material> pMaterials;	// マテリアル（基本一つだけ）
+	UINT NumMaterial;					// マテリアル数
+	bool IsDynamic;						// 動的メッシュか（バッファの切り替え）
 
 	MeshResourceData() :
 		pVertexBuffer(nullptr),
@@ -75,6 +83,57 @@ public:
 		meshData.NumVertex = vNum;
 		meshData.NumIndex = iNum;
 		meshData.IsDynamic = isDynamic;
+		
+		/////////////////////////////////////////////////////////////////////
+		// ローカル境界の生成		
+		/////////////////////////////////////////////////////////////////////
+		if (pVertices && vNum > 0)
+		{
+			VECTOR3::VEC3 minPos = pVertices[0].pos;
+			VECTOR3::VEC3 maxPos = pVertices[0].pos;
+
+			for (UINT i = 1; i < vNum; i++)
+			{
+				const VECTOR3::VEC3& pos = pVertices[i].pos;
+
+				minPos.x = std::min(minPos.x, pos.x);
+				minPos.y = std::min(minPos.y, pos.y);
+				minPos.z = std::min(minPos.z, pos.z);
+
+				maxPos.x = std::max(maxPos.x, pos.x);
+				maxPos.y = std::max(maxPos.y, pos.y);
+				maxPos.z = std::max(maxPos.z, pos.z);
+			}
+
+			DirectX::XMFLOAT3 center{
+				(minPos.x + maxPos.x) * 0.5f,
+				(minPos.y + maxPos.y) * 0.5f,
+				(minPos.z + maxPos.z) * 0.5f,
+			};
+
+
+			DirectX::XMFLOAT3 extents{
+				(maxPos.x - minPos.x) * 0.5f,
+				(maxPos.y - minPos.y) * 0.5f,
+				(maxPos.z - minPos.z) * 0.5f,
+			};
+
+			// ローカル境界設定
+			meshData.LocalBounds.Box =
+				DirectX::BoundingBox(center, extents);
+
+			// AABB全体を覆うSphere
+			const float radius = std::sqrt(
+				extents.x * extents.x +
+				extents.y * extents.y +
+				extents.z * extents.z
+			);
+			meshData.LocalBounds.Sphere =
+				DirectX::BoundingSphere(center, radius);
+
+			meshData.LocalBounds.IsValid = true;
+		}
+
 
 		/////////////////////////////////////////////////////////////////////
 		// 頂点バッファの作成

@@ -18,7 +18,7 @@
     {
       "aliveFrame" : 180,
       "speed": 10.0,
-      "maxSpeed": 600.0,
+      "maxSpeed": 1000.0,
       "damage": 75.0,
       "acceleration": 1000.0,
       "penetrationsCount": 0,
@@ -44,7 +44,7 @@
       "type" : "EXPLOSION",
       "decalMaterialTag" : "Decal_BulletHole",
       "hitEffectTag" : "BulletHit_Flame",
-      "explosionRadius" : 10.0,
+      "explosionRadius" : 14.0,
       "explosionEffectTag" : "Explosion_01",
       "explosionEffectAliveTime" : 0.5,
       "isSmoke" : true,

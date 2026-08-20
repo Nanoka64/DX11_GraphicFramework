@@ -83,6 +83,11 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     m_PostEffectData.Dof.dof_MaxRange = DOF_MAX_RANGE;
     m_PostEffectData.Dof.dof_MinRange = DOF_MIN_RANGE;
 
+    // フォグの設定
+    m_PostEffectData.Fog.Color  = { 0.6f, 0.7f, 0.8f };
+    m_PostEffectData.Fog.Start  = 30.0f;
+    m_PostEffectData.Fog.End    = 150.0f;
+
 	// カラーグレーディングの設定
     m_PostEffectData.ColorGrading.Exposure = 0.1f;                   // 露出補正（1.0fで補正なし）
     m_PostEffectData.ColorGrading.Contrast = 1.25f;                  // コントラスト（1.0fで補正なし）
@@ -167,11 +172,17 @@ void RenderPipeline::Execute(RendererEngine& renderer)
         renderer.get_DeviceContext()->PSSetShaderResources(0, 8, nullSRVs);
         renderer.get_DeviceContext()->VSSetShaderResources(0, 8, nullSRVs);
 
+        /* スカイボックスパス */
+        Skybox_PathRender(renderer);
+
+        /* 被写界深度パス */
+        Dof_PathRender(renderer);
+
         /* フォワードパス */
         Forward_PathRender(renderer);
 
-        /* ポストエフェクトパス */
-        PostEffect_PathRender(renderer);
+        /* ブルームパス */
+        Bloom_PathRender(renderer);
     }
 
     /* 最終パス（フレームバッファにコピー） */
@@ -240,6 +251,7 @@ void RenderPipeline::DebugRenderTargetImGui()
             * 被写界深度
             */
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"被写界深度"));
+
             Master::m_pDebugger->DG_Image(m_pDoF_GaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ぼかしの強さ"));
             Master::m_pDebugger->DG_DragFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 0.1f, 32.0f);
@@ -251,11 +263,31 @@ void RenderPipeline::DebugRenderTargetImGui()
             Master::m_pDebugger->DG_DragFloat("##DofMaxRange", 1, &m_PostEffectData.Dof.dof_MaxRange, 1.0f, 1.0f, 10000.0f);
             Master::m_pDebugger->DG_Separator();
 
+            /*
+            * フォグ
+            */
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ"));
+
+            VEC3 fogColor = m_PostEffectData.Fog.Color;
+
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグカラー"));
+            Master::m_pDebugger->DG_SameLine();
+            if (Master::m_pDebugger->DG_ColorPicker3("##FogColor", &fogColor))
+            {
+                m_PostEffectData.Fog.Color = fogColor;
+            }
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ開始距離"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##FogStart", 1, &m_PostEffectData.Fog.Start, 1.0f, 1.0f, 999.0f);
+            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ最大距離"));
+            Master::m_pDebugger->DG_SameLine();
+            Master::m_pDebugger->DG_DragFloat("##FogEnd", 1, &m_PostEffectData.Fog.End, 1.0f, m_PostEffectData.Fog.Start, 1000.0f);
 
             /*
             * 色味調整
             */
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味調整"));
+
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"露出補正"));
             Master::m_pDebugger->DG_DragFloat("##Exposure", 1, &m_PostEffectData.ColorGrading.Exposure, 0.1f, 0.0f, 100.0f);
             
@@ -518,7 +550,6 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 }
 
-
 //*---------------------------------------------------------------------------------------
 //*【?】スカイボックス描画パス
 //*
@@ -526,18 +557,8 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 //* renderer : 描画エンジンの参照
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
+void RenderPipeline::Skybox_PathRender(RendererEngine& renderer)
 {
-    //auto pContext = renderer.get_DeviceContext();
-    //pContext->PSSetShaderResources(6, 1, m_pSceneCopy_RT->get_SRV_ComPtr().GetAddressOf());
-    //pContext->PSSetShaderResources(5, 1, m_pDepth_RT->get_DepthSRV_ComPtr().GetAddressOf());
-
-
-    // ************************************************************************
-    // 
-    // フォワードの場合はこの下に記述
-    // 
-    // ************************************************************************
     // Gbuffer作成時の深度バッファを設定
     // ライティングパス時のRTに合成する
     // 深度はGbuffer作成時のもの
@@ -552,27 +573,13 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     renderer.RegisterDepthStencilState(renderer.get_DepthWriteDisabled_DSS(), 0);
 
     // 表カリング スカイボックスはボックスの内側に表示しているため
-    renderer.RegisterCullMode(CULL_MODE::FRONT);    
+    renderer.RegisterCullMode(CULL_MODE::FRONT);
 
-
-	m_pSkyRenderer = Master::m_pDataManager->get_SkyRenderer();
+    m_pSkyRenderer = Master::m_pDataManager->get_SkyRenderer();
     if (auto skyRenderer = m_pSkyRenderer.lock())
     {
         skyRenderer->Draw(renderer);
     }
-
-    // ************************************************************************
-    // 
-    // ここからフォワードオブジェクトの描画
-    // 
-    // ************************************************************************
-    renderer.RegisterCullMode(CULL_MODE::BACK);   
-
-    /*
-    * エフェクシアの描画もここでする！！
-    */
-    Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
-    Master::m_pEffectManager->DrawEffect();
 
     // スカイボックス深度ステンシル設定解除
     renderer.RegisterDepthStencilState(NULL, 0);
@@ -584,25 +591,18 @@ void RenderPipeline::Forward_PathRender(RendererEngine &renderer)
     renderer.ReleaseRenderTargetSetNull();
 }
 
-
 //*---------------------------------------------------------------------------------------
-//*【?】ポストエフェクトパス
+//*【?】被写界深度パス
 //*
 //* [引数]
 //* renderer : 描画エンジンの参照
 //* [返値] なし
 //*----------------------------------------------------------------------------------------
-void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
+void RenderPipeline::Dof_PathRender(RendererEngine& renderer)
 {
-    // ************************************************************************
-    // 
-    // 被写界深度
-    //
-    // ************************************************************************
-
     // 被写界深度用ガウスブラー実行
     m_pDoF_GaussianBlur->ExcuteOnGPU(renderer, m_DoF_BlurIncensity);
-   
+
     // アルファモード
     Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::ALPHA);
 
@@ -624,8 +624,58 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     // レンダリングターゲット解除
     renderer.ReleaseRenderTargetSetNull();
 
-    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+    // デフォルトの深度ステンシル設定に戻す
+    renderer.RegisterDefaultDepthStencilState(0);
 
+    Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】フォワード描画パス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Forward_PathRender(RendererEngine& renderer)
+{
+    // ************************************************************************
+    // 
+    // ここからフォワードオブジェクトの描画
+    // 
+    // ************************************************************************]
+
+    //深度テスト有効・書き込み無
+    renderer.RegisterDepthStencilState(renderer.get_DepthWriteDisabled_DSS(), 0);
+
+    // Gbuffer作成時の深度バッファを設定
+    // ライティングパス時のRTに合成する
+    // 深度はGbuffer作成時のもの
+    renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), m_pDepth_RT->get_DSV());
+
+    renderer.RegisterCullMode(CULL_MODE::BACK);
+
+    /*
+    * エフェクシアの描画もここでする！！
+    */
+    Master::m_pGameObjectManager->Alpha_ObjectRenderPass(renderer);
+    Master::m_pEffectManager->DrawEffect();
+
+    // レンダリングターゲット解除
+    renderer.ReleaseRenderTargetSetNull();
+}
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】ブルームパス
+//*
+//* [引数]
+//* renderer : 描画エンジンの参照
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::Bloom_PathRender(RendererEngine& renderer)
+{
     // ************************************************************************
     // 
     // 輝度抽出
@@ -634,7 +684,7 @@ void RenderPipeline::PostEffect_PathRender(RendererEngine &renderer)
     
     // 裏カリング
     renderer.RegisterCullMode(CULL_MODE::BACK);
-     
+
     // ビューポートの設定
     renderer.set_ViewPort(0, 0, m_ScreenWidth, m_ScreenHeight);
 

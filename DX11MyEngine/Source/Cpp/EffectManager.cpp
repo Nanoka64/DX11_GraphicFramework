@@ -208,7 +208,6 @@ void EffectManager::DrawEffect()
     m_EfkManager->Draw(drawParameter);
     // エフェクトの描画終了処理
     m_EfkRenderer->EndRendering();
-
 }
 
 

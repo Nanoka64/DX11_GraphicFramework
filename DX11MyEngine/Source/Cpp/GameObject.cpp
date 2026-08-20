@@ -81,7 +81,9 @@ void GameObject::ComponentRender(RendererEngine &renderer)
 	for (auto &comp : m_pComponentMap)
 	{
 		// 表示するか
-		if(!comp.second->IsVisible(renderer.get_MainCameraFrustum()))
+		// シャドウパスの場合は表示させる
+		if(!comp.second->IsVisible(renderer.get_MainCameraFrustum()) && 
+			renderer.get_CrntRenderPass() !=  RenderData::RENDER_PASS::SHADOW)
 		{
 			continue;
 		}

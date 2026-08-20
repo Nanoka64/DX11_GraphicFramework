@@ -13,7 +13,7 @@
 //* =========================================================================
 //* - @:ディレクションライト用構造体 - */
 ///* =========================================================================
-struct DirectionalLight
+struct DirectionalLightData
 {
     float3 Direction;           // 方向
     float pad0;
@@ -33,7 +33,7 @@ struct DirectionalLight
 /* =========================================================================
 //* - @:ポイントライト用構造体 - */
 //* =========================================================================
-struct PointLight
+struct PointLightData
 {
     float3 Pos;                 // 座標   
     float Range;                // 範囲
@@ -46,9 +46,32 @@ struct PointLight
 };
 
 /* =========================================================================
+//* - @:被写界深度用構造体 - */
+//* =========================================================================
+struct DofData
+{
+    float MaxRange; // ぼかしが最大になる距離
+    float MinRange; // ぼかしの開始距離
+    float2 pad3;
+};
+
+
+/* =========================================================================
+//* - @:フォグ用構造体 - */
+//* =========================================================================
+struct FogData
+{
+    float3 Color;
+    float Start;
+
+    float End;
+    float3 padding;
+};
+
+/* =========================================================================
 //* - @:色味調整用構造体 - */
 //* =========================================================================
-struct ColorGrading
+struct ColorGradingData
 {
     float Exposure;     // 露出補正（1.0fで補正なし）
     float Contrast;     // コントラスト（1.0fで補正なし）
@@ -135,7 +158,7 @@ cbuffer CB_MATERIAL : register(b4)
 //* =========================================================================
 cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
 {
-    DirectionalLight cb_DirLightData[DIRECTIONLIGHT_MAX_NUM];
+    DirectionalLightData cb_DirLightData[DIRECTIONLIGHT_MAX_NUM];
     
     float3 cb_EyePos; // 視点位置
     float pad1;
@@ -147,7 +170,7 @@ cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
 //* =========================================================================
 cbuffer CB_POINT_LIGHT : register(b6)        
 {
-    PointLight cb_PointLightData[POINTLIGHT_MAX_NUM];   // 50個
+    PointLightData cb_PointLightData[POINTLIGHT_MAX_NUM]; // 50個
     uint cb_PointLightCount; // ポイントライトの数
     float3 pad2;
     
@@ -166,15 +189,9 @@ cbuffer CB_BLUR_WEIGHTS : register(b7)
 //* =========================================================================
 cbuffer CB_POSTEFFECT : register(b8)
 {
-    /* 被写界深度用 */
-    float cb_DoF_MaxRange;  // ぼかしが最大になる距離
-    float cb_DoF_MinRange;  // ぼかしの開始距離
-    
-    float2 pad3;
-    
-    /* トーンマッピング用 */
-    
-    ColorGrading cb_ColorGrading; // 色味調整用
+    DofData cb_Dof;                     // 被写界深度
+    ColorGradingData cb_ColorGrading;   // 色味調整用    
+    FogData cb_Fog;                     // フォグ
 };
 
 //* =========================================================================

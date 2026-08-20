@@ -296,7 +296,7 @@ bool ModelMeshRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) cons
         return true;
     
     // モデルデータ＆ローカル境界があるか
-    auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
+    auto modelData = resource->get_ModelData().lock();
     if (!modelData || !modelData->get_HasLocalBounds())
         return true;
 
@@ -305,7 +305,6 @@ bool ModelMeshRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) cons
     const auto transform = owner ? owner->get_Transform().lock() : nullptr;
     if (!transform)
         return true;
-
 
     DirectX::BoundingBox worldBounds;
 

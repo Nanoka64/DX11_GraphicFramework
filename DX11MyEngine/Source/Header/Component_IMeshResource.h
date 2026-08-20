@@ -67,6 +67,7 @@ public:
 	UINT get_NumIndex()const { return m_pMeshData->NumIndex; };			// インデックス数取得
 	UINT get_NumMaterial()const { return m_pMeshData->NumMaterial; };	// マテリアル数取得
 	SHADER_TYPE get_ShaderType()const { return m_ShaderType; }			// 仕様シェーダ取得
+	const MeshLocalBounds& get_LocalBounds() const { return m_pMeshData->LocalBounds; }	// ローカル境界データ取得
 
 };
 

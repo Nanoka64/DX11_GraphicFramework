@@ -51,16 +51,16 @@
 
     "visual" :  
     {
-      "type" : "MODEL",
-      "bulletMaterialTag" : "Bullet_01",
-      "trailDrawTime" : 10,
-      "trailWidth" : 1.7,
+      "type" : "BILLBOARD",
+      "bulletMaterialTag" : "Bullet_02",
+      "trailDrawTime" : 5,
+      "trailWidth" : 1.5,
       "enableFlightSmoke" : true,
       "smokeInterval" : 0.001,
-      "smokeSize" : 1.0,                     
+      "smokeSize" : 1.0,
       "smokeEffectTag" : "Smoke_04",
-      "trailColor" : [1.0, 2.0, 1.0],
-      "scale" : [5.0,5.0, 5.0],
+      "trailColor" : [1.0, 2.0, 2.0],
+      "scale" : [0.2, 0.2, 0.2],
 
       "custom" :
       {

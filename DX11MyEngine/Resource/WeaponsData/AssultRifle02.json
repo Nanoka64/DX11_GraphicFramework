@@ -10,7 +10,7 @@
   "isLaserSight": true,
   "soundID": 0,
   "muzzleFlashEffectTag" : "MuzzleEffect_01",
-  "muzzleFlashEffectScale" :  [2.5, 2.5, 2.5],
+  "muzzleFlashEffectScale" :  [1.2, 1.2, 1.2],
   "bulletType": "NORMAL",
   "bulletParam": 
   {
@@ -44,15 +44,15 @@
     "visual" :  
     {
       "type" : "BILLBOARD",
-      "bulletMaterialTag" : "Bullet_02",
-      "trailDrawTime" : 10,
-      "trailWidth" : 3.0,
+      "bulletMaterialTag" : "Bullet_03",
+      "trailDrawTime" : 5,
+      "trailWidth" : 1.25,
       "enableFlightSmoke" : false,
       "smokeInterval" : 0.0,              
       "smokeSize" : 0.0,                     
       "smokeEffectTag" : "",
       "trailColor" : [10.0, 10.0, 10.0],
-      "scale" :  [0.7, 0.7, 0.7],
+      "scale" :  [0.25, 0.25, 0.25],
 
       "custom" : 
       {

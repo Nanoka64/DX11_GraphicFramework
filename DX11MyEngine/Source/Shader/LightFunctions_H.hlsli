@@ -158,7 +158,7 @@ struct OUT_DiffAndSpec
 //* [返値]
 //* OUT_DiffAndSpec ディフューズ＆スペキュラ
 //*----------------------------------------------------------------------------------------
-OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
+OUT_DiffAndSpec DirectionLightCalc(DirectionalLightData _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
 {
     float3 finalLig = float3(0.0f, 0.0f, 0.0f);
     
@@ -201,7 +201,7 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLight _ligData, float3 _eyePos, fl
 //* [返値]
 //* OUT_DiffAndSpec ディフューズ＆スペキュラ
 //*----------------------------------------------------------------------------------------
-OUT_DiffAndSpec PointLightCalc(PointLight _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
+OUT_DiffAndSpec PointLightCalc(PointLightData _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
 {
     float3 finalLig = float3(0, 0, 0);
 

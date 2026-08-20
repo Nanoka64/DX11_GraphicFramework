@@ -181,9 +181,25 @@ bool MeshRenderer::IsVisible(const DirectX::BoundingFrustum& _frustum) const
     const auto resource = m_pMeshResource.lock();
     if (!resource)
         return true;
+    
+    const auto& bounds = resource->get_LocalBounds();
 
-    resource->m_pMeshData;
+    if (!bounds.IsValid)
+        return true;
 
+    const auto owner = m_pOwner.lock();
+    const auto transform = owner ? owner->get_Transform().lock() : nullptr;
+    if (!transform)
+        return true;
+
+    // バウンディングボックスをワールド変換
+    DirectX::BoundingBox worldBounds;
+    bounds.Box.Transform(
+        worldBounds,
+        transform->get_WorldMtx()
+    );
+
+    return worldBounds.Intersects(_frustum);
 }
 
 

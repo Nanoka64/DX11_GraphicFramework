@@ -24,6 +24,7 @@ public:
 	void Start(RendererEngine& renderer)override;
 	void Update(RendererEngine& renderer)override;
 	void Draw(RendererEngine& renderer)override;
+	bool IsVisible(const DirectX::BoundingFrustum& _frustum) const override;
 
 	void set_ColorFactor(const VECTOR4::VEC4& _col) { m_ColorFactor = _col; }
 	void set_BillboardResource(std::weak_ptr<class BillboardResource> billboardResource);

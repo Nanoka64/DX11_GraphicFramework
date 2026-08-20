@@ -91,13 +91,15 @@ private:
     //
     // 各描画パスの処理
     //
-    void Shadow_PathRender(RendererEngine &renderer);            // シャドウ
-    void Geometry_PathRender(RendererEngine &renderer);          // G-Buffer
-    void Decal_PathRender(RendererEngine &renderer);             // デカール
-    void Lighting_PathRender(RendererEngine &renderer);          // ディファードライティング
-    void Forward_PathRender(RendererEngine &renderer);            // スカイボックス
-    void PostEffect_PathRender(RendererEngine &renderer);        // ポストエフェクト
-    void CopyToFrameBuffer_PathRender(RendererEngine &renderer); // フレームバッファへ描画＆トーンマッピング
+    void Shadow_PathRender(RendererEngine &renderer);               // シャドウ
+    void Geometry_PathRender(RendererEngine &renderer);             // G-Buffer
+    void Decal_PathRender(RendererEngine &renderer);                // デカール
+    void Lighting_PathRender(RendererEngine &renderer);             // ディファードライティング
+    void Skybox_PathRender(RendererEngine &renderer);               // スカイボックス
+    void Dof_PathRender(RendererEngine& renderer);                  // 被写界深度
+    void Forward_PathRender(RendererEngine &renderer);              // フォワードレンダリング
+    void Bloom_PathRender(RendererEngine& renderer);                // ブルーム
+    void CopyToFrameBuffer_PathRender(RendererEngine &renderer);    // フレームバッファへ描画＆トーンマッピング
 
     /// <summary>
     /// ImGuiを使用したレンダーターゲットのデバッグ表示
