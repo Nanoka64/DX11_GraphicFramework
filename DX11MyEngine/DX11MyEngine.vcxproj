@@ -1183,6 +1183,9 @@
   <ItemGroup>
     <ResourceCompile Include="DX11MyEngine.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\Texture\Other\IA_Icon.ico" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\AssimpCpp.5.0.1.6\build\native\AssimpCpp.targets" Condition="Exists('packages\AssimpCpp.5.0.1.6\build\native\AssimpCpp.targets')" />

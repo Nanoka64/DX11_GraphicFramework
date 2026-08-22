@@ -1022,9 +1022,6 @@
     <ClInclude Include="Source\Header\IDXResource.h">
       <Filter>ソース ファイル\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Lib\DirectXTex\DirectXTex.h">
       <Filter>外部ライブラリ</Filter>
     </ClInclude>
@@ -1295,6 +1292,9 @@
     <ClInclude Include="Source\Header\Component_Render.h">
       <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>リソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ConstantBuffers_H.hlsli">
@@ -1432,5 +1432,10 @@
     <ResourceCompile Include="DX11MyEngine.rc">
       <Filter>リソース ファイル</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\Texture\Other\IA_Icon.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

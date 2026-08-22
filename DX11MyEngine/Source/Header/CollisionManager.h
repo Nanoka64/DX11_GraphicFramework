@@ -102,8 +102,31 @@ struct CollInData_OBB
 class CollisionManager
 {
 private:
+    struct CollisionQueryDebugMetrics
+    {
+        int RaycastQueryCount = 0;
+        int RaycastColliderScanCount = 0;
+        int RaycastNarrowPhaseCount = 0;
+        int RaycastHitCount = 0;
+        double RaycastTotalTimeMs = 0.0;
+
+        int SphereQueryCount = 0;
+        int SphereColliderScanCount = 0;
+        int SphereNarrowPhaseCount = 0;
+        int SphereHitCount = 0;
+        double SphereTotalTimeMs = 0.0;
+    };
+
     // 衝突計算をするコライダーの配列
     std::vector<std::shared_ptr<class Collider>> m_pCollidersList;
+
+    // 前回のCollisionProcess終了後から今回開始までの問い合わせ計測
+    CollisionQueryDebugMetrics m_QueryDebugMetrics;
+
+    // 直近フレームの処理時間履歴
+    std::vector<double> m_CollisionProcessTimeHistory;
+    std::vector<double> m_RaycastTimeHistory;
+    std::vector<double> m_SphereQueryTimeHistory;
 
 public:
     CollisionManager();

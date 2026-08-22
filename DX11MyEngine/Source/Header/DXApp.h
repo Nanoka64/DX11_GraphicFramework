@@ -33,12 +33,14 @@ private:
     uint32_t    m_Width;    // ウインドウ横幅
     uint32_t    m_Height;   // ウインドウ縦幅
 
-    class GameManager      *m_pGameManager; // ゲームマネージャー
-    std::shared_ptr<class RendererEngine> m_pRenderer;// 描画管理
-    
-    bool m_IsClose; // 終了フラグ
-    bool m_IsEditMode;  // 編集モードにするか
+    WINDOW_MODE m_WindowMode = WINDOW_MODE::WINDOW;
+    DWORD m_WindowStyle = 0;
 
+    class GameManager *m_pGameManager;                  // ゲームマネージャー
+    std::shared_ptr<class RendererEngine> m_pRenderer;  // 描画管理
+    
+    bool m_IsClose;     // 終了フラグ
+    bool m_IsEditMode;  // 編集モードにするか
 public:
 
     /// <summary>
@@ -66,7 +68,8 @@ public:
     /// <param name="lpCmdLine">コマンドライン（今は使用していない）</param>
     /// <param name="nCmdShow"> ウインドウを表示するためのもの</param>
     void Run(HINSTANCE hInstance, LPSTR lpCmdLine, int nCmdShow);  // 実行
-    
+  
+    void set_WindowMode(WINDOW_MODE mode);
 
     /// <summary>
     /// デバッグモードかどうか
@@ -133,5 +136,10 @@ private:
     /// <param name=""></param>
     /// <returns></returns>
     static LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);    
+
+
+
+    void SetBorderlessFullscreen(HWND hwnd);
+    void SetWindowMode(HWND hwnd);
 };
 

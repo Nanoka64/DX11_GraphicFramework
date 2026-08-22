@@ -7,8 +7,61 @@
 #include "Component_Transform.h"
 #include "GameObject.h"
 
+#include <chrono>
+
 using namespace UtilityData;
 using namespace VECTOR3;
+
+namespace
+{
+    constexpr size_t COLLISION_DEBUG_HISTORY_SIZE = 300;
+
+    struct CollisionDebugTimeSummary
+    {
+        double AverageMs = 0.0;
+        double MaxMs = 0.0;
+        double P95Ms = 0.0;
+        double P99Ms = 0.0;
+    };
+
+    void AddCollisionDebugTimeSample(std::vector<double>& _history, double _elapsedMs)
+    {
+        if (_history.size() >= COLLISION_DEBUG_HISTORY_SIZE)
+        {
+            _history.erase(_history.begin());
+        }
+
+        _history.push_back(_elapsedMs);
+    }
+
+    CollisionDebugTimeSummary CalculateCollisionDebugTimeSummary(const std::vector<double>& _history)
+    {
+        CollisionDebugTimeSummary summary;
+        if (_history.empty())
+        {
+            return summary;
+        }
+
+        std::vector<double> sortedHistory = _history;
+        std::sort(sortedHistory.begin(), sortedHistory.end());
+
+        double totalMs = 0.0;
+        for (double elapsedMs : sortedHistory)
+        {
+            totalMs += elapsedMs;
+        }
+
+        const size_t sampleCount = sortedHistory.size();
+        const size_t p95Index = ((sampleCount * 95 + 99) / 100) - 1;
+        const size_t p99Index = ((sampleCount * 99 + 99) / 100) - 1;
+
+        summary.AverageMs = totalMs / static_cast<double>(sampleCount);
+        summary.MaxMs = sortedHistory.back();
+        summary.P95Ms = sortedHistory[p95Index];
+        summary.P99Ms = sortedHistory[p99Index];
+        return summary;
+    }
+}
 
 CollisionManager::CollisionManager()
 {
@@ -37,6 +90,15 @@ void CollisionManager::RegisterCollider(std::shared_ptr<Collider> pCol)
 //*----------------------------------------------------------------------------------------
 void CollisionManager::CollisionProcess()
 {
+    // RaycastとCheckSphereはCollisionProcessの前後から呼ばれるため、
+    // 前回のCollisionProcess終了後から今回開始までを1区間として表示する。
+    const CollisionQueryDebugMetrics queryMetrics = m_QueryDebugMetrics;
+    m_QueryDebugMetrics = {};
+
+    const auto collisionProcessStart = std::chrono::steady_clock::now();
+
+    const int colliderCountBeforeCleanup = static_cast<int>(m_pCollidersList.size());
+
     // コライダーがないまたは、オブジェクトがない場合は削除
     m_pCollidersList.erase(
         std::remove_if(
@@ -49,13 +111,30 @@ void CollisionManager::CollisionProcess()
         m_pCollidersList.end()
     );
 
+    const int registeredColliderCount = static_cast<int>(m_pCollidersList.size());
+    const int removedColliderCount = colliderCountBeforeCleanup - registeredColliderCount;
+
     // 全てのコライダーのヒットフラグを一旦falseに
+    int enabledColliderCount = 0;
     for (auto &comp : m_pCollidersList)
     {
         comp->set_IsHit(false);
+        if (comp->get_IsEnable())
+        {
+            enabledColliderCount++;
+        }
     }
 
+    int processAllCount = 0;
     int processCount = 0;
+    int staticPairSkipCount = 0;
+    int collisionMaskSkipCount = 0;
+    int missingTransformCount = 0;
+    int hitCount = 0;
+    int blockCount = 0;
+    int overlapCount = 0;
+    double narrowPhaseTimeMs = 0.0;
+    double eventNotificationTimeMs = 0.0;
 
     // 判定ループ処理
     for (int i = 0; i < m_pCollidersList.size(); i++)
@@ -65,6 +144,7 @@ void CollisionManager::CollisionProcess()
         bool isStaticB = false;
         auto transA = colA->get_OwnerObj().lock()->get_Component<MyTransform>();
         if (transA == nullptr) {
+            missingTransformCount++;
             MessageBoxA(NULL, "Aトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
             continue;
         }
@@ -76,6 +156,8 @@ void CollisionManager::CollisionProcess()
         
         for (int j = i + 1; j < m_pCollidersList.size(); j++)
         {
+            // 処理回数カウント
+            processAllCount++;
 
             auto& colB = m_pCollidersList[j];
 
@@ -84,15 +166,13 @@ void CollisionManager::CollisionProcess()
                 continue;
             }
 
-            processCount++;
-
-
             isStaticA = colA->get_IsStatic();
             isStaticB = colB->get_IsStatic();
 
             // 両方とも静的なら判定しない
             if (isStaticA && isStaticB)
             {
+                staticPairSkipCount++;
                 continue;
             }
             
@@ -103,6 +183,7 @@ void CollisionManager::CollisionProcess()
             if (collisionMaskA == 0 ||
                 collisionMaskB == 0)
             {
+                collisionMaskSkipCount++;
                 continue;
             }
 
@@ -110,15 +191,27 @@ void CollisionManager::CollisionProcess()
             auto transB = colB->get_OwnerObj().lock()->get_Component<MyTransform>();
 
             if (transB == nullptr) {
+                missingTransformCount++;
                 MessageBoxA(NULL, "Bトランスフォームコンポーネントがありません", "衝突判定", MB_OK);
                 continue;
             }
 
+
             CollisionInfo info; // 衝突情報格納用
-            
+
+            processCount++;
+
             // 衝突チェック
-            if (HitCheck(colA, colB, transA, transB, &info))
+            const auto narrowPhaseStart = std::chrono::steady_clock::now();
+            const bool isHit = HitCheck(colA, colB, transA, transB, &info);
+            const auto narrowPhaseEnd = std::chrono::steady_clock::now();
+            narrowPhaseTimeMs += std::chrono::duration<double, std::milli>(
+                narrowPhaseEnd - narrowPhaseStart).count();
+
+            if (isHit)
             {
+                hitCount++;
+
                 // 衝突
                 colA->set_IsHit(true);
                 colB->set_IsHit(true);
@@ -141,7 +234,10 @@ void CollisionManager::CollisionProcess()
 
 
                 // Blockの場合だけ押し出す
-                if (finalResponse == COLLISION_RESPONSE::RESPONSE_BLOCK)
+                if (GIGA_Engine::BitFlag::CheckAny(
+                    static_cast<unsigned>(finalResponse),
+                    static_cast<unsigned>(COLLISION_RESPONSE::RESPONSE_BLOCK))
+                    )
                 {
                     VEC3 pushVector;    // 押し出しベクトル
                     VEC3 currentPos;    // 押し出し反映用
@@ -188,14 +284,17 @@ void CollisionManager::CollisionProcess()
                 infoB.set_HitCollider(colA);
 
                 // Responseに応じてイベントを通知
+                const auto eventNotificationStart = std::chrono::steady_clock::now();
                 switch (finalResponse)
                 {
                 case COLLISION_RESPONSE::RESPONSE_OVERLAP:
+                    overlapCount++;
                     colA->get_OwnerObj().lock()->OnTriggerEnter(infoA);
                     colB->get_OwnerObj().lock()->OnTriggerEnter(infoB);
                     break;
 
                 case COLLISION_RESPONSE::RESPONSE_BLOCK:
+                    blockCount++;
                     colA->get_OwnerObj().lock()->OnCollisionEnter(infoA);
                     colB->get_OwnerObj().lock()->OnCollisionEnter(infoB);
                     break;
@@ -203,11 +302,94 @@ void CollisionManager::CollisionProcess()
                 case COLLISION_RESPONSE::RESPONSE_IGNORE:
                     break;
                 }
+                const auto eventNotificationEnd = std::chrono::steady_clock::now();
+                eventNotificationTimeMs += std::chrono::duration<double, std::milli>(
+                    eventNotificationEnd - eventNotificationStart).count();
             }
         }
     }
+
+    const auto collisionProcessEnd = std::chrono::steady_clock::now();
+    const double collisionProcessTimeMs = std::chrono::duration<double, std::milli>(
+        collisionProcessEnd - collisionProcessStart).count();
+
+    AddCollisionDebugTimeSample(m_CollisionProcessTimeHistory, collisionProcessTimeMs);
+    AddCollisionDebugTimeSample(m_RaycastTimeHistory, queryMetrics.RaycastTotalTimeMs);
+    AddCollisionDebugTimeSample(m_SphereQueryTimeHistory, queryMetrics.SphereTotalTimeMs);
+
+    const CollisionDebugTimeSummary collisionTimeSummary =
+        CalculateCollisionDebugTimeSummary(m_CollisionProcessTimeHistory);
+    const CollisionDebugTimeSummary raycastTimeSummary =
+        CalculateCollisionDebugTimeSummary(m_RaycastTimeHistory);
+    const CollisionDebugTimeSummary sphereTimeSummary =
+        CalculateCollisionDebugTimeSummary(m_SphereQueryTimeHistory);
+
     Master::m_pDebugger->BeginDebugWindow("CollisionProcess",0);
-    Master::m_pDebugger->DG_TextValue(Tool::U8ToChar(u8"衝突処理回数： % d"), processCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"登録コライダー: %d / 有効: %d / 今回削除: %d"),
+        registeredColliderCount, enabledColliderCount, removedColliderCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"ペアループ: %d / Static除外: %d / マスク除外: %d"),
+        processAllCount, staticPairSkipCount, collisionMaskSkipCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"形状判定: %d / ヒット: %d / Transformなし: %d"),
+        processCount, hitCount, missingTransformCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"Block: %d / Overlap: %d"), blockCount, overlapCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"形状判定時間: %.3f ms / イベント通知時間: %.3f ms"),
+        narrowPhaseTimeMs, eventNotificationTimeMs);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"CollisionProcess: %.3f ms"), collisionProcessTimeMs);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"直近%zuフレーム  平均: %.3f / 最大: %.3f / p95: %.3f / p99: %.3f ms"),
+        m_CollisionProcessTimeHistory.size(),
+        collisionTimeSummary.AverageMs,
+        collisionTimeSummary.MaxMs,
+        collisionTimeSummary.P95Ms,
+        collisionTimeSummary.P99Ms);
+
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"--- 前回CollisionProcess以降の問い合わせ ---"));
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"Raycast 回数: %d / 走査: %d / 形状判定: %d / ヒット: %d"),
+        queryMetrics.RaycastQueryCount,
+        queryMetrics.RaycastColliderScanCount,
+        queryMetrics.RaycastNarrowPhaseCount,
+        queryMetrics.RaycastHitCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"Raycast 合計: %.3f ms / 1回平均: %.3f ms"),
+        queryMetrics.RaycastTotalTimeMs,
+        queryMetrics.RaycastQueryCount > 0
+            ? queryMetrics.RaycastTotalTimeMs / queryMetrics.RaycastQueryCount
+            : 0.0);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"Raycast直近%zuフレーム  平均: %.3f / 最大: %.3f / p95: %.3f / p99: %.3f ms"),
+        m_RaycastTimeHistory.size(),
+        raycastTimeSummary.AverageMs,
+        raycastTimeSummary.MaxMs,
+        raycastTimeSummary.P95Ms,
+        raycastTimeSummary.P99Ms);
+
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"CheckSphere 回数: %d / 走査: %d / 形状判定: %d / ヒット: %d"),
+        queryMetrics.SphereQueryCount,
+        queryMetrics.SphereColliderScanCount,
+        queryMetrics.SphereNarrowPhaseCount,
+        queryMetrics.SphereHitCount);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"CheckSphere 合計: %.3f ms / 1回平均: %.3f ms"),
+        queryMetrics.SphereTotalTimeMs,
+        queryMetrics.SphereQueryCount > 0
+            ? queryMetrics.SphereTotalTimeMs / queryMetrics.SphereQueryCount
+            : 0.0);
+    Master::m_pDebugger->DG_TextValue(
+        Tool::U8ToChar(u8"CheckSphere直近%zuフレーム  平均: %.3f / 最大: %.3f / p95: %.3f / p99: %.3f ms"),
+        m_SphereQueryTimeHistory.size(),
+        sphereTimeSummary.AverageMs,
+        sphereTimeSummary.MaxMs,
+        sphereTimeSummary.P95Ms,
+        sphereTimeSummary.P99Ms);
     Master::m_pDebugger->EndDebugWindow();
 }
 
@@ -520,9 +702,14 @@ bool CollisionManager::HitCheck_Raycast(
 //*----------------------------------------------------------------------------------------
 std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTOR3::VEC3& _center, float _radius, unsigned _mask)
 {
+    const auto queryStart = std::chrono::steady_clock::now();
+    m_QueryDebugMetrics.SphereQueryCount++;
+
     std::vector<std::shared_ptr<Collider>> hitList;
 
     for (auto& col : m_pCollidersList) {
+        m_QueryDebugMetrics.SphereColliderScanCount++;
+
         if (!col->get_IsEnable()) continue;
 
         // マスクチェック
@@ -543,6 +730,7 @@ std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTO
             CollInData_Sphere srcB = { pos,    colRadius };
 
             // スフィアとスフィアで判定
+            m_QueryDebugMetrics.SphereNarrowPhaseCount++;
             if (HitCheck_SphereVsSphere(srcA, srcB))
             {
                 hitList.push_back(col);
@@ -566,6 +754,7 @@ std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTO
             CollInData_Sphere srcB = { _center,_radius };
 
             // ボックスとスフィアで判定
+            m_QueryDebugMetrics.SphereNarrowPhaseCount++;
             if (HitCheck_BoxVsSphere(srcA, srcB))
             {
                 hitList.push_back(col);
@@ -576,6 +765,12 @@ std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTO
 		}
 
     }
+
+    m_QueryDebugMetrics.SphereHitCount += static_cast<int>(hitList.size());
+    const auto queryEnd = std::chrono::steady_clock::now();
+    m_QueryDebugMetrics.SphereTotalTimeMs += std::chrono::duration<double, std::milli>(
+        queryEnd - queryStart).count();
+
     return hitList;
 }
 
@@ -592,6 +787,9 @@ std::vector<std::shared_ptr<Collider>> CollisionManager::CheckSphere(const VECTO
 //*----------------------------------------------------------------------------------------
 bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class CollisionInfo* _outHitInfo)
 {
+    const auto queryStart = std::chrono::steady_clock::now();
+    m_QueryDebugMetrics.RaycastQueryCount++;
+
     bool isHit = false;
     float closestDistSq = FLT_MAX;
     CollisionInfo tempHitInfo;
@@ -599,6 +797,8 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
     // 判定ループ処理
     for (int i = 0; i < m_pCollidersList.size(); i++)
     {
+        m_QueryDebugMetrics.RaycastColliderScanCount++;
+
         auto& col = m_pCollidersList[i];
 
         // 無効なコライダーはスキップ
@@ -621,6 +821,7 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
         float distance = 0.0f;
 
         // 衝突チェック
+        m_QueryDebugMetrics.RaycastNarrowPhaseCount++;
         if (HitCheck_Raycast(col, trans, _ray, &distance, &tempHitInfo))
         {
             // 最小距離のコライダーを調べる
@@ -632,6 +833,16 @@ bool CollisionManager::CheckRaycast(const CollInData_Ray& _ray, int _mask, class
             }
         }
     }
+
+    if (isHit)
+    {
+        m_QueryDebugMetrics.RaycastHitCount++;
+    }
+
+    const auto queryEnd = std::chrono::steady_clock::now();
+    m_QueryDebugMetrics.RaycastTotalTimeMs += std::chrono::duration<double, std::milli>(
+        queryEnd - queryStart).count();
+
     return isHit;
 }
 

@@ -16,3 +16,13 @@ constexpr LPCWSTR  g_WindowClassNameA = L"DX11_3DGAME_SL";
 
 // FPS
 constexpr float g_Fps = 60.0f;
+
+/// <summary>
+/// ウインドウモード
+/// </summary>
+enum class WINDOW_MODE
+{
+    WINDOW,
+    BORDERLESS,
+    FULLSCREEN
+};

@@ -9,6 +9,7 @@
 #include "GameManager.h"
 #include "RendererEngine.h"
 #include "ResourceManager.h"
+#include "../../resource.h"   
 
 #include <string>
 #include <cassert>
@@ -357,6 +358,7 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     SAFE_DELETE(pFontData);
 
 
+
     // 正常終了
     return true;
 }
@@ -634,6 +636,15 @@ void DXApp::Run(HINSTANCE hInstance,  LPSTR lpCmdLine, int nCmdShow)
 //*----------------------------------------------------------------------------------------
 HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
+    HICON icon = (HICON)LoadImage(
+        hInstance,
+        MAKEINTRESOURCE(IDI_ICON1),
+        IMAGE_ICON, 
+        GetSystemMetrics(SM_CXICON), 
+        GetSystemMetrics(SM_CYICON), 
+        0
+    );
+
     // ウインドウにデータを渡す
     // Register class
     WNDCLASSEX wcex;
@@ -644,9 +655,9 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     wcex.cbClsExtra    = 0;                     // ウインドウクラス構造体の後ろに割り当てる補足バイト数
     wcex.cbWndExtra    = 0;                     // ウインドウインスタンスの後ろに割り当てる補足バイト数
     wcex.hInstance     = hInstance;             // インスタンスハンドル
-    wcex.hIcon         = LoadIcon(NULL, IDI_QUESTION);  // アイコンのハンドル
-    wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);   // マウスカーソルのハンドル
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);    // ウインドウ背景色
+    wcex.hIcon         = icon/*LoadIcon(NULL, IDI_APPLICATION)*/;   // アイコンのハンドル
+    wcex.hCursor       = LoadCursor(NULL, IDC_ARROW);       // マウスカーソルのハンドル
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);        // ウインドウ背景色
     wcex.lpszMenuName  = NULL;                  // デフォルトメニュー名
     wcex.lpszClassName = g_WindowClassNameA;    // オリジナルの名前付ける
     wcex.hIconSm       = NULL;                  // 左上やタスクバーの小さいアイコン
@@ -654,18 +665,18 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
     if (!RegisterClassEx(&wcex))                // この設定でウインドウズにお願いする
         return E_FAIL;
 
-    DWORD dwStyle = WS_OVERLAPPED | /*WS_CAPTION | */ WS_SYSMENU | /*WS_MAXIMIZEBOX |*/ WS_MINIMIZEBOX;
+    m_WindowStyle = WS_OVERLAPPED | /*WS_CAPTION | */ WS_SYSMENU | /*WS_MAXIMIZEBOX |*/ WS_MINIMIZEBOX;
 
     // windowの作成
     // Create window
     m_hInst = hInstance;
     RECT rc = { WND_RECT_LEFT, WND_RECT_TOP,  static_cast<LONG>(m_Width), static_cast<LONG>(m_Height) };      // 矩形を設定する
-    int res = AdjustWindowRect(&rc, dwStyle, FALSE);   // ウインドウの形を整える
+    int res = AdjustWindowRect(&rc, m_WindowStyle, FALSE);   // ウインドウの形を整える
 
     m_hWnd = CreateWindowW(
         g_WindowClassNameW,                              // 上で設定した名前と合わせる
         g_WindowTitle,                                   // ウインドウタイトル
-        dwStyle,                                         // ウインドウスタイル
+        m_WindowStyle,                                   // ウインドウスタイル
         /*WS_OVERLAPPEDWINDOW | WS_POPUP,*/              // 基本ウインドウ、タイトルバー表示、Xボタンなど、サイズ変更、全画面
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -681,6 +692,10 @@ HRESULT DXApp::InitWindow(HINSTANCE hInstance, int nCmdShow)
 
     // 消すと出ないよ
     ShowWindow(m_hWnd, nCmdShow);
+
+
+    // ボーダーレスフルスクリーンに設定
+    SetBorderlessFullscreen(m_hWnd);
 
     return S_OK;
 }
@@ -738,3 +753,77 @@ LRESULT CALLBACK DXApp::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     return 0;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】ボーダーレスウインドウに設定
+//*
+//* [引数]
+//* hwnd : ウインドウハンドル
+//*
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void DXApp::SetBorderlessFullscreen(HWND hwnd)
+{
+    // ウィンドウの枠を消す
+    SetWindowLong(
+        hwnd,
+        GWL_STYLE,
+        WS_POPUP | WS_VISIBLE
+    );
+
+    // モニターサイズ取得
+    HMONITOR monitor = MonitorFromWindow(
+        hwnd,
+        MONITOR_DEFAULTTONEAREST
+    );
+
+    MONITORINFO monitorInfo{};
+    monitorInfo.cbSize = sizeof(MONITORINFO);
+
+    GetMonitorInfo(monitor, &monitorInfo);
+
+    int width =
+        monitorInfo.rcMonitor.right -
+        monitorInfo.rcMonitor.left;
+
+    int height =
+        monitorInfo.rcMonitor.bottom -
+        monitorInfo.rcMonitor.top;
+
+    // モニターいっぱいに広げる
+    SetWindowPos(
+        hwnd,
+        HWND_TOP,
+        monitorInfo.rcMonitor.left,
+        monitorInfo.rcMonitor.top,
+        width,
+        height,
+        SWP_FRAMECHANGED
+    );
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ウインドウモードに設定
+//*
+//* [引数]
+//* hwnd : ウインドウハンドル
+//*
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void DXApp::SetWindowMode(HWND hwnd)
+{
+    SetWindowLong(
+        hwnd,
+        GWL_STYLE,
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE
+    );
+
+    SetWindowPos(
+        hwnd,
+        nullptr,
+        0,
+        0,
+        m_Width,
+        m_Height,
+        SWP_FRAMECHANGED | SWP_NOZORDER
+    );
+}

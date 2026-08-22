@@ -228,7 +228,7 @@ void BillboardRenderer::set_BillboardResource(std::weak_ptr<BillboardResource> b
 
 //*---------------------------------------------------------------------------------------
 //*【?】表示するかどうか
-//*     フラスタムの判定 
+//*     フラスタムの判定
 //*
 //* [引数]
 //* & frustum : フラスタム
