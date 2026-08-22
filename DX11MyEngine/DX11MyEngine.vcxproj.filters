@@ -807,6 +807,12 @@
     <ClCompile Include="Source\Cpp\Component_Render.cpp">
       <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Grid.cpp">
+      <Filter>ソース ファイル\Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\Unit.cpp">
+      <Filter>ソース ファイル\Engine\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1294,6 +1300,12 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>リソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Grid.h">
+      <Filter>ソース ファイル\Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Unit.h">
+      <Filter>ソース ファイル\Engine\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

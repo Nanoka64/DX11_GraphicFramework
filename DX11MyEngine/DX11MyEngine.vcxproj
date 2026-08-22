@@ -274,6 +274,7 @@
     <ClInclude Include="Source\Header\Frustum.h" />
     <ClInclude Include="Source\Header\GameScene_StateHeader.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
+    <ClInclude Include="Source\Header\Grid.h" />
     <ClInclude Include="Source\Header\Gun_StateHeader.h" />
     <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\HormingMove_Behaviour.h" />
@@ -350,6 +351,7 @@
     <ClInclude Include="Source\Header\Tween.h" />
     <ClInclude Include="Source\Header\TweenManager.h" />
     <ClInclude Include="Source\Header\UIManager.h" />
+    <ClInclude Include="Source\Header\Unit.h" />
     <ClInclude Include="Source\Header\VEC.h" />
     <ClInclude Include="Source\Header\VERTEX.h" />
     <ClInclude Include="Source\Header\VertexBuffer.h" />
@@ -477,6 +479,7 @@
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp" />
     <ClCompile Include="Source\Cpp\Frustum.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
+    <ClCompile Include="Source\Cpp\Grid.cpp" />
     <ClCompile Include="Source\Cpp\Gun_FireState.cpp" />
     <ClCompile Include="Source\Cpp\Gun_IdleState.cpp" />
     <ClCompile Include="Source\Cpp\Gun_ReloadingState.cpp" />
@@ -657,6 +660,7 @@
     <ClCompile Include="Source\Cpp\Tween.cpp" />
     <ClCompile Include="Source\Cpp\TweenManager.cpp" />
     <ClCompile Include="Source\Cpp\UIManager.cpp" />
+    <ClCompile Include="Source\Cpp\Unit.cpp" />
     <ClCompile Include="Source\Cpp\VertexBuffer.cpp" />
     <ClCompile Include="Source\Cpp\VertexShader.cpp" />
     <ClCompile Include="Source\Cpp\Component_WeaponController.cpp" />
