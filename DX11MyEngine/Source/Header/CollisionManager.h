@@ -87,6 +87,21 @@ struct CollInData_OBB
     VECTOR3::VEC3 _harfLength;  //ローカルのx, y, z軸に沿ったハーフサイズ
 };
 
+struct CollisionProxy
+{
+    uint32_t colliderIndex;
+
+    class Collider* collider;
+    std::shared_ptr<MyTransform> transform;
+
+    CollInData_AABB worldBounds;
+
+    unsigned category;
+    unsigned collisionMask;
+
+    bool isStatic;
+};
+
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
 /* --- @:CollisionManager Class --- */

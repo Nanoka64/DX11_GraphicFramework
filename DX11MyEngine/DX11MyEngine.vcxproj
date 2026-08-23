@@ -274,7 +274,7 @@
     <ClInclude Include="Source\Header\Frustum.h" />
     <ClInclude Include="Source\Header\GameScene_StateHeader.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
-    <ClInclude Include="Source\Header\Grid.h" />
+    <ClInclude Include="Source\Header\Grid3D.h" />
     <ClInclude Include="Source\Header\Gun_StateHeader.h" />
     <ClInclude Include="Source\Header\HierarchyWindow.h" />
     <ClInclude Include="Source\Header\HormingMove_Behaviour.h" />
@@ -479,7 +479,7 @@
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp" />
     <ClCompile Include="Source\Cpp\Frustum.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
-    <ClCompile Include="Source\Cpp\Grid.cpp" />
+    <ClCompile Include="Source\Cpp\Grid3D.cpp" />
     <ClCompile Include="Source\Cpp\Gun_FireState.cpp" />
     <ClCompile Include="Source\Cpp\Gun_IdleState.cpp" />
     <ClCompile Include="Source\Cpp\Gun_ReloadingState.cpp" />

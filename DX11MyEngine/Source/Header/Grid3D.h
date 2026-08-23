@@ -2,7 +2,7 @@
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
-/* --- @:Grid Class --- */
+/* --- @:Grid3D Class --- */
 //
 // Åy?ÅzÉZÉãÇÃä«óù
 // 
@@ -10,11 +10,22 @@
 //	https://gameprogrammingpatterns.com/spatial-partition.html#drawing-battle-lines
 //
 // ***************************************************************************************
-class Grid
+class Grid3D
 {
+public:
+	static const int NUM_CELLS = 10;
+	static const int CELL_SIZE = 20;
+
 private:
+	class Unit* m_pCells[NUM_CELLS][NUM_CELLS][NUM_CELLS];
+
 
 public:
+	Grid3D();
+	~Grid3D();
 
+	void Add(class Unit* _pUnit);
+	void Move(class Unit* _pUnit, const VECTOR3::VEC3& _pos);
+	float UnitDistanceSq(class Unit* _pUnitA, class Unit* _pUnitB);
 };
 

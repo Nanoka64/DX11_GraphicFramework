@@ -807,7 +807,7 @@
     <ClCompile Include="Source\Cpp\Component_Render.cpp">
       <Filter>ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\Grid.cpp">
+    <ClCompile Include="Source\Cpp\Grid3D.cpp">
       <Filter>ソース ファイル\Engine\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\Unit.cpp">
@@ -1301,7 +1301,7 @@
     <ClInclude Include="resource.h">
       <Filter>リソース ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Grid.h">
+    <ClInclude Include="Source\Header\Grid3D.h">
       <Filter>ソース ファイル\Engine\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\Unit.h">
