@@ -254,9 +254,9 @@ bool EffectManager::LoadEffect(const char16_t *_name, const std::string& _key)
 //* [返値]
 //* int : ハンドル（呼び出し側で管理）
 //*----------------------------------------------------------------------------------------
-int EffectManager::PlayEffect(const std::string& _key)
+int EffectManager::PlayEffect(const std::string& _key, const VECTOR3::VEC3& _pos , int32_t _startFrame )
 {
-    return m_EfkManager->Play(m_EffectMap[_key], 0, 0, 0);
+    return m_EfkManager->Play(m_EffectMap[_key], Effekseer::Vector3D(_pos.x, _pos.y, _pos.z), _startFrame);
 }
 
 // エフェクトが再生中かどうかを確認

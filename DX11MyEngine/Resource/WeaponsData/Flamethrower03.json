@@ -58,7 +58,7 @@
       {
         "type" : "ScaleLerp",
         "startScale" : [0.0,0.0, 0.0],
-        "endScale" : [12.0, 12.0, 12.0],
+        "endScale" : [6.0, 6.0, 6.0],
         "duration" : 3.0
       }
     }

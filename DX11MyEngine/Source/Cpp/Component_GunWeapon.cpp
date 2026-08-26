@@ -327,7 +327,9 @@ void GunWeapon::Fire(RendererEngine& renderer)
     m_FireTimer = 0.0f;
 
 	// 武器使用の有無の設定がオフなら発射しない
-    if (!Master::m_pDataManager->get_IsUseWeapon() || !get_WeaponFlags().GetFlag(WEAPON_STATUS::ENABLED)) {
+    if (!Master::m_pDataManager->get_IsUseWeapon() ||
+        !get_WeaponFlags().GetFlag(WEAPON_STATUS::ENABLED))
+    {
         return;
     }
 
@@ -491,8 +493,7 @@ void GunWeapon::Fire(RendererEngine& renderer)
     {
 		VEC3 muzzleScale = gunParam->_muzzleFlashEffectScale;   // エフェクトの大きさ
 
-        auto handle = Master::m_pEffectManager->PlayEffect(gunParam->_muzzleFlashEffectTag);
-        Master::m_pEffectManager->SetPositionEffect(handle, firePos.x, firePos.y, firePos.z);
+        auto handle = Master::m_pEffectManager->PlayEffect(gunParam->_muzzleFlashEffectTag, firePos, 1);
         Master::m_pEffectManager->SetScaleEffect(handle, muzzleScale.x, muzzleScale.y, muzzleScale.z);
         Master::m_pEffectManager->SetRotationEffect(handle, pitch, yaw, 0.0f);
     }

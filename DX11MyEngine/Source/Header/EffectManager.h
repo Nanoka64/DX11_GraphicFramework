@@ -35,7 +35,7 @@ public:
     void UpdateEffect(RendererEngine& renderer);    // エフェクトの更新
     void DrawEffect();                              // エフェクトの描画
     bool LoadEffect(const char16_t *_name,const std::string&_key);           // エフェクトの読み込み
-    int PlayEffect(const std::string& _key);                        // エフェクトの再生
+    int PlayEffect(const std::string& _key, const VECTOR3::VEC3& _pos = 0, int32_t _startFrame = 0); // エフェクトの再生
     void StopEffect(int handle);                                    // エフェクトを止める
     void SetPositionEffect(int handle, float x, float y, float z);  // エフェクトの位置を設定
     void SetScaleEffect(int handle, float x, float y, float z);     // エフェクトの大きさを設定
