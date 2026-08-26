@@ -54,7 +54,10 @@ DXApp::DXApp(uint32_t width, uint32_t height) :
     m_pRenderer(),
     m_pGameManager(),
     m_IsClose(false),
-    m_IsEditMode(false)
+    m_IsEditMode(false),
+    m_FpsFrameCount(0),
+    m_FpsElapsedSeconds(0.0f),
+    m_CurrentFps(0.0f)
 {
 
 }
@@ -428,6 +431,11 @@ int DXApp::MainLoop()
 
                 Master::m_pDebugger->BeginFrame(win_width, win_height);
 
+                // MainLoop先頭で求めたフレーム開始間隔を秒へ変換してFPS計測に渡す。
+                // TimeManagerのデルタタイムはタイムスケールやヒットストップの影響を受けるため、
+                // 画面が実際に更新された頻度を示すFPSには、未加工の実経過時間を使用する。
+                UpdateFps(static_cast<float>(difference) / 1000.0f);
+
                 float deltatime = Master::m_pTimeManager->get_DeltaTime();
 
 				// デバッグキー：F1でカメラコントロールモードのオンオフ切り替え
@@ -578,7 +586,14 @@ void DXApp::AppEditDrawImGui()
     //					    アプリケーション情報
     //
     //=========================================================================================
-    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"アプリケーション設定"));
+    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"アプリケーション設定"),0);
+
+    // FPSの計測処理とは分離し、この関数では表示だけを行う。
+    // 表示先を既存のアプリケーション設定ウィンドウにまとめることで、
+    // FPS専用ウィンドウが他のデバッグウィンドウと重なることを防いでいる。
+    DrawFps();
+    Master::m_pDebugger->DG_Separator();
+
     if (Master::m_pDebugger->DG_CheckBox(U8ToChar(u8"デバッグ用エディタの表示"), &m_IsEditMode))
     {
         Master::m_pDataManager->set_IdDebugMode(m_IsEditMode);
@@ -596,6 +611,57 @@ void DXApp::AppEditDrawImGui()
         Master::m_pDataManager->set_IsUseWeapon(isUseWeapon);
     }
     Master::m_pDebugger->EndDebugWindow();
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:DXApp Class
+//*【?】FPSの更新
+//* 引数：1.前回の描画開始から今回の描画開始までの実経過時間（秒）
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void DXApp::UpdateFps(float frameElapsedSeconds)
+{
+    // 0秒以下の値ではFPSを正しく求められないため、異常値は計測対象から除外する。
+    if (frameElapsedSeconds <= 0.0f)
+    {
+        return;
+    }
+
+    // 毎フレームの経過時間とフレーム数を蓄積し、計測区間全体の平均FPSを求める。
+    // 「1 / 今回の経過時間」を直接表示する方式より、一時的な処理時間の揺れに強くなる。
+    m_FpsElapsedSeconds += frameElapsedSeconds;
+    ++m_FpsFrameCount;
+
+    // 表示値の更新間隔。短すぎると数値が読みにくく、長すぎると負荷変動への反応が
+    // 遅くなるため、ここでは視認性と追従性のバランスがよい0.5秒としている。
+    constexpr float FPS_UPDATE_INTERVAL_SECONDS = 0.5f;
+    if (m_FpsElapsedSeconds < FPS_UPDATE_INTERVAL_SECONDS)
+    {
+        return;
+    }
+
+    // FPS = 計測区間内の描画フレーム数 / 計測区間の実経過秒数
+    m_CurrentFps = static_cast<float>(m_FpsFrameCount) / m_FpsElapsedSeconds;
+
+    // 次の計測区間を開始できるよう、蓄積値だけをリセットする。
+    // m_CurrentFpsは次の計測が完了するまで、直近の結果として保持する。
+    m_FpsFrameCount = 0;
+    m_FpsElapsedSeconds = 0.0f;
+}
+
+
+//*---------------------------------------------------------------------------------------
+//* @:DXApp Class
+//*【?】FPSのデバッグ表示
+//* 引数：なし
+//* 返値：void
+//*----------------------------------------------------------------------------------------
+void DXApp::DrawFps()
+{
+    // UpdateFpsで更新された平均FPSを小数第1位まで表示する。
+    // 初回の0.5秒間は計測区間が完成していないため、初期値の0.0が表示される。
+    Master::m_pDebugger->DG_TextValue("FPS : %.1f", m_CurrentFps);
 }
 
 

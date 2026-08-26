@@ -41,6 +41,12 @@ private:
     
     bool m_IsClose;     // 終了フラグ
     bool m_IsEditMode;  // 編集モードにするか
+
+    // FPSは1フレームの計測値をそのまま表示すると数値が激しく変動するため、
+    // 一定時間分のフレーム数と経過時間を蓄積し、その区間の平均値を表示する。
+    uint32_t m_FpsFrameCount;      // 現在のFPS計測区間で描画したフレーム数
+    float    m_FpsElapsedSeconds;  // 現在のFPS計測区間で経過した実時間（秒）
+    float    m_CurrentFps;         // Debuggerに表示する、直近の計測区間の平均FPS
 public:
 
     /// <summary>
@@ -105,6 +111,20 @@ private:
     /// アプリケーションのImGui関連
     /// </summary>
     void AppEditDrawImGui();
+
+
+    /// <summary>
+    /// 1フレーム分の実経過時間をFPS計測値へ反映する
+    /// </summary>
+    /// <param name="frameElapsedSeconds">前回の描画開始から今回の描画開始までの実時間（秒）</param>
+    void UpdateFps(float frameElapsedSeconds);
+
+
+    /// <summary>
+    /// UpdateFpsで算出したFPSをDebuggerへ表示する
+    /// </summary>
+    /// <remarks>DebuggerのBeginDebugWindowとEndDebugWindowの間で呼び出すこと</remarks>
+    void DrawFps();
 
 
     // ======================================================================================================
