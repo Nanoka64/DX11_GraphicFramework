@@ -123,6 +123,7 @@ void GunWeapon::LateUpdate(RendererEngine& renderer)
 
     auto player = Master::m_pGameObjectManager->get_ObjectByTag("Player");
     auto skinnedMesh = player->get_Component<SkinnedMeshAnimator>();
+
     //auto& boneMtx = skinnedMesh->get_BoneLocalWorldMatrix("mixamorig:RightHand");
     
     // •Ší‚ÌˆÊ’u‚ğ‰Eè‚ÌˆÊ’u‚É‡‚í‚¹‚é

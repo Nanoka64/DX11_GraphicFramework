@@ -82,7 +82,7 @@ public:
 	std::vector<AnimationData *> get_AnimationDataList()const { return m_Animations; }
 
 	void CrossFadeAnim(int newAnimIndex, float blendDurationInSeconds);
-
+	void RefreshPose(RendererEngine& renderer);	// ボーン行列を計算する
 private:
 	void TransformBone(float animTimeTicks, UINT nodeIdx, const DirectX::XMMATRIX &parent, int animIdx); // ボーン変換行列の更新
 	const NodeAnimChannel *FindNodeAnim(const AnimationData *pAnim, const std::string &nodeName);	// アニメーションがあるか確認

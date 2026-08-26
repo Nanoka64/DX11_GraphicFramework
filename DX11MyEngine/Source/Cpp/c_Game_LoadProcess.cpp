@@ -796,7 +796,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             model.MatNum = 1;
             model.SetupMaterial = matInfo;
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC;
-            model.ObjLayer = 91;
+            model.ObjLayer = 92;
             auto obj = MeshFactory::CreateModel(model);
 
             // ”jŠü‚µ‚È‚¢

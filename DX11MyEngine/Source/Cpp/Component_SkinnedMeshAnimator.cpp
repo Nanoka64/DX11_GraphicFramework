@@ -55,7 +55,6 @@ void SkinnedMeshAnimator::Start(RendererEngine &renderer)
 //*----------------------------------------------------------------------------------------
 void SkinnedMeshAnimator::Update(RendererEngine& renderer)
 {
-
     BoneTransformsUpdate(renderer, m_AnimProcTime, m_CurrentAnimIndex);
 }
 
@@ -98,7 +97,7 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
     //    }
     //    BoneTransformsUpdate(renderer, m_ShadowAnimProcTime, m_CurrentAnimIndex);
     //}
-    
+
 
     auto pContext = renderer.get_DeviceContext();
 
@@ -638,4 +637,21 @@ XMMATRIX& SkinnedMeshAnimator::get_BoneLocalWorldMatrix(const std::string& _node
 {
     int index = m_BoneIndexMap[_nodeName];
     return m_BoneList[index].DebugWorldMatrix;  // Final...の方だとXMFLOAT4X4になってしまってるので
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ボーン行列を計算する
+//*
+//* [引数]
+//* & renderer : 描画エンジン
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void SkinnedMeshAnimator::RefreshPose(RendererEngine& renderer)
+{
+    BoneTransformsUpdate(
+        renderer,
+        m_AnimProcTime,
+        m_CurrentAnimIndex);
 }
