@@ -6,6 +6,7 @@
 #include "Component_RectTransform.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
+#include "Component_SpotLight.h"
 #include "Component_PlayerController.h"
 #include "Component_3DCamera.h"
 #include "Component_SkinnedMeshAnimator.h"
@@ -382,6 +383,62 @@ void PointLightEditor::OnEditorGUI(RendererEngine &renderer, GameObject &pObj)
     pPointLig->set_LightColor(lightColor);
     pPointLig->set_Range(range);
 }
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
+/* --- @:SpotLightEditor Class --- */
+//
+// ***************************************************************************************
+bool SpotLightEditor::Init(RendererEngine& renderer)
+{
+    return true;
+}
+
+void SpotLightEditor::OnEditorGUI(RendererEngine& renderer, GameObject& pObj)
+{
+    // ポイントライトコンポーネントの取得
+    auto pSpotLig = pObj.get_Component<SpotLight>();
+
+    if (pSpotLig == nullptr)
+    {
+        return;
+    }
+
+    // beginはInspectorWindowで行っている
+    float intensity = pSpotLig->get_Intensity();
+    float range = pSpotLig->get_Range();
+    float angle = pSpotLig->get_AngleDeg();
+    VEC3 lightColor = pSpotLig->get_LightColor();
+
+    // ノード
+    if (Master::m_pDebugger->DG_TreeNode(U8ToChar(u8"スポットライト")))
+    {
+        Master::m_pDebugger->DG_Separator();    // 区切り線
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"強さ"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Insensity", 1, &intensity, 0.5f, 0.0f, 100.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"範囲"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Range", 1, &range, 0.5f, 0.0f, 1000.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"放射角度"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_DragFloat("##Angle", 1, &angle, 0.5f, -360.0f, 360.0f);
+
+        Master::m_pDebugger->DG_BulletText(U8ToChar(u8"カラー"));
+        Master::m_pDebugger->DG_SameLine();
+        Master::m_pDebugger->DG_ColorEdit3("##DirLigColor", &lightColor);
+
+        Master::m_pDebugger->DG_TreePop();
+    }
+
+    // 反映
+    pSpotLig->set_Intensity(intensity);
+    pSpotLig->set_LightColor(lightColor);
+    pSpotLig->set_SpotLightData(range, angle);
+}
+
 
 
 

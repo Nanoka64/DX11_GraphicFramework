@@ -15,16 +15,17 @@ constexpr int CB_SLOT_TRANSFORM = 0;	        // ワールド変換行列用
 constexpr int CB_SLOT_VIEW = 1;		            // ビュー変換行列用
 constexpr int CB_SLOT_PROJECTION = 2;	        // 投影変換行列用
 constexpr int CB_SLOT_BONE = 3;	                // スキニング用ボーン行列用
-constexpr int CB_SLOT_MATERIAL = 4;	            //  マテリアル情報用
-constexpr int CB_SLOT_DIRECTIONAL_LIGHT = 5;	// ディレクションライト用
-constexpr int CB_SLOT_POINT_LIGHT = 6;	        // ポイントライト用
-constexpr int CB_SLOT_BLUR_WEIGHTS = 7;	        // ブラーの重み用
-constexpr int CB_SLOT_POSTEFFECT = 8;	        // ポストエフェクト用
-constexpr int CB_SLOT_SHADOW = 9;	            // シャドウマップ用
-constexpr int CB_SLOT_SPRITE = 10;	            // スプライト用
-constexpr int CB_SLOT_DECAL = 11;	            // デカール用
-constexpr int CB_SLOT_WINDOW = 12;	            // ウインドウ情報用
-constexpr int CB_SLOT_DISTORTION = 13;          // ディストーション用
+constexpr int CB_SLOT_MATERIAL = 4;	            // マテリアル情報用
+constexpr int CB_SLOT_LIGHTS = 5;	            // ライト用
+//constexpr int CB_SLOT_DIRECTIONAL_LIGHT = 5;	// ディレクションライト用
+//constexpr int CB_SLOT_POINT_LIGHT = 6;	    // ポイントライト用
+constexpr int CB_SLOT_BLUR_WEIGHTS = 6;	        // ブラーの重み用
+constexpr int CB_SLOT_POSTEFFECT = 7;	        // ポストエフェクト用
+constexpr int CB_SLOT_SHADOW = 8;	            // シャドウマップ用
+constexpr int CB_SLOT_SPRITE = 9;	            // スプライト用
+constexpr int CB_SLOT_DECAL = 10;	            // デカール用
+constexpr int CB_SLOT_WINDOW = 11;	            // ウインドウ情報用
+constexpr int CB_SLOT_DISTORTION = 12;          // ディストーション用
 
 
 //=========================================================================================
@@ -123,9 +124,13 @@ struct CB_MATERIAL_SET {
 
 //=========================================================================================
 //
-//						ディレクションライト情報 - slot 5
+//						ライト情報 - slot 5
 // 
 //=========================================================================================
+
+/* =========================================================================
+//* - @:ディレクションライト用構造体 - */
+//* =========================================================================
 struct CB_DirectionLightData
 {
     DirectX::XMFLOAT3 Direction;    // 方向
@@ -140,44 +145,9 @@ struct CB_DirectionLightData
 
 };
 
-struct CB_DIRECTION_LIGHT
-{
-    //DirectX::XMFLOAT3 Direction;    // 方向
-    //float Padding;
-    //
-    //DirectX::XMFLOAT3 DiffuseColor; // ディフューズ色
-    //float DiffuseIntensity;         // ディフューズ光度
-
-    //DirectX::XMFLOAT3 SpecularColor;// スペキュラ色
-    //float SpecularIntensity;        // スペキュラ強度
-
-    //// ライトから見た画面座標
-    //DirectX::XMFLOAT4X4 LightViewProj;
-
-    ////DirectX::XMFLOAT3 LightPos; // ライトの位置（シャドウマップ用）
-    ////float Padding3;
-
-	CB_DirectionLightData Lights[DIRECTIONLIGHT_MAX_NUM];   // 今のところは1個しか使わないけど、複数のライトに対応できるように配列にしている
-    DirectX::XMFLOAT3 EyePos;       // 視点の位置
-    float Padding2;
-};
-
-/// <summary>
-/// ディレクションライト 
-/// バッファセット用
-/// </summary>
-struct CB_DIRECTION_LIGHT_SET
-{
-    CB_DIRECTION_LIGHT Data[DIRECTIONLIGHT_MAX_NUM]{};
-    ID3D11Buffer* pBuff = nullptr;
-};
-
-
-//=========================================================================================
-//
-//						ポイントライト情報 - slot 6
-// 
-//=========================================================================================
+/* =========================================================================
+//* - @:ポイントライト用構造体 - */
+//* =========================================================================
 struct CB_PointLightData
 {
     DirectX::XMFLOAT3 Pos;          // 座標
@@ -190,21 +160,41 @@ struct CB_PointLightData
     float SpecularIntensity;        // スペキュラ強度
 };
 
-struct CB_POINT_LIGHT
+/* =========================================================================
+//* - @:スポットライト用構造体 - */
+//* =========================================================================
+struct CB_SpotLightData
 {
-    CB_PointLightData Lights[POINTLIGHT_MAX_NUM]; // 100個
-    unsigned LightCount;                          // 使用するライトの個数
-    float Padding[3];
+    DirectX::XMFLOAT3 Pos;                  // 座標   
+    float Range;                            // 範囲
+
+    DirectX::XMFLOAT3 DiffuseColor;         // ディフューズ
+    float DiffuseIntensity;                 // ディフューズ光度
+
+    DirectX::XMFLOAT3 SpecularColor;        // スペキュラ
+    float SpecularIntensity;                // スペキュラ強度
+
+    DirectX::XMFLOAT3 Direction;            // 放射する方向
+    float Angle;                            // 射出角度
 };
 
-/// <summary>
-/// ポイントライト 
-/// バッファセット用
-/// </summary>
-struct CB_POINT_LIGHT_SET
+struct CB_LIGHTS
 {
-    CB_POINT_LIGHT Data; 
-    ID3D11Buffer* pBuff = nullptr;
+    /* ディレクションライト */
+    CB_DirectionLightData DirLights[DIRECTIONLIGHT_MAX_NUM];    // 今のところは1個しか使わないけど、複数のライトに対応できるように配列にしている
+
+    /* ポイントライト */
+    CB_PointLightData PointLights[POINTLIGHT_MAX_NUM];          // 100個
+
+    /* スポットライト */
+    CB_SpotLightData SpotLights[SPOTLIGHT_MAX_NUM];             // 20個
+
+    int32_t PointLightCount;                                    // 使用するポイントライトの個数
+    int32_t SpotLightCount;                                     // 使用するスポットライトの個数
+    float Padding1;
+    float Padding2;
+    DirectX::XMFLOAT3 EyePos;       // 視点の位置
+    float Padding3;
 };
 
 

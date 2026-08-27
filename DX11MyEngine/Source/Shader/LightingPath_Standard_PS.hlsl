@@ -126,6 +126,17 @@ float4 PSMain(PS_IN input) : SV_TARGET
         pointLig.Specular += res.Specular;
     }
     
+    //************************************************************************
+    //                      スポットライト計算 
+    //************************************************************************
+    for (int spotIdx = 0; spotIdx < cb_SpotLightCount; spotIdx++)
+    {
+        OUT_DiffAndSpec res = SpotLightCalc(cb_SpotLightData[spotIdx], cb_EyePos, spcColor, spcPow, worldPos.xyz, normal);
+        pointLig.Diffuse += res.Diffuse;
+        pointLig.Specular += res.Specular;
+    }
+    
+    
     // 天球ライト
     float3 hemiLig = HemisphereLightCalc(normal);
     

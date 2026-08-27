@@ -147,6 +147,34 @@ public:
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
+/* --- @:SpotLightEditor Class --- */
+//
+//  ★継承：EditorBase ★
+//
+// 【?】スポットライト編集用エディタ
+//
+// ***************************************************************************************
+class SpotLightEditor : public EditorBase
+{
+private:
+    float m_SlideAccuRate; // 位置の入力精度
+
+public:
+    SpotLightEditor()
+        : EditorBase(),
+        m_SlideAccuRate(1.0f)
+    {
+    };
+    ~SpotLightEditor()
+    {
+    };
+    bool Init(RendererEngine &renderer) override;
+    void OnEditorGUI(RendererEngine &renderer, class GameObject &pObj) override;
+};
+
+
+// ***************************************************************************************
+// ---------------------------------------------------------------------------------------
 /* --- @:PlayerControllerEditor Class --- */
 //
 //  ★継承：EditorBase ★

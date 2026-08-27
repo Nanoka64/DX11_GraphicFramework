@@ -249,6 +249,7 @@
     <ClInclude Include="Source\Header\Component_SkinnedMeshAnimator.h" />
     <ClInclude Include="Source\Header\Component_SkyRenderer.h" />
     <ClInclude Include="Source\Header\Component_SphereCollider.h" />
+    <ClInclude Include="Source\Header\Component_SpotLight.h" />
     <ClInclude Include="Source\Header\Component_SpriteRenderer.h" />
     <ClInclude Include="Source\Header\Component_TimerDestruction.h" />
     <ClInclude Include="Source\Header\Component_TrailRenderer.h" />
@@ -402,6 +403,7 @@
     <ClCompile Include="Source\Cpp\Component_MuzzleFlashEffect.cpp" />
     <ClCompile Include="Source\Cpp\Component_Physics.cpp" />
     <ClCompile Include="Source\Cpp\Component_Render.cpp" />
+    <ClCompile Include="Source\Cpp\Component_SpotLight.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Config.cpp" />
     <ClCompile Include="Source\Cpp\c_Game_Manual.cpp" />
     <ClCompile Include="Source\Cpp\c_MissionSelect_DifficultSelect.cpp" />

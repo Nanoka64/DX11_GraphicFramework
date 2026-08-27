@@ -37,6 +37,7 @@ bool InspectorWindow::Init(RendererEngine &renderer)
     m_EditorMap["PhysicsEditor"]        = std::make_unique<PhysicsEditor>();
     m_EditorMap["DirectionalLight"]     = std::make_unique<DirectionLightEditor>();
     m_EditorMap["PointLight"]           = std::make_unique<PointLightEditor>();
+    m_EditorMap["SpotLight"]            = std::make_unique<SpotLightEditor>();
     m_EditorMap["PlayerController"]     = std::make_unique<PlayerControllerEditor>();
     m_EditorMap["Camera3D"]             = std::make_unique<Camera3DEditor>();
     m_EditorMap["SkinnedMeshAnimator"]  = std::make_unique<SkinnedMeshAnimatorEditor>();

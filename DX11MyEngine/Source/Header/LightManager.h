@@ -20,6 +20,7 @@ private:
 	ID3D11DeviceContext* m_pContext;
 
 	std::vector<CB_PointLightData>	m_TemporaryPointLightData;		// ポイントライト情報の一時保持
+	std::vector<CB_SpotLightData>	m_TemporarySpotLightData;		// スポットライト情報の一時保持
 	std::vector<CB_DirectionLightData> m_TemporaryDirectionLightData;  // ディレクションライト情報の一時保持
 
 	TransientPointLightPool m_TransientPointLightPool;
@@ -38,6 +39,7 @@ public:
 	void set_CameraTransform(std::weak_ptr<class MyTransform> pCamTransform);
 
 	void set_PointLightData(const CB_PointLightData& data);
+	void set_SpotLightData(const CB_SpotLightData& data);
 	void set_DirectionLightData(const CB_DirectionLightData& data);
 
 	/// ライトビュープロジェクションの設定（多分ディレクションライト専用）
@@ -71,6 +73,7 @@ private:
 	/// </summary>
 	void PointLight_SetCBuffer();
 
+	void LightDataSetupAndBindToConstantBuffer();
 
 	/// <summary>
 	/// ポイントライト用の定数バッファを作成

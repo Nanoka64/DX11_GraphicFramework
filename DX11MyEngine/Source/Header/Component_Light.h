@@ -17,10 +17,6 @@ protected:
     VECTOR3::VEC3 m_LightColor;                         // ライトカラー
     float m_Intensity;   // 強度
 
-    VECTOR3::VEC3 m_FocusPoint;
-    VECTOR3::VEC3 m_UpVec;
-
-
 public:
     Light(std::weak_ptr<GameObject> pOwner, int updateRank);
     virtual ~Light() = default;

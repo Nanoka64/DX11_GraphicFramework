@@ -1119,7 +1119,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.Height = m_ScreenHeight;
     sprite.PSConstBufferNum = 1;
     sprite.pPSConstantBuffers =  new ExpandConstantBufferInfo();
-    sprite.pPSConstantBuffers->SetSlot = 9;
+    sprite.pPSConstantBuffers->SetSlot = CB_SLOT_SHADOW;
     sprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_ShadowData);
     sprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_ShadowData;
 
@@ -1221,7 +1221,7 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     depthOfFieldSprite.pTextureMap[2] = Master::m_pResourceManager->Convert_SRVToTexture("Depth");
 
     depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();                     // VS定数バッファにブラー用の重みテーブルをセット
-    depthOfFieldSprite.pPSConstantBuffers->SetSlot = 8;                                         // スロット8にセット
+    depthOfFieldSprite.pPSConstantBuffers->SetSlot = CB_SLOT_POSTEFFECT;                                         // スロット8にセット
 	depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_PostEffectData;       // ポストエフェクトのデータをセット
     depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_PostEffectData);
     depthOfFieldSprite.PSConstBufferNum = 1;

@@ -813,6 +813,9 @@
     <ClCompile Include="Source\Cpp\Unit.cpp">
       <Filter>ソース ファイル\Engine\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\Component_SpotLight.cpp">
+      <Filter>ソース ファイル\Engine\BaseComponent\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1306,6 +1309,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Unit.h">
       <Filter>ソース ファイル\Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Component_SpotLight.h">
+      <Filter>ソース ファイル\Engine\BaseComponent\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

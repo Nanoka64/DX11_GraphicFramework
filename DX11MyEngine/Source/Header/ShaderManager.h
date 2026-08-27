@@ -119,8 +119,7 @@ enum class CONSTANT_BUFFER_TYPE
     PROJECTION,             // プロジェクション行列
 	BONE,                   // スキニング用ボーン行列
 	MATERIAL,   	        // マテリアル情報
-	DIRECTIONAL_LIGHT,      // ディレクションライト
-	POINT_LIGHT,            // ポイントライト
+	LIGHTS,                 // ライト
 	BLUR_WEIGHTS,			// ブラーの重み
 	POSTEFFECT,             // ポストエフェクト用
 	SHADOW,				    // シャドウマップ用

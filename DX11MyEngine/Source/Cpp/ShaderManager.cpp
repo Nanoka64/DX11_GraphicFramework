@@ -267,8 +267,7 @@ bool ShaderManager::Init(std::shared_ptr<RendererEngine> renderer)
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::PROJECTION)]          = std::make_unique<ConstantBuffer<CB_PROJECTION>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::BONE)]                = std::make_unique<ConstantBuffer<CB_BONES_DATA>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::MATERIAL)]            = std::make_unique<ConstantBuffer<CB_MATERIAL>>();
-	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::DIRECTIONAL_LIGHT)]   = std::make_unique<ConstantBuffer<CB_DIRECTION_LIGHT>>();
-	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::POINT_LIGHT)]         = std::make_unique<ConstantBuffer<CB_POINT_LIGHT>>();
+	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::LIGHTS)]              = std::make_unique<ConstantBuffer<CB_LIGHTS>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::BLUR_WEIGHTS)]        = std::make_unique<ConstantBuffer<CB_BLUR>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::POSTEFFECT)]          = std::make_unique<ConstantBuffer<CB_POSTEFFECT>>();
 	m_ConstantBuffers[UINT_CAST(CONSTANT_BUFFER_TYPE::SHADOW)]              = std::make_unique<ConstantBuffer<CB_SHADOW>>();

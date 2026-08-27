@@ -15,6 +15,7 @@
 #include "Component_MeshRenderer.h"
 #include "Component_DirectionalLight.h"
 #include "Component_PointLight.h"
+#include "Component_SpotLight.h"
 #include "Component_SpriteRenderer.h"
 #include "Component_BillboardRenderer.h"
 #include "Component_SkyRenderer.h"
@@ -606,7 +607,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         mesh.IsNormalMap = true;
         mesh.ObjLayer = 105;
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 5; i++)
         {
             VEC3 pos;
             pos.x = -140.0f;
@@ -624,10 +625,10 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             obj->set_Tag("Block");
             obj->set_IsUpdateAllowedDuringPause(false);
             obj->set_IsStatic(false);
-            auto light = obj->add_Component<PointLight>();
+            auto light = obj->add_Component<SpotLight>();
+            light->set_SpotLightData(30.0f, 15.0f);
             light->set_LightColor(col);
-            light->set_Range(15.0f);
-            light->set_Intensity(1.5f);
+            light->set_Intensity(5.5f);
 
             // 物理コンポーネント
             auto physics = obj->add_Component<Physics>();

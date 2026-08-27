@@ -188,7 +188,7 @@ OUT_DiffAndSpec DirectionLightCalc(DirectionalLightData _ligData, float3 _eyePos
 
 
 //*---------------------------------------------------------------------------------------
-//*【?】ディレクションライトの計算
+//*【?】ポイントライトの計算
 //*
 //* [引数]
 //* _ligData    : ライト情報
@@ -236,6 +236,69 @@ OUT_DiffAndSpec PointLightCalc(PointLightData _ligData, float3 _eyePos, float3 _
     return outData;
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】スポットライトの計算
+//*
+//* [引数]
+//* _ligData    : ライト情報
+//* _eyePos     : カメラ座標
+//* _spcCol     : スペキュラカラー
+//* _spcPow     : スペキュラ強度
+//* _worldPos   : サーフェイスのワールド座標
+//* _norm       : サーフェイスのワールド法線
+//*
+//* [返値]
+//* OUT_DiffAndSpec ディフューズ＆スペキュラ
+//*----------------------------------------------------------------------------------------
+OUT_DiffAndSpec SpotLightCalc(SpotLightData _ligData, float3 _eyePos, float3 _spcCol, float _spcPow, float3 _worldPos, float3 _norm)
+{
+    float3 finalLig = float3(0, 0, 0);
+
+    float3 ligDir = _worldPos - _ligData.Pos; // 光の向きを求める（ライト→サーフェイス）
+    float distance = length(ligDir); // サーフェイス→ライトの距離
+    ligDir = normalize(ligDir); // 正規化
+    
+    // ディフューズ計算
+    float3 diffPoint = LambertDiffuseLightCalc(ligDir, _ligData.DiffuseColor, _norm);
+    
+    // フォン反射
+    float3 spcPoint = Blinn_PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
+    
+    // 影響度計算
+    float affect = 1.0f - min(1.0f, distance / _ligData.Range);
+    
+    // マイナスにならないように
+    affect = max(0.0, affect);
+    affect = pow(affect, 3.0);
+    
+    // 影響度を拡散・鏡面に反映させる
+    diffPoint *= affect;
+    spcPoint *= affect;
+    
+    // 入射角と射出方向の角度を求める
+    float angle = dot(ligDir, _ligData.Direction);
+    
+    // acosで角度を求める
+    angle = abs(acos(saturate(angle)));
+    
+    // 角度に比例して小さくなっていく影響率を計算
+    affect = 1.0f - 1.0f / _ligData.Angle * angle;
+    if (affect < 0.0f)
+    {
+        affect = 0.0f;
+    }
+    
+    // 減衰
+    affect = pow(affect, 0.5f);
+    
+    diffPoint *= affect;
+    spcPoint *= affect;
+    
+    OUT_DiffAndSpec outData;
+    outData.Diffuse = diffPoint * _ligData.DiffuseIntensity;
+    outData.Specular = spcPoint * _ligData.SpecularIntensity;
+    return outData;
+}
 
 //*---------------------------------------------------------------------------------------
 //*【?】半球ライト計算

@@ -72,7 +72,10 @@ void LightManager::Update()
 			POINTLIGHT_MAX_NUM);
 	}
 
-	DirectionLight_SetCBuffer();
+	// ライトデータを定数バッファへ送る
+	LightDataSetupAndBindToConstantBuffer();
+
+	//DirectionLight_SetCBuffer();
 
 	// ポーズ中は直前のポイントライト用バッファを維持する
 	if (isPause)
@@ -81,7 +84,7 @@ void LightManager::Update()
 		return;
 	}
 
-	PointLight_SetCBuffer();
+	//PointLight_SetCBuffer();
 }
 
 void LightManager::Term()
@@ -91,6 +94,89 @@ void LightManager::Term()
 	m_TransientPointLightPool.Clear();
 
 }
+
+
+//*---------------------------------------------------------------------------------------
+//*【?】ライト情報を構築し、定数バッファにセット
+//*
+//* [引数]
+//* なし
+//*
+//* [返値]
+//* void
+//*----------------------------------------------------------------------------------------
+void LightManager::LightDataSetupAndBindToConstantBuffer()
+{
+
+	VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
+	CB_LIGHTS cbLights{};
+	cbLights.EyePos = cameraPos;	// カメラ位置
+
+	// ----------------------------------------------------------
+	// ディレクションライト用データの更新
+	// ----------------------------------------------------------
+	memcpy(
+		&cbLights.DirLights,
+		m_TemporaryDirectionLightData.data(),
+		m_TemporaryDirectionLightData.size() * sizeof(CB_DirectionLightData)
+	);
+
+	// ----------------------------------------------------------
+	// ポイントライト用データの更新
+	// ----------------------------------------------------------
+	// サイズがオーバーしてないか
+	uint32_t pLightCount = static_cast<uint32_t>(m_TemporaryPointLightData.size());
+	if (pLightCount > POINTLIGHT_MAX_NUM) {
+		pLightCount = POINTLIGHT_MAX_NUM;
+	}
+	// ポイントライトの数をセット
+	cbLights.PointLightCount = pLightCount;
+
+	// ポイントライトが1個以上あればメモリコピー
+	if (pLightCount > 0)
+	{
+		memcpy(
+			cbLights.PointLights,
+			m_TemporaryPointLightData.data(),
+			pLightCount * sizeof(CB_PointLightData)
+		);
+	}
+
+	// ----------------------------------------------------------
+	// スポットライト用データの更新
+	// ----------------------------------------------------------
+	// サイズがオーバーしてないか
+	uint32_t spLightCount = static_cast<uint32_t>(m_TemporarySpotLightData.size());
+	if (spLightCount > SPOTLIGHT_MAX_NUM) {
+		spLightCount = SPOTLIGHT_MAX_NUM;
+	}
+	// スポットライトの数をセット
+	cbLights.SpotLightCount = spLightCount;
+
+	// スポットライト数が1個以上あればメモリコピー
+	if (spLightCount > 0)
+	{
+		memcpy(
+			cbLights.SpotLights,
+			m_TemporarySpotLightData.data(),
+			spLightCount * sizeof(CB_SpotLightData)
+		);
+	}
+
+
+	/* 定数バッファにセット */
+	Master::m_pShaderManager->BindConstantBuffer(
+		CONSTANT_BUFFER_TYPE::LIGHTS,
+		(void*)&cbLights, sizeof(CB_LIGHTS)
+	);
+
+	// 配列のクリア
+	m_TemporaryPointLightData.clear();
+	m_TemporaryDirectionLightData.clear();
+	m_TemporarySpotLightData.clear();
+
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライトを定数バッファにセット
@@ -103,24 +189,24 @@ void LightManager::Term()
 //*----------------------------------------------------------------------------------------
 void LightManager::DirectionLight_SetCBuffer()
 {
-	VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
+	//VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
 
-	CB_DIRECTION_LIGHT cbDirectionLight{};
+	//CB_DIRECTION_LIGHT cbDirectionLight{};
 
-	// バッファの更新
-	memcpy(
-		&cbDirectionLight.Lights,
-		m_TemporaryDirectionLightData.data(),
-		m_TemporaryDirectionLightData.size() * sizeof(CB_DirectionLightData)
-	);
+	//// バッファの更新
+	//memcpy(
+	//	&cbDirectionLight.Lights,
+	//	m_TemporaryDirectionLightData.data(),
+	//	m_TemporaryDirectionLightData.size() * sizeof(CB_DirectionLightData)
+	//);
 
-	// 一旦直接セット
-	// TODO: ライトをまとめた構造体を作り、ポイント、ディレクション問わず一気に送ってしまい、その時に一緒にカメラも送るか、
-	//		 カメラを完全に分離するか…
-	cbDirectionLight.EyePos = cameraPos;
+	//// 一旦直接セット
+	//// TODO: ライトをまとめた構造体を作り、ポイント、ディレクション問わず一気に送ってしまい、その時に一緒にカメラも送るか、
+	////		 カメラを完全に分離するか…
+	//cbDirectionLight.EyePos = cameraPos;
 
-	/* 定数バッファにセット */
-	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::DIRECTIONAL_LIGHT, (void*)&cbDirectionLight, sizeof(CB_DIRECTION_LIGHT));
+	///* 定数バッファにセット */
+	//Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::DIRECTIONAL_LIGHT, (void*)&cbDirectionLight, sizeof(CB_DIRECTION_LIGHT));
 
 
 	//D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -154,27 +240,27 @@ void LightManager::DirectionLight_SetCBuffer()
 //*----------------------------------------------------------------------------------------
 void LightManager::PointLight_SetCBuffer()
 {
-	// サイズがオーバーしてないか
-	uint32_t lightCount = static_cast<uint32_t>(m_TemporaryPointLightData.size());
-	if (lightCount > POINTLIGHT_MAX_NUM) lightCount = POINTLIGHT_MAX_NUM;
+	//// サイズがオーバーしてないか
+	//uint32_t lightCount = static_cast<uint32_t>(m_TemporaryPointLightData.size());
+	//if (lightCount > POINTLIGHT_MAX_NUM) lightCount = POINTLIGHT_MAX_NUM;
 
-	CB_POINT_LIGHT cbPointLight {};
+	//CB_POINT_LIGHT cbPointLight {};
 
-	// ライトの個数セット
-	cbPointLight.LightCount = lightCount;
+	//// ライトの個数セット
+	//cbPointLight.LightCount = lightCount;
 
-	if (lightCount > 0)
-	{
-		memcpy(cbPointLight.Lights, m_TemporaryPointLightData.data(), lightCount * sizeof(CB_PointLightData));
-	}
+	//if (lightCount > 0)
+	//{
+	//	memcpy(cbPointLight.Lights, m_TemporaryPointLightData.data(), lightCount * sizeof(CB_PointLightData));
+	//}
 
-	// 0灯の場合も送信し、前フレームのライト情報が残らないようにする
-	Master::m_pShaderManager->BindConstantBuffer(
-		CONSTANT_BUFFER_TYPE::POINT_LIGHT,
-		(void*)&cbPointLight,
-		sizeof(CB_POINT_LIGHT));
+	//// 0灯の場合も送信し、前フレームのライト情報が残らないようにする
+	//Master::m_pShaderManager->BindConstantBuffer(
+	//	CONSTANT_BUFFER_TYPE::POINT_LIGHT,
+	//	(void*)&cbPointLight,
+	//	sizeof(CB_POINT_LIGHT));
 
-	m_TemporaryPointLightData.clear();
+	//m_TemporaryPointLightData.clear();
 }
 
 
@@ -286,6 +372,22 @@ void LightManager::set_PointLightData(const CB_PointLightData& data)
 	}
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】スポットライトの情報をセット
+//*
+//* [引数]
+//* const CB_PointLightData& : ポイントライト情報
+//*
+//* [返値]
+//* void 
+//*----------------------------------------------------------------------------------------
+void LightManager::set_SpotLightData(const CB_SpotLightData& data)
+{
+	// ポイントライトの最大数より少なければ追加
+	if (m_TemporarySpotLightData.size() < SPOTLIGHT_MAX_NUM){
+		m_TemporarySpotLightData.push_back(data);
+	}
+}
 
 //*---------------------------------------------------------------------------------------
 //*【?】ディレクションライト情報をセット

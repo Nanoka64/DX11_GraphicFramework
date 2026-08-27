@@ -189,7 +189,7 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     CreateSpriteInfo horizontalBlurSprite;
     horizontalBlurSprite.pRenderer = &renderer;
     horizontalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo(); // VS定数バッファにブラー用の重みテーブルをセット
-    horizontalBlurSprite.pPSConstantBuffers->SetSlot = 7;               // スロット7にセット
+    horizontalBlurSprite.pPSConstantBuffers->SetSlot = CB_SLOT_BLUR_WEIGHTS;               // スロット7にセット
     horizontalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_BlurInfo.weights;
     horizontalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_BlurInfo.weights);
     horizontalBlurSprite.PSConstBufferNum = 1;
@@ -209,7 +209,7 @@ bool GaussianBlur::InitSprites(RendererEngine& renderer)
     CreateSpriteInfo verticalBlurSprite;
     verticalBlurSprite.pRenderer = &renderer;
     verticalBlurSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();   // VS定数バッファにブラー用の重みテーブルをセット
-    verticalBlurSprite.pPSConstantBuffers->SetSlot = 7;                 // スロット7にセット
+    verticalBlurSprite.pPSConstantBuffers->SetSlot = CB_SLOT_BLUR_WEIGHTS;                 // スロット7にセット
     verticalBlurSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_BlurInfo.weights;
     verticalBlurSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_BlurInfo.weights);
     verticalBlurSprite.PSConstBufferNum = 1;

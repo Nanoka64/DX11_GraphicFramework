@@ -28,7 +28,6 @@ public:
 
 	void Start(RendererEngine &renderer) override;	// 初期化
 	void Update(RendererEngine &renderer) override;// 更新
-	void Draw(RendererEngine &renderer) override;	// 描画
 
 	/// <summary>
 	/// 影響範囲セット

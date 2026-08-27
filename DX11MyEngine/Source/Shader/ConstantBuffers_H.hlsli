@@ -46,6 +46,24 @@ struct PointLightData
 };
 
 /* =========================================================================
+//* - @:スポットライト用構造体 - */
+//* =========================================================================
+struct SpotLightData
+{
+    float3 Pos;                 // 座標   
+    float Range;                // 範囲
+    
+    float3 DiffuseColor;        // ディフューズ
+    float DiffuseIntensity;     // ディフューズ光度
+    
+    float3 SpecularColor;       // スペキュラ
+    float SpecularIntensity;    // スペキュラ強度
+    
+    float3 Direction;           // 放射する方向
+    float Angle;                // 射出角度
+};
+
+/* =========================================================================
 //* - @:被写界深度用構造体 - */
 //* =========================================================================
 struct DofData
@@ -153,41 +171,59 @@ cbuffer CB_MATERIAL : register(b4)
 };
 
 
-//* =========================================================================
-//*- @:ディレクションライト -                     >>>>>>>【５】
-//* =========================================================================
-cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
+cbuffer CB_LIGHT : register(b5)
 {
+    /* ディレクションライト */
     DirectionalLightData cb_DirLightData[DIRECTIONLIGHT_MAX_NUM];
     
-    float3 cb_EyePos; // 視点位置
-    float pad1;
-};
-
-
-//* =========================================================================
-//*- @:ポイントライト -                           >>>>>>>【６】
-//* =========================================================================
-cbuffer CB_POINT_LIGHT : register(b6)        
-{
-    PointLightData cb_PointLightData[POINTLIGHT_MAX_NUM]; // 50個
-    uint cb_PointLightCount; // ポイントライトの数
-    float3 pad2;
+    /* ポイントライト */
+    PointLightData cb_PointLightData[POINTLIGHT_MAX_NUM]; // 100個
     
-};
+    /* スポットライト */
+    SpotLightData cb_SpotLightData[SPOTLIGHT_MAX_NUM];  // 20個
+    
+    uint cb_PointLightCount; // ポイントライトの数
+    uint cb_SpotLightCount; // スポットライトの数
+    float pad1;
+    float pad2;
+    float3 cb_EyePos; // 視点位置
+    float pad3;
+}
+
+////* =========================================================================
+////*- @:ディレクションライト -                     >>>>>>>【５】
+////* =========================================================================
+//cbuffer CB_DIRECTIONAL_LIGHT : register(b5)
+//{
+//    DirectionalLightData cb_DirLightData[DIRECTIONLIGHT_MAX_NUM];
+    
+//    float3 cb_EyePos; // 視点位置
+//    float pad1;
+//};
+
+
+////* =========================================================================
+////*- @:ポイントライト -                           >>>>>>>【６】
+////* =========================================================================
+//cbuffer CB_POINT_LIGHT : register(b6)        
+//{
+//    PointLightData cb_PointLightData[POINTLIGHT_MAX_NUM]; // 50個
+//    uint cb_PointLightCount; // ポイントライトの数
+//    float3 pad2;
+//};
 
 //* =========================================================================
-//*- @:ブラー用 -                           >>>>>>>【７】
+//*- @:ブラー用 -                           >>>>>>>【６】
 //* =========================================================================
-cbuffer CB_BLUR_WEIGHTS : register(b7)
+cbuffer CB_BLUR_WEIGHTS : register(b6)
 {
     float4 cb_BlurWeights[2];
 };
 
 //* =========================================================================
-//*- @:ポストエフェクト用データ -            >>>>>>>【８】
+//*- @:ポストエフェクト用データ -            >>>>>>>【７】
 //* =========================================================================
-cbuffer CB_POSTEFFECT : register(b8)
+cbuffer CB_POSTEFFECT : register(b7)
 {
     DofData cb_Dof;                     // 被写界深度
     ColorGradingData cb_ColorGrading;   // 色味調整用    
@@ -195,9 +231,9 @@ cbuffer CB_POSTEFFECT : register(b8)
 };
 
 //* =========================================================================
-//*- @:シャドウ用データ -            >>>>>>>【９】
+//*- @:シャドウ用データ -            >>>>>>>【８】
 //* =========================================================================
-cbuffer CB_SHADOW : register(b9)
+cbuffer CB_SHADOW : register(b8)
 {
     /* シャドウバイアス */
     float cb_BaseShadowBias;  
@@ -207,9 +243,9 @@ cbuffer CB_SHADOW : register(b9)
 };
 
 //* =========================================================================
-//*- @:スプライト用データ -            >>>>>>>【１０】
+//*- @:スプライト用データ -            >>>>>>>【９】
 //* =========================================================================
-cbuffer CB_SPRITE : register(b10)
+cbuffer CB_SPRITE : register(b9)
 {
     float2 cb_Sprite_OffsetUV; // UVオフセット
     float pad4;
@@ -218,9 +254,9 @@ cbuffer CB_SPRITE : register(b10)
 
 
 //* =========================================================================
-//*- @:デカール書き込み用データ -            >>>>>>>【１１】
+//*- @:デカール書き込み用データ -            >>>>>>>【１０】
 //* =========================================================================
-cbuffer CB_DECAL : register(b11)
+cbuffer CB_DECAL : register(b10)
 {
     float4x4 cb_InvDecalTransform;  // デカールボックスのワールド逆行列
     float3 cb_DecalColor;   // カラー（float4にしてaにディザリングのしきい値入れてもいいかも）
@@ -228,9 +264,9 @@ cbuffer CB_DECAL : register(b11)
 };
 
 //* =========================================================================
-//*- @:ウインドウ用データ -            >>>>>>>【１２】
+//*- @:ウインドウ用データ -            >>>>>>>【１１】
 //* =========================================================================
-cbuffer CB_WINDOW : register(b12)
+cbuffer CB_WINDOW : register(b11)
 {
     float cb_WindowWidth; // ウインドウの幅
     float cb_WindowHeight; // ウインドウの高さ
@@ -239,9 +275,9 @@ cbuffer CB_WINDOW : register(b12)
 
 
 //* =========================================================================
-//*- @:ディストーション用データ -        >>>>>>>【１３】
+//*- @:ディストーション用データ -        >>>>>>>【１２】
 //* =========================================================================
-cbuffer CB_DISTORTION : register(b13)
+cbuffer CB_DISTORTION : register(b12)
 {
     float cb_DistortionPower;       // ディストーションの強さ
     float cb_DistortionTime;        // ディストーションの時間（アニメーション用）
