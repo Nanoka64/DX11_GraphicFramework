@@ -45,8 +45,8 @@ RenderPipeline::RenderPipeline() :
     m_pEmissive_RT(nullptr),
     m_DoF_BlurIncensity(2.0f),
     m_Bloom_BlurIncensity(8.0f),
-    m_ShadowData(),
-    m_PostEffectData(),
+    m_ShadowParam(),
+    m_PostEffectParam(),
     m_ScreenWidth(0),
     m_ScreenHeight(0)
 {
@@ -74,26 +74,26 @@ bool RenderPipeline::Setup(RendererEngine &renderer)
     bool result = true;
 
     // シャドウバイアスの設定
-    m_ShadowData.baseShadowBias = 0.0005f;
-    m_ShadowData.depthBiasClamp = 0.001f;
-    m_ShadowData.slopeScaledBias = 0.1f;
-	m_ShadowData.isEnable = false;
+    m_ShadowParam.baseShadowBias = 0.0005f;
+    m_ShadowParam.depthBiasClamp = 0.001f;
+    m_ShadowParam.slopeScaledBias = 0.1f;
+	m_ShadowParam.isEnable = false;
 
     // 被写界深度の設定
-    m_PostEffectData.Dof.dof_MaxRange = DOF_MAX_RANGE;
-    m_PostEffectData.Dof.dof_MinRange = DOF_MIN_RANGE;
+    m_PostEffectParam.Dof.dof_MaxRange = DOF_MAX_RANGE;
+    m_PostEffectParam.Dof.dof_MinRange = DOF_MIN_RANGE;
 
     // フォグの設定
-    m_PostEffectData.Fog.Color  = { 0.6f, 0.7f, 0.8f };
-    m_PostEffectData.Fog.Start  = 30.0f;
-    m_PostEffectData.Fog.End    = 150.0f;
+    m_PostEffectParam.Fog.Color  = { 0.6f, 0.7f, 0.8f };
+    m_PostEffectParam.Fog.Start  = 30.0f;
+    m_PostEffectParam.Fog.End    = 150.0f;
 
 	// カラーグレーディングの設定
-    m_PostEffectData.ColorGrading.Exposure = 0.1f;                   // 露出補正（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.Contrast = 1.25f;                  // コントラスト（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.Saturation = 1.2f;                 // 彩度（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.Gamma = 1.0f;                      // ガンマ補正（1.0fで補正なし）
-    m_PostEffectData.ColorGrading.ColorTint = { 1.0f, 1.0f, 1.0f };  // 色味（1.0fで補正なし）
+    m_PostEffectParam.ColorGrading.Exposure = 0.1f;                   // 露出補正（1.0fで補正なし）
+    m_PostEffectParam.ColorGrading.Contrast = 1.25f;                  // コントラスト（1.0fで補正なし）
+    m_PostEffectParam.ColorGrading.Saturation = 1.2f;                 // 彩度（1.0fで補正なし）
+    m_PostEffectParam.ColorGrading.Gamma = 1.0f;                      // ガンマ補正（1.0fで補正なし）
+    m_PostEffectParam.ColorGrading.ColorTint = { 1.0f, 1.0f, 1.0f };  // 色味（1.0fで補正なし）
 
     // スクリーンの大きさを取得
     m_ScreenWidth = static_cast<float>(renderer.get_ScreenWidth());
@@ -145,10 +145,10 @@ void RenderPipeline::Execute(RendererEngine& renderer)
         // ライトの更新
         Master::m_pLightManager->Update();
 
-        m_ShadowData.isEnable = Master::m_pDataManager->get_UserConfigData()._isShadowEnabled;
-        m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
+        m_ShadowParam.isEnable = Master::m_pDataManager->get_UserConfigData()._isShadowEnabled;
+        m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowParam);
         // シャドウが有効ならシャドウパスも実行
-        if (m_ShadowData.isEnable)
+        if (m_ShadowParam.isEnable)
         {
             /* シャドウパス */
             Shadow_PathRender(renderer);
@@ -257,10 +257,10 @@ void RenderPipeline::DebugRenderTargetImGui()
             Master::m_pDebugger->DG_DragFloat("##DofBlur", 1, &m_DoF_BlurIncensity, 0.1f, 0.1f, 32.0f);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー開始距離"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##DofMinRange", 1, &m_PostEffectData.Dof.dof_MinRange, 1.0f, 0.1f, 1000.0f);
+            Master::m_pDebugger->DG_DragFloat("##DofMinRange", 1, &m_PostEffectParam.Dof.dof_MinRange, 1.0f, 0.1f, 1000.0f);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ブラー最大位置"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##DofMaxRange", 1, &m_PostEffectData.Dof.dof_MaxRange, 1.0f, 1.0f, 10000.0f);
+            Master::m_pDebugger->DG_DragFloat("##DofMaxRange", 1, &m_PostEffectParam.Dof.dof_MaxRange, 1.0f, 1.0f, 10000.0f);
             Master::m_pDebugger->DG_Separator();
 
             /*
@@ -268,20 +268,20 @@ void RenderPipeline::DebugRenderTargetImGui()
             */
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ"));
 
-            VEC3 fogColor = m_PostEffectData.Fog.Color;
+            VEC3 fogColor = m_PostEffectParam.Fog.Color;
 
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグカラー"));
             Master::m_pDebugger->DG_SameLine();
             if (Master::m_pDebugger->DG_ColorPicker3("##FogColor", &fogColor))
             {
-                m_PostEffectData.Fog.Color = fogColor;
+                m_PostEffectParam.Fog.Color = fogColor;
             }
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ開始距離"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##FogStart", 1, &m_PostEffectData.Fog.Start, 1.0f, 1.0f, 999.0f);
+            Master::m_pDebugger->DG_DragFloat("##FogStart", 1, &m_PostEffectParam.Fog.Start, 1.0f, 1.0f, 999.0f);
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグ最大距離"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##FogEnd", 1, &m_PostEffectData.Fog.End, 1.0f, m_PostEffectData.Fog.Start, 1000.0f);
+            Master::m_pDebugger->DG_DragFloat("##FogEnd", 1, &m_PostEffectParam.Fog.End, 1.0f, m_PostEffectParam.Fog.Start, 1000.0f);
 
             /*
             * 色味調整
@@ -289,17 +289,17 @@ void RenderPipeline::DebugRenderTargetImGui()
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味調整"));
 
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"露出補正"));
-            Master::m_pDebugger->DG_DragFloat("##Exposure", 1, &m_PostEffectData.ColorGrading.Exposure, 0.1f, 0.0f, 100.0f);
+            Master::m_pDebugger->DG_DragFloat("##Exposure", 1, &m_PostEffectParam.ColorGrading.Exposure, 0.1f, 0.0f, 100.0f);
             
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"コントラスト"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##Contrast", 1, &m_PostEffectData.ColorGrading.Contrast, 0.1f, 0.0f, 100.0f);
+            Master::m_pDebugger->DG_DragFloat("##Contrast", 1, &m_PostEffectParam.ColorGrading.Contrast, 0.1f, 0.0f, 100.0f);
             
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"彩度"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##Saturation", 1, &m_PostEffectData.ColorGrading.Saturation, 0.1f, 0.0f, 100.0f);
+            Master::m_pDebugger->DG_DragFloat("##Saturation", 1, &m_PostEffectParam.ColorGrading.Saturation, 0.1f, 0.0f, 100.0f);
             
-			VEC3 colorTint = m_PostEffectData.ColorGrading.ColorTint; 
+			VEC3 colorTint = m_PostEffectParam.ColorGrading.ColorTint; 
 
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"色味"));
             Master::m_pDebugger->DG_SameLine();
@@ -307,9 +307,9 @@ void RenderPipeline::DebugRenderTargetImGui()
             
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ガンマ"));
             Master::m_pDebugger->DG_SameLine();
-            Master::m_pDebugger->DG_DragFloat("##Gamma", 1, &m_PostEffectData.ColorGrading.Gamma, 0.1f, 0.0f, 6.0f);
+            Master::m_pDebugger->DG_DragFloat("##Gamma", 1, &m_PostEffectParam.ColorGrading.Gamma, 0.1f, 0.0f, 6.0f);
 
-            m_PostEffectData.ColorGrading.ColorTint = colorTint;
+            m_PostEffectParam.ColorGrading.ColorTint = colorTint;
 
             Master::m_pDebugger->DG_Separator();
 
@@ -325,13 +325,13 @@ void RenderPipeline::DebugRenderTargetImGui()
             //Master::m_pDebugger->DG_Image(m_pShadowGaussianBlur->get_AfterBlurTexture().Get(), VEC2(400, 200));
             //Master::m_pDebugger->DG_BulletText(U8ToChar(u8"バイアス"));
             //Master::m_pDebugger->DG_SameLine();
-            //Master::m_pDebugger->DG_DragFloat("##BaseBias", 1, &m_ShadowData.baseShadowBias, 0.0001f, 0.0f, 0.1f);
+            //Master::m_pDebugger->DG_DragFloat("##BaseBias", 1, &m_ShadowParam.baseShadowBias, 0.0001f, 0.0f, 0.1f);
             //Master::m_pDebugger->DG_BulletText(U8ToChar(u8"傾斜バイアス"));
             //Master::m_pDebugger->DG_SameLine();
-            //Master::m_pDebugger->DG_DragFloat("##SlopeBias", 1, &m_ShadowData.slopeScaledBias, 0.0001f, 0.0f, 1.0);
+            //Master::m_pDebugger->DG_DragFloat("##SlopeBias", 1, &m_ShadowParam.slopeScaledBias, 0.0001f, 0.0f, 1.0);
             //Master::m_pDebugger->DG_BulletText(U8ToChar(u8"最大バイアス"));
             //Master::m_pDebugger->DG_SameLine();
-            //Master::m_pDebugger->DG_DragFloat("##ClampBias", 1, &m_ShadowData.depthBiasClamp, 0.0001f, 0.0001f, 0.1f);
+            //Master::m_pDebugger->DG_DragFloat("##ClampBias", 1, &m_ShadowParam.depthBiasClamp, 0.0001f, 0.0001f, 0.1f);
 
             Master::m_pDebugger->DG_Separator();
 
@@ -386,8 +386,44 @@ void RenderPipeline::Release()
     m_pBloom_Sprite.reset();
     m_pDoF_Sprite.reset();
     m_pFinalSceneToneMappingFilter_Sprite.reset();
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】被写界深度の設定
+//*
+//* [引数]
+//* _param  : パラメータ
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::set_DofParam(const CB_Dof& _param)
+{
+    m_PostEffectParam.Dof = _param;
 
 }
+//*---------------------------------------------------------------------------------------
+//*【?】フォグの設定
+//*
+//* [引数]
+//* _param  : パラメータ
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::set_FogParam(const CB_Fog& _param)
+{
+    m_PostEffectParam.Fog = _param;
+
+}
+//*---------------------------------------------------------------------------------------
+//*【?】カラーグレーディングの設定
+//*
+//* [引数]
+//* _param  : パラメータ
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RenderPipeline::set_ColorGradingParam(const CB_ColorGrading& _param)
+{
+    m_PostEffectParam.ColorGrading = _param;
+}
+
 
 //*---------------------------------------------------------------------------------------
 //*【?】シャドウパス ライティングの前に
@@ -539,7 +575,7 @@ void RenderPipeline::Lighting_PathRender(RendererEngine &renderer)
 
     // ディファードスプライト
     //Master::m_pBlendManager->DeviceToSetBlendState(BLEND_MODE::NONE);
-    //m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowData);
+    //m_pDefferdLighting_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_ShadowParam);
     m_pDefferdLighting_Sprite->Draw(renderer);
 
     //auto pContext = renderer.get_DeviceContext();
@@ -616,7 +652,7 @@ void RenderPipeline::Dof_PathRender(RendererEngine& renderer)
     renderer.RegisterRenderTarget(m_pSceneFinal_RT->get_RTV(), nullptr);
 
     // 定数バッファに送信
-    m_pDoF_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_PostEffectData);
+    m_pDoF_Sprite->setToGPU_ExtendUserPS_CBuffer(renderer, 0, &m_PostEffectParam);
 
     // 被写界深度用スプライト
     m_pDoF_Sprite->Draw(renderer);
@@ -1120,8 +1156,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
     sprite.PSConstBufferNum = 1;
     sprite.pPSConstantBuffers =  new ExpandConstantBufferInfo();
     sprite.pPSConstantBuffers->SetSlot = CB_SLOT_SHADOW;
-    sprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_ShadowData);
-    sprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_ShadowData;
+    sprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_ShadowParam);
+    sprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_ShadowParam;
 
     sprite.pTextureMap[0] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_A");
     sprite.pTextureMap[1] = Master::m_pResourceManager->Convert_SRVToTexture("GBuffer_B");
@@ -1222,8 +1258,8 @@ bool RenderPipeline::CreateRenderTargetSprites(RendererEngine &renderer)
 
     depthOfFieldSprite.pPSConstantBuffers = new ExpandConstantBufferInfo();                     // VS定数バッファにブラー用の重みテーブルをセット
     depthOfFieldSprite.pPSConstantBuffers->SetSlot = CB_SLOT_POSTEFFECT;                                         // スロット8にセット
-	depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_PostEffectData;       // ポストエフェクトのデータをセット
-    depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_PostEffectData);
+	depthOfFieldSprite.pPSConstantBuffers->pUserExpandConstantBuffer = &m_PostEffectParam;       // ポストエフェクトのデータをセット
+    depthOfFieldSprite.pPSConstantBuffers->UserExpandConstantBufferSize = sizeof(m_PostEffectParam);
     depthOfFieldSprite.PSConstBufferNum = 1;
 
     // スプライト取得

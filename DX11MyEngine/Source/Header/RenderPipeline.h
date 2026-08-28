@@ -56,11 +56,11 @@ private:
     std::shared_ptr<class SpriteRenderer> m_pDoF_Sprite;
     std::shared_ptr<class SpriteRenderer> m_pFinalSceneToneMappingFilter_Sprite;
 
-
-    CB_POSTEFFECT m_PostEffectData;
+    // ポストエフェクト情報
+    CB_POSTEFFECT m_PostEffectParam;
 
     // シャドウバイアス情報
-    CB_SHADOW m_ShadowData;
+    CB_SHADOW m_ShadowParam;
 
 
     // ビューポートの設定時にスムーズに渡す用
@@ -86,6 +86,10 @@ public:
     /// 解放
     /// </summary>
     void Release();
+
+    void set_DofParam(const CB_Dof& _param);
+    void set_FogParam(const CB_Fog& _param);
+    void set_ColorGradingParam(const CB_ColorGrading& _param);
 
 private:
     //

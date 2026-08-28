@@ -74,6 +74,7 @@ void c_Game_Play::OnExit(SceneManager* pOwner)
     // 連続入力防止のため、1フレーム止める
     Master::m_pInputManager->StopInput(1);
 
+    // 敵数背景スプライトをプールへ返す
     if (m_pEnemyNumBackSpriteObj)
     {
         m_pEnemyNumBackSpriteObj->clear_StatusFlag(OBJECT_STATUS_BITFLAG::IS_ACTIVE);
@@ -89,6 +90,7 @@ void c_Game_Play::OnExit(SceneManager* pOwner)
 //*----------------------------------------------------------------------------------------
 int c_Game_Play::Update(SceneManager *pOwner)
 {
+    // プレイヤーが存在しなければ、終了
     if (m_pPlayerObj.expired())
     {
 		MessageBeep(MB_ICONEXCLAMATION);
@@ -101,22 +103,34 @@ int c_Game_Play::Update(SceneManager *pOwner)
     //						子ステートの処理
     // 
     //////////////////////////////////////////////////////////////////////////////////////////
-    if (m_CrntChildStateID != -1) {
+    if (m_CrntChildStateID != -1) 
+    {
+        //
         // 子ステートの更新
+        //
         int newState = m_pChildStateMap[m_CrntChildStateID]->Update(pOwner);
 
+        //******************************************************************
+        // << ポーズ >>
         // ポーズのままなら、その後の処理を飛ばして返す
+        //******************************************************************
         if (newState == c_GAME::c_GAME_PAUSE)
         {
-            return c_GAME::c_GAME_PLAY;;
+            return c_GAME::c_GAME_PLAY;
         }
+        //******************************************************************
+        // << プレイ >>
         // プレイシーンのままであれば、子をNONEに戻す
+        //******************************************************************
         else if (newState == c_GAME::c_GAME_PLAY)
         {
             m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);	// 子ステートの終了
             this->SetInitChildState(pOwner, c_GAME::c_GAME_NONE);
         }
-        // ゲームロード（再出撃）
+        //******************************************************************
+        // << ゲームロード >>
+        // 再出撃
+        //******************************************************************
         else if (newState == c_GAME::c_GAME_LOAD)
         {
             m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);	// 子ステートの終了
@@ -127,7 +141,10 @@ int c_Game_Play::Update(SceneManager *pOwner)
 
             return c_GAME::c_GAME_LOAD;
         }
-        // リザルトの場合（退却）
+        //******************************************************************
+        // << リザルト >>
+        // 退却
+        //******************************************************************
         else if (newState == c_GAME::c_GO_RESULT_SCENE)
         {
             m_pChildStateMap[m_CrntChildStateID]->OnExit(pOwner);	// 子ステートの終了
@@ -140,36 +157,39 @@ int c_Game_Play::Update(SceneManager *pOwner)
     //						現在のステートの処理
     // 
     //////////////////////////////////////////////////////////////////////////////////////////
-    // ぽーずへ遷移
+    // ボタンが押されたら、"ポーズ"へ遷移
     if (GetInputDown(GAME_CONFIG::PAUSE))
     {
         this->SetInitChildState(pOwner, c_GAME::c_GAME_PAUSE);
     }
 
-    // プレイヤーが死んでいたら、リザルトへ
+    // プレイヤーが死んでいたら、"リザルト"へ
     if (Master::m_pDataManager->get_IsPlayerDead())
     {
         // スローモーション
-        //Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
+        Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
-        Master::m_pDataManager->set_IsMissionCleared(false);    // ミッション失敗
-        //return c_GAME::c_GO_RESULT_SCENE;
+        // ミッション失敗フラグを設定
+        Master::m_pDataManager->set_IsMissionCleared(false);  
+
+        return c_GAME::c_GO_RESULT_SCENE;
     }
     
+    // 敵の数
     auto enemys = Master::m_pGameObjectManager->get_ObjectListByFactionAlive(FACTION::ENEMY);
     m_EnemyNum = INT_CAST(enemys.size());
-    // 敵が居なくなったらリザルトへ
+
+    // 敵が居なくなったら"リザルト"へ
     if (m_EnemyNum == 0)
     {
         // スローモーション
-        //Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
+        Master::m_pTimeManager->TriggerHitStop(3.0f, 0.5f);
 
-        Master::m_pDataManager->set_IsMissionCleared(true);     // ミッションクリア
-        //return c_GAME::c_GO_RESULT_SCENE;
+        // ミッションクリアフラグを設定
+        Master::m_pDataManager->set_IsMissionCleared(true);  
+
+        return c_GAME::c_GO_RESULT_SCENE;
     }
-
-    // B-2の移動
-    //BomberMove();
 
     return c_GAME::c_GAME_PLAY;
 }

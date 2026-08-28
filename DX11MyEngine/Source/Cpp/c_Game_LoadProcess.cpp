@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "GameScene_StateHeader.h"
+#include "RendererEngine.h"
 #include "GameManager.h"
 #include "ResourceManager.h"
-#include "RendererEngine.h"
 #include "SceneStateEnums.h"
 #include "GameObject.h"
 #include "InputFactory.h"
@@ -819,6 +819,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             flash->set_Intensity(0.0f);
             flash->set_Range(0.0f);
 
+
+            // スポットライト
+            auto spotLight = obj->add_Component<SpotLight>();
+            spotLight->set_SpotLightData(300.0f, 15.0f);
+            spotLight->set_Intensity(15.0f);
+            spotLight->set_LightColor(VEC3(1.0f));
+
+
             // レーザーサイト
             auto line = obj->add_Component<LineRenderer>();
             line->set_Color(VEC4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -866,6 +874,12 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             auto flash = obj->add_Component<PointLight>();
             flash->set_Intensity(0.0f);
             flash->set_Range(0.0f);
+
+            // スポットライト
+            auto spotLight = obj->add_Component<SpotLight>();
+            spotLight->set_SpotLightData(300.0f, 15.0f);
+            spotLight->set_Intensity(15.0f);
+            spotLight->set_LightColor(VEC3(1.0f));
 
             // レーザーサイト
             auto line = obj->add_Component<LineRenderer>();
@@ -948,31 +962,62 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     DIFFICULTY_LEVEL crntDiffLevel = Master::m_pDataManager->get_DifficultyLevel();
     auto dirLightObj = Master::m_pGameObjectManager->get_ObjectByTag("DirectionLight");
     auto dirLight = dirLightObj->get_Component<DirectionalLight>();
-    VEC3 color = VEC3(1.0f);
-	float intensity = 2.5f;
+
+    // ステージ環境パラメータ
+    StageEnvironmentParam stageEnvironmentParam;
+    stageEnvironmentParam._dirLightColor     = VEC3(1.0f);              // ライトカラー
+    stageEnvironmentParam._dirLightIntensity = 2.5f;                    // ライトの強さ
+    stageEnvironmentParam._fogColor          = VEC3(0.6f, 0.7f, 0.8f);  // フォグカラー
+    stageEnvironmentParam._fogStart          = 0.0f;                    // フォグ開始距離
+    stageEnvironmentParam._fogEnd            = 0.0f;                    // フォグ最大距離
+    stageEnvironmentParam._dofStart          = 300.0f;                  // 被写界深度開始距離
+    stageEnvironmentParam._dofEnd            = 1500.0f;                 // 被写界深度最大距離
+
     switch (crntDiffLevel)
     {
     case UtilityData::DIFFICULTY_LEVEL::EASY:
-		color = VEC3(0.4f, 0.4f, 0.4f);
+        stageEnvironmentParam._dirLightColor = VEC3(0.7f, 0.7f, 0.7f);
+        stageEnvironmentParam._dirLightIntensity = 3.5f;                   
         break;
     case UtilityData::DIFFICULTY_LEVEL::NORMAL:
-        color = VEC3(0.4f, 0.4f, 0.4f);
+        stageEnvironmentParam._dirLightColor = VEC3(0.7f, 0.7f, 0.7f);
+        stageEnvironmentParam._dirLightIntensity = 3.5f;
         break;
     case UtilityData::DIFFICULTY_LEVEL::HARD:
-        color = VEC3(0.6f, 0.4f, 0.4f);
+        stageEnvironmentParam._dirLightColor = VEC3(0.6f, 0.4f, 0.4f);
         break;
     case UtilityData::DIFFICULTY_LEVEL::DISASTER:
-        color = VEC3(0.6f, 0.1f, 0.2f);
+        stageEnvironmentParam._dirLightColor = VEC3(0.5f, 0.2f, 0.4f);
+        stageEnvironmentParam._fogColor = VEC3(0.1f, 0.05f, 0.2f);
+        stageEnvironmentParam._fogStart = 30.0f;
+        stageEnvironmentParam._fogEnd = 250.0f;
+        stageEnvironmentParam._dofStart = 30.0f;
+        stageEnvironmentParam._dofEnd = 250.0f;
         break;
+
     case UtilityData::DIFFICULTY_LEVEL::IMPOSSIBLE:
-        color = VEC3(0.9f, 0.0f, 0.0f);
-        break;
+        stageEnvironmentParam._dirLightColor = VEC3(0.9f, 0.0f, 0.0f);
+        stageEnvironmentParam._fogColor = VEC3(0.25f, 0.0f, 0.0f);
+        stageEnvironmentParam._fogStart = 30.0f;
+        stageEnvironmentParam._fogEnd = 200.0f;
+        stageEnvironmentParam._dofStart = 30.0f;
+        stageEnvironmentParam._dofEnd = 200.0f;
+        break;    
+
     default:
         break;
     }
-    dirLight->set_LightColor(color);
-	dirLight->set_Intensity(intensity);
+    /* 
+    * ディレクションライトの設定 
+    */
+    dirLight->set_LightColor(stageEnvironmentParam._dirLightColor);
+	dirLight->set_Intensity(stageEnvironmentParam._dirLightIntensity);
 
+    /* 
+    *  DOFとフォグの設定 
+    */
+    m_pRenderer->set_DofParam(stageEnvironmentParam._dofStart, stageEnvironmentParam._dofEnd);
+    m_pRenderer->set_FogParam(stageEnvironmentParam._fogColor, stageEnvironmentParam._fogStart, stageEnvironmentParam._fogEnd);
 
     // ロード画面用スプライトをオフに
     auto obj = Master::m_pGameObjectManager->get_ObjectByTag("LoadScreen_Sp");
@@ -990,7 +1035,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
     //                        爆速ロード防止のため、一時的に処理を停止させる
     //  
     //*****************************************************************************************
-    Sleep(1000);
+    Sleep(100);
 }
 
 

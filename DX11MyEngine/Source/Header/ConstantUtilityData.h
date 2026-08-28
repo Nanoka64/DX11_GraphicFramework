@@ -359,6 +359,32 @@ namespace UtilityData
 		}
 	};
 
+	/// <summary>
+	/// ステージの環境パラメータ
+	/// </summary>
+	struct StageEnvironmentParam
+	{
+		VECTOR3::VEC3 _dirLightColor;		// ディレクションライトカラー（スカイボックスの色になる）
+		VECTOR3::VEC3 _dirLightDirection;	// ディレクションライトの向き
+		float _dirLightIntensity;			// ディレクションライトインテンシティ
+		VECTOR3::VEC3 _fogColor;			// フォグカラー
+		float _fogStart;					// フォグの開始距離
+		float _fogEnd;						// フォグの最大距離（1.0以下ならフォグを設定しない）
+		float _dofStart;					// 被写界深度の開始距離
+		float _dofEnd;						// 被写界深度の最大距離
+
+		StageEnvironmentParam() :
+			_dirLightColor(VECTOR3::VEC3(1.0f)),
+			_dirLightDirection(VECTOR3::VEC3(0.0f,1.0f,0.0f)),
+			_dirLightIntensity(2.0f),
+			_fogColor(VECTOR3::VEC3(1.0f)),
+			_fogStart(0.0f),
+			_fogEnd(0.0f)
+
+		{
+		}
+	};
+
 
 	/// <summary>
 	/// タイトル項目名

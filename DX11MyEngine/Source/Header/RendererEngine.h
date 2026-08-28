@@ -59,7 +59,7 @@ private:
     class RenderPipeline *m_pRendererPipeline;      // 描画パイプラインの実体を持つ
 	CB_WINDOW_SET *m_pCBWindowSet;                  // ウインドウ情報の定数バッファセット
 
-    DirectX::BoundingFrustum m_MainCameraFrustum;
+    DirectX::BoundingFrustum m_MainCameraFrustum;   // メインカメラフラスタム
 
 public:
     RendererEngine();
@@ -72,6 +72,8 @@ public:
     void Swap();    // 裏表切り替え
     bool SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far); //透視投影変換計算
     bool SetupOrthographicProjectionTransform(float _w, float _h,  float _near, float _far); //正射投影変換計算
+
+
 private:
     bool InitDx11();                            // ＤＸ１１の初期化
     HRESULT InitDX11_SwapChain();               // ＤＸ１１ スワップチェイン初期化
@@ -87,18 +89,22 @@ private:
     void UpdateMainCameraFrustum(); // メインカメラフラスタムの更新
 
 public:
-    inline ID3D11Device* get_Device()const { return m_pd3dDevice; }                      // デバイス取得
-    inline ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; } // デバイスコンテキスト取得
-    inline IDXGISwapChain *get_SwapChain() const { return m_pSwapChain; }                // スワップチェイン取得
-    inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }          // サンプラー取得
-    //inline RenderParam &get_RenderParam() { return m_RenderParam; }                      // 描画に必要な定数バッファ取得                        
-    inline HWND get_WndHandle()const { return m_hWnd; }                                  // ウインドウハンドル取得
+    inline ID3D11Device* get_Device()const { return m_pd3dDevice; }                         // デバイス取得
+    inline ID3D11DeviceContext* get_DeviceContext()const { return m_pImmediateContext; }    // デバイスコンテキスト取得
+    inline IDXGISwapChain *get_SwapChain() const { return m_pSwapChain; }                   // スワップチェイン取得
+    inline ID3D11SamplerState* get_Sampler() const { return m_pSamplerLinear; }             // サンプラー取得
+    //inline RenderParam &get_RenderParam() { return m_RenderParam; }                       // 描画に必要な定数バッファ取得                        
+    inline HWND get_WndHandle()const { return m_hWnd; }                                     // ウインドウハンドル取得
     inline UINT get_ScreenWidth()const { return m_ScreenWidth; };                       
     inline UINT get_ScreenHeight()const { return m_ScreenHeight; };
     inline Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> get_FrameBufferSRV_ComPtr() const { return m_pFrameBufferSRV; };
-    D3D11_VIEWPORT get_CrntViewPort()const { return m_CrntViewPort; }   // ビューポートの取得
+    D3D11_VIEWPORT get_CrntViewPort()const { return m_CrntViewPort; }                               // ビューポートの取得
     const DirectX::BoundingFrustum& get_MainCameraFrustum() const { return m_MainCameraFrustum; }   // メインカメラのフラスタム取得
     
+    void set_DofParam(float _minRange, float _maxRange);                                                              // フォグの設定
+    void set_FogParam(const VECTOR3::VEC3& _color, float _startRange, float _endRange);                               // 被写界深度の設定
+    void set_ColorGradingParam(float _exposure, float _contrast, float _saturation, const VECTOR3::VEC3& _colorTint); // カラーグレーディングの設定
+
     /// <summary>
     /// ワールド座標をスクリーン座標へ変換
     /// </summary>

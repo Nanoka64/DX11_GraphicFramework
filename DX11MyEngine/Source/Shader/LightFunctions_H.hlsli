@@ -259,44 +259,40 @@ OUT_DiffAndSpec SpotLightCalc(SpotLightData _ligData, float3 _eyePos, float3 _sp
     ligDir = normalize(ligDir); // 正規化
     
     // ディフューズ計算
-    float3 diffPoint = LambertDiffuseLightCalc(ligDir, _ligData.DiffuseColor, _norm);
+    float3 diffuse = LambertDiffuseLightCalc(ligDir, _ligData.DiffuseColor, _norm);
     
     // フォン反射
-    float3 spcPoint = Blinn_PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
+    float3 specular = Blinn_PhongSpecularLightCalc(ligDir, _eyePos, _spcCol, _spcPow, _worldPos, _norm);
     
     // 影響度計算
     float affect = 1.0f - min(1.0f, distance / _ligData.Range);
     
     // マイナスにならないように
     affect = max(0.0, affect);
-    affect = pow(affect, 3.0);
+    affect = pow(affect, 16.0);
     
     // 影響度を拡散・鏡面に反映させる
-    diffPoint *= affect;
-    spcPoint *= affect;
+    diffuse *= affect;
+    specular *= affect;
     
     // 入射角と射出方向の角度を求める
-    float angle = dot(ligDir, _ligData.Direction);
+    float spotAngle = max(dot(ligDir, _ligData.Direction),0.0f);
     
     // acosで角度を求める
-    angle = abs(acos(saturate(angle)));
+    spotAngle = abs(acos(spotAngle));
     
     // 角度に比例して小さくなっていく影響率を計算
-    affect = 1.0f - 1.0f / _ligData.Angle * angle;
-    if (affect < 0.0f)
-    {
-        affect = 0.0f;
-    }
+    affect = 1.0f - 1.0f / _ligData.Angle * spotAngle;
     
-    // 減衰
-    affect = pow(affect, 0.5f);
+    // マイナスにならないように
+    affect = max(0.0f, affect);
     
-    diffPoint *= affect;
-    spcPoint *= affect;
+    diffuse *= affect;
+    specular *= affect;
     
     OUT_DiffAndSpec outData;
-    outData.Diffuse = diffPoint * _ligData.DiffuseIntensity;
-    outData.Specular = spcPoint * _ligData.SpecularIntensity;
+    outData.Diffuse = diffuse * _ligData.DiffuseIntensity;
+    outData.Specular = specular * _ligData.SpecularIntensity;
     return outData;
 }
 

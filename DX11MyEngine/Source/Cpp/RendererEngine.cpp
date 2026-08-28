@@ -680,6 +680,58 @@ bool RendererEngine::WorldToScreen(const VECTOR3::VEC3 &_world, VECTOR2::VEC2 &_
 }
 
 //*---------------------------------------------------------------------------------------
+//*【?】被写界深度の設定
+//*
+//* [引数]
+//* _maxRange   : 開始距離
+//* _minRange   : 最大距離
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_DofParam(float _minRange, float _maxRange)
+{
+    CB_Dof param;
+    param.dof_MaxRange = _maxRange;
+    param.dof_MinRange = _minRange;
+    m_pRendererPipeline->set_DofParam(param);
+}
+//*---------------------------------------------------------------------------------------
+//*【?】フォグの設定
+//*
+//* [引数]
+//* _color      : フォグカラー
+//* _startRange : 開始位置
+//* _endRange   : 終了位置
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_FogParam(const VECTOR3::VEC3& _color, float _startRange, float _endRange)
+{
+    CB_Fog param;
+    param.Color = _color;
+    param.Start = _startRange;
+    param.End = _endRange;
+    m_pRendererPipeline->set_FogParam(param);
+}
+//*---------------------------------------------------------------------------------------
+//*【?】カラーグレーディングの設定
+//*
+//* [引数]
+//* _exposure   : 露出補正
+//* _contrast   : コントラスト
+//* _saturation : 彩度
+//* _colorTint  : 色味調整
+//* [返値] なし
+//*----------------------------------------------------------------------------------------
+void RendererEngine::set_ColorGradingParam(float _exposure, float _contrast, float _saturation, const VECTOR3::VEC3& _colorTint)
+{
+    CB_ColorGrading param;
+    param.Exposure = _exposure;
+    param.Contrast = _contrast;
+    param.Saturation = _saturation;
+    param.ColorTint = _colorTint;
+    m_pRendererPipeline->set_ColorGradingParam(param);
+}
+
+//*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】ビューポートの設定
 //* 引数：1.描画範囲の左上Ｘ座標、

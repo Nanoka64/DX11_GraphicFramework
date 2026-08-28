@@ -11,10 +11,10 @@ using namespace VECTOR2;
 using namespace VECTOR3;
 using namespace VECTOR4;
 
-constexpr int NUM_DEFAULT__SPRITE = 32;
-constexpr int NUM_MAX__SPRITE = 256;       
-constexpr int NUM_DEFAULT__BUTTON = 16;
-constexpr int NUM_MAX__BUTTON = 32;       
+constexpr int NUM_DEFAULT__SPRITE   = 32;       // デフォルトスプライト数
+constexpr int NUM_MAX__SPRITE       = 1024;     // 最大スプライト数
+constexpr int NUM_DEFAULT__BUTTON   = 16;       // デフォルトボタン数
+constexpr int NUM_MAX__BUTTON       = 128;      // 最大ボタン数
 
 //*---------------------------------------------------------------------------------------
 //*【?】コンストラクタ
