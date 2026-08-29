@@ -45,8 +45,8 @@
     {
       "type" : "BILLBOARD",
       "bulletMaterialTag" : "Bullet_03",
-      "trailDrawTime" : 5,
-      "trailWidth" : 1.25,
+      "trailDrawTime" : 3,
+      "trailWidth" : 0.8,
       "enableFlightSmoke" : false,
       "smokeInterval" : 0.0,              
       "smokeSize" : 0.0,                     

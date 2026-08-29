@@ -45,8 +45,8 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 
 
-constexpr int ENEMY_OCT_NUM = 100;
-constexpr int ENEMY_ANT_NUM = 0;
+constexpr int ENEMY_OCT_NUM = 0;
+constexpr int ENEMY_ANT_NUM = 500;
 
 //*---------------------------------------------------------------------------------------
 //* @:c_Game_LoadProcess Class 
@@ -988,11 +988,11 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
         break;
     case UtilityData::DIFFICULTY_LEVEL::DISASTER:
         stageEnvironmentParam._dirLightColor = VEC3(0.5f, 0.2f, 0.4f);
-        stageEnvironmentParam._fogColor = VEC3(0.1f, 0.05f, 0.2f);
+        stageEnvironmentParam._fogColor = VEC3(0.6f, 0.7f, 0.8f);;
         stageEnvironmentParam._fogStart = 30.0f;
-        stageEnvironmentParam._fogEnd = 250.0f;
+        stageEnvironmentParam._fogEnd = 180.0f;
         stageEnvironmentParam._dofStart = 30.0f;
-        stageEnvironmentParam._dofEnd = 250.0f;
+        stageEnvironmentParam._dofEnd = 180.0f;
         break;
 
     case UtilityData::DIFFICULTY_LEVEL::IMPOSSIBLE:

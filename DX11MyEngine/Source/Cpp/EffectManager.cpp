@@ -92,7 +92,7 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Simple_Sprite_BillBoard.efkefc", "DeadExplosion");
     LoadEffect(u"Resource/Effect/Simple_SpawnMethod1.efkefc", "Hit");
     //LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
-    LoadEffect(u"Resource/Effect/Explosion_01_B.efkefc", "Explosion_01");
+    LoadEffect(u"Resource/Effect/Explosion_01.efkefc", "Explosion_01");
     LoadEffect(u"Resource/Effect/Explosion_02.efkefc", "Explosion_02");
     LoadEffect(u"Resource/Effect/Explosion_03.efkefc", "Explosion_03");
     LoadEffect(u"Resource/Effect/Explosion_Smoke_01.efkefc", "Explosion_Smoke_01");
@@ -101,11 +101,11 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Explosion_Acid_01.efkefc", "Explosion_Acid_01");
     LoadEffect(u"Resource/Effect/Smoke_01.efkefc", "Smoke_01");
     LoadEffect(u"Resource/Effect/Smoke_02.efkefc", "Smoke_02");
-    LoadEffect(u"Resource/Effect/Smoke_03.efkefc", "Smoke_03");
-    LoadEffect(u"Resource/Effect/Smoke_04.efkefc", "Smoke_04");
-    LoadEffect(u"Resource/Effect/Smoke_05.efkefc", "Smoke_05");
-    LoadEffect(u"Resource/Effect/Smoke_06.efkefc", "Smoke_06");
-    LoadEffect(u"Resource/Effect/Fragment.efkefc", "Fragment");
+    LoadEffect(u"Resource/Effect/Fragment_Smoke_01.efkefc", "Fragment_Smoke_01");
+    LoadEffect(u"Resource/Effect/Fragment_Plasma_01.efkefc", "Fragment_Plasma_01");
+    LoadEffect(u"Resource/Effect/Fragment_Acid_01.efkefc", "Fragment_Acid_01");
+    LoadEffect(u"Resource/Effect/Fragment_Acid_02.efkefc", "Fragment_Acid_02");
+    LoadEffect(u"Resource/Effect/DestructionFragments.efkefc", "DestructionFragments");
     LoadEffect(u"Resource/Effect/Fragment_Octahedron.efkefc", "Fragment_Octahedron");
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");
     LoadEffect(u"Resource/Effect/BulletHit_Acid.efkefc", "BulletHit_Acid");

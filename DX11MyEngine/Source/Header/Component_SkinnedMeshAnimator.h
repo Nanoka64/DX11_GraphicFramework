@@ -51,6 +51,8 @@ private:
 	float m_BlendDuration = 0.2f;         // ブレンド完了までの総時間（例: 0.2秒）
 	float m_PrevAnimProcTime = 0.0f;      // 一つ前のアニメーションの再生時間
 
+	int m_AnimationLODFrameCounter;
+
 public:
 	SkinnedMeshAnimator(std::weak_ptr<GameObject> pOwner, int updateRank = 100);
 	~SkinnedMeshAnimator();

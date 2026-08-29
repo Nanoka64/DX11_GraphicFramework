@@ -19,6 +19,8 @@ m_AnimationTime(0.0),
 m_CurrentAnimIndex(-1),
 m_IsAnimationFlag(false),
 m_AnimProcTime(0.0),
+m_AnimationLODFrameCounter(0),
+m_ShadowAnimProcTime(0.0)/*,
 m_ShadowAnimProcTime(0.0)/*,
 m_ConstanrBufferBonesData(nullptr)*/
 {
@@ -44,6 +46,7 @@ void SkinnedMeshAnimator::Start(RendererEngine &renderer)
     m_BoneList      = m_pMeshResource.lock()->get_ModelData().lock()->get_BoneList();
     m_BoneIndexMap  = m_pMeshResource.lock()->get_ModelData().lock()->get_BoneIndexMap();
     m_Animations    = m_pMeshResource.lock()->get_ModelData().lock()->get_Animations();
+
     //m_ConstanrBufferBonesData = m_pMeshResource.lock()->get_ModelData().lock()->GetConstantBufferBonesData();
 }
 
@@ -113,7 +116,8 @@ void SkinnedMeshAnimator::Draw(RendererEngine &renderer)
     }
 
     // モデルシェーダに切り替え
-    Master::m_pShaderManager->DeviceToSetShader(m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType());
+    Master::m_pShaderManager->DeviceToSetShader(
+        m_pMeshResource.lock()->get_ModelData().lock()->get_ShaderType());
 
 	Master::m_pShaderManager->BindConstantBuffer(CONSTANT_BUFFER_TYPE::BONE, (void*)&bonesData, sizeof(CB_BONES_DATA));
 
@@ -213,10 +217,46 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
         animTimeTicks = static_cast<float>(fmod(timeInTicks, m_Animations[animIdx]->Duration));
     }
 
-    //if (m_IsAnimationFlag) 
+    VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
+    VEC3 myPos = m_pOwner.lock()->get_TransformConst()->get_VEC3ToPos();
+
+    float distanceFormCameraSq = VEC3::DistanceSq(cameraPos, myPos);
+    int animationLODFrame = 0;
+    const float ANIMATION_LOD_DISTANCE_NEAR     = 100.0f;
+    const float ANIMATION_LOD_DISTANCE_MIDDLE   = 150.0f;
+    const float ANIMATION_LOD_DISTANCE_LONG     = 250.0f;
+    const float ANIMATION_LOD_DISTANCESQ_NEAR = ANIMATION_LOD_DISTANCE_NEAR * ANIMATION_LOD_DISTANCE_NEAR;
+    const float ANIMATION_LOD_DISTANCESQ_MIDDLE = ANIMATION_LOD_DISTANCE_MIDDLE * ANIMATION_LOD_DISTANCE_MIDDLE;
+    const float ANIMATION_LOD_DISTANCESQ_LONG = ANIMATION_LOD_DISTANCE_LONG * ANIMATION_LOD_DISTANCE_LONG;
+    m_AnimationLODFrameCounter++;
+    //
+    // 近距離
+    //
+    if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_NEAR)
+    {
+        animationLODFrame = 0;
+    }
+    //
+    // 中距離
+    //
+    else if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_MIDDLE)
+    {
+        animationLODFrame = 8;
+    }
+    //
+    // 遠距離
+    //
+    else if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_LONG)
+    {
+        animationLODFrame = 16;
+    }
+
+    if (m_AnimationLODFrameCounter >= animationLODFrame)
     {
         // ボーン変換
         TransformBone(animTimeTicks, 0, XMMatrixIdentity(), animIdx);
+
+        m_AnimationLODFrameCounter = 0;
     }
 
 }

@@ -57,8 +57,8 @@
       "trailWidth" : 1.5,
       "enableFlightSmoke" : true,
       "smokeInterval" : 0.001,
-      "smokeSize" : 1.0,
-      "smokeEffectTag" : "Smoke_04",
+      "smokeSize" : 3.0,
+      "smokeEffectTag" : "Fragment_Plasma_01",
       "trailColor" : [1.0, 2.0, 2.0],
       "scale" : [0.2, 0.2, 0.2],
 

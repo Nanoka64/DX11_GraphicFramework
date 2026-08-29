@@ -50,7 +50,7 @@
       "enableFlightSmoke" : true,
       "smokeInterval" : 0.001,              
       "smokeSize" : 1.0,
-      "smokeEffectTag" : "Smoke_06",
+      "smokeEffectTag" : "Fragment_Acid_01",
       "trailColor" : [1.0, 1.0, 1.0],
       "scale" : [1.0, 1.0, 1.0],
 

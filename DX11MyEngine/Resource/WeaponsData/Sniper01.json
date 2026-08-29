@@ -44,13 +44,13 @@
     "visual" :  
     {
       "type" : "BILLBOARD",
-      "bulletMaterialTag" : "Bullet_03",
+      "bulletMaterialTag" : "Bullet_04",
       "trailDrawTime" : 20,
       "trailWidth" : 1.0,
       "enableFlightSmoke" : true,
       "smokeInterval" : 0.05,              
       "smokeSize" : 0.5,                     
-      "smokeEffectTag" : "Smoke_03",
+      "smokeEffectTag" : "Fragment_Smoke_01",
       "trailColor" : [10.0, 10.0, 10.0],
       "scale" :  [0.25, 0.25, 0.25],
 

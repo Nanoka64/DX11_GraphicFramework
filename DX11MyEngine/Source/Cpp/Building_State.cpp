@@ -150,7 +150,7 @@ void Building_CllapseNowState::OnExit(BuildingController* pOwner)
 	Master::m_pEffectManager->SetRotationEffect(handle, 0.0f, 0.0f, 0.0f);
 	Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
 
-	handle = Master::m_pEffectManager->PlayEffect("Fragment");
+	handle = Master::m_pEffectManager->PlayEffect("DestructionFragments");
 	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + m_SunkRateY, pos.z);
 	Master::m_pEffectManager->SetRotationEffect(handle, 0.0f, 0.0f, 0.0f);
 	Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
