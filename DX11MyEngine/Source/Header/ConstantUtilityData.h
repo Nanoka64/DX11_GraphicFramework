@@ -378,6 +378,8 @@ namespace UtilityData
 			_dirLightDirection(VECTOR3::VEC3(0.0f,1.0f,0.0f)),
 			_dirLightIntensity(2.0f),
 			_fogColor(VECTOR3::VEC3(1.0f)),
+			_dofStart(0.0f),
+			_dofEnd(0.0f),
 			_fogStart(0.0f),
 			_fogEnd(0.0f)
 
@@ -385,6 +387,63 @@ namespace UtilityData
 		}
 	};
 
+	/// <summary>
+	/// 出現位置のタイプ
+	/// </summary>
+	enum class ENEMY_SPAWN_POS_TYPE
+	{
+		NONE = -1,
+		RANDOM,	// ランダムに出現
+		POINT,	// 指定したポイントに出現
+	};
+
+	/// <summary>
+	/// プレイヤーの出現情報
+	/// </summary>
+	struct SpawnPlayerData
+	{
+		VECTOR3::VEC3 _playerStartPos;					// プレイヤーの初期位置
+		VECTOR3::VEC3 _playerStartRot;					// プレイヤーの初期回転角度
+	};
+
+	/// <summary>
+	/// 出現するエネミーの情報
+	/// </summary>
+	struct SpawnEnemyData
+	{
+		std::string _enemyType;				// 出現する敵の種類
+		ENEMY_SPAWN_POS_TYPE _spawnPosType;	// 出現位置のタイプ
+		int _enemyNum;						// 出現する敵の数
+		VECTOR3::VEC3 _spawnPos;			// 出現位置
+		VECTOR3::VEC3 _spawnRot;			// 出現時の回転角度
+	};
+
+	/// <summary>
+	/// ウェーブごとのデータ
+	/// </summary>
+	struct WaveData
+	{
+		int _waveID;								// ウェーブID
+		float _spawnDelay;							// ウェーブ開始から敵が出現するまでの遅延時間
+		std::vector<SpawnEnemyData> _enemysList;	// 出現する敵のリスト
+	};
+
+	/// <summary>
+	/// ミッションの情報
+	/// </summary>
+	struct MissionData
+	{
+		std::string _missionName;						// ミッション名
+		std::string _missionDescription;				// ミッションの説明
+		std::string _texturePath;						// ミッション用画像パス
+		int _missionID;									// ミッションID
+		StageEnvironmentParam _stageEnvironmentParam;	// ステージ環境パラメータ
+		SpawnPlayerData _spawnPlayerData;				// プレイヤーの出現情報
+		int _waveNum;									// ウェーブ数
+		std::vector<WaveData>_waveDataList;				// ウェーブごとのデータ
+
+		
+	};
 
 	/// <summary>
 	/// タイトル項目名
