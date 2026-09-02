@@ -28,6 +28,21 @@ namespace BuildingData
         NUM,
     };
 
+    /* 建物のデータ */
+    struct BuildingData
+    {
+		std::string _tag;       // タグ
+		float _collapseTimeMin;	// 倒壊にかかる時間の最小値
+		float _collapseTimeMax; // 倒壊にかかる時間の最大値
+		float _collapseSpeed;	// 倒壊スピード
+		float _collapseEndTime;	// 倒壊終了から落下までの時間
+		float _fallSpeed;		// 落下スピード
+		float _shakeDuration;	// カメラシェイクの持続時間
+		float _shakeLength;		// カメラシェイクの強さ
+		float _shakeMaxRange;	// カメラシェイクの最大範囲
+
+    };
+
     /* 建物の状態 */
     enum BUILDING_STATE
     {

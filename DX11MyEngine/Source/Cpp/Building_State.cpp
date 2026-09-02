@@ -4,6 +4,7 @@
 #include "Component_3DCamera.h"
 #include "Component_BuildingController.h"
 #include "Component_BoxCollider.h"
+#include "Component_Health.h"
 
 using namespace VECTOR2;
 using namespace VECTOR3;
@@ -11,20 +12,24 @@ using namespace BuildingData;
 using namespace Tool;
 
 /* 倒壊パラメータ */
-constexpr float BUILDING_COLLAPSE_TIME_MIN = 2.0f;	// 倒壊にかかる時間の最小値
-constexpr float BUILDING_COLLAPSE_TIME_MAX = 5.0f;	// 倒壊にかかる時間の最大値
-constexpr float BUILDING_COLLAPSE_SPEED = 25.0f;	// 建物の倒壊スピード
-constexpr float BUILDING_COLLAPSE_END_TIME = 3.0f;	// 倒壊終了から落下までの時間
-constexpr float BUILDING_FALL_SPEED = 20.0f;		// 建物の落下スピード
+constexpr float BUILDING_COLLAPSE_TIME_MIN = 2.0f;			// 倒壊にかかる時間の最小値
+constexpr float BUILDING_COLLAPSE_TIME_MAX = 3.5f;			// 倒壊にかかる時間の最大値
+constexpr float BUILDING_COLLAPSE_SPEED = 25.0f;			// 建物の倒壊スピード
+constexpr float BUILDING_COLLAPSE_END_TIME = 3.0f;			// 倒壊終了から落下までの時間
+constexpr float BUILDING_FALL_SPEED = 20.0f;				// 建物の落下スピード
+constexpr float BUILDING_COLLAPSE_TWEEN_DURATION = 2.0f;	// 倒壊のTweenの時間
+constexpr float BUILDING_COLLAPSE_SUNK_POSY_AMOUNT = 6.0f;	// 倒壊のY座標の沈み量
 
 /* サウンド */
 constexpr float BUILDING_DESTRUCTION_SOUND_RADIUS = 500.0f;	// 破壊時の音の聞こえる範囲
 constexpr float BUILDING_FALL_SOUND_RADIUS = 500.0f;		// 落下時の音の聞こえる範囲
 
 /* カメラシェイク */
-constexpr float SHAKE_DURATION = 3.0f;		// 持続時間
-constexpr float SHAKE_LENGTH = 0.3f;		// 強さ
-constexpr float SHAKE_MAX_RANGE = 300.0f;	// 揺れが影響する最大距離
+constexpr float SHAKE_DURATION = 3.0f;					// 持続時間
+constexpr float SHAKE_LENGTH = 0.3f;					// 強さ
+constexpr float SHAKE_MAX_RANGE = 300.0f;				// 揺れが影響する最大距離
+constexpr float COLLAPSE_IN_SHAKE_DURATION = 3.0f;		// 倒壊始めのカメラシェイクの持続時間
+constexpr float COLLAPSE_IN_SHAKE_LENGTH = 0.05f;		// 倒壊始めのカメラシェイクの強さ
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +39,7 @@ constexpr float SHAKE_MAX_RANGE = 300.0f;	// 揺れが影響する最大距離
 //////////////////////////////////////////////////////////////////////////////////////////
 void Building_IdleState::OnEnter(BuildingController* pOwner)
 {
-
+	m_FrameCounter = 0;
 }
 
 void Building_IdleState::OnExit(BuildingController* pOwner)
@@ -44,8 +49,32 @@ void Building_IdleState::OnExit(BuildingController* pOwner)
 
 int Building_IdleState::Update(BuildingController* pOwner)
 {
-	if (pOwner->get_IsDestruction())
+	const auto healthComp = pOwner->get_HealthComp();
+
+	// ダメージを受けた場合、エフェクトを再生する
+	if (pOwner->get_IsOnDamage())
 	{
+		const auto transform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+		VEC3 pos = healthComp->get_CollisionInfo().get_HitPoint();
+		VEC3 hitNormal = healthComp->get_CollisionInfo().get_HitNormal();	// 衝突法線
+		VEC3 effectRotAxis = VEC3(0.0f);
+		float effectRotAngle = 0;
+
+		// 法線から回転を求める
+		GetRotationFromNormal(hitNormal, VEC3(0.0f, 0.0f, -1.0f), effectRotAxis, effectRotAngle);
+
+		VEC3 effectScale = 3.0f;
+		int handle = Master::m_pEffectManager->PlayEffect("Destruction_Fragments_Small");
+
+		Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
+		Master::m_pEffectManager->SetRotationEffect(handle, effectRotAxis, effectRotAngle);
+		Master::m_pEffectManager->SetScaleEffect(handle, effectScale.x, effectScale.y, effectScale.z);
+	}
+
+	float halfMaxHP = healthComp->get_MaxHP() * 0.5f;	// 最大HPの半分の値
+
+	// 体力が半分を下回ったら、倒壊始めステートへ遷移する
+	if (healthComp->get_CrntHP() < halfMaxHP){
 		return BUILDING_STATE::BUILDING_STATE_CLLAPSE_IN;	// 倒壊始めステートへ
 	}
 
@@ -63,13 +92,36 @@ void Building_CllapseInState::OnEnter(BuildingController* pOwner)
 	auto ownerObj =pOwner->get_OwnerObj().lock();
 
 	VEC3 pos = ownerObj->get_Transform().lock()->get_VEC3ToPos();
+	VEC3 rot = ownerObj->get_Transform().lock()->get_VEC3ToRotateToRad();
 	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, INT_CAST(SOUND_ID::BUILDING_DESTRUCTION), pos, BUILDING_DESTRUCTION_SOUND_RADIUS);
 
 
-	// 倒壊が始まったら、コライダーをオフにする
-	auto collider = ownerObj->get_Component<BoxCollider>();
-	if (collider){
-		collider->set_IsEnable(false);
+	//
+	// 倒壊のY座標をTweenで沈める
+	//
+	float tweenEndPosY = pos.y - BUILDING_COLLAPSE_SUNK_POSY_AMOUNT;	// 目標のY座標を設定
+	float tweenDuration = BUILDING_COLLAPSE_TWEEN_DURATION;
+	Master::m_pTweenManager->AddTween(&m_SunkTweenPosY, pos.y, tweenEndPosY, tweenDuration, TweenType::EASE_IN);
+
+	//
+	// 崩壊の目標角度を設定する
+	//
+	float collapseTargetAngle = Master::m_pRandomManager->GetFloatRandom(-0.3f, 0.3f);	// 目標角度を決める
+	pOwner->set_CollapseTargetAngle(collapseTargetAngle);								// 目標角度を設定（崩壊中にも使用するため）
+
+	//
+	// 倒壊の回転角度をTweenで変化させる
+	//
+	VEC3 tweenEndRot = VEC3(collapseTargetAngle, rot.y, collapseTargetAngle);	// 目標角度を設定(yに入れると崩壊の仕方がおかしくなるのでxとzのみ)
+	Master::m_pTweenManager->AddTween(&m_SunkTweenRot, rot, tweenEndRot, tweenDuration, TweenType::LINEAR);
+
+	// ****************************************************
+	//				 カメラシェイク
+	// ****************************************************
+	std::shared_ptr<Camera3D> camera;
+	if (camera = Master::m_pDataManager->get_CameraComponent().lock())
+	{
+		camera->DistanceDecay(COLLAPSE_IN_SHAKE_DURATION, VEC3(COLLAPSE_IN_SHAKE_LENGTH), pos, SHAKE_MAX_RANGE);
 	}
 
 
@@ -79,7 +131,6 @@ void Building_CllapseInState::OnEnter(BuildingController* pOwner)
 	//*****************************************************************************************
 	float scale = 10.0f;
 
-	VEC3 rot;
 	for (int i = 0; i < 5; i++)
 	{
 		rot.x = Master::m_pRandomManager->GetFloatRandom(-G_PI_F, G_PI_F);
@@ -91,18 +142,67 @@ void Building_CllapseInState::OnEnter(BuildingController* pOwner)
 		Master::m_pEffectManager->SetRotationEffect(handle, rot.x, rot.y, rot.z);
 		Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
 	}
-	ownerObj->set_IsStatic(false);	// 動的オブジェクトに変更
-
 }
 
 void Building_CllapseInState::OnExit(BuildingController* pOwner)
 {
+	auto ownerObj = pOwner->get_OwnerObj().lock();
 
+	VEC3 pos = ownerObj->get_Transform().lock()->get_VEC3ToPos();
+	Master::m_pSoundManager->Play_3D(SOUND_TYPE::SE, INT_CAST(SOUND_ID::BUILDING_DESTRUCTION), pos, BUILDING_DESTRUCTION_SOUND_RADIUS);
+
+	// 完全に破壊されたら、コライダーをオフにする
+	auto collider = ownerObj->get_Component<BoxCollider>();
+	if (collider) {
+		collider->set_IsEnable(false);
+	}
+
+	ownerObj->set_IsStatic(false);	// 動的オブジェクトに変更
 }
 
 int Building_CllapseInState::Update(BuildingController* pOwner)
 {
-	return BUILDING_STATE::BUILDING_STATE_CLLAPSE_NOW;	// 倒壊中ステートへ
+	// 完全に破壊されたら、倒壊中ステートへ遷移する
+	if (pOwner->get_IsDestruction())
+	{
+		return BUILDING_STATE::BUILDING_STATE_CLLAPSE_NOW;	// 倒壊中ステートへ
+	}
+
+	auto transform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
+
+	// 倒壊のY座標を更新
+	VEC3 pos = transform->get_VEC3ToPos();
+	pos.y = m_SunkTweenPosY;	// 倒壊のY座標を更新
+
+	// 倒壊の回転角度を更新
+	VEC3 rot = transform->get_VEC3ToRotateToRad();
+	rot.x = m_SunkTweenRot.x;
+	rot.z = m_SunkTweenRot.z;
+
+	transform->set_Pos(pos);
+	transform->set_RotateToRad(rot);
+
+	m_FrameCounter++;
+	
+	//*****************************************************************************************
+	//						エフェクト再生
+	//					煙がごわごわ出てくる感じ
+	//*****************************************************************************************
+	if (m_FrameCounter % 180 == 0)
+	{
+		float scale = 10.0f;
+
+		VEC3 effectRot;
+		effectRot.x = Master::m_pRandomManager->GetFloatRandom(-G_PI_F, G_PI_F);
+		effectRot.y = Master::m_pRandomManager->GetFloatRandom(-G_PI_F, G_PI_F);
+		effectRot.z = Master::m_pRandomManager->GetFloatRandom(-G_PI_F, G_PI_F);
+
+		int handle = Master::m_pEffectManager->PlayEffect("Explosion_Smoke_02");
+		Master::m_pEffectManager->SetPositionEffect(handle, pos);
+		Master::m_pEffectManager->SetRotationEffect(handle, effectRot);
+		Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
+	}
+	return BUILDING_STATE::BUILDING_STATE_CLLAPSE_IN;
 }
 
 
@@ -113,13 +213,14 @@ int Building_CllapseInState::Update(BuildingController* pOwner)
 //////////////////////////////////////////////////////////////////////////////////////////
 void Building_CllapseNowState::OnEnter(BuildingController* pOwner)
 {
+	auto transform = pOwner->get_OwnerObj().lock()->get_Transform().lock();
 	m_CollapseTime = Master::m_pRandomManager->GetFloatRandom(BUILDING_COLLAPSE_TIME_MIN, BUILDING_COLLAPSE_TIME_MAX);	// 倒壊にかかる時間をランダムで決める
 
-	m_CrntCollapseTime = 0.0f;	// 現在の倒壊時間を初期化
-	m_SunkRateY = 0.0f;
-	m_FrameCounter = 0;
-
-	m_CollapseTargetAngle = Master::m_pRandomManager->GetFloatRandom(-0.3f, 0.3f);	// 目標角度を決める
+	m_CrntCollapseTime = 0.0f;									// 現在の倒壊時間を初期化
+	m_SunkRateY = 0.0f;											// どのくらい沈んだかを初期化
+	m_FrameCounter = 0;											// フレームカウンターを初期化
+	m_StartRot = transform->get_VEC3ToRotateToRad();			// 開始時の回転角度を取得する
+	m_CollapseTargetAngle = pOwner->get_CollapseTargetAngle();	// 崩壊開始時に設定した目標角度を取得する
 }
 
 void Building_CllapseNowState::OnExit(BuildingController* pOwner)
@@ -137,9 +238,6 @@ void Building_CllapseNowState::OnExit(BuildingController* pOwner)
 		camera->DistanceDecay(SHAKE_DURATION, VEC3(SHAKE_LENGTH), pos, SHAKE_MAX_RANGE);
 	}
 
-
-
-
 	//*****************************************************************************************
 	//						エフェクト再生
 	//				煙と破片と、ドデカい爆発が起きる感じ
@@ -150,7 +248,7 @@ void Building_CllapseNowState::OnExit(BuildingController* pOwner)
 	Master::m_pEffectManager->SetRotationEffect(handle, 0.0f, 0.0f, 0.0f);
 	Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
 
-	handle = Master::m_pEffectManager->PlayEffect("DestructionFragments");
+	handle = Master::m_pEffectManager->PlayEffect("Destruction_Fragments");
 	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y + m_SunkRateY, pos.z);
 	Master::m_pEffectManager->SetRotationEffect(handle, 0.0f, 0.0f, 0.0f);
 	Master::m_pEffectManager->SetScaleEffect(handle, scale, scale, scale);
@@ -186,11 +284,10 @@ int Building_CllapseNowState::Update(BuildingController* pOwner)
 		// どのくらい沈んだかを保持
 		m_SunkRateY += speed * deltaTime;
 
-
 		/* 倒れるような感じに */
 		float crntAngle = m_CollapseTargetAngle * easeIn;
-		rot.x = crntAngle;
-		rot.z = crntAngle;
+		rot.x = m_StartRot.x + crntAngle;
+		rot.z = m_StartRot.z + crntAngle;
 
 		transform->set_Pos(pos);
 		transform->set_RotateToRad(rot);

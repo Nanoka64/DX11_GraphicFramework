@@ -19,6 +19,7 @@
 #include "WeaponDataManager.h"
 #include "ItemManager.h"
 #include "TweenManager.h"
+#include "BuildingManager.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -57,4 +58,5 @@ public:
 	static RandomManager		* m_pRandomManager;		// 乱数管理
 	static WeaponDataManager	* m_pWeaponDataManager;	// 武器データ管理
 	static ItemManager			* m_pItemManager;		// アイテム管理
+	static BuildingManager		* m_pBuildingManager;	// 建物管理
 };

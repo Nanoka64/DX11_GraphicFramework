@@ -205,7 +205,7 @@ namespace BulletBehaviour
         if (health && hitCategory != COLLISION_CATEGORY::DESTRUCTION_BUILDING)
         {
             // 弾が保持しているダメージ値を渡す
-            health->TakeDamage(_common._damage);
+            health->TakeDamage(_common._damage, _collision);
 
         }
 
@@ -516,7 +516,7 @@ namespace BulletBehaviour
                 // ダメージ
                 if (auto health = obj->get_Component<Health>())
                 {
-                    health->TakeDamage(_common._damage);
+                    health->TakeDamage(_common._damage, _collision);
                 }
 
                 // 吹っ飛び

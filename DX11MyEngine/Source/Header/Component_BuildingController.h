@@ -14,15 +14,16 @@
 // ***************************************************************************************
 class BuildingController : public IComponent
 {
-private:
-	
-	std::weak_ptr<class Health>m_pHealthComp;	// 体力管理コンポーネント
+public:
 
+private:
+	class Health* m_pHealthComp;	// 体力管理コンポーネント
 	StateMachine<BuildingController> m_StateMachine;	// ステートマシン
+	float m_CollapseTargetAngle;	// 崩壊する角度
 
 	// ステートマシンの状態を管理するためのフラグ
 	bool m_IsDestruction;	// 破壊されたかどうか
-
+	bool m_IsOnDamage;	// ダメージを受けたかどうか
 
 public:
 	BuildingController(std::weak_ptr<GameObject> pOwner, int updateRank);
@@ -33,5 +34,9 @@ public:
 	void OnCollisionEnter(const class CollisionInfo& _other)override;
 
 	bool get_IsDestruction()const { return m_IsDestruction; }	// 破壊されたかどうかの取得
+	bool get_IsOnDamage()const { return m_IsOnDamage; };			// ダメージを受けたかどうかの取得
+	void set_CollapseTargetAngle(float _angle) { m_CollapseTargetAngle = _angle; }
+	float get_CollapseTargetAngle()const { return m_CollapseTargetAngle; }	// 崩壊する角度の取得
+	const class Health* get_HealthComp()const { return m_pHealthComp; }	// 体力管理コンポーネントの取得
 };
 

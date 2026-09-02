@@ -72,7 +72,7 @@ void Health::TakeDamage(const float _dmg)
     m_CrntHP -= _dmg;
     
     // ダメージ処理を行う
-    for (auto& callback : m_DamageTaskArray) {
+    for (auto& callback : m_DamageTasks) {
         callback(_dmg);
     }
 
@@ -83,7 +83,46 @@ void Health::TakeDamage(const float _dmg)
 
 
         // 死亡処理を行う
-        for (auto& callback : m_DeathTaskArray) {
+        for (auto& callback : m_DeathTasks) {
+            callback();
+        }
+    }
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】ダメージ処理（衝突情報格納ver）
+//*
+//* [引数]
+//* _dmg : ダメージ値
+//* _collInfo : 衝突情報
+//*
+//* [返値]
+//* なし 
+//*----------------------------------------------------------------------------------------
+void Health::TakeDamage(const float _dmg, const CollisionInfo& _collInfo)
+{
+    if (m_IsDead) {
+        return;
+    }
+
+    m_CrntHP -= _dmg;
+
+    // 衝突情報を格納
+	m_CollisionInfo = _collInfo;
+
+    // ダメージ処理を行う
+    for (auto& callback : m_DamageTasks) {
+        callback(_dmg);
+    }
+
+    // 死亡
+    if (m_CrntHP <= 0.0f) {
+        m_CrntHP = 0.0f;
+        m_IsDead = true;
+
+
+        // 死亡処理を行う
+        for (auto& callback : m_DeathTasks) {
             callback();
         }
     }
@@ -101,7 +140,7 @@ void Health::TakeDamage(const float _dmg)
 //*----------------------------------------------------------------------------------------
 void Health::RegisterOnDead(std::function<void()> _callback)
 {
-    m_DeathTaskArray.push_back(_callback);
+    m_DeathTasks.push_back(_callback);
 }
 
 
@@ -116,7 +155,7 @@ void Health::RegisterOnDead(std::function<void()> _callback)
 //*----------------------------------------------------------------------------------------
 void Health::RegisterOnDamage(std::function<void(float)> _callback)
 {
-    m_DamageTaskArray.push_back(_callback);
+    m_DamageTasks.push_back(_callback);
 }
 
 //*---------------------------------------------------------------------------------------

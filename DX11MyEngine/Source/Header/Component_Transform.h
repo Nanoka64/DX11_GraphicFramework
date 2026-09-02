@@ -157,7 +157,6 @@ public:
     /// <returns></returns>
     virtual bool get_IsRectTransform()const { return false; }
 
-
     void Release(); // ‰ð•ú
 };
 

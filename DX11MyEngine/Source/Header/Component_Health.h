@@ -1,5 +1,6 @@
 #pragma once
 #include "IComponent.h"
+#include "CollisionInfo.h"
 
 
 
@@ -20,9 +21,10 @@ private:
 	bool m_IsDead;		// 死亡フラグ 
 	//bool m_IsOnDamage;  // ダメージを受けたか
 
+	std::vector<std::function<void(float)>> m_DamageTasks;	// ダメージを受けた際の処理
+	std::vector<std::function<void()>> m_DeathTasks;		// 死んだときの処理
 
-	std::vector<std::function<void(float)>> m_DamageTaskArray;	// ダメージを受けた際の処理
-	std::vector<std::function<void()>> m_DeathTaskArray;		// 死んだときの処理
+	CollisionInfo m_CollisionInfo;	// 衝突情報
 
 public:
 	Health(std::weak_ptr<GameObject> pOwner, int updateRank);
@@ -31,6 +33,7 @@ public:
 	void Start(RendererEngine& renderer) override;	// 初期化
 	void Update(RendererEngine& renderer) override;// 更新
 	void TakeDamage(const float _dmg);	// ダメージ処理
+	void TakeDamage(const float _dmg, const CollisionInfo& _collInfo);	// ダメージ処理
 
 	void RegisterOnDead(std::function<void()> _callback);	// 死んだときの処理の登録
 	void RegisterOnDamage(std::function<void(float)> _callback);	// ダメージを受けた際の処理の登録
@@ -41,6 +44,8 @@ public:
 	void set_MaxHP(const float _hp) { m_MaxHP = _hp; }
 	void set_CrntHP(const float _hp);
 	void set_RecoveryHP(const float _hp);
+
+	const CollisionInfo& get_CollisionInfo()const { return m_CollisionInfo; }	// ダメージを受けた際の衝突情報の取得
 
 	bool get_IsDead()const { return m_IsDead; }			// 死亡フラグ取得
 	//bool get_IsOnDamage()const { return m_IsOnDamage;}  // ダメージフラグを取得

@@ -191,6 +191,7 @@
     <ClInclude Include="Source\Header\Ant_StateHeader.h" />
     <ClInclude Include="Source\Header\BitFlag.h" />
     <ClInclude Include="Source\Header\BlendManager.h" />
+    <ClInclude Include="Source\Header\BuildingManager.h" />
     <ClInclude Include="Source\Header\BuildingStateFactory.h" />
     <ClInclude Include="Source\Header\Building_State.h" />
     <ClInclude Include="Source\Header\BulletBehaviour.h" />
@@ -392,6 +393,7 @@
     <ClCompile Include="Source\Cpp\Ant_PT_MoveState.cpp" />
     <ClCompile Include="Source\Cpp\BitFlag.cpp" />
     <ClCompile Include="Source\Cpp\BlendManager.cpp" />
+    <ClCompile Include="Source\Cpp\BuildingManager.cpp" />
     <ClCompile Include="Source\Cpp\BuildingStateFactory.cpp" />
     <ClCompile Include="Source\Cpp\Building_State.cpp" />
     <ClCompile Include="Source\Cpp\BulletBehaviour.cpp" />

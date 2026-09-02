@@ -14,6 +14,7 @@
 class Building_IdleState : public IState<class BuildingController>
 {
 private:
+	int m_FrameCounter = 0;
 
 public:
 	void OnEnter(class BuildingController* pOwner) override;
@@ -34,6 +35,9 @@ public:
 class Building_CllapseInState : public IState<class BuildingController>
 {
 private:
+	float m_SunkTweenPosY = 0.0f;	// 倒壊するまでのY座標の変化量
+	VECTOR3::VEC3 m_SunkTweenRot = 0.0f;	// 倒壊するまでの回転角度の変化量
+	int m_FrameCounter = 0;	// フレームカウンター
 
 public:
 	void OnEnter(class BuildingController* pOwner) override;
@@ -59,6 +63,7 @@ private:
 	float m_CollapseTargetAngle; // 倒れる角度 
 	float m_SunkRateY;			 // Y座標がどのくらい沈んだか
 	int m_FrameCounter;
+	VECTOR3::VEC3 m_StartRot;	// 開始時の回転
 
 public:
 	void OnEnter(class BuildingController* pOwner) override;

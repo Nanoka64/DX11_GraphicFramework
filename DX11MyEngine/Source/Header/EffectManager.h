@@ -40,14 +40,15 @@ public:
     void SetPositionEffect(int handle, float x, float y, float z);  // エフェクトの位置を設定
     void SetScaleEffect(int handle, float x, float y, float z);     // エフェクトの大きさを設定
     void SetRotationEffect(int handle, float x, float y, float z);  // エフェクトの回転値を設定
+    void SetRotationEffect(int handle, const VECTOR3::VEC3& _axis, float _angle);  // エフェクトの軸を指定し、角度（ラジアン）を設定
     void SetPositionEffect(int handle,const VECTOR3::VEC3& _v);     
     void SetScaleEffect(int handle,   const VECTOR3::VEC3& _v);     
     void SetRotationEffect(int handle,const VECTOR3::VEC3& _v);     
     void SetAllColorEffect(int handle,const Effekseer::Color& _color);
     bool IsPlayingEffect(int handle);                               // エフェクトの再生状態を取得
     void SetDynamicParameter(int handle, int32_t _index, float _param);             // 動的パラメータの設定
-
     void StopAllEffects();  // 全てのエフェクトの停止
+
     
 private:
     // コピー禁止

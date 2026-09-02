@@ -550,6 +550,25 @@ namespace Tool
     //}
 
 
+    /// <summary>
+	/// 法線から回転を求める
+    /// </summary>
+    /// <param name="_normal">法線</param>
+    /// <param name="_from">元の向き</param>
+    inline void GetRotationFromNormal(const VECTOR3::VEC3& _normal, const VECTOR3::VEC3& _from, VECTOR3::VEC3 &_outAxis, float &_outAngle)
+    {
+        // 回転軸を求める
+		VECTOR3::VEC3 axis = VECTOR3::VEC3::Cross(_from, _normal);
+
+		// 回転角度を求める
+		float angle = acosf(VECTOR3::VEC3::Dot(_from, _normal));
+
+		// 出力
+		_outAxis = axis.Normalize();
+		_outAngle = angle;
+    }
+
+
 
     /// <summary>
     /// 接線・副接線を求める

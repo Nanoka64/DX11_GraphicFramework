@@ -105,7 +105,8 @@ bool EffectManager::Setup(RendererEngine &renderer)
     LoadEffect(u"Resource/Effect/Fragment_Plasma_01.efkefc", "Fragment_Plasma_01");
     LoadEffect(u"Resource/Effect/Fragment_Acid_01.efkefc", "Fragment_Acid_01");
     LoadEffect(u"Resource/Effect/Fragment_Acid_02.efkefc", "Fragment_Acid_02");
-    LoadEffect(u"Resource/Effect/DestructionFragments.efkefc", "DestructionFragments");
+    LoadEffect(u"Resource/Effect/Destruction_Fragments.efkefc", "Destruction_Fragments");
+    LoadEffect(u"Resource/Effect/Destruction_Fragments_Small.efkefc", "Destruction_Fragments_Small");
     LoadEffect(u"Resource/Effect/Fragment_Octahedron.efkefc", "Fragment_Octahedron");
     LoadEffect(u"Resource/Effect/BulletHit_Standard.efkefc", "BulletHit_Standard");
     LoadEffect(u"Resource/Effect/BulletHit_Acid.efkefc", "BulletHit_Acid");
@@ -294,6 +295,12 @@ void EffectManager::SetPositionEffect(int handle, float x, float y, float z)
 void EffectManager::SetRotationEffect(int handle, float x, float y, float z)
 {
     m_EfkManager->SetRotation(handle, x, y, z);
+}
+
+// 任意軸周りの反時計周りの回転角度を指定する
+void EffectManager::SetRotationEffect(int handle, const VECTOR3::VEC3& _axis, float _angle)
+{
+    m_EfkManager->SetRotation(handle, { _axis.x,_axis.y,_axis.z }, _angle);
 }
 
 // エフェクトの大きさを設定
