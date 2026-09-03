@@ -72,7 +72,8 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dInput8.lib")
 
-
+// json読み込み用
+#include <nlohmann/json.hpp>
 
 // 標準ヘッダ
 #include <unordered_map>    // 連想配列用

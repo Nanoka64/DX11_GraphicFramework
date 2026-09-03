@@ -34,8 +34,8 @@ bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;   // キーボードの入力を有効化
 
 
-    //ImGui::StyleColorsDark();    // デフォルト（暗め）
-    ImGui::StyleColorsLight();   // 明るい色調
+    ImGui::StyleColorsDark();    // デフォルト（暗め）
+    //ImGui::StyleColorsLight();   // 明るい色調
     //ImGui::StyleColorsClassic(); // 昔ながらのImGuiスタイル
 
     // 日本語フォント設定

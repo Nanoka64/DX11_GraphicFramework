@@ -1,0 +1,22 @@
+{
+    "MissionName" : "てすとお",
+    "Description" : "て・す・と・だ・よ",
+    "TexturePath" : "Texture/Mission/IA_GameLogo.png",
+    "ID" : 1,
+    "StageEnvironment" :
+    {
+        "DirLightColor" : [0.0, 0.0, 0.0],
+        "DirLightDirection" : [0.5, 0.7, -0.5],
+        "DirLightIntensity" : 2.0,
+        "FogColor" : [1.0, 1.0, 1.0],
+        "FogStart" : 0.0,
+        "FogEnd" : 0.0,
+        "DofStart" : 0.0,
+        "DofEnd" : 0.0
+    },
+    "SpawnPlayer":
+    {
+        "StartPoint" : [0.0, 0.0, 0.0],
+        "StartRotation" : [0.0, 0.0, 0.0]
+    }
+}

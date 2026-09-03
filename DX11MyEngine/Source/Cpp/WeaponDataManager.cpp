@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "WeaponDataManager.h"
 
-
 #include <iostream>
 #include <fstream>
 
 using namespace WeaponData;
 using namespace UtilityData;
 using namespace BulletData;
+using namespace Tool::Json;
 
 //*---------------------------------------------------------------------------------------
 //*y?zƒRƒ“ƒXƒgƒ‰ƒNƒ^
@@ -473,26 +473,3 @@ bool WeaponDataManager::LoadVisualData(const nlohmann::json& _json, BulletData::
     return true;
 }
 
-
-//*---------------------------------------------------------------------------------------
-//*y?zVEC3 Œ^‚Ì“Ç‚İæ‚è
-//*
-//* [ˆø”] 
-//* &_json : json
-//* &_tag : ƒ^ƒO
-//* &_outData : o—Íæ 
-//* [•Ô’l]
-//* true : “Ç‚İ‚Æ‚è¬Œ÷
-//* false : “Ç‚İ‚Æ‚è¸”s
-//*----------------------------------------------------------------------------------------
-void WeaponDataManager::LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag,VECTOR3::VEC3& _outData)
-{
-    if (_json.contains(_tag) &&                                                      // ’e‚Ì‘å‚«‚³
-        _json[_tag].is_array() &&
-        _json[_tag].size() == 3)
-    {
-        _outData.x = _json[_tag][0].get<float>();
-        _outData.y = _json[_tag][1].get<float>();
-        _outData.z = _json[_tag][2].get<float>();
-    }
-}

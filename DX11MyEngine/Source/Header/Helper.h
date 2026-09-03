@@ -568,6 +568,19 @@ namespace Tool
 		_outAngle = angle;
     }
 
+    /// <summary>
+    /// json要ヘルパー
+    /// </summary>
+    namespace Json
+    {
+        /// <summary>
+		/// jsonからVEC3型のデータを読み取る
+        /// </summary>
+        /// <param name="_json">json</param>
+        /// <param name="_tag">タグ</param>
+        /// <param name="_outData">出力先</param>
+        void LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag, VECTOR3::VEC3& _outData);
+    };
 
 
     /// <summary>

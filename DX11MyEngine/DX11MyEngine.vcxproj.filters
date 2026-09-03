@@ -681,9 +681,6 @@
     <ClCompile Include="Source\Cpp\Debugger.cpp">
       <Filter>ソース ファイル\Singleton\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\EffectManager.cpp">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\WeaponDataManager.cpp">
       <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClCompile>
@@ -705,9 +702,6 @@
     <ClCompile Include="Source\Cpp\DirectWriteManager.cpp">
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\UIManager.cpp">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\ItemManager.cpp">
       <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClCompile>
@@ -725,9 +719,6 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\TimeManager.cpp">
       <Filter>ソース ファイル\Singleton\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Cpp\c_Game_Manual.cpp">
       <Filter>ソース ファイル\Game\Scene\Game</Filter>
@@ -795,9 +786,6 @@
     <ClCompile Include="Source\Cpp\Helper.cpp">
       <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Cpp\TweenManager.cpp">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Cpp\Tween.cpp">
       <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
     </ClCompile>
@@ -818,6 +806,18 @@
     </ClCompile>
     <ClCompile Include="Source\Cpp\BuildingManager.cpp">
       <Filter>ソース ファイル\Singleton\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\UIManager.cpp">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\TweenManager.cpp">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\GameObjectManager.cpp">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EffectManager.cpp">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1175,9 +1175,6 @@
     <ClInclude Include="Source\Header\Debugger.h">
       <Filter>ソース ファイル\Singleton\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\EffectManager.h">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\WeaponDataManager.h">
       <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClInclude>
@@ -1199,9 +1196,6 @@
     <ClInclude Include="Source\Header\DirectWriteManager.h">
       <Filter>ソース ファイル\Singleton\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\UIManager.h">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\TragetManager.h">
       <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClInclude>
@@ -1219,9 +1213,6 @@
     </ClInclude>
     <ClInclude Include="Source\Header\TimeManager.h">
       <Filter>ソース ファイル\Singleton\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Header\GameObjectManager.h">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
     </ClInclude>
     <ClInclude Include="Source\Header\ResultScene_StateHeader.h">
       <Filter>ソース ファイル\Game\Scene\Head</Filter>
@@ -1289,9 +1280,6 @@
     <ClInclude Include="Source\Header\Tween.h">
       <Filter>ソース ファイル\Engine\Tool\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\TweenManager.h">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\RenderQueue.h">
       <Filter>ソース ファイル\Engine\Renderer</Filter>
     </ClInclude>
@@ -1313,11 +1301,23 @@
     <ClInclude Include="Source\Header\Component_SpotLight.h">
       <Filter>ソース ファイル\Engine\BaseComponent\Light</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Header\Master.h">
-      <Filter>ソース ファイル\Singleton\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Header\BuildingManager.h">
       <Filter>ソース ファイル\Singleton\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\UIManager.h">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\TweenManager.h">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\GameObjectManager.h">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EffectManager.h">
+      <Filter>ソース ファイル\Singleton\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\Master.h">
+      <Filter>ソース ファイル\Singleton</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

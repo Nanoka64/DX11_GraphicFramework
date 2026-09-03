@@ -2,7 +2,7 @@
 #include "ConstantWeaponData.h"
 #include "ConstantBulletData.h"
 #include "ConstantUtilityData.h"
-#include <nlohmann/json.hpp>
+
 
 
 // ---------------------------------------------------------------------------------------
@@ -85,6 +85,5 @@ private:
         const nlohmann::json& json,
         BulletData::Definition& outData);
 
-    void LoadVEC3Data(const nlohmann::json& _json, const std::string& _tag, VECTOR3::VEC3& _outData);
 };
 

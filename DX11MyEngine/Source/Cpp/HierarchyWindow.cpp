@@ -63,7 +63,7 @@ void HierarchyWindow::Update(RendererEngine& renderer)
     //objects.splice(objects.end(), transparentObjList);
     //objects.splice(objects.end(), opawueObjList); 
 
-    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"));
+    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"オブジェクトリスト"),0);
     Master::m_pDebugger->DG_BulletText(U8ToChar(u8"数 : %d"), objects.size());
 
     int id = 0;

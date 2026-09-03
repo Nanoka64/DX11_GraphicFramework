@@ -67,7 +67,7 @@ void InspectorWindow::Update(RendererEngine &renderer)
     // 現在選択されているオブジェクトの取得
     m_pCrntSelectedObject = Master::m_pEditorManager->get_crntSelectedObject();
 
-    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"インスペクター"));
+    Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"インスペクター"),0);
     
     if (m_pCrntSelectedObject.expired() == false)
     {

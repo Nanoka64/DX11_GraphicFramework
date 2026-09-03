@@ -388,13 +388,21 @@ namespace UtilityData
 	};
 
 	/// <summary>
-	/// 出現位置のタイプ
+	/// エネミーの出現位置のタイプ
 	/// </summary>
 	enum class ENEMY_SPAWN_POS_TYPE
 	{
-		NONE = -1,
-		RANDOM,	// ランダムに出現
-		POINT,	// 指定したポイントに出現
+		RANDOM = 0,		// ランダムに出現
+		POINT  = 1,		// 指定したポイントに出現
+	};
+
+	/// <summary>
+	/// エネミーの出現状態のタイプ
+	/// </summary>
+	enum class ENEMY_SPAWN_ACTIVE_TYPE
+	{
+		ACTIVE = 0,		// アクティブ状態で出現
+		PATROL = 1,		// 非アクティブ状態で出現
 	};
 
 	/// <summary>
@@ -402,8 +410,8 @@ namespace UtilityData
 	/// </summary>
 	struct SpawnPlayerData
 	{
-		VECTOR3::VEC3 _playerStartPos;					// プレイヤーの初期位置
-		VECTOR3::VEC3 _playerStartRot;					// プレイヤーの初期回転角度
+		VECTOR3::VEC3 _playerStartPos;				// プレイヤーの初期位置
+		VECTOR3::VEC3 _playerStartRot;				// プレイヤーの初期回転角度
 	};
 
 	/// <summary>
@@ -411,11 +419,14 @@ namespace UtilityData
 	/// </summary>
 	struct SpawnEnemyData
 	{
-		std::string _enemyType;				// 出現する敵の種類
-		ENEMY_SPAWN_POS_TYPE _spawnPosType;	// 出現位置のタイプ
-		int _enemyNum;						// 出現する敵の数
-		VECTOR3::VEC3 _spawnPos;			// 出現位置
-		VECTOR3::VEC3 _spawnRot;			// 出現時の回転角度
+		std::string _enemyType;						// 出現する敵の種類
+		int _enemyNum;								// 出現する敵の数
+		float _healthScale;							// HPスケール
+		ENEMY_SPAWN_POS_TYPE _spawnPosType;			// 出現位置のタイプ
+		float _spawnRadius;							// 出現位置の半径（ランダム出現時に使用）
+		VECTOR3::VEC3 _spawnPos;					// 出現位置
+		VECTOR3::VEC3 _spawnRot;					// 出現時の回転角度
+		ENEMY_SPAWN_ACTIVE_TYPE _activeType;		// 出現時の状態（アクティブ or 非アクティブ）
 	};
 
 	/// <summary>
@@ -441,8 +452,6 @@ namespace UtilityData
 		SpawnPlayerData _spawnPlayerData;				// プレイヤーの出現情報
 		int _waveNum;									// ウェーブ数
 		std::vector<WaveData>_waveDataList;				// ウェーブごとのデータ
-
-		
 	};
 
 	/// <summary>
