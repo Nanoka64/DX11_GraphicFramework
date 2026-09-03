@@ -226,7 +226,7 @@ void UIManager::Update(RendererEngine &renderer)
     if (Master::m_pDataManager->get_IsDebugMode() == false)return;
 
 
-    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"UIプールの確認"));
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"UIプールの確認"), 0);
 
     for (int i = 0; i < static_cast<int>(UIData::UI_TYPE::NUM); i++)
     {

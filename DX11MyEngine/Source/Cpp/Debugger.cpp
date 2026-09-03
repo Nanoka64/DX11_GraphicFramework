@@ -32,6 +32,7 @@ bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;   // キーボードの入力を有効化
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // ドッキングを有効化
 
 
     ImGui::StyleColorsDark();    // デフォルト（暗め）
@@ -76,6 +77,11 @@ void Debugger::BeginFrame(float winW, float winH)
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+    //ImGui::DockSpaceOverViewport(); 
+
+    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+
 }
 
 
@@ -564,5 +570,37 @@ bool Debugger::DG_Selectable(const std::string &_label, bool _selected, ImGuiSel
     return ImGui::Selectable(_label.c_str(), &_selected, _flag, size);
 }
 
+//*---------------------------------------------------------------------------------------
+//*【?】テクスチャの配列を持つテーブルを作る
+//*     
+//* [引数]
+//* _label : テーブルのラベル
+//* _columnCount : 列の数
+//* _textures : テクスチャの配列
+//* _srvArraySize : 配列のサイズ
+//* _flags : テーブルのフラグ
+//*----------------------------------------------------------------------------------------
+void Debugger::DG_BeginTable(const std::string& _label, int _columnCount, TableTextures _textures[], int _srvArraySize,  ImGuiTableFlags _flags)
+{
+    const float thumbnailSize = 200.0f;
+    const float padding = 0.0f;
 
+    if (ImGui::BeginTable("ImageTable", _columnCount))
+    {
+        for (int i = 0; i < _srvArraySize; ++i)
+        {
+            ImGui::TableNextColumn();
 
+            // 画像
+            ImGui::Image(
+                _textures[i].pSrv,
+                ImVec2(thumbnailSize, thumbnailSize)
+            );
+
+            // 名前
+            ImGui::TextWrapped("%s", _textures[i].label.c_str());
+        }
+
+        ImGui::EndTable();
+    }
+}

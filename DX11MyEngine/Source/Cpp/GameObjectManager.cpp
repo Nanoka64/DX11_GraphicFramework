@@ -226,7 +226,7 @@ void GameObjectManager::ObjectMainRenderPass(RendererEngine& renderer)
 
     if (isDrawComponent)
     {
-        Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"コンポーネント確認"));
+        Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"コンポーネント確認"), 0);
         Master::m_pDebugger->DG_BulletText(Tool::U8ToChar(u8"こちらでは追加されている\nすべてのコンポーネントを確認できます。"));
         Master::m_pDebugger->DG_Separator();
         Master::m_pDebugger->DG_BulletText("Count : %d", m_3DOpaqueList.size());

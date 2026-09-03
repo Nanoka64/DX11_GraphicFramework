@@ -206,31 +206,25 @@ void RenderPipeline::DebugRenderTargetImGui()
 
     // レンダーターゲットデバッグ
     {
-        Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"レンダーターゲット"));
+        Master::m_pDebugger->BeginDebugWindow(U8ToChar(u8"レンダーターゲット"),0);
 
         VEC2 rtSize = VEC2(400, 200);
 
         if (Master::m_pDebugger->DG_TreeNode("G-Buffer"))
         {
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"アルベド"));
-            Master::m_pDebugger->DG_Image(m_pAlbedo_RT->get_SRV(), rtSize);
-            Master::m_pDebugger->DG_Separator();
 
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"ノーマル"));
-            Master::m_pDebugger->DG_Image(m_pNormal_RT->get_SRV(),rtSize);
-            Master::m_pDebugger->DG_Separator();
-
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"スペキュラ"));
-            Master::m_pDebugger->DG_Image(m_pSpecular_RT->get_SRV(), rtSize);
-            Master::m_pDebugger->DG_Separator();
-
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"エミッシブ"));
-            Master::m_pDebugger->DG_Image(m_pEmissive_RT->get_SRV(), rtSize);
-            Master::m_pDebugger->DG_Separator();
-
-            Master::m_pDebugger->DG_BulletText(U8ToChar(u8"深度"));
-            Master::m_pDebugger->DG_Image(m_pDepth_RT->get_DepthSRV_ComPtr().Get(), rtSize);
-            Master::m_pDebugger->DG_Separator();
+            Debugger::TableTextures textures[] = 
+            {
+                U8ToChar(u8"アルベド"),m_pAlbedo_RT->get_SRV(),
+                U8ToChar(u8"ノーマル"),m_pNormal_RT->get_SRV(),
+                U8ToChar(u8"スペキュラ"),m_pSpecular_RT->get_SRV(),
+                U8ToChar(u8"エミッシブ"),m_pEmissive_RT->get_SRV(),
+                U8ToChar(u8"深度"),m_pDepth_RT->get_DepthSRV_ComPtr().Get(),
+            };
+            int arraySize = sizeof(textures) / sizeof(Debugger::TableTextures);
+            
+			// G-Bufferのテーブル表示
+            Master::m_pDebugger->DG_BeginTable("G-Buffer", 3, textures, arraySize, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg);
 
             Master::m_pDebugger->DG_TreePop();// G-Buffer終了
         }
@@ -272,7 +266,7 @@ void RenderPipeline::DebugRenderTargetImGui()
 
             Master::m_pDebugger->DG_BulletText(U8ToChar(u8"フォグカラー"));
             Master::m_pDebugger->DG_SameLine();
-            if (Master::m_pDebugger->DG_ColorPicker3("##FogColor", &fogColor))
+            if (Master::m_pDebugger->DG_ColorEdit3("##FogColor", &fogColor))
             {
                 m_PostEffectParam.Fog.Color = fogColor;
             }

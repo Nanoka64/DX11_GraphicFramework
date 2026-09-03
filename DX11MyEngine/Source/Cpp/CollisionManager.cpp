@@ -309,6 +309,13 @@ void CollisionManager::CollisionProcess()
         }
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    //						デバッグ用
+    //              ※ デバッグモードが有効の際に表示
+    //////////////////////////////////////////////////////////////////////////////////////////
+    if (Master::m_pDataManager->get_IsDebugMode() == false)return;
+
     const auto collisionProcessEnd = std::chrono::steady_clock::now();
     const double collisionProcessTimeMs = std::chrono::duration<double, std::milli>(
         collisionProcessEnd - collisionProcessStart).count();

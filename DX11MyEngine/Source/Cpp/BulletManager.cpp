@@ -315,7 +315,7 @@ void BulletManager::Update(RendererEngine &renderer)
     //////////////////////////////////////////////////////////////////////////////////////////
     if (Master::m_pDataManager->get_IsDebugMode() == false)return;
 
-    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾プールの確認"));
+    Master::m_pDebugger->BeginDebugWindow(Tool::U8ToChar(u8"弾プールの確認"), 0);
 
     for (int i = 0; i < static_cast<int>(BULLET_VISUAL_ARCHETYPE::NUM); i++)
     {

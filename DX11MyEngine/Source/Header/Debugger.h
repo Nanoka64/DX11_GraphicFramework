@@ -74,6 +74,14 @@ public:
 	void DG_Dummy(const VECTOR2::VEC2 &_size);	// サイズ分、隙間を開けることができる
 	bool DG_Selectable(const std::string &_label, bool _selected, ImGuiSelectableFlags _flag, VECTOR2::VEC2 _size);
 	
+	/// <summary>
+	/// テクスチャの配列を持つテーブルを作るための構造体
+	/// </summary>
+	struct TableTextures{
+		std::string label;
+		ID3D11ShaderResourceView* pSrv;
+	};
+	void DG_BeginTable(const std::string& _label, int _columnCount, TableTextures _textures[], int _srvArraySize, ImGuiTableFlags _flags = ImGuiTableFlags_None);
 
 	// 後で作る
 	bool DG_Combo()
