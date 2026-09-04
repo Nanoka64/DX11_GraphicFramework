@@ -7,8 +7,8 @@
 
 // =======================================================================================
 //      * Debugger Class *
-//        - ƒVƒ“ƒOƒ‹ƒgƒ“ - 
-//    Imguig—p ƒfƒoƒbƒO‘S”Ê
+//        - ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ - 
+//    Imguiä½¿ç”¨ ãƒ‡ãƒãƒƒã‚°å…¨èˆ¬
 // https://qiita.com/ousttrue/items/ae7c8d5715adffc5b1fa
 // =======================================================================================
 class Debugger
@@ -19,49 +19,49 @@ public:
 	Debugger();
 	~Debugger();
 
-	// ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Æ‘ã“ü‰‰Zq‚ğíœ
+	// ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã¨ä»£å…¥æ¼”ç®—å­ã‚’å‰Šé™¤
 	Debugger(const Debugger&) = delete;;
 	Debugger& operator = (const Debugger&) = delete;
 
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	bool Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer);
 
-	// •`‰æŠJn‘O‚Ìˆ—
-	void BeginFrame(float winW,float winH);
+	// æç”»é–‹å§‹å‰ã®å‡¦ç†
+	void BeginFrame(float winW, float winH, bool isEditorMode);
 
-	// •`‰æI—¹Œã‚Ìˆ—
+	// æç”»çµ‚äº†å¾Œã®å‡¦ç†
 	void EndFrame();
 
 																		
-																		// No!ƒTƒCƒY!!				// No!ƒ€[ƒu!!
+																		// No!ç¹§ï½µç¹§ï½¤ç¹§ï½º!!				// No!ç¹ï£°ç¹ï½¼ç¹ãƒ»!
 	bool BeginDebugWindow(const std::string& _label, ImGuiWindowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
 	void EndDebugWindow();											   
 
-	void DG_Text(std::string tex);																			// ƒeƒLƒXƒg•\¦
-	void DG_SameLine(float offsetStart_X = 0.0f);															// ‚±‚ÌŠÖ”‚Ìã‚Æ‰º‚ÌƒeƒLƒXƒg‚ğ‰¡‚É‚Â‚È‚°‚é
+	void DG_Text(std::string tex);																			// ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤º
+	void DG_SameLine(float offsetStart_X = 0.0f);															// ã“ã®é–¢æ•°ã®ä¸Šã¨ä¸‹ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æ¨ªã«ã¤ãªã’ã‚‹
 	
-	bool DG_ColorPicker3(const std::string &label, float col[]);													// ƒJƒ‰[ƒsƒbƒJ[3
-	bool DG_ColorPicker3(const std::string &label, VECTOR3::VEC3* col3V);											// ƒJƒ‰[ƒsƒbƒJ[3
-	bool DG_ColorPicker4(const std::string &label, float col[]);													// ƒJƒ‰[ƒsƒbƒJ[4
-	bool DG_ColorPicker4(const std::string &label, VECTOR4::VEC4* col4V);											// ƒJƒ‰[ƒsƒbƒJ[4
-	bool DG_ColorEdit3(const std::string &label, float col[]);														// ƒJƒ‰[ƒGƒfƒBƒbƒg3
-	bool DG_ColorEdit3(const std::string &label, VECTOR3::VEC3* col3V);											// ƒJƒ‰[ƒGƒfƒBƒbƒg3
-	bool DG_ColorEdit4(const std::string &label, float col[]);														// ƒJƒ‰[ƒGƒfƒBƒbƒg4
-	bool DG_ColorEdit4(const std::string &label, VECTOR4::VEC4* col4V);											// ƒJƒ‰[ƒGƒfƒBƒbƒg4
+	bool DG_ColorPicker3(const std::string &label, float col[]);													// ã‚«ãƒ©ãƒ¼ãƒ”ãƒƒã‚«ãƒ¼3
+	bool DG_ColorPicker3(const std::string &label, VECTOR3::VEC3* col3V);											// ã‚«ãƒ©ãƒ¼ãƒ”ãƒƒã‚«ãƒ¼3
+	bool DG_ColorPicker4(const std::string &label, float col[]);													// ã‚«ãƒ©ãƒ¼ãƒ”ãƒƒã‚«ãƒ¼4
+	bool DG_ColorPicker4(const std::string &label, VECTOR4::VEC4* col4V);											// ã‚«ãƒ©ãƒ¼ãƒ”ãƒƒã‚«ãƒ¼4
+	bool DG_ColorEdit3(const std::string &label, float col[]);														// ã‚«ãƒ©ãƒ¼ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ3
+	bool DG_ColorEdit3(const std::string &label, VECTOR3::VEC3* col3V);											// ã‚«ãƒ©ãƒ¼ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ3
+	bool DG_ColorEdit4(const std::string &label, float col[]);														// ã‚«ãƒ©ãƒ¼ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ4
+	bool DG_ColorEdit4(const std::string &label, VECTOR4::VEC4* col4V);											// ã‚«ãƒ©ãƒ¼ã‚¨ãƒ‡ã‚£ãƒƒãƒˆ4
 
 	bool DG_DragInt(const std::string &label, int valNum, int* val, float slideSpeed, int _min, int _max);			// int
 	bool DG_DragFloat(const std::string &label, int valNum, float* val, float slideSpeed, float _min, float _max);	// float
 	bool DG_DragVec2(const std::string &label, VECTOR2::VEC2* val, float slideSpeed, float _min, float _max);		// VEC3
 	bool DG_DragVec3(const std::string &label, VECTOR3::VEC3* val, float slideSpeed, float _min, float _max);		// VEC3
-	bool DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max);							// ƒXƒ‰ƒCƒ_[ -int-
-	bool DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max);					// ƒXƒ‰ƒCƒ_[ -float-
-	bool DG_SliderFloat(const std::string &label, VECTOR2::VEC2* val, float _min, float _max);						// ƒXƒ‰ƒCƒ_[ -VEC3-
-	bool DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max);						// ƒXƒ‰ƒCƒ_[ -VEC3-
-	bool DG_Button(const std::string &label, VECTOR2::VEC2 size = { 0.0f,0.0f });									// ƒ{ƒ^ƒ“
-	bool DG_RadioButton(const std::string &label, bool active);													// ƒ‰ƒWƒIƒ{ƒ^ƒ“
-	bool DG_CheckBox(const std::string &label, bool *active);														// ƒ`ƒFƒbƒNƒ{ƒbƒNƒX
+	bool DG_SliderInt(const std::string &label, int valNum, int* val, int _min, int _max);							// ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ -int-
+	bool DG_SliderFloat(const std::string &label, int valNum, float* val, float _min, float _max);					// ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ -float-
+	bool DG_SliderFloat(const std::string &label, VECTOR2::VEC2* val, float _min, float _max);						// ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ -VEC3-
+	bool DG_SliderFloat(const std::string &label, VECTOR3::VEC3* val, float _min, float _max);						// ã‚¹ãƒ©ã‚¤ãƒ€ãƒ¼ -VEC3-
+	bool DG_Button(const std::string &label, VECTOR2::VEC2 size = { 0.0f,0.0f });									// ãƒœã‚¿ãƒ³
+	bool DG_RadioButton(const std::string &label, bool active);													// ãƒ©ã‚¸ã‚ªãƒœã‚¿ãƒ³
+	bool DG_CheckBox(const std::string &label, bool *active);														// ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 
 	void DG_Image(ID3D11ShaderResourceView* pSrv, VECTOR2::VEC2 size = { 200.0f,200.0f }, VECTOR2::VEC2 uv0 = { 0.0f,0.0f }, VECTOR2::VEC2 uv1 = { 1.0f,1.0f });
 	void DG_Bullet();
@@ -71,11 +71,11 @@ public:
 	bool DG_TreeNode(const std::string& label);
 	void DG_TreePop();
 
-	void DG_Dummy(const VECTOR2::VEC2 &_size);	// ƒTƒCƒY•ªAŒ„ŠÔ‚ğŠJ‚¯‚é‚±‚Æ‚ª‚Å‚«‚é
+	void DG_Dummy(const VECTOR2::VEC2 &_size);	// ã‚µã‚¤ã‚ºåˆ†ã€éš™é–“ã‚’é–‹ã‘ã‚‹ã“ã¨ãŒã§ãã‚‹
 	bool DG_Selectable(const std::string &_label, bool _selected, ImGuiSelectableFlags _flag, VECTOR2::VEC2 _size);
 	
 	/// <summary>
-	/// ƒeƒNƒXƒ`ƒƒ‚Ì”z—ñ‚ğ‚Âƒe[ƒuƒ‹‚ğì‚é‚½‚ß‚Ì\‘¢‘Ì
+	/// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®é…åˆ—ã‚’æŒã¤ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ä½œã‚‹ãŸã‚ã®æ§‹é€ ä½“
 	/// </summary>
 	struct TableTextures{
 		std::string label;
@@ -83,23 +83,23 @@ public:
 	};
 	void DG_BeginTable(const std::string& _label, int _columnCount, TableTextures _textures[], int _srvArraySize, ImGuiTableFlags _flags = ImGuiTableFlags_None);
 
-	// Œã‚Åì‚é
+	// å¾Œã§ä½œã‚‹
 	bool DG_Combo()
 	{
-		// ‘I‘ğˆ‚ªo‚Ä‚«‚Ä‘I‚×‚é‚İ‚½‚¢‚È‚â‚Â
+		// é¸æŠè‚¢ãŒå‡ºã¦ãã¦é¸ã¹ã‚‹ã¿ãŸã„ãªã‚„ã¤
 		//ImGui::Combo("combo", &item, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
 	}
 
-	/* ƒeƒ“ƒvƒŒ[ƒg */
+	/* ãƒ†ãƒ³ãƒ—ãƒ¬ãƒ¼ãƒˆ */
 	
-	// ƒeƒLƒXƒg•\¦
+	// ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤º
 	template<typename ...Args>
 	void DG_TextValue(const std::string& tex, Args&& ...args)
 	{
 		ImGui::Text(tex.c_str(), std::forward<Args>(args)...);
 	}	
 	
-	// ƒoƒŒƒbƒgƒeƒLƒXƒg•\¦
+	// ãƒãƒ¬ãƒƒãƒˆãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤º
 	template<typename ...Args>
 	void DG_BulletText(const std::string& tex, Args&& ...args)
 	{

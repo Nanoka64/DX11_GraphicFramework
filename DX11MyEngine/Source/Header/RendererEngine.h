@@ -36,7 +36,8 @@ private:
     ID3D11RasterizerState                   * m_pRasterState_FrontCull;          // 表カリング
     ID3D11RasterizerState                   * m_pRasterState_BackCull;           // 裏カリング
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pFrameBufferSRV; // フレームバッファのSRV
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pFrameBufferTexture;      // エディタ用ゲーム画面コピー
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pFrameBufferSRV; // エディタ用ゲーム画面SRV
 
     DirectX::XMMATRIX m_Proj;
     DirectX::XMMATRIX m_View;
@@ -68,6 +69,8 @@ public:
     bool Init(HWND hWnd);
 	void BeginRender();
     void EndRender();
+	// 描画済みバックバッファをGameパネル用テクスチャへ保存し、ImGuiの描画先を準備する
+	void CaptureFrameBufferForEditor();
 	void Term();
     void Swap();    // 裏表切り替え
     bool SetupProjectionTransform(float _w, float _h, float _fovDeg, float _near, float _far); //透視投影変換計算

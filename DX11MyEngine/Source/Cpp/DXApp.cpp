@@ -431,7 +431,10 @@ int DXApp::MainLoop()
 
                 Master::m_pTimeManager->Update();
 
-                Master::m_pDebugger->BeginFrame(win_width, win_height);
+                Master::m_pDebugger->BeginFrame(
+                    win_width,
+                    win_height,
+                    Master::m_pDataManager->get_IsDebugMode());
 
                 // MainLoop先頭で求めたフレーム開始間隔を秒へ変換してFPS計測に渡す。
                 // TimeManagerのデルタタイムはタイムスケールやヒットストップの影響を受けるため、
@@ -440,8 +443,16 @@ int DXApp::MainLoop()
 
                 float deltatime = Master::m_pTimeManager->get_DeltaTime();
 
-				// デバッグキー：F1でカメラコントロールモードのオンオフ切り替え
+				// デバッグキー：F1でデバッグモードの切り替え
                 if (GetInputDown(GAME_CONFIG::F1))
+                {
+                    m_IsEditMode ? m_IsEditMode = false :
+                        m_IsEditMode = true;
+
+                    Master::m_pDataManager->set_IdDebugMode(m_IsEditMode);
+                }
+				// デバッグキー：F1でカメラコントロールモードのオンオフ切り替え
+                if (GetInputDown(GAME_CONFIG::F2))
                 {
 					bool isCameraControlMode = Master::m_pDataManager->get_IsCameraControl();
 
@@ -449,7 +460,7 @@ int DXApp::MainLoop()
 						Master::m_pDataManager->set_IsCameraControl(true);
                 }
 				// デバッグキー：F2で武器使用のオンオフ切り替え
-                if (GetInputDown(GAME_CONFIG::F2))
+                if (GetInputDown(GAME_CONFIG::F3))
                 {
 					bool isUseWeapon = Master::m_pDataManager->get_IsUseWeapon();
 
@@ -491,6 +502,13 @@ int DXApp::MainLoop()
 
                 // DirectWrite描画終了
                 Master::m_pDirectWriteManager->EndDraw();
+
+                // DirectWriteまで含む完成フレームを、ImGui描画前にGameウィンドウ用へ保存する。
+                // 順番を逆にすると、エディタ自身までキャプチャされて再帰的な表示になる。
+                if (Master::m_pDataManager->get_IsDebugMode())
+                {
+                    m_pRenderer->CaptureFrameBufferForEditor();
+                }
 
                 // ImGUI描画終了
                 Master::m_pDebugger->EndFrame();

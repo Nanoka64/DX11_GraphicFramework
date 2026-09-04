@@ -177,6 +177,48 @@ void RendererEngine::EndRender()
 }
 
 //*---------------------------------------------------------------------------------------
+//* 完成したゲーム画面をエディタ表示用に保存し、ImGui描画用の画面を準備する
+//*----------------------------------------------------------------------------------------
+void RendererEngine::CaptureFrameBufferForEditor()
+{
+    // 初期化に失敗してコピー先がない場合は、通常のバックバッファ表示を壊さず終了する。
+    if (!m_pFrameBufferTexture || !m_pSwapChain)
+    {
+        return;
+    }
+
+    ID3D11Texture2D* pBackBuffer = nullptr;
+    const HRESULT hr = m_pSwapChain->GetBuffer(
+        0,
+        __uuidof(ID3D11Texture2D),
+        reinterpret_cast<void**>(&pBackBuffer));
+    if (FAILED(hr))
+    {
+        return;
+    }
+
+    // CopyResourceのコピー元をRTVへバインドしたままにしないよう、一度出力先から外す。
+    // この時点のバックバッファには3D、ゲームUI、DirectWrite文字まで描画済みで、
+    // まだImGuiは描画されていないため、エディタ自身を含まないゲーム画面だけを保存できる。
+    ReleaseRenderTargetSetNull();
+    m_pImmediateContext->CopyResource(m_pFrameBufferTexture.Get(), pBackBuffer);
+    pBackBuffer->Release();
+
+    // コピー後は再びスワップチェインのバックバッファをImGuiの描画先に戻す。
+    set_ViewPort(
+        0.0f,
+        0.0f,
+        static_cast<float>(m_ScreenWidth),
+        static_cast<float>(m_ScreenHeight));
+
+    ChangeRenderTargetFrameBuffer();
+
+    // 元の全画面ゲーム画像を消してからエディタを描画し、パネルの隙間への映り込みを防ぐ。
+    const FLOAT editorBackground[] = { 0.075f, 0.075f, 0.085f, 1.0f };
+    m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, editorBackground);
+}
+
+//*---------------------------------------------------------------------------------------
 //* @:RendererEngine Class 
 //*【?】終了
 //* 引数：なし
@@ -359,8 +401,47 @@ HRESULT RendererEngine::InitDX11_RenderTargetView()
         &rtvDesc,                   // D3D11_RENDER_TARGET_VIEW_DESC ( NULLなら自動設定 )
         &m_pRenderTargetView        // 生成したレンダーターゲットの出力先
     );
+    if (FAILED(hr))
+    {
+        pBackBuffer->Release();
+        return hr;
+    }
+
+    // 完成したバックバッファをGameウィンドウで表示するため、
+    // シェーダーから参照できる同サイズのコピー先を用意する。
+    // CopyResourceには同じフォーマット系列が必要なので、BGRA8のTYPELESSを使用する。
+    D3D11_TEXTURE2D_DESC gameViewTextureDesc{};
+    pBackBuffer->GetDesc(&gameViewTextureDesc);
+    gameViewTextureDesc.Format = DXGI_FORMAT_B8G8R8A8_TYPELESS;
+    gameViewTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    gameViewTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    gameViewTextureDesc.CPUAccessFlags = 0;
+    gameViewTextureDesc.MiscFlags = 0;
+
+    hr = m_pd3dDevice->CreateTexture2D(
+        &gameViewTextureDesc,
+        nullptr,
+        m_pFrameBufferTexture.GetAddressOf());
+    if (FAILED(hr))
+    {
+        pBackBuffer->Release();
+        return hr;
+    }
+
+    // バックバッファはSRGBのRTVを通して書き込まれている。
+    // 読み出し側もSRGBビューにすることで、ImGuiで再描画した際の二重ガンマ補正を防ぐ。
+    D3D11_SHADER_RESOURCE_VIEW_DESC gameViewSrvDesc{};
+    gameViewSrvDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+    gameViewSrvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    gameViewSrvDesc.Texture2D.MostDetailedMip = 0;
+    gameViewSrvDesc.Texture2D.MipLevels = 1;
+
+    hr = m_pd3dDevice->CreateShaderResourceView(
+        m_pFrameBufferTexture.Get(),
+        &gameViewSrvDesc,
+        m_pFrameBufferSRV.GetAddressOf());
     pBackBuffer->Release();
-    if (FAILED(hr))return hr;
+    if (FAILED(hr)) return hr;
 
 
     //
@@ -620,6 +701,8 @@ HRESULT RendererEngine::InitDX11_Sampler()
 void RendererEngine::CleanupDX11()
 {
     if (m_pImmediateContext) m_pImmediateContext->ClearState();
+    m_pFrameBufferSRV.Reset();
+    m_pFrameBufferTexture.Reset();
     SAFE_RELEASE(m_pImmediateContext);
     SAFE_RELEASE(m_pRasterState_NoneCull);
     SAFE_RELEASE(m_pRasterState_FrontCull);

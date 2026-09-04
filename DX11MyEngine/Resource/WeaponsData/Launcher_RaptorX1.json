@@ -46,7 +46,7 @@
       "hitEffectTag" : "BulletHit_Flame",
       "explosionRadius" : 14.0,
       "explosionEffectTag" : "Explosion_01",
-      "explosionEffectAliveTime" : 0.5,
+      "explosionEffectAliveTime" : 1.0,
       "isSmoke" : true,
 
       "expLightColor" : [0.8, 0.4, 0.1],

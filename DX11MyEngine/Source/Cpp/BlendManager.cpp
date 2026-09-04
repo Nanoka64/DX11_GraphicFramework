@@ -91,11 +91,16 @@ std::unique_ptr<IDX_BlendState>  BlendManager::BlendStateFactory(BLEND_MODE type
 	// 以下はデフォルトとして指定しているが、種別ごとにswichの中で書き換える
 	info.alphaToCoverageEnable						= FALSE;
 	info.independentBlendEnable						= FALSE;
-	info.renderTargets[0].blendOpAlpha				= D3D11_BLEND_OP_ADD;
-	info.renderTargets[0].destBlendAlpha			= D3D11_BLEND_ZERO;
-	info.renderTargets[0].srcBlendAlpha				= D3D11_BLEND_ONE;
-	info.renderTargets[0].renderTargetWriteMask		= D3D11_COLOR_WRITE_ENABLE_ALL;
+	info.renderTargets[0].blendOpAlpha = D3D11_BLEND_OP_ADD;
 
+	// 色と同じく、アルファも通常の source-over 合成にする。
+	// 以前は描画元のアルファで出力先を上書きしていたため、画面表示だけなら問題が見えなくても、
+	// デバッグエディタで完成済みバックバッファをテクスチャとして再描画すると二重に透過されていた。
+	// outAlpha = srcAlpha + destAlpha * (1 - srcAlpha) とすることで、背景まで描画済みの画面は
+	// 常に不透明なまま保たれ、半透明UIの色だけが一度正しく合成される。
+	info.renderTargets[0].destBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	info.renderTargets[0].srcBlendAlpha = D3D11_BLEND_ONE;
+	info.renderTargets[0].renderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	switch (type)
 	{

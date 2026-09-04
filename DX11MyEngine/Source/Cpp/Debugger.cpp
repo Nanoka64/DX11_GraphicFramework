@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Debugger.h"
 #include "RendererEngine.h"
+#include "imgui_internal.h"
 
 
 //**************************************************************************************
@@ -69,7 +70,7 @@ bool Debugger::Init(HWND hWnd, std::shared_ptr<class RendererEngine> renderer)
 //**************************************************************************************
 //      * Debugger Class - 描画前に呼ぶやつ - *
 //=======================================================================================
-void Debugger::BeginFrame(float winW, float winH)
+void Debugger::BeginFrame(float winW, float winH, bool isEditorMode)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2(winW, winH);
@@ -78,10 +79,63 @@ void Debugger::BeginFrame(float winW, float winH)
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    //ImGui::DockSpaceOverViewport(); 
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+    // ウィンドウ名や表示順に依存しない固定IDを使う。
+    // IDを変えない限り、ユーザーが調整した配置をimgui.iniから復元できる。
+    const ImGuiID dockspaceId = ImHashStr("MainEditorDockSpace");
 
+    if (!isEditorMode)
+    {
+        // 通常プレイ中はドックを描画せず、ゲーム画面を従来どおり全画面表示する。
+        // KeepAliveOnlyで内部ノードだけ維持し、編集モードへ戻したときに配置が崩れるのを防ぐ。
+        if (ImGui::DockBuilderGetNode(dockspaceId) != nullptr)
+        {
+            ImGui::DockSpaceOverViewport(
+                dockspaceId,
+                viewport,
+                ImGuiDockNodeFlags_KeepAliveOnly | 
+                ImGuiDockNodeFlags_PassthruCentralNode);
+        }
+        return;
+    }
+
+    // 保存済みレイアウトがない初回だけUnity風の初期配置を構築する。
+    // 毎フレーム再構築すると、ユーザーによるドッキング変更がリセットされてしまう。
+    if (ImGui::DockBuilderGetNode(dockspaceId) == nullptr)
+    {
+        ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+        ImGui::DockBuilderSetNodePos(dockspaceId, viewport->WorkPos);
+        ImGui::DockBuilderSetNodeSize(dockspaceId, viewport->WorkSize);
+
+        ImGuiID centerDockId = dockspaceId;
+        ImGuiID hierarchyDockId = 0;
+        ImGuiID inspectorDockId = 0;
+
+        // まず左側にHierarchy領域を20%、残った領域の右側にInspector領域を24%確保する。
+        // 分割後に残るcenterDockIdが、もっとも広い中央のGame領域になる。
+        ImGui::DockBuilderSplitNode(
+            centerDockId,
+            ImGuiDir_Left,
+            0.20f,
+            &hierarchyDockId,
+            &centerDockId);
+        ImGui::DockBuilderSplitNode(
+            centerDockId,
+            ImGuiDir_Right,
+            0.24f,
+            &inspectorDockId,
+            &centerDockId);
+
+        // 日本語の表示名が変わっても配置を維持できるよう、各パネルは###以降の固定IDで紐付ける。
+        ImGui::DockBuilderDockWindow("###Hierarchy", hierarchyDockId);
+        ImGui::DockBuilderDockWindow("Game", centerDockId);
+        ImGui::DockBuilderDockWindow("###Inspector", inspectorDockId);
+        ImGui::DockBuilderFinish(dockspaceId);
+    }
+
+    // メインビューポート全体をドッキング可能領域として有効化する。
+    ImGui::DockSpaceOverViewport(dockspaceId, viewport);
 }
 
 

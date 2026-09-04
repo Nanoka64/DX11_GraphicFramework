@@ -273,7 +273,6 @@
     <ClInclude Include="Source\Header\EditWindowBase.h" />
     <ClInclude Include="Source\Header\EffectManager.h" />
     <ClInclude Include="Source\Header\EnemyStateFactory.h" />
-    <ClInclude Include="Source\Header\EventCondition.h" />
     <ClInclude Include="Source\Header\Frustum.h" />
     <ClInclude Include="Source\Header\GameScene_StateHeader.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
@@ -482,8 +481,6 @@
     <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />
     <ClCompile Include="Source\Cpp\EffectManager.cpp" />
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp" />
-    <ClCompile Include="Source\Cpp\EventAction.cpp" />
-    <ClCompile Include="Source\Cpp\EventCondition.cpp" />
     <ClCompile Include="Source\Cpp\Frustum.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
     <ClCompile Include="Source\Cpp\Grid3D.cpp" />
@@ -683,7 +680,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Header\EventAction.h" />
     <ClCompile Include="Source\Lib\Imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
