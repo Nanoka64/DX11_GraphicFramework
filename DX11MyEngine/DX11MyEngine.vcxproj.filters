@@ -298,6 +298,9 @@
     <Filter Include="ソース ファイル\Engine\BaseComponent\Renderer\UtilityMesh">
       <UniqueIdentifier>{56b764bb-d086-4f11-a45c-d49b2261655d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Event">
+      <UniqueIdentifier>{eb065296-aae5-4043-9f71-8cbf83424555}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -819,6 +822,15 @@
     <ClCompile Include="Source\Cpp\EffectManager.cpp">
       <Filter>ソース ファイル\Singleton\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\EventCondition.cpp">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\EventAction.cpp">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Header\EventAction.h">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1318,6 +1330,9 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Master.h">
       <Filter>ソース ファイル\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EventCondition.h">
+      <Filter>ソース ファイル\Game\Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
