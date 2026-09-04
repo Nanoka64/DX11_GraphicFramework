@@ -83,7 +83,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\DX11MyEngine\Source\Lib\nlohmann</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\DX11MyEngine\Source\Lib\nlohmann</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\DX11MyEngine\Source\Lib\nlohmann</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);C:\Users\edama\Documents\GitHub\DX11_EDF_3DGame\DX11_3D_Game_Test\DX11MyEngine\Source\Lib\nlohmann</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -166,7 +166,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -273,6 +273,7 @@
     <ClInclude Include="Source\Header\EditWindowBase.h" />
     <ClInclude Include="Source\Header\EffectManager.h" />
     <ClInclude Include="Source\Header\EnemyStateFactory.h" />
+    <ClInclude Include="Source\Header\EventCondition.h" />
     <ClInclude Include="Source\Header\Frustum.h" />
     <ClInclude Include="Source\Header\GameScene_StateHeader.h" />
     <ClInclude Include="Source\Header\GaussianBlur.h" />
@@ -288,7 +289,10 @@
     <ClInclude Include="Source\Header\ItemManager.h" />
     <ClInclude Include="Source\Header\KeyState.h" />
     <ClInclude Include="Source\Header\LightManager.h" />
+    <ClInclude Include="Source\Header\MissionAction.h" />
+    <ClInclude Include="Source\Header\MissionEvent.h" />
     <ClInclude Include="Source\Header\RenderQueue.h" />
+    <ClInclude Include="Source\Header\ScriptManager.h" />
     <ClInclude Include="Source\Header\TransientPointLightPool.h" />
     <ClInclude Include="Source\Header\LinearMove_Behaviour.h" />
     <ClInclude Include="Source\Header\Master.h" />
@@ -481,6 +485,7 @@
     <ClCompile Include="Source\Cpp\EditWindowBase.cpp" />
     <ClCompile Include="Source\Cpp\EffectManager.cpp" />
     <ClCompile Include="Source\Cpp\EnemyStateFactory.cpp" />
+    <ClCompile Include="Source\Cpp\EventCondition.cpp" />
     <ClCompile Include="Source\Cpp\Frustum.cpp" />
     <ClCompile Include="Source\Cpp\GaussianBlur.cpp" />
     <ClCompile Include="Source\Cpp\Grid3D.cpp" />
@@ -495,7 +500,10 @@
     <ClCompile Include="Source\Cpp\InspectorWindow.cpp" />
     <ClCompile Include="Source\Cpp\ItemManager.cpp" />
     <ClCompile Include="Source\Cpp\LightManager.cpp" />
+    <ClCompile Include="Source\Cpp\MissionAction.cpp" />
+    <ClCompile Include="Source\Cpp\MissionEvent.cpp" />
     <ClCompile Include="Source\Cpp\RenderQueue.cpp" />
+    <ClCompile Include="Source\Cpp\ScriptManager.cpp" />
     <ClCompile Include="Source\Cpp\TransientPointLightPool.cpp" />
     <ClCompile Include="Source\Cpp\LinearMove_Behaviour.cpp" />
     <ClCompile Include="Source\Cpp\Material.cpp" />
@@ -1193,6 +1201,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\Texture\Other\IA_Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\angelscript\sdk\angelscript\projects\msvc2022\angelscript.vcxproj">
+      <Project>{39e6af97-6ba3-4a72-8c61-bcebf214ebfd}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

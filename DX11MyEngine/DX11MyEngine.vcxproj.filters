@@ -822,6 +822,18 @@
     <ClCompile Include="Source\Cpp\EffectManager.cpp">
       <Filter>ソース ファイル\Singleton\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cpp\EventCondition.cpp">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\MissionAction.cpp">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\MissionEvent.cpp">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpp\ScriptManager.cpp">
+      <Filter>ソース ファイル\Singleton\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1321,6 +1333,18 @@
     </ClInclude>
     <ClInclude Include="Source\Header\Master.h">
       <Filter>ソース ファイル\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\EventCondition.h">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\MissionAction.h">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\MissionEvent.h">
+      <Filter>ソース ファイル\Game\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Header\ScriptManager.h">
+      <Filter>ソース ファイル\Singleton\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

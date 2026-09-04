@@ -20,6 +20,7 @@
 #include "ItemManager.h"
 #include "TweenManager.h"
 #include "BuildingManager.h"
+#include "ScriptManager.h"
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -59,4 +60,5 @@ public:
 	static WeaponDataManager	* m_pWeaponDataManager;	// 武器データ管理
 	static ItemManager			* m_pItemManager;		// アイテム管理
 	static BuildingManager		* m_pBuildingManager;	// 建物管理
+	static ScriptManager		* m_pScriptManager;		// AngelScript管理
 };

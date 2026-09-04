@@ -388,6 +388,15 @@ namespace UtilityData
 	};
 
 	/// <summary>
+	/// 条件の分岐
+	/// </summary>
+	enum class ConditionOperator
+	{
+        AND = 0,
+        OR = 1
+    };
+
+	/// <summary>
 	/// エネミーの出現位置のタイプ
 	/// </summary>
 	enum class ENEMY_SPAWN_POS_TYPE

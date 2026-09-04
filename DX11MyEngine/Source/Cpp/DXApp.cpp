@@ -40,6 +40,7 @@ WeaponDataManager       *Master::m_pWeaponDataManager   = nullptr;   // 武器デー
 ItemManager             *Master::m_pItemManager         = nullptr;   // アイテム管理
 TweenManager            *Master::m_pTweenManager        = nullptr;   // Tween管理
 BuildingManager         *Master::m_pBuildingManager     = nullptr;   // 建物管理
+ScriptManager           *Master::m_pScriptManager       = nullptr;   // AngelScript管理
 
 //*---------------------------------------------------------------------------------------
 //* @:DXApp Class 
@@ -114,6 +115,8 @@ bool DXApp::Init(HINSTANCE hInstance,LPSTR lpCmdLine, int nCmdShow)
     Master::m_pItemManager          = new ItemManager();            // アイテム管理
     Master::m_pTweenManager         = new TweenManager();           // Tween管理
     Master::m_pBuildingManager      = new BuildingManager();        // 建物管理
+    Master::m_pScriptManager        = new ScriptManager();          // AngelScript管理
+
 
     // *************************************************************************************************
     /**  ウインドウの初期化 **/
