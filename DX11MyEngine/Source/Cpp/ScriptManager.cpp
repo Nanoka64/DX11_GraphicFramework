@@ -45,7 +45,9 @@ ScriptManager::~ScriptManager()
 //*----------------------------------------------------------------------------------------
 bool ScriptManager::Init()
 {
-    // エンジン生成
+    // =====================================
+    // AngelScriptエンジン作成
+    // =====================================
     m_pEngine = asCreateScriptEngine();
     assert(m_pEngine != nullptr);
 
@@ -68,6 +70,9 @@ bool ScriptManager::Init()
     );
     assert(r >= 0);
 
+    // =====================================
+    // スクリプト読み込み
+    // =====================================
     // スクリプトビルダーでモジュール作成
     CScriptBuilder builder;
     r = builder.StartNewModule(m_pEngine, "MyModule");
@@ -85,13 +90,17 @@ bool ScriptManager::Init()
     //    }
     //)";
 
-    r = builder.AddSectionFromFile("../../Resource/MISSION_AS/test.as");
+    r = builder.AddSectionFromFile("Resource/MISSION_AS/test.as");
     if (r < 0)
     {
         printf("Failed to add script section\n");
         return false;
     }
-
+    
+    
+    // =====================================
+    // スクリプトをコンパイル
+    // =====================================
     r = builder.BuildModule();
     if (r < 0)
     {
