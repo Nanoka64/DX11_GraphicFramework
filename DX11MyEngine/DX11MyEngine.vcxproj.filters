@@ -301,6 +301,18 @@
     <Filter Include="ソース ファイル\Game\Event">
       <UniqueIdentifier>{eb065296-aae5-4043-9f71-8cbf83424555}</UniqueIdentifier>
     </Filter>
+    <Filter Include="外部ライブラリ\AS_add_on">
+      <UniqueIdentifier>{9da6fdc3-bc94-4d69-8070-6909a7196c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="外部ライブラリ\AS_add_on\scriptbuilder">
+      <UniqueIdentifier>{d8768570-88f6-44a9-872c-773134029df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="外部ライブラリ\AS_add_on\scriptstdstring">
+      <UniqueIdentifier>{e7b070dd-4296-43e3-b8ae-04a74c62755b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\AS">
+      <UniqueIdentifier>{02a51b6d-0962-4cdd-9ab9-0b735ade235a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -834,6 +846,12 @@
     <ClCompile Include="Source\Cpp\ScriptManager.cpp">
       <Filter>ソース ファイル\Singleton\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.cpp">
+      <Filter>外部ライブラリ\AS_add_on\scriptbuilder</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.cpp">
+      <Filter>外部ライブラリ\AS_add_on\scriptstdstring</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1346,6 +1364,12 @@
     <ClInclude Include="Source\Header\ScriptManager.h">
       <Filter>ソース ファイル\Singleton\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.h">
+      <Filter>外部ライブラリ\AS_add_on\scriptbuilder</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.h">
+      <Filter>外部ライブラリ\AS_add_on\scriptstdstring</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Shader\ConstantBuffers_H.hlsli">
@@ -1379,6 +1403,9 @@
       <Filter>項目テンプレ</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="Resource\MISSION_AS\test.as">
+      <Filter>ソース ファイル\Game\AS</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shader\Skinned_VS.hlsl">

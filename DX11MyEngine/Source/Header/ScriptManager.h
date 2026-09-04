@@ -1,6 +1,5 @@
 #pragma once
 #include <angelscript.h>
-//#include <scriptbuilder/scriptbuilder.h>
 
 // ***************************************************************************************
 // ---------------------------------------------------------------------------------------
@@ -18,12 +17,14 @@ private:
     asIScriptContext* m_pContext = nullptr;
 
 public:
-    ScriptManager() = default;
-    ~ScriptManager() = default;
+    ScriptManager();
+    ~ScriptManager();
 
     bool Init();
     void Update(float _deltaTime);
     
+	void Term();
+
     bool LoadScript(const std::string& _filePath);
 
 private:

@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source/Lib/angelscript/add_on;../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Shader;Source/Lib/Imgui;Source/Lib/Imgui/backends;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -166,7 +166,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Source/Lib/angelscript/add_on;../angelscript/sdk/angelscript/include;Source/Header;Source/Lib/DirectXTex;Source/Lib/Imgui/backends;Source/Lib/Imgui;Source/Shader;%(AdditionalIncludeDirectories);Source/Lib/Effekseer/Include/Effekseer;Source/Lib/Effekseer/Include/EffekseerRendererDX11;Source\Lib\nlohmann;Source\Lib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -366,6 +366,8 @@
     <ClInclude Include="Source\Header\WeaponDataManager.h" />
     <ClInclude Include="Source\Header\WeaponStateFactory.h" />
     <ClInclude Include="Source\Header\Window.h" />
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.h" />
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.h" />
     <ClInclude Include="Source\Lib\DirectXTex\DirectXTex.h" />
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_win32.h" />
@@ -376,6 +378,7 @@
     <ClInclude Include="Source\Lib\Imgui\imstb_textedit.h" />
     <ClInclude Include="Source\Lib\Imgui\imstb_truetype.h" />
     <None Include="packages.config" />
+    <None Include="Resource\MISSION_AS\test.as" />
     <None Include="Source\VS_Template\Template_Component.h" />
   </ItemGroup>
   <ItemGroup>
@@ -685,6 +688,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Cpp\KeyState.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
