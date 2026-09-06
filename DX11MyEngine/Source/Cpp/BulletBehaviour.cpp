@@ -34,7 +34,7 @@ constexpr float EXP_SHAKE_LENGTH_SCALE_FACTOR               = 0.004f;   // ƒJƒƒ
 constexpr float EXP_SHAKEDURATION                           = 1.0f;     // ƒJƒƒ‰ƒVƒFƒCƒN‚Ì‘±ŠÔ
 constexpr float EXP_EFFECT_SIZE_FACTOR                      = 0.12f;    // ‚»‚Ì‚Ü‚Ü‚¾‚ÆAƒGƒtƒFƒNƒg‚ª‘å‚«‚·‚¬‚é‚Ì‚Å
 
-constexpr float EXP_LIGHT_RADIUS_FACTOR = 10.0f; // ”š”­”ÍˆÍ‚ÉŠ|‚¯‚éA•â³’l
+constexpr float EXP_LIGHT_RADIUS_FACTOR = 30.0f; // ”š”­”ÍˆÍ‚ÉŠ|‚¯‚éA•â³’l
 
 
 namespace BulletBehaviour

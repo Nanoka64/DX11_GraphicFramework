@@ -89,7 +89,7 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 {
 	if (pOwner->get_OwnerObj().expired())
 	{
-		MessageBoxA(NULL, "ターゲットがいません", "Ant_PT_MoveState", MB_OK);
+		MessageBoxA(NULL, "ターゲットがいません", "Octahedron_AT_DeadState", MB_OK);
 		assert(false);
 	}
 	else
@@ -150,6 +150,7 @@ int Octahedron_AT_DeadState::Update(class EnemyController* pOwner)
 
 			// 大爆発エフェクト
 			SpawnDeadEffect(pOwner, 40.0f);
+			SpawnDeadFragmentEffect(pOwner, 15.0f);
 		}
 	}
 
@@ -171,6 +172,26 @@ void Octahedron_AT_DeadState::SpawnDeadEffect(class EnemyController* pOwner, flo
 
 	// 死亡エフェクト
 	int handle = Master::m_pEffectManager->PlayEffect("Explosion_Acid_01");
+	float deadEffectScale = _effectSize;
+	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
+	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);
+}
+
+//*---------------------------------------------------------------------------------------
+//*【?】爆散破片エフェクトの生成
+//*
+//* [引数]
+//* *pOwner : 親となるエネミーコントローラー
+//* _effectSize : エフェクトのサイズ
+//* [返値]なし
+//*----------------------------------------------------------------------------------------
+void Octahedron_AT_DeadState::SpawnDeadFragmentEffect(class EnemyController* pOwner, float _effectSize)
+{
+	auto myTransform = pOwner->get_TransformComponent();
+	VEC3 pos = myTransform->get_VEC3ToPos();
+
+	// 死亡エフェクト
+	int handle = Master::m_pEffectManager->PlayEffect("Fragment_Octahedron");
 	float deadEffectScale = _effectSize;
 	Master::m_pEffectManager->SetScaleEffect(handle, deadEffectScale, deadEffectScale, deadEffectScale);
 	Master::m_pEffectManager->SetPositionEffect(handle, pos.x, pos.y, pos.z);

@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "ScriptManager.h"
-#include <angelscript/add_on/scriptbuilder/scriptbuilder.h>     // スクリプトビルダー
+#include <angelscript/add_on/scriptbuilder/scriptbuilder.h>     // ファイル読み込み用
 #include <angelscript/add_on/scriptstdstring/scriptstdstring.h> // string型を使えるようにする
+#include <angelscript/add_on/scriptarray/scriptarray.h>         // arrayを使えるようにする
+#include <angelscript/add_on/scriptmath/scriptmath.h>           // 数学関数を使えるようにする
+
+using namespace Tool;
 
 // メッセージコールバック
 void MessageCallback(const asSMessageInfo* msg, void* param)
@@ -59,8 +63,20 @@ bool ScriptManager::Init()
     );
     assert(r >= 0);
 
-    // string型を使えるようにする
-	RegisterStdString(m_pEngine);
+    // =====================================
+    // アドオンの登録
+    // =====================================
+    {
+        // arrayアドオンの登録
+        RegisterScriptArray(m_pEngine, true);
+
+        // string型を使えるようにする
+        RegisterStdString(m_pEngine);
+
+        // 数学
+        RegisterScriptMath(m_pEngine);
+    }
+
 
     // グローバル関数 print() を登録
     r = m_pEngine->RegisterGlobalFunction(
@@ -78,22 +94,14 @@ bool ScriptManager::Init()
     r = builder.StartNewModule(m_pEngine, "MyModule");
     if (r < 0)
     {
-        MessageBoxA(NULL, "モジュール作成失敗", "ScriptManager", MB_OK);
+        ErrorMessage(L"モジュール作成失敗", L"ScriptManager");
         return false;
     }
-
-    //// スクリプトをセクションとして追加
-    //const char* script = R"(
-    //    void as_main()
-    //    {
-    //        print("HelloWorld");
-    //    }
-    //)";
 
     r = builder.AddSectionFromFile("Resource/MISSION_AS/test.as");
     if (r < 0)
     {
-        printf("Failed to add script section\n");
+        ErrorMessage(L"ファイル読み込み失敗\n", L"ScriptManager");
         return false;
     }
     
@@ -104,7 +112,7 @@ bool ScriptManager::Init()
     r = builder.BuildModule();
     if (r < 0)
     {
-        printf("Failed to build module\n");
+        ErrorMessage(L"コンパイル\n", L"ScriptManager");
         return false;
     }
 
@@ -112,15 +120,15 @@ bool ScriptManager::Init()
     asIScriptModule* mod = m_pEngine->GetModule("MyModule");
     if (!mod)
     {
-        printf("Module not found\n");
+        ErrorMessage(L"モジュールが見つかりません\n", L"ScriptManager");
         return false;
     }
 
     // 関数取得
-	asIScriptFunction* func = mod->GetFunctionByDecl("void as_main()");
+	asIScriptFunction* func = mod->GetFunctionByDecl("void as_main(void)");
     if (!func)
     {
-        printf("Function 'void as_main()' not found\n");
+        ErrorMessage(L"関数が見つかりません\n", L"ScriptManager");
         return false;
     }
 
@@ -132,7 +140,7 @@ bool ScriptManager::Init()
     {
         if (r == asEXECUTION_EXCEPTION)
         {
-            printf("Exception: %s\n", m_pContext->GetExceptionString());
+            ErrorMessage(StringToWstring(m_pContext->GetExceptionString()), L"ScriptManager");
         }
     }
     return true;
@@ -150,6 +158,8 @@ bool ScriptManager::Init()
 //*----------------------------------------------------------------------------------------
 void ScriptManager::Update(float _deltaTime)
 {
+    int r = 0;
+
 }
 
 //*---------------------------------------------------------------------------------------
@@ -163,7 +173,6 @@ void ScriptManager::Term()
     // クリーンアップ
     m_pContext->Release();
     m_pEngine->ShutDownAndRelease();
-
 }
 
 
@@ -178,5 +187,25 @@ void ScriptManager::Term()
 //*----------------------------------------------------------------------------------------
 bool ScriptManager::LoadScript(const std::string& _filePath)
 {
+    // =====================================
+    // スクリプト読み込み
+    // =====================================
+    // スクリプトビルダーでモジュール作成
+    CScriptBuilder builder;
+    int r = builder.StartNewModule(m_pEngine, "MyModule");
+    if (r < 0)
+    {
+        MessageBoxA(NULL, "モジュール作成失敗", "ScriptManager", MB_OK);
+        return false;
+    }
+
+    r = builder.AddSectionFromFile(_filePath.c_str());
+    if (r < 0)
+    {
+        print("ファイル読み込み失敗\n");
+        return false;
+    }
+
+
     return true;
 }

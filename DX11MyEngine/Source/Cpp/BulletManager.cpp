@@ -202,7 +202,7 @@ bool BulletManager::Init(RendererEngine &renderer)
             // ÉÅÉbÉVÉÖçÏê¨
             CreateModelInfo model;
             model.pRenderer = &renderer;
-            model.Path = "Resource/Model/Weapon/bullet.fbx";
+            model.LODModels[0] = { "Resource/Model/Weapon/bullet.fbx", 0.0f };
             model.ObjTag = "Bullet";
             model.IsAnim = false;
             model.MatNum = 1;

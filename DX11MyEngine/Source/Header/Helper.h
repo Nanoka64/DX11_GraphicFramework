@@ -522,6 +522,18 @@ namespace Tool
         return stream.str();
     }
 
+
+    /// <summary>
+    /// エラーメッセージの表示
+    /// </summary>
+    /// <param name="_text">本文</param>
+    /// <param name="_caption">タイトル</param>
+    inline void ErrorMessage(const std::wstring& _text, const std::wstring& _caption)
+    {
+        MessageBoxW(NULL, _text.c_str(), _caption.c_str(), MB_OK);
+    }
+
+
     //-----------------------------------------
     /*      クオータニオン系    */
     //-----------------------------------------
@@ -569,7 +581,7 @@ namespace Tool
     }
 
     /// <summary>
-    /// json要ヘルパー
+    /// json用ヘルパー
     /// </summary>
     namespace Json
     {

@@ -45,7 +45,7 @@ using namespace VECTOR3;
 using namespace VECTOR2;
 
 constexpr int ENEMY_OCT_NUM = 0;
-constexpr int ENEMY_ANT_NUM = 100;
+constexpr int ENEMY_ANT_NUM = 1000;
 
 //*---------------------------------------------------------------------------------------
 //* @:c_Game_LoadProcess Class 
@@ -112,13 +112,14 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/GiantAnt01/GiantAnt01.fbx";
         model.ObjTag = "Ant1";
         model.IsAnim = true;
         model.MatNum = 1;
         model.SetupMaterial = matInfo;
         model.ShaderType = SHADER_TYPE::DEFERRED_STD_SKINNED_N;
-
+        model.LODModels[0] = {"Resource/Model/Enemy/GiantAnt01/GiantAnt_LOD0.fbx", 0.0f };
+        model.LODModels[1] = {"Resource/Model/Enemy/GiantAnt01/GiantAnt_LOD1.fbx", 100.0f};
+        model.LODModels[2] = {"Resource/Model/Enemy/GiantAnt01/GiantAnt_LOD2.fbx", 150.0f};
 
         for (int i = 0; i < ENEMY_ANT_NUM; i++)
         {
@@ -177,7 +178,8 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             //
             auto physics = obj->add_Component<Physics>();
             physics->set_AirDrag(1.0f);
-            physics->set_Restitution(0.0f); // 跳ねない
+            physics->set_Restitution(0.5f); // 跳ねない
+            physics->set_AngularDrag(0.98f);
 
             //
             // コライダーの追加
@@ -194,6 +196,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             collider->set_CollisionResponse(COLLISION_CATEGORY::ENEMY, COLLISION_RESPONSE::RESPONSE_IGNORE);                // エネミー
             collider->set_CollisionResponse(COLLISION_CATEGORY::ENEMY_BULLET, COLLISION_RESPONSE::RESPONSE_IGNORE);         // エネミー弾
             collider->set_CollisionResponse(COLLISION_CATEGORY::ITEM, COLLISION_RESPONSE::RESPONSE_IGNORE);                 // アイテム
+            collider->set_CollisionResponse(COLLISION_CATEGORY::PLAYER_BULLET, COLLISION_RESPONSE::RESPONSE_OVERLAP);       // アイテム
 
 
             // コライダーの登録
@@ -278,7 +281,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             CreateModelInfo model;
             model.pRenderer = m_pRenderer;
             //model.Path = "Resource/Model/Building/03/Building_Tower_1.fbx";
-            model.Path = "Resource/Model/Building/02/Building_01.fbx";
+            model.LODModels[0] = { "Resource/Model/Building/02/Building_01.fbx", 0.0f };
             model.ObjTag = "Building";
             model.IsAnim = false;
             model.MatNum = 4;
@@ -353,7 +356,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
             model.pRenderer = m_pRenderer;
             model.ObjTag = "Building";
             model.IsAnim = false;
-            model.Path = "Resource/Model/Building/03/Building_Tower_1.fbx";
+            model.LODModels[0] = { "Resource/Model/Building/03/Building_Tower_1.fbx", 0.0f };
             model.ShaderType = SHADER_TYPE::DEFERRED_STD_STATIC_N;
             model.MatNum = 6;
             model.SetupMaterial = matInfo;
@@ -400,7 +403,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/MotherShip/MotherShip.fbx";
+        model.LODModels[0] = { "Resource/Model/Enemy/MotherShip/MotherShip.fbx", 0.0f };
         model.ObjTag = "MotherShip";
         model.IsAnim = false;
         model.MatNum = 1;
@@ -429,7 +432,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Enemy/Octahedron/Octahedron.fbx";
+        model.LODModels[0] = { "Resource/Model/Enemy/Octahedron/Octahedron.fbx", 0.0f };
         model.ObjTag = "Octahedron";
         model.IsAnim = false;
         model.MatNum = 2;
@@ -793,7 +796,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
             CreateModelInfo model;
             model.pRenderer = m_pRenderer;
-            model.Path = "Resource/Model/Weapon/M4A1.fbx";
+            model.LODModels[0] = { "Resource/Model/Weapon/M4A1.fbx", 0.0f };
             model.ObjTag = "AssultRifle";
             model.IsAnim = false;
             model.MatNum = 1;
@@ -851,7 +854,7 @@ void c_Game_LoadProcess::OnExit(SceneManager* pOwner)
 
             CreateModelInfo model;
             model.pRenderer = m_pRenderer;
-            model.Path = "Resource/Model/Weapon/RocketLauncher/RocketLauncher_01.fbx";
+            model.LODModels[0] = { "Resource/Model/Weapon/RocketLauncher/RocketLauncher_01.fbx", 0.0f };
             model.ObjTag = "RocketLauncher";
             model.IsAnim = false;
             model.MatNum = 1;

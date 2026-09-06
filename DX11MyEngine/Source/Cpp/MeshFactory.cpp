@@ -27,12 +27,40 @@ using namespace VECTOR2;
 //*----------------------------------------------------------------------------------------
 std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo& info)
 {
-    // モデルの読み込み
-    std::shared_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.Path.c_str());
-    if (modeldata == nullptr)
+    std::array<LODModelData, MAX_REGISTER_LOD>lodModels;
+
+    // =================================================
+    // LODモデルがあるなら
+    // =================================================
+    for (int i = 0; i < info.LODModels.size(); i++)
     {
-        MessageBoxA(NULL, "モデルが読み込めませんでした", "Error", MB_OK);
-        return{};
+        // パスが入ってないなら、飛ばす
+        if (info.LODModels[i]._path.empty())
+            continue;
+
+        // モデルの読み込み
+        std::shared_ptr<ModelData> modeldata = Master::m_pResourceManager->LoadModel(info.LODModels[i]._path.c_str());
+        if (modeldata == nullptr)
+        {
+            MessageBoxA(NULL, "モデルが読み込めませんでした", "Error", MB_OK);
+            return{};
+        }
+
+        // マテリアルの設定
+        for (size_t i = 0; i < info.MatNum; i++)
+        {
+            if (!modeldata->SetupTextureMap(info.SetupMaterial[i].pMaterialData, info.SetupMaterial[i].Index))
+            {
+                MessageBoxA(NULL, "マテリアルが設定できませんでした", "Error", MB_OK);
+            }
+        }
+
+        // 使用するシェーダの設定
+        modeldata->set_ShaderType(info.ShaderType);
+        modeldata->set_ShadowShaderType(info.Shadow_ShaderType);
+        
+        lodModels[i]._pModelData = modeldata;
+        lodModels[i]._distance = info.LODModels[i]._distance;
     }
 
     auto obj = std::make_shared<GameObject>();
@@ -50,21 +78,8 @@ std::shared_ptr<class GameObject> MeshFactory::CreateModel(const CreateModelInfo
     // メッシュリソースコンポーネントを追加
     std::shared_ptr<ModelMeshResource> meshResource = pModelObj->add_Component<ModelMeshResource>();
 
-    // マテリアルの設定
-    for (size_t i = 0; i < info.MatNum; i++)
-    {
-        if (!modeldata->SetupTextureMap(info.SetupMaterial[i].pMaterialData,info.SetupMaterial[i].Index))
-        {
-            MessageBoxA(NULL, "マテリアルが設定できませんでした", "Error", MB_OK);
-        }
-    }
-    
-    // 使用するシェーダの設定
-    modeldata->set_ShaderType(info.ShaderType);
-    modeldata->set_ShadowShaderType(info.Shadow_ShaderType);
-
-    // リソースにモデル情報を持たせる
-    meshResource->set_ModelData(modeldata);
+    // リソースにモデル情報を持たせる（LODの品質は配列の順番準拠）
+    meshResource->set_LODModelData(lodModels);
 
     // スキニングモデルの場合、アニメーションコンポーネントを追加
     if (info.ShaderType == SHADER_TYPE::DEFERRED_STD_SKINNED_N || info.ShaderType == SHADER_TYPE::_DEFERRED_STD_SKINNED)

@@ -38,9 +38,9 @@
       "type" : "EXPLOSION",
       "decalMaterialTag" : "",
       "hitEffectTag" : "BulletHit_Flame",
-      "explosionRadius" : 100.0,
-      "explosionEffectTag" : "Explosion_01",
-      "explosionEffectAliveTime" : 2.5,
+      "explosionRadius" : 50.0,
+      "explosionEffectTag" : "Explosion_03",
+      "explosionEffectAliveTime" : 1.0,
       "isSmoke" : true,
 
       "expLightColor" : [1.0, 0.3, 0.9],

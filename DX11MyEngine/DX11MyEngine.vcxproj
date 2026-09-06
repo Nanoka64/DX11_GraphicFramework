@@ -366,7 +366,10 @@
     <ClInclude Include="Source\Header\WeaponDataManager.h" />
     <ClInclude Include="Source\Header\WeaponStateFactory.h" />
     <ClInclude Include="Source\Header\Window.h" />
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptarray\scriptarray.h" />
     <ClInclude Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.h" />
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptmath\scriptmath.h" />
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptmath\scriptmathcomplex.h" />
     <ClInclude Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.h" />
     <ClInclude Include="Source\Lib\DirectXTex\DirectXTex.h" />
     <ClInclude Include="Source\Lib\Imgui\backends\imgui_impl_dx11.h" />
@@ -691,7 +694,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptarray\scriptarray.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Source\Lib\angelscript\add_on\scriptbuilder\scriptbuilder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptmath\scriptmath.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptmath\scriptmathcomplex.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

@@ -3,6 +3,7 @@
 #include "Component_IMeshResource.h"
 #include "Component_SpriteRenderer.h"
 #include "Component_BillboardResource.h"
+#include "ModelData.h"
 
 
 // 入力マテリアル情報
@@ -10,6 +11,15 @@ struct SetupMaterialInfo
 {
     std::shared_ptr<Material> pMaterialData;  // マテリアル
     int Index = 0;              // マテリアル番号
+};
+
+/// <summary>
+/// LODモデルのセットアップ情報
+/// </summary>
+struct SetupLODModelInfo
+{
+    std::string _path;
+    float _distance = 0.0f;
 };
 
 /// <summary>
@@ -51,11 +61,13 @@ struct CreateMesh_Base
 /// </summary>
 struct CreateModelInfo : public CreateMesh_Base
 {
-    std::string Path;               // モデルパス
-    bool IsAnim;                    // アニメーションするかどうか
-    int InitAnimIndex;              // 最初に再生するアニメーション
-    SetupMaterialInfo* SetupMaterial;    // マテリアル情報（MatNum分）
-    UINT MatNum;                         // マテリアル数
+    bool IsAnim;                                // アニメーションするかどうか
+    int InitAnimIndex;                          // 最初に再生するアニメーション
+    SetupMaterialInfo* SetupMaterial;           // マテリアル情報（MatNum分）
+    UINT MatNum;                                // マテリアル数
+
+    std::array<SetupLODModelInfo, MAX_REGISTER_LOD>  // LODデータ
+        LODModels;  
 
     // コンストラクタ
     CreateModelInfo() :

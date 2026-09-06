@@ -81,6 +81,9 @@ void GameManager::Update(RendererEngine& renderer)
 	
 	// Tweenの更新
 	Master::m_pTweenManager->Update(deltaTime);
+	
+	// scriptの更新
+	Master::m_pScriptManager->Update(deltaTime);
 
 	// UIの更新
 	Master::m_pUIManager->Update(renderer);

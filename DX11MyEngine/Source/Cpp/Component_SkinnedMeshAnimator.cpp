@@ -221,34 +221,34 @@ void SkinnedMeshAnimator::BoneTransformsUpdate(RendererEngine &renderer, float t
     VEC3 myPos = m_pOwner.lock()->get_TransformConst()->get_VEC3ToPos();
 
     float distanceFormCameraSq = VEC3::DistanceSq(cameraPos, myPos);
-    int animationLODFrame = 0;
-    const float ANIMATION_LOD_DISTANCE_NEAR     = 100.0f;
-    const float ANIMATION_LOD_DISTANCE_MIDDLE   = 150.0f;
-    const float ANIMATION_LOD_DISTANCE_LONG     = 250.0f;
+    int animationLODFrame = 16;
+    const float ANIMATION_LOD_DISTANCE_NEAR     = 0.0f;
+    const float ANIMATION_LOD_DISTANCE_MIDDLE   = 100.0f;
+    const float ANIMATION_LOD_DISTANCE_LONG     = 200.0f;
     const float ANIMATION_LOD_DISTANCESQ_NEAR = ANIMATION_LOD_DISTANCE_NEAR * ANIMATION_LOD_DISTANCE_NEAR;
     const float ANIMATION_LOD_DISTANCESQ_MIDDLE = ANIMATION_LOD_DISTANCE_MIDDLE * ANIMATION_LOD_DISTANCE_MIDDLE;
     const float ANIMATION_LOD_DISTANCESQ_LONG = ANIMATION_LOD_DISTANCE_LONG * ANIMATION_LOD_DISTANCE_LONG;
     m_AnimationLODFrameCounter++;
     //
-    // ‹ß‹——£
+    // ‰“‹——£
     //
-    if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_NEAR)
+    if (distanceFormCameraSq > ANIMATION_LOD_DISTANCESQ_LONG)
     {
-        animationLODFrame = 0;
+        animationLODFrame = 16;
     }
     //
     // ’†‹——£
     //
-    else if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_MIDDLE)
+    else if (distanceFormCameraSq > ANIMATION_LOD_DISTANCESQ_MIDDLE)
     {
         animationLODFrame = 8;
     }
     //
-    // ‰“‹——£
+    // ‹ß‹——£
     //
-    else if (distanceFormCameraSq < ANIMATION_LOD_DISTANCESQ_LONG)
+    else if (distanceFormCameraSq > ANIMATION_LOD_DISTANCESQ_NEAR)
     {
-        animationLODFrame = 16;
+        animationLODFrame = 0;
     }
 
     if (m_AnimationLODFrameCounter >= animationLODFrame)

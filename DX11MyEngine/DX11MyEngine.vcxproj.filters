@@ -313,6 +313,12 @@
     <Filter Include="ソース ファイル\Game\AS">
       <UniqueIdentifier>{02a51b6d-0962-4cdd-9ab9-0b735ade235a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="外部ライブラリ\AS_add_on\scriptarray">
+      <UniqueIdentifier>{9d21647f-669e-4c76-8d52-785fb3a1a4bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="外部ライブラリ\AS_add_on\scriptmath">
+      <UniqueIdentifier>{64de6292-17d2-43ac-91fc-b7dd7837d056}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Cpp\SHADER.cpp">
@@ -852,6 +858,15 @@
     <ClCompile Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.cpp">
       <Filter>外部ライブラリ\AS_add_on\scriptstdstring</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptarray\scriptarray.cpp">
+      <Filter>外部ライブラリ\AS_add_on\scriptarray</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptmath\scriptmath.cpp">
+      <Filter>外部ライブラリ\AS_add_on\scriptmath</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\angelscript\add_on\scriptmath\scriptmathcomplex.cpp">
+      <Filter>外部ライブラリ\AS_add_on\scriptmath</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Header\SHADER.h">
@@ -1369,6 +1384,15 @@
     </ClInclude>
     <ClInclude Include="Source\Lib\angelscript\add_on\scriptstdstring\scriptstdstring.h">
       <Filter>外部ライブラリ\AS_add_on\scriptstdstring</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptarray\scriptarray.h">
+      <Filter>外部ライブラリ\AS_add_on\scriptarray</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptmath\scriptmath.h">
+      <Filter>外部ライブラリ\AS_add_on\scriptmath</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Lib\angelscript\add_on\scriptmath\scriptmathcomplex.h">
+      <Filter>外部ライブラリ\AS_add_on\scriptmath</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

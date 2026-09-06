@@ -203,7 +203,7 @@ void c_Title_LoadProcess::OnExit(SceneManager *pOwner)
 
         CreateModelInfo model;
         model.pRenderer = m_pRenderer;
-        model.Path = "Resource/Model/Ranger/Swat_01.fbx";
+        model.LODModels[0] = { "Resource/Model/Ranger/Swat_01.fbx", 0.0f };
         model.ObjTag = "Player";
         model.IsAnim = true;
         model.MatNum = 3;

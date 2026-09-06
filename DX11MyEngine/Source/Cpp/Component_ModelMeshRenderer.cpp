@@ -73,17 +73,26 @@ void ModelMeshRenderer::Update(RendererEngine &renderer)
 void ModelMeshRenderer::Draw(RendererEngine &renderer)
 {
     if (m_pMeshResource.lock() == nullptr) return;
-    auto modelData = m_pMeshResource.lock()->get_ModelData().lock();
+    auto meshResource = m_pMeshResource.lock();
+
+    //========================================================================
+    // 距離に合わせて、LODの切り替えを行う
+    //========================================================================
+    VEC3 cameraPos = Master::m_pDataManager->get_CameraPos();
+    VEC3 myPos = m_pOwner.lock()->get_TransformConst()->get_VEC3ToPos();
+    float distanceFormCameraSq = VEC3::DistanceSq(cameraPos, myPos);
+
+    // カメラからの距離からLODモデルを求める
+    auto outLODModelData = meshResource->get_LODModelData(distanceFormCameraSq);
+    auto& modelData = outLODModelData._pModelData;
     if (modelData == nullptr)return;
+
     auto pDeviceContext             = renderer.get_DeviceContext();
     std::vector<std::weak_ptr<Material>>matList    = modelData->get_MaterialList();
     const aiScene *pScene           = modelData->get_Scene();
     ModelMesh *pMeshes              = modelData->get_Meshes();
     UINT meshNum                    = modelData->get_MeshNum();
-    //CB_MATERIAL_SET *CB_MatSet      = modelData->GetConstantBufferMaterialDataSet();
-    //CB_TRANSFORM_SET *CB_TransSet   = modelData->GetConstantBufferTransformSet();
     UINT vertexNum                  = pMeshes->get_VertexNum();
-    //VERTEX_Skneed* vertices         = pMeshes->get_Vertices();
     SHADER_TYPE shaderType          = modelData->get_ShaderType();
     SHADER_TYPE shadowShaderType    = modelData->get_ShadowShaderType();
 	CB_TRANSFORM cbTransform{};
@@ -167,6 +176,11 @@ void ModelMeshRenderer::Draw(RendererEngine &renderer)
     }
     // シャドウパス **********************************************************
     else if (renderer.get_CrntRenderPass() == RENDER_PASS::SHADOW) {
+
+        // LODクオリティが低品質のものなら、シャドウは飛ばす
+        if (outLODModelData._quality == LOD_QUALITY::LOW){
+            return;
+        }
 
         // スキニングメッシュかどうか
 		if (pScene->mMeshes[0]->HasBones()) {  

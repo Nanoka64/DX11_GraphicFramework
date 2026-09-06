@@ -123,6 +123,7 @@ public:
 
 private:
 	void SpawnDeadEffect(class EnemyController* pOwner, float _effectSize);
+	void SpawnDeadFragmentEffect(class EnemyController* pOwner, float _effectSize);
 };
 
 
